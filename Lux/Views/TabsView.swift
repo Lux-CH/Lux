@@ -6,45 +6,38 @@
 //
 
 import SwiftUI
-import BubbleBar
 
 struct TabsView: View {
     @State private var selectedTab = 0
     @EnvironmentObject var locationManager: LocationManager
     
     var body: some View {
-        BubbleBarView(selectedTab: $selectedTab) {
+        TabView() {
             HomeView()
-                .tabBarItem(
-                    label: { Label("Home", systemImage: "square.grid.3x3") },
-                    accessibilityLabel: "Home"
-                )
+                .tabItem {
+                    Label("Home", systemImage: "square.grid.3x3")
+                }
             
             StopsView()
-                .tabBarItem(
-                    label: { Label("Stops", systemImage: "signpost.right") },
-                    accessibilityLabel: "Stops"
-                )
+                .tabItem {
+                    Label("Stops", systemImage: "signpost.right")
+                }
             
             OnboardView()
-                .tabBarItem(
-                    label: { Label("Onboard", systemImage: "location.north") },
-                    accessibilityLabel: "Onboard"
-                )
+                .tabItem {
+                    Label("Onboard", systemImage: "location.north")
+                }
             
             TripPlannerView()
-                .tabBarItem (
-                    label: { Label("Trip", systemImage: "point.bottomleft.forward.to.arrow.triangle.scurvepath.fill") },
-                    accessibilityLabel: "Trip"
-                )
+                .tabItem {
+                    Label("Trip", systemImage: "point.bottomleft.forward.to.arrow.triangle.scurvepath.fill")
+                }
             
-            Text("tickets view")
-                .tabBarItem (
-                    label : { Label("Tickets", systemImage: "ticket") },
-                    accessibilityLabel: "Tickets"
-                )
+            TicketsView()
+                .tabItem {
+                    Label("Tickets", systemImage: "ticket")
+                }
         }
-        .bubbleBarStyle(.desert)
     }
 }
 
