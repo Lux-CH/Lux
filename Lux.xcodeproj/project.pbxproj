@@ -6,13 +6,31 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7971EE462DB0E0D000A8823B /* BubbleBar in Frameworks */ = {isa = PBXBuildFile; productRef = 7971EE452DB0E0D000A8823B /* BubbleBar */; };
+		799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 799D2A762D98AC420066E9F5 /* LuxCom */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		799D2A672D98ABF80066E9F5 /* Lux.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lux.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		79A4C21F2DB2853A000FF271 /* Exceptions for "Lux" folder in "Lux" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 799D2A662D98ABF80066E9F5 /* Lux */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		799D2A692D98ABF80066E9F5 /* Lux */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				79A4C21F2DB2853A000FF271 /* Exceptions for "Lux" folder in "Lux" target */,
+			);
 			path = Lux;
 			sourceTree = "<group>";
 		};
@@ -23,6 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7971EE462DB0E0D000A8823B /* BubbleBar in Frameworks */,
+				799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +85,8 @@
 			);
 			name = Lux;
 			packageProductDependencies = (
+				799D2A762D98AC420066E9F5 /* LuxCom */,
+				7971EE452DB0E0D000A8823B /* BubbleBar */,
 			);
 			productName = Lux;
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
@@ -94,6 +116,10 @@
 			);
 			mainGroup = 799D2A5E2D98ABF80066E9F5;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */,
+				7971EE442DB0E0D000A8823B /* XCRemoteSwiftPackageReference "BubbleBar" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 799D2A682D98ABF80066E9F5 /* Products */;
 			projectDirPath = "";
@@ -256,11 +282,16 @@
 				DEVELOPMENT_TEAM = 7G89J82G2A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Lux/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Lux;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Lux needs access to your location to show nearby stops, enable Onboard features, and help plan your trips.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -284,11 +315,16 @@
 				DEVELOPMENT_TEAM = 7G89J82G2A;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = Lux/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Lux;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Lux needs access to your location to show nearby stops, enable Onboard features, and help plan your trips.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -324,6 +360,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7971EE442DB0E0D000A8823B /* XCRemoteSwiftPackageReference "BubbleBar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Archetapp/BubbleBar";
+			requirement = {
+				kind = revision;
+				revision = 21b126087ff1fcfe94371b1424caf220545fae65;
+			};
+		};
+		799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lux-CH/LuxCom";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7971EE452DB0E0D000A8823B /* BubbleBar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7971EE442DB0E0D000A8823B /* XCRemoteSwiftPackageReference "BubbleBar" */;
+			productName = BubbleBar;
+		};
+		799D2A762D98AC420066E9F5 /* LuxCom */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */;
+			productName = LuxCom;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 799D2A5F2D98ABF80066E9F5 /* Project object */;
 }
