@@ -19,11 +19,27 @@ struct LinePill: View {
         ZStack {
             RoundedRectangle(cornerRadius: 50)
                 .fill(Color(lineColor.opacity(0.25)))
-                .frame(width: 30.1, height: 19)
+                .frame(width: 30, height: 20)
+            Text(line)
+                .font(.custom("NimbusSansBeckerPBla", size: 11))
+                .foregroundColor(lineColor)
+                .multilineTextAlignment(.center)
         }
-        Text(line)
-            .font(.custom("NimbusSansBeckerPBla", size: 11))
-            .foregroundColor(Color(lineColor))
-            .multilineTextAlignment(.center)
+
     }
 }
+
+struct MorePill: View {
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 50)
+                .fill(Color.accentColor.opacity(0.25))
+                .frame(width: 30, height: 20)
+            Image(systemName: "ellipsis")
+                .foregroundColor(Color.accentColor)
+                .multilineTextAlignment(.center)
+                .font(.system(size: 11))
+        }
+    }
+}
+
