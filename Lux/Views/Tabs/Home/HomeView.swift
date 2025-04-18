@@ -46,10 +46,12 @@ struct HomeView: View {
                                 style: .continuous
                             )
                         )
-                    NearbyStopsView()
-                        .padding(.bottom, 60)
-                        .padding(.top, -20)
-                        .padding(.horizontal, 10)
+                    
+                    VStack(alignment: .center) {
+                        NearbyStopsView()
+                            .padding(.horizontal, 10)
+                        Spacer()
+                    }
                 }
                 .ignoresSafeArea(edges: .bottom)
             }
