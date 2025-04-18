@@ -13,7 +13,7 @@ struct LuxApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabsView()
                 .environmentObject(locationManager)
         }
     }

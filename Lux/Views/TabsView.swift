@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  TabsView.swift
 //  Lux
 //
 //  Created by Constantin Clerc on 29.03.2025.
@@ -8,38 +8,31 @@
 import SwiftUI
 import BubbleBar
 
-struct ContentView: View {
+struct TabsView: View {
     @State private var selectedTab = 0
     @EnvironmentObject var locationManager: LocationManager
     
     var body: some View {
         BubbleBarView(selectedTab: $selectedTab) {
-            VStack {
-                if let location = locationManager.location {
-                    Text("You're at: \(location.coordinate.latitude), \(location.coordinate.longitude)")
-                } else {
-                    Text("Getting location...")
-                }
-            }
-            
+            HomeView()
                 .tabBarItem(
                     label: { Label("Home", systemImage: "square.grid.3x3") },
                     accessibilityLabel: "Home"
                 )
             
-            Text("Srotoet")
+            StopsView()
                 .tabBarItem(
                     label: { Label("Stops", systemImage: "signpost.right") },
                     accessibilityLabel: "Stops"
                 )
             
-            Text("Sreeotoet")
+            OnboardView()
                 .tabBarItem(
                     label: { Label("Onboard", systemImage: "location.north") },
                     accessibilityLabel: "Onboard"
                 )
             
-            Text("eeiei")
+            TripPlannerView()
                 .tabBarItem (
                     label: { Label("Trip", systemImage: "point.bottomleft.forward.to.arrow.triangle.scurvepath.fill") },
                     accessibilityLabel: "Trip"
@@ -56,5 +49,5 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    TabsView()
 }
