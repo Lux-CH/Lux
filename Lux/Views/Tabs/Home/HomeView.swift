@@ -17,7 +17,7 @@ struct HomeView: View {
                     Rectangle()
                         .fill(Color(.secondarySystemBackground))
                         .frame(maxHeight: .infinity)
-                        .frame(height: 200)
+                        .frame(height: 215)
                         .clipShape(
                             .rect(
                                 topLeadingRadius: 0,
@@ -27,6 +27,9 @@ struct HomeView: View {
                                 style: .continuous
                             )
                         )
+                    
+                    HomeHeaderView()
+                        .padding(.top, 65)
                 }
                 .ignoresSafeArea(edges: .top)
                 
