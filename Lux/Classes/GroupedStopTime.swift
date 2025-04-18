@@ -13,10 +13,4 @@ struct GroupedStopTime: Identifiable {
     let routeShortName: String
     let headsign: String
     let stopTimes: [StopTime]
-    
-    init(routeShortName: String, headsign: String, stopTimes: [StopTime]) {
-        self.routeShortName = routeShortName
-        self.headsign = headsign
-        self.stopTimes = stopTimes
-    }
 }
