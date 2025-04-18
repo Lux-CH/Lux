@@ -46,6 +46,10 @@ struct HomeView: View {
                                 style: .continuous
                             )
                         )
+                    NearbyStopsView()
+                        .padding(.bottom, 60)
+                        .padding(.top, -20)
+                        .padding(.horizontal, 10)
                 }
                 .ignoresSafeArea(edges: .bottom)
             }
