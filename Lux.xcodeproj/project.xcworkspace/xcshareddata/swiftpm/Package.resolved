@@ -1,0 +1,32 @@
+{
+  "originHash" : "eb8996f691d0229a59748a377581fd8c28ef586d0ad13121308eef1589c2abdd",
+  "pins" : [
+    {
+      "identity" : "bubblebar",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Archetapp/BubbleBar",
+      "state" : {
+        "revision" : "21b126087ff1fcfe94371b1424caf220545fae65"
+      }
+    },
+    {
+      "identity" : "luxcom",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Lux-CH/LuxCom",
+      "state" : {
+        "branch" : "main",
+        "revision" : "06df9cedc2a8051c80b090d3e7b83e96ed6fadec"
+      }
+    },
+    {
+      "identity" : "swiftuix",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/SwiftUIX/SwiftUIX",
+      "state" : {
+        "branch" : "master",
+        "revision" : "974ba14e7baba5456c4c6ae43bb4c01f40a6dd67"
+      }
+    }
+  ],
+  "version" : 3
+}

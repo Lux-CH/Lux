@@ -10,9 +10,17 @@ import BubbleBar
 
 struct ContentView: View {
     @State private var selectedTab = 0
+    @EnvironmentObject var locationManager: LocationManager
+    
     var body: some View {
         BubbleBarView(selectedTab: $selectedTab) {
-            Text("Home View")
+            VStack {
+                if let location = locationManager.location {
+                    Text("You're at: \(location.coordinate.latitude), \(location.coordinate.longitude)")
+                } else {
+                    Text("Getting location...")
+                }
+            }
             
                 .tabBarItem(
                     label: { Label("Home", systemImage: "square.grid.3x3") },
