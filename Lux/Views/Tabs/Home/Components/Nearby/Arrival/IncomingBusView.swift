@@ -14,7 +14,7 @@ struct IncomingBusView: View {
         HStack {
             VStack(alignment: .leading) {
                 HStack {
-                    LinePill(line: group.routeShortName)
+                    LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus)
                     Image(systemName: "arrow.right")
                         .foregroundStyle(Color.primary.opacity(0.3))
                     Text(group.headsign)

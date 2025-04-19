@@ -9,23 +9,35 @@ import SwiftUI
 import LuxCom
 
 struct LinePill: View {
-    var line: String
+    let line: String
+    let mode: TransportationMode
     
-    var lineColor: Color {
-        LineColors.color(for: line) ?? .black
+    private var isSquared: Bool {
+        mode == .regionalRail || mode == .ferry
+    }
+    
+    private var formattedLine: String {
+        line.hasPrefix("RL") ? String(line.dropFirst(1)) : line
+    }
+    
+    private var lineColor: Color {
+        if mode == .regionalRail && LineColors.color(for: line) == nil {
+            return Color(hex: "EA0706")
+        }
+        return LineColors.color(for: line) ?? .black
     }
     
     var body: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 50)
-                .fill(Color(lineColor.opacity(0.25)))
+            RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
+                .fill(lineColor.opacity(0.25))
                 .frame(width: 30, height: 20)
-            Text(line)
+            
+            Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: 11))
-                .foregroundColor(lineColor)
+                .foregroundColor(lineColor == .black ? .white : lineColor)
                 .multilineTextAlignment(.center)
         }
-
     }
 }
 
