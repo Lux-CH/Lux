@@ -32,7 +32,7 @@ struct NearbyStopsView: View {
             } else {
                 ForEach(searchResults.prefix(2)) { result in
                     ZStack {
-                           HomeStopView(stop: result, maxGroupsToShow: 3)
+                        StopView(stop: result, maxGroupsToShow: 3, fromStops: false)
                        }
                        .frame(maxWidth: .infinity)
                 }

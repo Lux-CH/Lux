@@ -1,0 +1,214 @@
+//
+//  StopView.swift
+//  Lux
+//
+//  Created by Constantin Clerc on 18.04.2025.
+//
+
+import SwiftUI
+import LuxCom
+import Combine
+
+struct StopView: View {
+    @Environment(\.colorScheme) var colorScheme
+    @StateObject private var viewModel: HomeStopViewModel
+    @State var fromStops: Bool
+    let maxGroupsToShow: Int
+    
+    private let activeDotColor = Color.primary.opacity(0.5)
+    private let inactiveDotColor = Color.secondary.opacity(0.3)
+    
+    init(stop: SearchResult, maxGroupsToShow: Int, fromStops: Bool) {
+        self._viewModel = StateObject(wrappedValue: HomeStopViewModel(stop: stop))
+        self.maxGroupsToShow = maxGroupsToShow
+        self.fromStops = fromStops
+    }
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            headerView
+            
+            if viewModel.isLoading {
+                loadingView
+            } else if viewModel.routeGroups.isEmpty && !viewModel.isLoading {
+                emptyStateView
+            } else {
+                routeGroupsView
+            }
+        }
+        .onAppear {
+            viewModel.startMonitoring()
+        }
+        .onDisappear {
+            viewModel.stopMonitoring()
+        }
+    }
+    
+    // MARK: - Subviews
+    
+    private var headerView: some View {
+        Group {
+            if fromStops {
+                fromStopsHeaderView
+            } else {
+                regularHeaderView
+            }
+        }
+    }
+    
+    private var fromStopsHeaderView: some View {
+        VStack(alignment: .leading) {
+            HStack {
+                Image(systemName: "clock")
+                Text("Horaires")
+                    .fontWeight(.bold)
+            }
+            Divider()
+                .padding(.bottom, 0)
+        }
+        .padding(.top, 17.5)
+        .padding(.horizontal)
+    }
+    
+    private var regularHeaderView: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Image(systemName: "signpost.right")
+                Text(viewModel.stop.name)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                
+                Spacer()
+                
+                connectionPills
+            }
+            .padding(.horizontal, 25)
+            .padding(.bottom, 12)
+            .padding(.top, 20)
+            
+            Divider()
+                .padding(.bottom, 0)
+        }
+        .background {
+            if colorScheme == .dark {
+                MaskedImageView()
+                    .edgesIgnoringSafeArea(.all)
+            } else {
+                UnevenRoundedRectangle(
+                    topLeadingRadius: 38,
+                    bottomLeadingRadius: 2,
+                    bottomTrailingRadius: 2,
+                    topTrailingRadius: 38,
+                    style: .continuous
+                )
+                .strokeBorder(Color(UIColor.systemGray5), lineWidth: 1)
+                .edgesIgnoringSafeArea(.all)
+            }
+        }
+    }
+    
+    private var connectionPills: some View {
+        HStack(spacing: 4) {
+            ForEach(viewModel.connections.prefix(3), id: \.self) { connection in
+                LinePill(line: connection, mode: .bus)
+            }
+            if viewModel.connections.count > 3 {
+                MorePill()
+            }
+        }
+    }
+    
+    private var loadingView: some View {
+        ProgressView("Chargement des départs...")
+            .padding()
+            .overlay(
+                Group {
+                    if let error = viewModel.errorMessage {
+                        Text(error)
+                            .foregroundColor(.red)
+                            .padding()
+                    }
+                }, alignment: .bottom
+            )
+    }
+    
+    private var emptyStateView: some View {
+        VStack {
+            Text("Aucun départ à venir.")
+                .foregroundColor(.gray)
+                .padding()
+            
+            if let error = viewModel.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .padding()
+            }
+        }
+    }
+    
+    private var routeGroupsView: some View {
+        Group {
+            if fromStops {
+                ScrollView(.vertical, showsIndicators: true) {
+                    routeGroupsContent
+                }
+            } else {
+                routeGroupsContent
+            }
+        }
+    }
+    
+    private var routeGroupsContent: some View {
+        VStack(spacing: 0) {
+            ForEach(viewModel.routeNames.prefix(maxGroupsToShow), id: \.self) { routeName in
+                if let groups = viewModel.routeGroups[routeName], !groups.isEmpty {
+                    routeGroupView(for: routeName, groups: groups)
+                }
+            }
+        }
+    }
+    
+    private func routeGroupView(for routeName: String, groups: [GroupedStopTime]) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            ZStack(alignment: .bottom) {
+                TabView(selection: Binding(
+                    get: { viewModel.currentPages[routeName] ?? 0 },
+                    set: { viewModel.currentPages[routeName] = $0 }
+                )) {
+                    ForEach(Array(groups.enumerated()), id: \.element.id) { index, group in
+                        if !group.stopTimes.isEmpty {
+                            IncomingBusView(group: group)
+                                .padding(.horizontal)
+                                .tag(index)
+                        }
+                    }
+                }
+                .frame(height: 70)
+                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                
+                paginationDotsView(groups: groups, routeName: routeName)
+            }
+            
+            if routeName != viewModel.routeNames.prefix(maxGroupsToShow).last {
+                Divider()
+                    .padding(.horizontal)
+            }
+        }
+    }
+    
+    private func paginationDotsView(groups: [GroupedStopTime], routeName: String) -> some View {
+        Group {
+            if groups.count > 1 {
+                let currentPage = viewModel.currentPages[routeName] ?? 0
+                HStack(spacing: 6) {
+                    ForEach(0..<min(groups.count, 10), id: \.self) { index in
+                        Circle()
+                            .frame(width: 5, height: 5)
+                            .foregroundColor(index == currentPage ? activeDotColor : inactiveDotColor)
+                    }
+                }
+                .padding(.bottom, 5)
+            }
+        }
+    }
+}
