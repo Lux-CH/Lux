@@ -49,7 +49,6 @@ struct HomeView: View {
                     
                     VStack(alignment: .center) {
                         NearbyStopsView()
-                            .padding(.horizontal, 10)
                         Spacer()
                     }
                 }

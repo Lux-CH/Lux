@@ -34,11 +34,15 @@ struct StopView: View {
 //                        MorePill()
                     }
                 }
-                .padding(.horizontal, 15)
+                .padding(.horizontal, 25)
                 .padding(.bottom, 12)
                 .padding(.top, 25)
                 Divider()
                     .padding(.bottom, 0)
+            }
+            .background {
+                MaskedImageView()
+                    .edgesIgnoringSafeArea(.all)
             }
             if isLoading {
                 ProgressView("Loading departures...")
