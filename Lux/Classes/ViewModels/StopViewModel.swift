@@ -12,6 +12,7 @@ import Combine
 class StopViewModel: ObservableObject {
     @Published var stopTimes: StopTimes?
     @Published var routeGroups: [String: [GroupedStopTime]] = [:]
+    @Published var connections: [String] = []
     @Published var isLoading = false
     @Published var routeNames: [String] = []
     @Published var currentPages: [String: Int] = [:]
@@ -27,6 +28,7 @@ class StopViewModel: ObservableObject {
     
     init(stop: SearchResult) {
         self.stop = stop
+        self.connections = extractConnections()
     }
     
     func startMonitoring() {
@@ -63,6 +65,23 @@ class StopViewModel: ObservableObject {
         refreshTimer?.cancel()
         departureCheckTimer?.cancel()
         backgroundRefreshTask?.cancel()
+    }
+    
+    func extractConnections() -> [String] {
+        do {
+            let extractor = try ConnectionExtractor()
+            let newStopID = stop.id.replacingOccurrences(of: "ch_Parent", with: "ch_")
+            if let busRoutes = try extractor.extractSpecificKey(newStopID) {
+                return busRoutes
+            } else {
+                print("Not found !")
+            }
+            extractor.releaseResources()
+        }
+        catch {
+            print("an error occured while extracting connecions ! \(error)")
+        }
+        return []
     }
     
     @MainActor

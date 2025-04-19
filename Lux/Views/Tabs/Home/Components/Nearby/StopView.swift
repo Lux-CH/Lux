@@ -31,10 +31,13 @@ struct StopView: View {
                             .fontWeight(.bold)
                     }
                     Spacer()
-                    HStack {
-                        // for now this isn't automated
-//                        LinePill(line: "80")
-                        MorePill()
+                    HStack(spacing: 4) {
+                        ForEach(viewModel.connections.prefix(3), id: \.self) { connection in
+                            LinePill(line: connection, mode: .bus)
+                        }
+                        if viewModel.connections.count > 3 {
+                            MorePill()
+                        }
                     }
                 }
                 .padding(.horizontal, 25)
