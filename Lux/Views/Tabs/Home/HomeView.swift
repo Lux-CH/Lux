@@ -10,12 +10,14 @@ import SwiftUI
 struct HomeView: View {
     var body: some View {
         ZStack {
-            Color(.systemBackground).ignoresSafeArea()
+            Color(.systemBackground)
+                .ignoresSafeArea()
+                .opacity(0.9)
             
             VStack(spacing: 0) {
                 ZStack(alignment: .top) {
                     Rectangle()
-                        .fill(Color(.secondarySystemBackground))
+                        .fill(Color(.secondarySystemBackground).opacity(0.8))
                         .frame(maxHeight: .infinity)
                         .frame(height: 215)
                         .clipShape(
@@ -35,7 +37,7 @@ struct HomeView: View {
                 
                 ZStack {
                     Rectangle()
-                        .fill(Color(.secondarySystemBackground))
+                        .fill(Color(.secondarySystemBackground).opacity(0.8))
                         .frame(maxHeight: .infinity)
                         .clipShape(
                             .rect(
