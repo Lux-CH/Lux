@@ -16,6 +16,8 @@ struct StopView: View {
     @State private var isLoading = false
     @State private var routeNames: [String] = []
     @State private var currentPages: [String: Int] = [:]
+    @State private var routeOrder: [String: Int] = [:]
+    
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
@@ -227,6 +229,8 @@ struct StopView: View {
         var result: [String: [GroupedStopTime]] = [:]
         var newCurrentPages: [String: Int] = [:]
         
+        var routeTiming: [String: Date] = [:]
+        
         for (routeName, routeStopTimes) in groupedByRoute {
             let groupedByHeadsign = Dictionary(grouping: routeStopTimes) { $0.headsign ?? "" }
             
@@ -242,13 +246,40 @@ struct StopView: View {
             }
             
             result[routeName] = groupedStopTimes
-            newCurrentPages[routeName] = 0
+            
+            if let currentPage = currentPages[routeName] {
+                newCurrentPages[routeName] = min(currentPage, groupedStopTimes.count - 1)
+            } else {
+                newCurrentPages[routeName] = 0
+            }
+            
+            if let firstTime = groupedStopTimes.first?.stopTimes.first?.place.departure {
+                routeTiming[routeName] = firstTime
+            }
         }
         
         let sortedRouteNames = groupedByRoute.keys.sorted { routeA, routeB in
-            let firstArrivalA = result[routeA]?.first?.stopTimes.first?.place.departure ?? Date.distantFuture
-            let firstArrivalB = result[routeB]?.first?.stopTimes.first?.place.departure ?? Date.distantFuture
-            return firstArrivalA < firstArrivalB
+            if let orderA = routeOrder[routeA], let orderB = routeOrder[routeB] {
+                return orderA < orderB
+            } else if routeOrder[routeA] != nil {
+                return true
+            } else if routeOrder[routeB] != nil {
+                return false
+            } else {
+                let firstArrivalA = routeTiming[routeA] ?? Date.distantFuture
+                let firstArrivalB = routeTiming[routeB] ?? Date.distantFuture
+                return firstArrivalA < firstArrivalB
+            }
+        }
+        
+        if routeOrder.isEmpty && !sortedRouteNames.isEmpty {
+            for (index, routeName) in sortedRouteNames.enumerated() {
+                routeOrder[routeName] = index
+            }
+        }
+        
+        for routeName in sortedRouteNames where routeOrder[routeName] == nil {
+            routeOrder[routeName] = routeOrder.values.max().map { $0 + 1 } ?? routeOrder.count
         }
         
         self.routeNames = sortedRouteNames
