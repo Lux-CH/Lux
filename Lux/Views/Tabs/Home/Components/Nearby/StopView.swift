@@ -37,8 +37,8 @@ struct StopView: View {
                     Spacer()
                     HStack {
                         // for now this isn't automated
-                        LinePill(line: "80")
-//                        MorePill()
+//                        LinePill(line: "80")
+                        MorePill()
                     }
                 }
                 .padding(.horizontal, 25)
@@ -62,7 +62,7 @@ struct StopView: View {
             }
             else {
                 VStack(spacing: 0) {
-                    ForEach(routeNames.prefix(2), id: \.self) { routeName in
+                    ForEach(routeNames.prefix(4), id: \.self) { routeName in
                         if let groups = routeGroups[routeName], !groups.isEmpty {
                             VStack(alignment: .leading, spacing: 0) {
                                 ZStack(alignment: .bottom) {
@@ -93,7 +93,7 @@ struct StopView: View {
                                         .padding(.bottom, 5)
                                     }
                                 }
-                                if routeName != routeNames.prefix(2).last {
+                                if routeName != routeNames.prefix(4).last {
                                     Divider()
                                         .padding(.horizontal)
                                 }
@@ -114,6 +114,9 @@ struct StopView: View {
                     await refreshDeparturesInBackground()
                 }
             }
+            
+            refreshTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+            departureCheckTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
         }
         .onReceive(refreshTimer) { _ in
             Task {
@@ -136,18 +139,28 @@ struct StopView: View {
         backgroundRefreshTask?.cancel()
         
         backgroundRefreshTask = Task {
-            defer { if showLoading { isLoading = false } }
+            defer {
+                if showLoading {
+                    DispatchQueue.main.async {
+                        self.isLoading = false
+                    }
+                }
+            }
+            
             do {
                 let freshStopTimes = try await getDeparturesForStop(stopId: stop.id, numberOfEvents: 15)
                 if Task.isCancelled { return }
-                self.stopTimes = freshStopTimes
-                let times = freshStopTimes.stopTimes
-                if !times.isEmpty {
-                    groupStopTimes(times)
-                } else {
-                    self.routeGroups = [:]
-                    self.routeNames = []
-                    self.currentPages = [:]
+                
+                DispatchQueue.main.async {
+                    self.stopTimes = freshStopTimes
+                    let times = freshStopTimes.stopTimes
+                    if !times.isEmpty {
+                        self.groupStopTimes(times)
+                    } else {
+                        self.routeGroups = [:]
+                        self.routeNames = []
+                        self.currentPages = [:]
+                    }
                 }
             } catch {
                 if !(error is CancellationError) {
@@ -167,15 +180,18 @@ struct StopView: View {
             do {
                 let freshStopTimes = try await getDeparturesForStop(stopId: stop.id, numberOfEvents: 15)
                 if Task.isCancelled { return }
-                self.stopTimes = freshStopTimes
-                let times = freshStopTimes.stopTimes
-                if !times.isEmpty {
-                    groupStopTimes(times)
-                    checkAndHandleDepartures()
-                } else {
-                    self.routeGroups = [:]
-                    self.routeNames = []
-                    self.currentPages = [:]
+                
+                DispatchQueue.main.async {
+                    self.stopTimes = freshStopTimes
+                    let times = freshStopTimes.stopTimes
+                    if !times.isEmpty {
+                        self.groupStopTimes(times)
+                        self.checkAndHandleDepartures()
+                    } else {
+                        self.routeGroups = [:]
+                        self.routeNames = []
+                        self.currentPages = [:]
+                    }
                 }
             } catch {
                 if !(error is CancellationError) {
@@ -188,34 +204,19 @@ struct StopView: View {
     
     private func checkAndHandleDepartures() {
         let now = Date()
-        var needsRefresh = false
-        let calendar = Calendar.current
         
-        for routeName in routeNames.prefix(2) {
-            guard let groups = routeGroups[routeName], !groups.isEmpty else { continue }
-            let currentPage = currentPages[routeName] ?? 0
+        outerLoop: for (_, groups) in routeGroups {
+            guard !groups.isEmpty else { continue }
             
-            guard currentPage < groups.count else {
-                currentPages[routeName] = 0
-                continue
-            }
-            
-            let currentGroup = groups[currentPage]
-            guard let firstStopTime = currentGroup.stopTimes.first,
-                  let arrival = firstStopTime.place.arrival else { continue }
-            
-            if arrival < now {
-                let timeDifference = calendar.dateComponents([.minute], from: arrival, to: now).minute ?? 0
-                if timeDifference < 1 {
-                    needsRefresh = true
-                    currentPages[routeName] = 0
+            for group in groups {
+                if let firstStopTime = group.stopTimes.first,
+                   let arrival = firstStopTime.place.departure,
+                   arrival < now {
+                    Task {
+                        await refreshDepartures(showLoading: false)
+                    }
+                    break outerLoop
                 }
-            }
-        }
-        
-        if needsRefresh {
-            Task {
-                await refreshDeparturesInBackground()
             }
         }
     }
@@ -233,11 +234,11 @@ struct StopView: View {
                 return GroupedStopTime(
                     routeShortName: routeName,
                     headsign: headsign,
-                    stopTimes: times.sorted { ($0.place.arrival ?? Date.distantFuture) < ($1.place.arrival ?? Date.distantFuture) }
+                    stopTimes: times.sorted { ($0.place.departure ?? Date.distantFuture) < ($1.place.departure ?? Date.distantFuture) }
                 )
             }.sorted {
-                ($0.stopTimes.first?.place.arrival ?? Date.distantFuture) <
-                    ($1.stopTimes.first?.place.arrival ?? Date.distantFuture)
+                ($0.stopTimes.first?.place.departure ?? Date.distantFuture) <
+                    ($1.stopTimes.first?.place.departure ?? Date.distantFuture)
             }
             
             result[routeName] = groupedStopTimes
@@ -245,8 +246,8 @@ struct StopView: View {
         }
         
         let sortedRouteNames = groupedByRoute.keys.sorted { routeA, routeB in
-            let firstArrivalA = result[routeA]?.first?.stopTimes.first?.place.arrival ?? Date.distantFuture
-            let firstArrivalB = result[routeB]?.first?.stopTimes.first?.place.arrival ?? Date.distantFuture
+            let firstArrivalA = result[routeA]?.first?.stopTimes.first?.place.departure ?? Date.distantFuture
+            let firstArrivalB = result[routeB]?.first?.stopTimes.first?.place.departure ?? Date.distantFuture
             return firstArrivalA < firstArrivalB
         }
         

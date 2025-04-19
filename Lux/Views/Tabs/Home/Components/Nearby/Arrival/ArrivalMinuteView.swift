@@ -12,8 +12,10 @@ struct ArrivalMinuteView: View {
     let incomingStop: StopTime
     @Environment(\.calendar) private var calendar
     @State private var now = Date()
-
+    @State private var isVisible = true
+    
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let blinkTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     private static let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -22,11 +24,30 @@ struct ArrivalMinuteView: View {
     }()
     
     var body: some View {
-        Text(displayText)
-            .foregroundColor(latenessColor)
-            .onReceive(timer) { _ in
-                self.now = Date()
+        Group {
+            if displayText == "0'" {
+                switch incomingStop.mode {
+                case .tram:
+                    transportImage(systemName: "tram")
+                case .ferry:
+                    transportImage(systemName: "ferry")
+                case .bus:
+                    transportImage(systemName: "bus")
+                case .rail, .highSpeedRail, .regionalFastRail, .regionalRail:
+                    transportImage(systemName: "tram.tunnel.fill")
+                default:
+                    transportImage(systemName: "bus")
+                }
             }
+            // TODO: add other blinkings
+            else {
+                Text(displayText)
+                    .foregroundColor(latenessColor)
+            }
+        }
+        .onReceive(timer) { _ in
+            self.now = Date()
+        }
     }
     
     private var displayText: String {
@@ -35,14 +56,7 @@ struct ArrivalMinuteView: View {
         let timeDifference = calendar.dateComponents([.minute], from: now, to: arrival).minute ?? 0
         let isNextDay = !calendar.isDate(arrival, inSameDayAs: now)
 
-        if timeDifference == 0 {
-            let secondsDifference = calendar.dateComponents([.second], from: now, to: arrival).second ?? 0
-            if secondsDifference >= 0 {
-                return "~\(secondsDifference)s"
-            } else {
-                 return "0'"
-            }
-        } else if abs(timeDifference) < 99 {
+        if abs(timeDifference) < 99 {
             return "\(timeDifference)'"
         } else {
             return "\(Self.hourFormatter.string(from: arrival))\(isNextDay ? "*" : "")"
@@ -62,5 +76,17 @@ struct ArrivalMinuteView: View {
         } else {
             return .red
         }
+    }
+    
+    func transportImage(systemName: String) -> some View {
+        Image(systemName: systemName)
+            .foregroundColor(latenessColor)
+            .font(.system(size: 15))
+            .opacity(isVisible ? 1.0 : 0.0)
+            .onReceive(blinkTimer) { _ in
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    self.isVisible.toggle()
+                }
+            }
     }
 }
