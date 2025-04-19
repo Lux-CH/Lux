@@ -21,6 +21,7 @@ struct IncomingBusView: View {
                         .fontWeight(.regular)
                 }
                 .multilineTextAlignment(.leading)
+                .padding(.bottom, 3)
                 
                 let displayTrack = group.stopTimes.first {
                     $0.place.track != nil || $0.place.scheduledTrack != nil

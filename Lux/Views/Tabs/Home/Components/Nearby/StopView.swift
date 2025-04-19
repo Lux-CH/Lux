@@ -14,7 +14,10 @@ struct StopView: View {
     @State private var routeGroups: [String: [GroupedStopTime]] = [:]
     @State private var isLoading = false
     @State private var routeNames: [String] = []
-
+    @State private var currentPages: [String: Int] = [:]
+    private let activeDotColor = Color.primary.opacity(0.5)
+    private let inactiveDotColor = Color.secondary.opacity(0.3)
+    
     var body: some View {
         VStack(spacing: 0) {
             VStack(spacing: 0) {
@@ -51,14 +54,32 @@ struct StopView: View {
                     ForEach(routeNames.prefix(2), id: \.self) { routeName in
                         if let groups = routeGroups[routeName], !groups.isEmpty {
                             VStack(alignment: .leading, spacing: 0) {
-                                TabView {
-                                    ForEach(groups) { group in
-                                        IncomingBusView(group: group)
-                                            .padding(.horizontal)
+                                ZStack(alignment: .bottom) {
+                                    TabView(selection: Binding(
+                                        get: { currentPages[routeName] ?? 0 },
+                                        set: { currentPages[routeName] = $0 }
+                                    )) {
+                                        ForEach(Array(groups.enumerated()), id: \.element.id) { index, group in
+                                            IncomingBusView(group: group)
+                                                .padding(.horizontal)
+                                                .tag(index)
+                                        }
+                                    }
+                                    .frame(height: 70)
+                                    .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                                    
+                                    if groups.count > 1 {
+                                        let currentPage = currentPages[routeName] ?? 0
+                                        HStack(spacing: 6) {
+                                            ForEach(0..<min(groups.count, 10), id: \.self) { index in
+                                                Circle()
+                                                    .frame(width: 5, height: 5)
+                                                    .foregroundColor(index == currentPage ? activeDotColor : inactiveDotColor)
+                                            }
+                                        }
+                                        .padding(.bottom, 5)
                                     }
                                 }
-                                .frame(height: 70)
-                                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                                 
                                 Divider()
                                     .padding(.horizontal)
@@ -107,9 +128,11 @@ struct StopView: View {
         routeNames = groupedByRoute.keys.sorted()
         
         routeGroups = result
+        
+        // Initialize current page for each route
+        for routeName in routeNames {
+            currentPages[routeName] = 0
+        }
     }
 }
 
-//#Preview {
-//    StopView(stopName: "Genève, Cornavin")
-//}
