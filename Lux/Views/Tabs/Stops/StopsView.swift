@@ -19,6 +19,8 @@ struct StopsView: View {
     // Added to prevent flickering during search
     @State private var isSearchingInBackground = false
     
+    @State private var showMinCharactersMessage = false
+    
     // Reused from NearbyStopsView for refreshing logic
     @State private var lastFetchedLocation: CLLocation? = nil
     @State private var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -58,14 +60,21 @@ struct StopsView: View {
                                 .onChange(of: searchQuery) {
                                     if searchQuery.isEmpty {
                                         isSearchMode = false
+                                        showMinCharactersMessage = false
                                         loadNearbyStops(showLoading: false)
                                     }
+                                    else if searchQuery.count < 3 {
+                                        isSearchMode = true
+                                        showMinCharactersMessage = true
+                                        searchResults = []
+                                    }
                                     else {
+                                        showMinCharactersMessage = false
                                         performSearch()
                                     }
                                 }
                                 .onSubmit {
-                                    if !searchQuery.isEmpty {
+                                    if !searchQuery.isEmpty && searchQuery.count >= 3 {
                                         performSearch()
                                     }
                                 }
@@ -74,7 +83,7 @@ struct StopsView: View {
                             
                             
                             Button(action: {
-                                if !searchQuery.isEmpty {
+                                if !searchQuery.isEmpty && searchQuery.count >= 3 {
                                     performSearch()
                                 }
                             }) {
@@ -124,31 +133,43 @@ struct StopsView: View {
                             .padding(.top, 17)
                             .padding(.horizontal)
                             
-                            // Orange line below the title
                             if !isSearchMode {
                                 Divider()
                             }
                             
-                            // Loading state - only show if there are no current results
-                            if isLoading && searchResults.isEmpty {
-                                ProgressView(isSearchMode ? "Recherche en cours..." : "Chargement des arrêts à proximité...")
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .center)
+                            VStack {
+                                if showMinCharactersMessage {
+                                    ScrollView {
+                                        Text("Veuillez saisir au moins 3 caractères pour rechercher")
+                                            .foregroundColor(.secondary)
+                                            .padding(.horizontal)
+                                    }
+                                    .scrollDisabled(true)
+                                }
+                                else if isLoading && searchResults.isEmpty {
+                                    ScrollView {
+                                        ProgressView(isSearchMode ? "Recherche en cours..." : "Chargement des arrêts à proximité...")
+                                            .padding(.horizontal)
+                                    }
+                                    .scrollDisabled(true)
+                                }
+                                else if searchResults.isEmpty && !showMinCharactersMessage {
+                                    ScrollView {
+                                        Text(isSearchMode ? "Aucun résultat trouvé." : "Aucun arrêt à proximité trouvé.")
+                                            .foregroundColor(.gray)
+                                            .padding(.horizontal)
+                                    }
+                                    .scrollDisabled(true)
+                                }
                             }
-                            // Empty state
-                            else if searchResults.isEmpty {
-                                Text(isSearchMode ? "Aucun résultat trouvé." : "Aucun arrêt à proximité trouvé.")
-                                    .foregroundColor(.gray)
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .center)
-                            }
-                            // Results list
-                            else {
+                            
+                            if !searchResults.isEmpty {
                                 ScrollView {
                                     LazyVStack(spacing: 0) {
                                         ForEach(searchResults) { stop in
                                             NavigationLink(destination: IndividualStopView(stop: stop)) {
                                                 stopRowView(stop: stop)
+                                                    .contentShape(Rectangle())
                                             }
                                             .buttonStyle(PlainButtonStyle())
                                             
@@ -243,6 +264,10 @@ struct StopsView: View {
     }
     
     private func performSearch() {
+        guard searchQuery.count >= 3 else {
+            return
+        }
+        
         isSearchMode = true
         
         // Set background search flag but keep previous results visible
@@ -258,7 +283,7 @@ struct StopsView: View {
         backgroundRefreshTask = Task {
             do {
                 if let coords = locationManager.location?.coordinate {
-                    let results = try await geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 15)
+                    let results = try await geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude))
                     if !Task.isCancelled {
                         await MainActor.run {
                             // Update results only when we have them

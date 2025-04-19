@@ -53,9 +53,9 @@ struct IndividualStopView: View {
                     
                     VStack(alignment: .center) {
                         StopView(stop: stop, maxGroupsToShow: 15, fromStops: true)
-                        Spacer()
                     }
                 }
+                .padding(.top, -50)
                 .ignoresSafeArea(edges: .bottom)
             }
         }
