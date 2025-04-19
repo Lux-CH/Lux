@@ -34,16 +34,6 @@ struct StopHeaderView: View {
                         .background(Color(.secondarySystemFill).opacity(0.5))
                         .clipShape(Circle())
                 }
-                Button {
-                    print("search!")
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(Color.accentColor)
-                        .font(.system(size: 20))
-                        .frame(width: 61, height: 52.5)
-                        .background(Color(.secondarySystemFill).opacity(0.5))
-                        .clipShape(Circle())
-                }
             }
         }
     }

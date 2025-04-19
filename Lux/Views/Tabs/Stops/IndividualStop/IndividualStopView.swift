@@ -21,7 +21,7 @@ struct IndividualStopView: View {
                     Rectangle()
                         .fill(Color(.secondarySystemBackground).opacity(0.8))
                         .frame(maxHeight: .infinity)
-                        .frame(height: 120)
+                        .frame(height: 175)
                         .clipShape(
                             .rect(
                                 topLeadingRadius: 0,
@@ -33,11 +33,10 @@ struct IndividualStopView: View {
                         )
                     
                     StopHeaderView(stop: stop)
-                        .padding(.top, 40)
-                        .padding(.horizontal)
+                        .padding(.top, 95)
+                        .padding(.horizontal, 20)
                 }
                 .ignoresSafeArea(edges: .top)
-                Spacer()
                 ZStack {
                     Rectangle()
                         .fill(Color(.secondarySystemBackground).opacity(0.8))
