@@ -83,7 +83,9 @@ struct StopView: View {
                                     }
                                     .frame(height: 70)
                                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                                    .zIndex(1)
+                                    .simultaneousGesture(DragGesture())
+                                    .contentShape(Rectangle())
+                                    .zIndex(10)
                                     
                                     if groups.count > 1 {
                                         let currentPage = currentPages[routeName] ?? 0

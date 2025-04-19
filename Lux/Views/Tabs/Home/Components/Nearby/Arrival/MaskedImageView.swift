@@ -19,6 +19,7 @@ struct MaskedImageView: View {
                     .aspectRatio(contentMode: .fill)
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .blur(radius: 8)
+                    .allowsHitTesting(false)
                     .clipShape(
                         .rect(
                             topLeadingRadius: 38,
