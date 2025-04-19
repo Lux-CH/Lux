@@ -12,10 +12,8 @@ struct ArrivalMinuteView: View {
     let incomingStop: StopTime
     @Environment(\.calendar) private var calendar
     @State private var now = Date()
-    @State private var isVisible = true
     
-    private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    private let blinkTimer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
 
     private static let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -25,7 +23,7 @@ struct ArrivalMinuteView: View {
     
     var body: some View {
         Group {
-            if displayText == "0'" || displayText == "-1'" {
+            if shouldBlink {
                 switch incomingStop.mode {
                 case .tram:
                     transportImage(systemName: "tram")
@@ -38,9 +36,7 @@ struct ArrivalMinuteView: View {
                 default:
                     transportImage(systemName: "bus")
                 }
-            }
-            // TODO: add other blinkings
-            else {
+            } else {
                 Text(displayText)
                     .foregroundColor(latenessColor)
             }
@@ -50,17 +46,34 @@ struct ArrivalMinuteView: View {
         }
     }
     
+    private var timeDifferenceInSeconds: Int {
+        let arrival = incomingStop.place.departure ?? now
+        return Int(arrival.timeIntervalSince(now))
+    }
+    
     private var displayText: String {
         let arrival = incomingStop.place.departure ?? now
-
-        let timeDifference = calendar.dateComponents([.minute], from: now, to: arrival).minute ?? 0
+        let secondsDifference = timeDifferenceInSeconds
         let isNextDay = !calendar.isDate(arrival, inSameDayAs: now)
-
-        if abs(timeDifference) < 99 {
-            return "\(timeDifference)'"
+        
+        if secondsDifference > 30 && secondsDifference <= 60 {
+            return "0'"
         } else {
-            return "\(Self.hourFormatter.string(from: arrival))\(isNextDay ? "*" : "")"
+            let minutes = secondsDifference / 60
+            if abs(minutes) < 99 {
+                return "\(minutes)'"
+            } else {
+                return "\(Self.hourFormatter.string(from: arrival))\(isNextDay ? "*" : "")"
+            }
         }
+    }
+    
+    private var shouldBlink: Bool {
+        return timeDifferenceInSeconds <= 30
+    }
+    
+    private var isVisibleNow: Bool {
+        return Int(Date().timeIntervalSince1970) % 2 == 0
     }
 
     private var latenessColor: Color {
@@ -82,11 +95,7 @@ struct ArrivalMinuteView: View {
         Image(systemName: systemName)
             .foregroundColor(latenessColor)
             .font(.system(size: 15))
-            .opacity(isVisible ? 1.0 : 0.0)
-            .onReceive(blinkTimer) { _ in
-                withAnimation(.easeInOut(duration: 0.1)) {
-                    self.isVisible.toggle()
-                }
-            }
+            .opacity(isVisibleNow ? 1.0 : 0.0)
+            .animation(.easeInOut(duration: 0.1), value: isVisibleNow)
     }
 }
