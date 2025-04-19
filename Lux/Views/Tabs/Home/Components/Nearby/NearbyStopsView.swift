@@ -7,11 +7,18 @@
 
 import SwiftUI
 import LuxCom
+import CoreLocation
 
 struct NearbyStopsView: View {
     @EnvironmentObject var locationManager: LocationManager
     @State private var searchResults: [SearchResult] = []
     @State private var isLoading = false
+
+    @State private var lastFetchedLocation: CLLocation? = nil
+    @State private var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    @State private var backgroundRefreshTask: Task<Void, Never>? = nil
+
+    private let significantDistance: CLLocationDistance = 100.0
 
     var body: some View {
         VStack {
@@ -21,6 +28,7 @@ struct NearbyStopsView: View {
             } else if searchResults.isEmpty {
                 Text("No nearby stops found.")
                     .foregroundColor(.gray)
+                    .padding() // Add padding for better spacing
             } else {
                 ForEach(searchResults.prefix(2)) { result in
                     StopView(stop: result)
@@ -28,28 +36,88 @@ struct NearbyStopsView: View {
             }
         }
         .onAppear {
-            loadNearbyStops()
+            if searchResults.isEmpty {
+                loadNearbyStops(showLoading: true)
+            } else {
+                checkLocationAndRefresh()
+            }
+        }
+        .onChange(of: locationManager.location) {
+             checkLocationAndRefresh()
+        }
+        .onReceive(refreshTimer) { _ in
+             guard let currentLoc = locationManager.location, let lastLoc = lastFetchedLocation else {
+                 refreshNearbyStopsInBackground()
+                 return
+             }
+             if currentLoc.distance(from: lastLoc) < significantDistance {
+                 refreshNearbyStopsInBackground()
+             }
+        }
+        .onDisappear {
+             backgroundRefreshTask?.cancel()
         }
     }
 
-    private func loadNearbyStops() {
-        isLoading = true
-        Task {
-            defer { isLoading = false }
-            do {
-                if let loc = locationManager.location?.coordinate {
-                    let results = try await reverseGeocode(
-                        place: (loc.latitude, loc.longitude),
-                        type: .stop
-                    )
-                    // sometimes, some stops with empty coords are returned with reverse geocoding.
-                    searchResults = results.filter { result in
-                        return result.lat != 0.0 && result.lon != 0.0
-                    }
+    private func checkLocationAndRefresh() {
+        guard let currentLoc = locationManager.location else { return }
+
+        if let lastLoc = lastFetchedLocation {
+            let distance = currentLoc.distance(from: lastLoc)
+            if distance >= significantDistance {
+                refreshNearbyStopsInBackground()
+            }
+        } else {
+            refreshNearbyStopsInBackground()
+        }
+    }
+
+    private func loadNearbyStops(showLoading: Bool) {
+        if showLoading { isLoading = true }
+        backgroundRefreshTask?.cancel()
+
+        backgroundRefreshTask = Task {
+            guard let loc = locationManager.location?.coordinate else {
+                if showLoading { isLoading = false }
+                print("Location not available for loading stops.")
+                return
+            }
+
+            let fetchLocation = locationManager.location
+
+            defer {
+                if showLoading { isLoading = false }
+                if !Task.isCancelled {
+                    backgroundRefreshTask = nil
                 }
+            }
+
+            do {
+                let results = try await reverseGeocode(
+                    place: (loc.latitude, loc.longitude),
+                    type: .stop
+                )
+                if Task.isCancelled { return }
+
+                let filteredResults = results.filter { result in
+                    return result.lat != 0.0 && result.lon != 0.0
+                }
+
+                self.searchResults = filteredResults
+                self.lastFetchedLocation = fetchLocation
+
             } catch {
-                print("Failed to load nearby stops: \(error)")
+                 if !(error is CancellationError) {
+                     print("Failed to load nearby stops: \(error)")
+                 }
             }
         }
+    }
+
+    private func refreshNearbyStopsInBackground() {
+        guard backgroundRefreshTask == nil || backgroundRefreshTask?.isCancelled == true else {
+            return
+        }
+        loadNearbyStops(showLoading: false)
     }
 }
