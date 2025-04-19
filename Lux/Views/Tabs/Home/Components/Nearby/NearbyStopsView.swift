@@ -23,12 +23,12 @@ struct NearbyStopsView: View {
     var body: some View {
         VStack {
             if isLoading {
-                ProgressView("Loading nearby stops...")
+                ProgressView("Chargement des arrêts à proximité...")
                     .padding()
             } else if searchResults.isEmpty {
-                Text("No nearby stops found.")
+                Text("Aucun arrêt à proximité trouvé.")
                     .foregroundColor(.gray)
-                    .padding() // Add padding for better spacing
+                    .padding()
             } else {
                 ForEach(searchResults.prefix(2)) { result in
                     StopView(stop: result)
@@ -79,7 +79,7 @@ struct NearbyStopsView: View {
         backgroundRefreshTask = Task {
             guard let loc = locationManager.location?.coordinate else {
                 if showLoading { isLoading = false }
-                print("Location not available for loading stops.")
+                print("loc not available for loading stops..:(")
                 return
             }
 
@@ -108,7 +108,7 @@ struct NearbyStopsView: View {
 
             } catch {
                  if !(error is CancellationError) {
-                     print("Failed to load nearby stops: \(error)")
+                     print("failed to load nerby stops!! \(error)")
                  }
             }
         }

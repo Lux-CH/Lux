@@ -52,11 +52,11 @@ struct StopView: View {
                     .edgesIgnoringSafeArea(.all)
             }
             if isLoading {
-                ProgressView("Loading departures...")
+                ProgressView("Chargement des départs...")
                     .padding()
             }
             else if routeGroups.isEmpty && !isLoading {
-                Text("No upcoming departures")
+                Text("Aucun départ à venir.")
                     .foregroundColor(.gray)
                     .padding()
             }
@@ -151,7 +151,7 @@ struct StopView: View {
                 }
             } catch {
                 if !(error is CancellationError) {
-                    print("Failed to load departures: \(error)")
+                    print("failed to load departures !!!!!! \(error)")
                 }
             }
         }
@@ -179,7 +179,7 @@ struct StopView: View {
                 }
             } catch {
                 if !(error is CancellationError) {
-                    print("Failed to background refresh departures: \(error)")
+                    print("failed to load \(error)")
                 }
             }
             backgroundRefreshTask = nil
