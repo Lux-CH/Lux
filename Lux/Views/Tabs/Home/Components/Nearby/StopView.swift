@@ -19,12 +19,14 @@ struct StopView: View {
     @State private var currentPages: [String: Int] = [:]
     @State private var routeOrder: [String: Int] = [:]
     
+    @State private var errorMessage: String? = nil
+    
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
-    @State private var refreshTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
-    @State private var departureCheckTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
-    @State private var cancellables = Set<AnyCancellable>()
+    @State private var refreshTimer: AnyCancellable?
+    @State private var departureCheckTimer: AnyCancellable?
+    
     @State private var backgroundRefreshTask: Task<Void, Never>? = nil
     
     
@@ -57,11 +59,21 @@ struct StopView: View {
             if isLoading {
                 ProgressView("Chargement des départs...")
                     .padding()
+                if let error = errorMessage {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .padding()
+                }
             }
             else if routeGroups.isEmpty && !isLoading {
                 Text("Aucun départ à venir.")
                     .foregroundColor(.gray)
                     .padding()
+                if let error = errorMessage {
+                    Text(error)
+                        .foregroundColor(.red)
+                        .padding()
+                }
             }
             else {
                 VStack(spacing: 0) {
@@ -121,25 +133,28 @@ struct StopView: View {
                 }
             }
             
-            refreshTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
-            departureCheckTimer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
-        }
-        .onReceive(refreshTimer) { _ in
-            Task {
-                await refreshDeparturesInBackground()
-            }
-        }
-        .onReceive(departureCheckTimer) { _ in
-            checkAndHandleDepartures()
+            refreshTimer = Timer.publish(every: 30, on: .main, in: .common)
+                .autoconnect()
+                .sink { _ in
+                    Task {
+                        await refreshDeparturesInBackground()
+                    }
+                }
+                
+            departureCheckTimer = Timer.publish(every: 5, on: .main, in: .common)
+                .autoconnect()
+                .sink { _ in
+                    checkAndHandleDepartures()
+                }
         }
         .onDisappear {
-            refreshTimer.upstream.connect().cancel()
-            departureCheckTimer.upstream.connect().cancel()
+            refreshTimer?.cancel()
+            departureCheckTimer?.cancel()
             backgroundRefreshTask?.cancel()
-            cancellables.forEach { $0.cancel() }
         }
     }
     
+    @MainActor
     private func refreshDepartures(showLoading: Bool) async {
         if showLoading { isLoading = true }
         backgroundRefreshTask?.cancel()
@@ -147,9 +162,7 @@ struct StopView: View {
         backgroundRefreshTask = Task {
             defer {
                 if showLoading {
-                    DispatchQueue.main.async {
-                        self.isLoading = false
-                    }
+                    self.isLoading = false
                 }
             }
             
@@ -157,20 +170,19 @@ struct StopView: View {
                 let freshStopTimes = try await getDeparturesForStop(stopId: stop.id, numberOfEvents: 15)
                 if Task.isCancelled { return }
                 
-                DispatchQueue.main.async {
-                    self.stopTimes = freshStopTimes
-                    let times = freshStopTimes.stopTimes
-                    if !times.isEmpty {
-                        self.groupStopTimes(times)
-                    } else {
-                        self.routeGroups = [:]
-                        self.routeNames = []
-                        self.currentPages = [:]
-                    }
+                self.stopTimes = freshStopTimes
+                let times = freshStopTimes.stopTimes
+                if !times.isEmpty {
+                    self.groupStopTimes(times)
+                } else {
+                    self.routeGroups = [:]
+                    self.routeNames = []
+                    self.currentPages = [:]
                 }
             } catch {
                 if !(error is CancellationError) {
                     print("failed to load departures !!!!!! \(error)")
+                    self.errorMessage = error.localizedDescription
                 }
             }
         }
@@ -202,12 +214,14 @@ struct StopView: View {
             } catch {
                 if !(error is CancellationError) {
                     print("failed to load \(error)")
+                    self.errorMessage = error.localizedDescription
                 }
             }
             backgroundRefreshTask = nil
         }
     }
     
+    @MainActor
     private func checkAndHandleDepartures() {
         let now = Date()
         
@@ -228,41 +242,40 @@ struct StopView: View {
     }
     
     private func groupStopTimes(_ stopTimes: [StopTime]) {
-        let groupedByRoute = Dictionary(grouping: stopTimes) { $0.routeShortName }
+        let routeGroups = Dictionary(grouping: stopTimes) { $0.routeShortName }
         
         var result: [String: [GroupedStopTime]] = [:]
         var newCurrentPages: [String: Int] = [:]
         
         var routeTiming: [String: Date] = [:]
         
-        for (routeName, routeStopTimes) in groupedByRoute {
-            let groupedByHeadsign = Dictionary(grouping: routeStopTimes) { $0.headsign ?? "" }
+        for (routeName, routeStopTimes) in routeGroups {
+            let groupsByHeadsign = Dictionary(grouping: routeStopTimes) { $0.headsign ?? "" }
+                .map { (headsign, times) -> GroupedStopTime in
+                    let sortedTimes = times.sorted {
+                        ($0.place.departure ?? Date.distantFuture) < ($1.place.departure ?? Date.distantFuture)
+                    }
+                    return GroupedStopTime(
+                        routeShortName: routeName,
+                        headsign: headsign,
+                        stopTimes: sortedTimes
+                    )
+                }
+                .sorted {
+                    ($0.stopTimes.first?.place.departure ?? Date.distantFuture) <
+                        ($1.stopTimes.first?.place.departure ?? Date.distantFuture)
+                }
             
-            let groupedStopTimes = groupedByHeadsign.map { headsign, times -> GroupedStopTime in
-                return GroupedStopTime(
-                    routeShortName: routeName,
-                    headsign: headsign,
-                    stopTimes: times.sorted { ($0.place.departure ?? Date.distantFuture) < ($1.place.departure ?? Date.distantFuture) }
-                )
-            }.sorted {
-                ($0.stopTimes.first?.place.departure ?? Date.distantFuture) <
-                    ($1.stopTimes.first?.place.departure ?? Date.distantFuture)
-            }
+            result[routeName] = groupsByHeadsign
             
-            result[routeName] = groupedStopTimes
+            newCurrentPages[routeName] = min(currentPages[routeName] ?? 0, groupsByHeadsign.count - 1)
             
-            if let currentPage = currentPages[routeName] {
-                newCurrentPages[routeName] = min(currentPage, groupedStopTimes.count - 1)
-            } else {
-                newCurrentPages[routeName] = 0
-            }
-            
-            if let firstTime = groupedStopTimes.first?.stopTimes.first?.place.departure {
-                routeTiming[routeName] = firstTime
+            if let firstDeparture = groupsByHeadsign.first?.stopTimes.first?.place.departure {
+                routeTiming[routeName] = firstDeparture
             }
         }
         
-        let sortedRouteNames = groupedByRoute.keys.sorted { routeA, routeB in
+        let sortedRouteNames = routeGroups.keys.sorted { routeA, routeB in
             if let orderA = routeOrder[routeA], let orderB = routeOrder[routeB] {
                 return orderA < orderB
             } else if routeOrder[routeA] != nil {
@@ -270,20 +283,19 @@ struct StopView: View {
             } else if routeOrder[routeB] != nil {
                 return false
             } else {
-                let firstArrivalA = routeTiming[routeA] ?? Date.distantFuture
-                let firstArrivalB = routeTiming[routeB] ?? Date.distantFuture
-                return firstArrivalA < firstArrivalB
+                return routeTiming[routeA] ?? Date.distantFuture < routeTiming[routeB] ?? Date.distantFuture
             }
         }
         
-        if routeOrder.isEmpty && !sortedRouteNames.isEmpty {
-            for (index, routeName) in sortedRouteNames.enumerated() {
-                routeOrder[routeName] = index
+        if routeOrder.isEmpty {
+            for (index, name) in sortedRouteNames.enumerated() {
+                routeOrder[name] = index
             }
-        }
-        
-        for routeName in sortedRouteNames where routeOrder[routeName] == nil {
-            routeOrder[routeName] = routeOrder.values.max().map { $0 + 1 } ?? routeOrder.count
+        } else {
+            let maxOrder = routeOrder.values.max() ?? -1
+            for (offset, name) in sortedRouteNames.filter({ routeOrder[$0] == nil }).enumerated() {
+                routeOrder[name] = maxOrder + offset + 1
+            }
         }
         
         self.routeNames = sortedRouteNames
