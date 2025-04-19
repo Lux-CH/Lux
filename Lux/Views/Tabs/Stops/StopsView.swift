@@ -16,9 +16,6 @@ struct StopsView: View {
     @State private var isLoading = false
     @State private var isSearchMode = false
     
-    // Added to prevent flickering during search
-    @State private var isSearchingInBackground = false
-    
     @State private var showMinCharactersMessage = false
     
     // Reused from NearbyStopsView for refreshing logic
@@ -53,10 +50,25 @@ struct StopsView: View {
                             )
                                                 
                         HStack {
-                            TextField("Aller à...", text: $searchQuery)
+                            TextField("Rechercher un arrêt...", text: $searchQuery)
                                 .padding(.vertical, 20)
                                 .padding(.horizontal, 20)
                                 .font(.system(size: 16, weight: .medium))
+                                .overlay(
+                                    HStack {
+                                        Spacer()
+                                        if !searchQuery.isEmpty {
+                                            Button(action: {
+                                                searchQuery = ""
+                                            }) {
+                                                Image(systemName: "xmark.circle.fill")
+                                                    .foregroundColor(.gray)
+                                                    .font(.system(size: 16))
+                                            }
+                                            .padding(.trailing, 8)
+                                        }
+                                    }
+                                )
                                 .onChange(of: searchQuery) {
                                     if searchQuery.isEmpty {
                                         isSearchMode = false
@@ -122,13 +134,6 @@ struct StopsView: View {
                                 Text(isSearchMode ? "Résultats de recherche" : "À proximité")
                                     .font(.headline)
                                     .fontWeight(.bold)
-                                
-                                // Show mini loading indicator for background searches
-                                if isSearchingInBackground && !searchResults.isEmpty {
-                                    Spacer()
-                                    ProgressView()
-                                        .scaleEffect(0.7)
-                                }
                             }
                             .padding(.top, 17)
                             .padding(.horizontal)
@@ -270,8 +275,6 @@ struct StopsView: View {
         
         isSearchMode = true
         
-        // Set background search flag but keep previous results visible
-        isSearchingInBackground = true
         
         // Only show loading indicator if there are no current results
         if searchResults.isEmpty {
@@ -289,7 +292,6 @@ struct StopsView: View {
                             // Update results only when we have them
                             searchResults = results
                             isLoading = false
-                            isSearchingInBackground = false
                             backgroundRefreshTask = nil
                         }
                     }
@@ -299,7 +301,6 @@ struct StopsView: View {
                     print("Search error: \(error)")
                     await MainActor.run {
                         isLoading = false
-                        isSearchingInBackground = false
                         backgroundRefreshTask = nil
                     }
                 }
