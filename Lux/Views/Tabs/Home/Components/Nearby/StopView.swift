@@ -10,6 +10,7 @@ import LuxCom
 import Combine
 
 struct StopView: View {
+    @Environment(\.colorScheme) var colorScheme
     @StateObject private var viewModel: StopViewModel
     let maxGroupsToShow: Int
     
@@ -47,8 +48,21 @@ struct StopView: View {
                     .padding(.bottom, 0)
             }
             .background {
-                MaskedImageView()
+                if colorScheme == .dark {
+                    MaskedImageView()
+                        .edgesIgnoringSafeArea(.all)
+                }
+                else {
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 38,
+                        bottomLeadingRadius: 2,
+                        bottomTrailingRadius: 2,
+                        topTrailingRadius: 38,
+                        style: .continuous
+                    )
+                    .strokeBorder(Color(UIColor.systemGray5), lineWidth: 1)
                     .edgesIgnoringSafeArea(.all)
+                }
             }
             if viewModel.isLoading {
                 ProgressView("Chargement des départs...")
