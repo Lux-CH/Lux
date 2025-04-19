@@ -36,7 +36,7 @@ struct StopView: View {
                 }
                 .padding(.horizontal, 25)
                 .padding(.bottom, 12)
-                .padding(.top, 25)
+                .padding(.top, 20)
                 Divider()
                     .padding(.bottom, 0)
             }
@@ -84,9 +84,10 @@ struct StopView: View {
                                         .padding(.bottom, 5)
                                     }
                                 }
-                                
-                                Divider()
-                                    .padding(.horizontal)
+                                if routeName != routeNames.prefix(2).last {
+                                    Divider()
+                                        .padding(.horizontal)
+                                }
                             }
                         }
                     }

@@ -35,7 +35,7 @@ struct IncomingBusView: View {
                     .multilineTextAlignment(.leading)
             }
             Spacer()
-            VStack {
+            VStack(alignment: .trailing) {
                 if let firstStop = group.stopTimes.first {
                     ArrivalMinuteView(incomingStop: firstStop)
                 }
