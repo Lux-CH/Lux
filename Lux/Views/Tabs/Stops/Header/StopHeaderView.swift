@@ -1,56 +1,54 @@
 //
-//  HomeHeaderView.swift
+//  StopHeaderView.swift
 //  Lux
 //
 //  Created by Constantin Clerc on 18.04.2025.
 //
 
 import SwiftUI
+import LuxCom
 
-struct HomeHeaderView: View {
-    @State private var searchText: String = ""
+struct StopHeaderView: View {
+    @State var stop: SearchResult
     var body: some View {
-        VStack {
-            // MARK: Shortcut bar
+        HStack {
+            VStack(alignment: .leading) {
+                HStack {
+                    Image(systemName: "signpost.right")
+                    Text(stop.name)
+                        .fontWeight(.bold)
+                }
+                VStack {
+                    LinePill(line: "80", mode: .bus)
+                }
+            }
+            Spacer()
             HStack {
-                ShortcutButton(symbol: "house", coords: (0.0, 0.0))
-                ShortcutButton(symbol: "suitcase", coords: (0.0, 0.0))
                 Button {
-                    print("show settings")
+                    print("go!")
                 } label: {
-                    Image(systemName: "gearshape")
-                        .foregroundColor(Color.primary.opacity(0.6))
+                    Image(systemName: "arrow.triangle.turn.up.right.circle")
+                        .foregroundColor(Color.accentColor)
                         .font(.system(size: 20))
                         .frame(width: 61, height: 52.5)
                         .background(Color(.secondarySystemFill).opacity(0.5))
-                        .cornerRadius(25)
+                        .clipShape(Circle())
                 }
-            }
-            .padding(.bottom, 5)
-            HStack {
-                TextField("Aller à...", text: $searchText)
-                    .padding(.vertical, 20)
-                    .padding(.horizontal, 20)
-                    .font(.system(size: 16, weight: .medium))
-
-                Spacer()
-                
-                Button(action: {
-                    print("searching \(searchText)")
-                }) {
+                Button {
+                    print("search!")
+                } label: {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 20))
                         .foregroundColor(Color.accentColor)
+                        .font(.system(size: 20))
+                        .frame(width: 61, height: 52.5)
+                        .background(Color(.secondarySystemFill).opacity(0.5))
+                        .clipShape(Circle())
                 }
-                .padding(.trailing, 18)
             }
-            .frame(width: 350, height: 60)
-            .background(Color(.secondarySystemFill).opacity(0.5))
-            .cornerRadius(25)
         }
     }
 }
-
-#Preview {
-    HomeHeaderView()
-}
+//
+//#Preview {
+//    StopHeaderView()
+//}
