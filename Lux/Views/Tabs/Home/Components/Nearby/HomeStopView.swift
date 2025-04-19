@@ -1,5 +1,5 @@
 //
-//  StopView.swift
+//  HomeStopView.swift
 //  Lux
 //
 //  Created by Constantin Clerc on 18.04.2025.
@@ -9,16 +9,17 @@ import SwiftUI
 import LuxCom
 import Combine
 
-struct StopView: View {
+struct HomeStopView: View {
     @Environment(\.colorScheme) var colorScheme
-    @StateObject private var viewModel: StopViewModel
+    @StateObject private var viewModel: HomeStopViewModel
+    @State private var showSheet: Bool = false
     let maxGroupsToShow: Int
     
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
     init(stop: SearchResult, maxGroupsToShow: Int) {
-        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop))
+        self._viewModel = StateObject(wrappedValue: HomeStopViewModel(stop: stop))
         self.maxGroupsToShow = maxGroupsToShow
     }
     
@@ -27,9 +28,16 @@ struct StopView: View {
             VStack(spacing: 0) {
                 HStack {
                     HStack {
-                        Image(systemName: "signpost.right")
-                        Text(viewModel.stop.name)
-                            .fontWeight(.bold)
+                        Button() {
+                            showSheet.toggle()
+                        } label: {
+                            Image(systemName: "signpost.right")
+                            Text(viewModel.stop.name)
+                                .fontWeight(.bold)
+                        }
+                        .sheet(isPresented: $showSheet) {
+                            IndividualStopView(stop: viewModel.stop)
+                        }
                     }
                     Spacer()
                     HStack(spacing: 4) {

@@ -1,5 +1,5 @@
 //
-//  StopViewModel.swift
+//  HomeStopViewModel.swift
 //  Lux
 //
 //  Created by Constantin Clerc on 19.04.2025.
@@ -9,7 +9,7 @@ import SwiftUI
 import LuxCom
 import Combine
 
-class StopViewModel: ObservableObject {
+class HomeStopViewModel: ObservableObject {
     @Published var stopTimes: StopTimes?
     @Published var routeGroups: [String: [GroupedStopTime]] = [:]
     @Published var connections: [String] = []
