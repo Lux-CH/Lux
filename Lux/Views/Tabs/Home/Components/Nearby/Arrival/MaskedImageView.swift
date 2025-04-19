@@ -32,7 +32,7 @@ struct MaskedImageView: View {
                         LinearGradient(
                             gradient: Gradient(stops: [
                                 .init(color: Color(hex: "D9D9D9").opacity(1.0), location: 0.42),
-                                .init(color: Color(hex: "737373").opacity(0.23), location: 1.0)
+                                .init(color: Color(hex: "737373").opacity(0.53), location: 1.0)
                             ]),
                             startPoint: .top,
                             endPoint: .bottom
