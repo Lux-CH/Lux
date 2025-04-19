@@ -11,6 +11,7 @@ import Combine
 
 struct StopView: View {
     @State var stop: SearchResult
+    let maxGroupsToShow: Int
     @State private var stopTimes: StopTimes? = nil
     @State private var routeGroups: [String: [GroupedStopTime]] = [:]
     @State private var isLoading = false
@@ -64,7 +65,7 @@ struct StopView: View {
             }
             else {
                 VStack(spacing: 0) {
-                    ForEach(routeNames.prefix(4), id: \.self) { routeName in
+                    ForEach(routeNames.prefix(maxGroupsToShow), id: \.self) { routeName in
                         if let groups = routeGroups[routeName], !groups.isEmpty {
                             VStack(alignment: .leading, spacing: 0) {
                                 ZStack(alignment: .bottom) {
@@ -95,7 +96,7 @@ struct StopView: View {
                                         .padding(.bottom, 5)
                                     }
                                 }
-                                if routeName != routeNames.prefix(4).last {
+                                if routeName != routeNames.prefix(maxGroupsToShow).last {
                                     Divider()
                                         .padding(.horizontal)
                                 }
