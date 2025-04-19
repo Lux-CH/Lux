@@ -25,7 +25,7 @@ struct ArrivalMinuteView: View {
     
     var body: some View {
         Group {
-            if displayText == "0'" {
+            if displayText == "0'" || displayText == "-1'" {
                 switch incomingStop.mode {
                 case .tram:
                     transportImage(systemName: "tram")
