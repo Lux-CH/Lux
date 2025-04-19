@@ -41,7 +41,7 @@ class StopViewModel: ObservableObject {
             }
         }
         
-        refreshTimer = Timer.publish(every: 15, on: .main, in: .common)
+        refreshTimer = Timer.publish(every: 7.5, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 Task {
