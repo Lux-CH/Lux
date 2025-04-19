@@ -9,10 +9,12 @@ import SwiftUI
 import LuxCom
 
 struct MaskedImageView: View {
+    @State private var randomImageName: String = ""
+    
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image("Mountain1")
+                Image(randomImageName.isEmpty ? "Mountain1" : randomImageName)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: geometry.size.width, height: geometry.size.height)
@@ -41,9 +43,16 @@ struct MaskedImageView: View {
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .onAppear {
+            randomImageName = getRandomStopHeaderImage()
+        }
+    }
+    
+    func getRandomStopHeaderImage() -> String {
+        let stopHeaderImages = ["Mountain1", "Jet1"]
+        return stopHeaderImages.randomElement() ?? "Mountain1"
     }
 }
-
 
 #Preview {
     MaskedImageView()
