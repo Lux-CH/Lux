@@ -49,7 +49,7 @@ struct MaskedImageView: View {
     }
     
     func getRandomStopHeaderImage() -> String {
-        let stopHeaderImages = ["Mountain1", "Jet1"]
+        let stopHeaderImages = ["Mountain1", "Jet1", "Rive1", "Rive2", "Vignes1", "Vignes2"]
         return stopHeaderImages.randomElement() ?? "Mountain1"
     }
 }
