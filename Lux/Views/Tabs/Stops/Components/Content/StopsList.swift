@@ -46,7 +46,7 @@ struct StopsList: View {
             }
         }
         .safeAreaInset(edge: .bottom) {
-            Spacer().frame(height: 85)
+            Spacer().frame(height: 100)
         }
     }
 }
