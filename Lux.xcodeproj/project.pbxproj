@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 799D2A762D98AC420066E9F5 /* LuxCom */; };
 		79A912462DB341660032AB9D /* GPSTests.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 79A912452DB341660032AB9D /* GPSTests.gpx */; };
-		79C1991A2DB4412100916049 /* BubbleBar in Frameworks */ = {isa = PBXBuildFile; productRef = 79C199192DB4412100916049 /* BubbleBar */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +42,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				79C1991A2DB4412100916049 /* BubbleBar in Frameworks */,
 				799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -89,7 +87,6 @@
 			name = Lux;
 			packageProductDependencies = (
 				799D2A762D98AC420066E9F5 /* LuxCom */,
-				79C199192DB4412100916049 /* BubbleBar */,
 			);
 			productName = Lux;
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
@@ -121,7 +118,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */,
-				79C199182DB4412100916049 /* XCRemoteSwiftPackageReference "BubbleBar" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 799D2A682D98ABF80066E9F5 /* Products */;
@@ -374,14 +370,6 @@
 				kind = branch;
 			};
 		};
-		79C199182DB4412100916049 /* XCRemoteSwiftPackageReference "BubbleBar" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Archetapp/BubbleBar";
-			requirement = {
-				kind = revision;
-				revision = 21b126087ff1fcfe94371b1424caf220545fae65;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -389,11 +377,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */;
 			productName = LuxCom;
-		};
-		79C199192DB4412100916049 /* BubbleBar */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 79C199182DB4412100916049 /* XCRemoteSwiftPackageReference "BubbleBar" */;
-			productName = BubbleBar;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
