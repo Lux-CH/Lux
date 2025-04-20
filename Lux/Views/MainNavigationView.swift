@@ -34,8 +34,8 @@ struct MainNavigationView: View {
     
     // curves
     private let quickSpring = Animation.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0.2)
-    private let smoothSpring = Animation.spring(response: 0.55, dampingFraction: 0.7, blendDuration: 0.3)
-    private let contentTransition = Animation.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3)
+    private let smoothSpring = Animation.spring(response: 0.55, dampingFraction: 0.75, blendDuration: 0.3)
+    private let contentTransition = Animation.spring(response: 0.6, dampingFraction: 0.85, blendDuration: 0.3)
     
     var body: some View {
         NavigationStack {
