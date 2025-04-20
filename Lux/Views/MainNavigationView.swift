@@ -28,7 +28,7 @@ enum ViewMode: CaseIterable {
 
 struct MainNavigationView: View {
     @State private var viewMode: ViewMode = .home
-    @State private var headerHeight: CGFloat = 215 // Home header default height
+    @State private var headerHeight: CGFloat = 215
     @State private var searchText: String = ""
     @StateObject private var stopsViewModel = StopsViewModel()
     @EnvironmentObject var locationManager: LocationManager
@@ -88,7 +88,7 @@ struct MainNavigationView: View {
                                             .foregroundColor(Color.primary.opacity(0.6))
                                             .font(.system(size: 20))
                                             .frame(width: 61, height: 52.5)
-                                            .background(Color(.secondarySystemFill).opacity(0.5))
+                                            .background(Color(.secondarySystemBackground))
                                             .cornerRadius(25)
                                     }
                                     .transition(.scale(scale: 0.8).combined(with: .opacity))
