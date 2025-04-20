@@ -21,18 +21,18 @@ struct MainNavigationView: View {
     @EnvironmentObject var locationManager: LocationManager
     @Namespace private var animation
     
-    // Improved animation configurations
+    // Animation configs
     private let contentExitTransition: AnyTransition = .asymmetric(
         insertion: .opacity.combined(with: .move(edge: .bottom).combined(with: .scale(scale: 0.96))),
         removal: .opacity.combined(with: .move(edge: .bottom).combined(with: .scale(scale: 0.96)))
     )
     
     private let contentEntryTransition: AnyTransition = .asymmetric(
-        insertion: .opacity.combined(with: .move(edge: .bottom).combined(with: .scale(scale: 0.96))),
-        removal: .opacity.combined(with: .move(edge: .bottom).combined(with: .scale(scale: 0.96)))
+        insertion: .opacity.combined(with: .move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.96))),
+        removal: .opacity.combined(with: .move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.96)))
     )
     
-    // Standard animation curves
+    // curves
     private let quickSpring = Animation.spring(response: 0.4, dampingFraction: 0.8, blendDuration: 0.2)
     private let smoothSpring = Animation.spring(response: 0.55, dampingFraction: 0.7, blendDuration: 0.3)
     private let contentTransition = Animation.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.3)
@@ -45,9 +45,8 @@ struct MainNavigationView: View {
                     .opacity(0.9)
                 
                 VStack(spacing: 0) {
-                    // Header section (animates height) - Keeping this exactly as is per feedback
+                    // Header
                     ZStack(alignment: .top) {
-                        // Background shape with smoother animation
                         Rectangle()
                             .fill(Color(.secondarySystemBackground).opacity(0.8))
                             .frame(height: headerHeight)
@@ -62,9 +61,7 @@ struct MainNavigationView: View {
                             )
                             .animation(smoothSpring, value: headerHeight)
                         
-                        // Header content
                         VStack {
-                            // Show shortcuts with improved animation
                             if viewMode == .home {
                                 HStack {
                                     ShortcutButton(symbol: "house", coords: (0.0, 0.0))
@@ -88,7 +85,6 @@ struct MainNavigationView: View {
                                 .transition(.opacity.combined(with: .move(edge: .top)))
                             }
                             
-                            // Animated unified search bar with improved animations
                             AnimatedSearchBar(
                                 searchText: viewMode == .home ? $searchText : $stopsViewModel.searchQuery,
                                 placeholderText: viewMode == .home ? "Aller à..." : "Rechercher un arrêt...",
@@ -118,7 +114,7 @@ struct MainNavigationView: View {
                     }
                     .ignoresSafeArea(edges: .top)
                     
-                    // Content section with improved transitions
+                    // Content
                     ZStack {
                         Rectangle()
                             .fill(Color(.secondarySystemBackground).opacity(0.8))
@@ -143,15 +139,13 @@ struct MainNavigationView: View {
                                 .transition(contentExitTransition)
                             }
                             
-                            // Stops content with improved transitions
                             if viewMode == .stops {
                                 VStack(spacing: 0) {
-                                    // Inverted transition for SectionTitleView - coming from bottom
                                     VStack(alignment: .leading) {
                                         SectionTitleView(isSearchMode: stopsViewModel.isSearchMode)
                                             .transition(.asymmetric(
-                                                insertion: .move(edge: .bottom).combined(with: .opacity),
-                                                removal: .move(edge: .bottom).combined(with: .opacity)
+                                                insertion: .move(edge: .leading).combined(with: .opacity),
+                                                removal: .move(edge: .leading).combined(with: .opacity)
                                             ))
                                             .animation(quickSpring, value: stopsViewModel.isSearchMode)
                                         
@@ -183,7 +177,7 @@ struct MainNavigationView: View {
                     .ignoresSafeArea(edges: .bottom)
                 }
                 
-                // Mode switch button with improved animation
+                // Mode switcher
                 VStack {
                     Spacer()
                     Button(action: toggleViewMode) {
@@ -225,26 +219,38 @@ struct MainNavigationView: View {
             if viewMode == .home {
                 viewMode = .stops
                 headerHeight = 135
-                if !stopsViewModel.isSearchMode {
-                    stopsViewModel.loadNearbyStops(showLoading: true)
-                }
             } else {
                 viewMode = .home
                 headerHeight = 215
                 stopsViewModel.resetSearch()
             }
         }
+        
+        if viewMode == .stops {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                if !stopsViewModel.isSearchMode {
+                    stopsViewModel.loadNearbyStops(showLoading: false)
+                }
+            }
+        }
     }
     
     func switchToStopsMode() {
+        stopsViewModel.isLoading = true
+        
         withAnimation(smoothSpring) {
             viewMode = .stops
             headerHeight = 135
         }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            if !stopsViewModel.isSearchMode {
+                stopsViewModel.loadNearbyStops(showLoading: false)
+            }
+        }
     }
 }
 
-// Custom button style for a bouncy effect
 struct BouncyButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label

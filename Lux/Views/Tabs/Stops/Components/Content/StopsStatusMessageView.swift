@@ -25,6 +25,7 @@ struct StopsStatusMessageView: View {
                     }
                 }
                 .scrollDisabled(true)
+                .padding(.top, 15)
             }
             else if isLoading && isEmpty {
                 ScrollView {
@@ -35,6 +36,7 @@ struct StopsStatusMessageView: View {
                     }
                 }
                 .scrollDisabled(true)
+                .padding(.top, 15)
             }
             else if isEmpty && !showMinCharactersMessage {
                 ScrollView {
@@ -46,8 +48,8 @@ struct StopsStatusMessageView: View {
                     }
                 }
                 .scrollDisabled(true)
+                .padding(.top, 15)
             }
         }
-        .padding(.top, 15)
     }
 }
