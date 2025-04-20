@@ -1,5 +1,5 @@
 //
-//  UIElements.swift
+//  AnimatedSearchBar.swift
 //  Lux
 //
 //  Created by Constantin Clerc on 20.04.2025.
