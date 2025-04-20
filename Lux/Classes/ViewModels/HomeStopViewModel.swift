@@ -28,7 +28,14 @@ class HomeStopViewModel: ObservableObject {
     
     init(stop: SearchResult) {
         self.stop = stop
-        self.connections = extractConnections()
+        loadConnections()
+    }
+    
+    private func loadConnections() {
+        ConnectionService.shared.getConnections(for: stop.id) { [weak self] connections in
+            guard let self = self else { return }
+            self.connections = connections
+        }
     }
     
     func startMonitoring() {
@@ -65,23 +72,6 @@ class HomeStopViewModel: ObservableObject {
         refreshTimer?.cancel()
         departureCheckTimer?.cancel()
         backgroundRefreshTask?.cancel()
-    }
-    
-    func extractConnections() -> [String] {
-        do {
-            let extractor = try ConnectionExtractor()
-            let newStopID = stop.id.replacingOccurrences(of: "ch_Parent", with: "ch_")
-            if let busRoutes = try extractor.extractSpecificKey(newStopID) {
-                return busRoutes
-            } else {
-                print("Not found !")
-            }
-            extractor.releaseResources()
-        }
-        catch {
-            print("an error occured while extracting connecions ! \(error)")
-        }
-        return []
     }
     
     @MainActor

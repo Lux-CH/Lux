@@ -9,6 +9,7 @@ import SwiftUI
 
 @main
 struct LuxApp: App {
+    @StateObject private var connectionService = ConnectionService.shared
     @StateObject private var locationManager = LocationManager()
     
     var body: some Scene {

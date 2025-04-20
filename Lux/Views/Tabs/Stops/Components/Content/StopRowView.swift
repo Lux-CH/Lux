@@ -13,10 +13,12 @@ import CoreLocation
 struct StopRowView: View {
     let stop: SearchResult
     let locationManager: LocationManager
+    @State private var connections: [String] = []
+    let isSearching: Bool
     
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 6) {
+            VStack(alignment: .leading, spacing: 10) {
                 HStack(spacing: 8) {
                     Image(systemName: "signpost.right")
                         .foregroundColor(.secondary)
@@ -25,33 +27,55 @@ struct StopRowView: View {
                         .fontWeight(.medium)
                         .foregroundColor(.primary)
                 }
-                
-                // distance calc
-                if let userLocation = locationManager.location {
-                    let distance = calculateDistance(
-                        userLat: userLocation.coordinate.latitude,
-                        userLon: userLocation.coordinate.longitude,
-                        stopLat: stop.lat,
-                        stopLon: stop.lon
-                    )
-                    Text(formatDistance(distance))
-                        .foregroundColor(.green)
-                        .font(.subheadline)
-                }
-                
-                // TODO: Line pills
-                HStack(spacing: 4) {
-                    LinePill(line: "80", mode: .bus)
+                HStack {
+                    if !isSearching {
+                        HStack(spacing: 4) {
+                            ForEach(connections.prefix(3), id: \.self) { routeName in
+                                LinePill(line: routeName, mode: .bus)
+                            }
+                            if connections.count > 3 {
+                                MorePill()
+                            }
+                        }
+                        Text("–")
+                    }
+                    // distance calc
+                    if let userLocation = locationManager.location {
+                        let distance = calculateDistance(
+                            userLat: userLocation.coordinate.latitude,
+                            userLon: userLocation.coordinate.longitude,
+                            stopLat: stop.lat,
+                            stopLon: stop.lon
+                        )
+                        HStack {
+                            Image(systemName: "location.fill")
+                                .font(.caption)
+                                .foregroundColor(.green)
+                            Text(formatDistance(distance))
+                                .foregroundColor(.green)
+                                .font(.subheadline)
+                        }
+                    }
                 }
             }
             .padding(.vertical, 12)
+            .onAppear {
+                if !isSearching {
+                    ConnectionService.shared.getConnections(for: stop.id) { results in
+                        connections = results
+                    }
+                }
+            }
             
             Spacer()
             
             Image(systemName: "chevron.right")
                 .foregroundColor(.secondary)
+                .font(.system(size: 14, weight: .semibold))
         }
         .padding(.horizontal)
+        .contentShape(Rectangle())
+        .background(Color.clear)
     }
     
     private func calculateDistance(userLat: Double, userLon: Double, stopLat: Double, stopLon: Double) -> Double {

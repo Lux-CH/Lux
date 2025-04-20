@@ -11,14 +11,19 @@ import LuxCom
 struct StopsList: View {
     let stops: [SearchResult]
     let locationManager: LocationManager
+    let isSearching: Bool
     
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(stops) { stop in
                     NavigationLink(destination: IndividualStopView(stop: stop)) {
-                        StopRowView(stop: stop, locationManager: locationManager)
-                            .contentShape(Rectangle())
+                        StopRowView(
+                            stop: stop,
+                            locationManager: locationManager,
+                            isSearching: isSearching
+                        )
+                        .contentShape(Rectangle())
                     }
                     .buttonStyle(PlainButtonStyle())
                     

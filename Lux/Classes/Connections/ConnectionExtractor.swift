@@ -7,7 +7,7 @@
 
 import Foundation
 
-class ConnectionExtractor {
+class ConnectionExtractor: ObservableObject {
     private let url: URL
     
     private var mappedData: Data?

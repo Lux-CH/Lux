@@ -67,20 +67,22 @@ struct StopView: View {
                 .padding(.bottom, 0)
         }
         .padding(.top, 17.5)
-        .padding(.horizontal)
+        .padding(.horizontal, 25)
     }
     
     private var regularHeaderView: some View {
         VStack(spacing: 0) {
             HStack {
                 Image(systemName: "signpost.right")
+                    .foregroundColor(.secondary)
+
                 Text(viewModel.stop.name)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                 
                 Spacer()
                 
-                connectionPills
+                connectionPills(prefix: 3)
             }
             .padding(.horizontal, 25)
             .padding(.bottom, 12)
@@ -107,12 +109,12 @@ struct StopView: View {
         }
     }
     
-    private var connectionPills: some View {
+    private func connectionPills(prefix: Int) -> some View {
         HStack(spacing: 4) {
-            ForEach(viewModel.connections.prefix(3), id: \.self) { connection in
+            ForEach(viewModel.connections.prefix(prefix), id: \.self) { connection in
                 LinePill(line: connection, mode: .bus)
             }
-            if viewModel.connections.count > 3 {
+            if viewModel.connections.count > prefix {
                 MorePill()
             }
         }

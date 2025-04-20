@@ -43,7 +43,7 @@ struct StopsContentView: View {
                 )
                 
                 if !searchResults.isEmpty {
-                    StopsList(stops: searchResults, locationManager: locationManager)
+                    StopsList(stops: searchResults, locationManager: locationManager, isSearching: isSearchMode)
                 }
             }
         }

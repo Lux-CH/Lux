@@ -10,16 +10,30 @@ import LuxCom
 
 struct StopHeaderView: View {
     @State var stop: SearchResult
+    @State private var connections: [String] = []
+    
     var body: some View {
         HStack {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 12) {
                 HStack {
                     Image(systemName: "signpost.right")
+                        .foregroundStyle(.secondary)
                     Text(stop.name)
+                        .font(.title3)
                         .fontWeight(.bold)
                 }
-                VStack {
-                    LinePill(line: "80", mode: .bus)
+                
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(spacing: 6) {
+                        ForEach(connections, id: \.self) { connection in
+                            LinePill(line: connection, mode: .bus)
+                        }
+                    }
+                }
+                .onAppear {
+                    ConnectionService.shared.getConnections(for: stop.id) { results in
+                        connections = results
+                    }
                 }
             }
             Spacer()
