@@ -37,24 +37,6 @@ struct StopRowView: View {
                                 MorePill()
                             }
                         }
-                        Text("–")
-                    }
-                    // distance calc
-                    if let userLocation = locationManager.location {
-                        let distance = calculateDistance(
-                            userLat: userLocation.coordinate.latitude,
-                            userLon: userLocation.coordinate.longitude,
-                            stopLat: stop.lat,
-                            stopLon: stop.lon
-                        )
-                        HStack {
-                            Image(systemName: "location.fill")
-                                .font(.caption)
-                                .foregroundColor(.green)
-                            Text(formatDistance(distance))
-                                .foregroundColor(.green)
-                                .font(.subheadline)
-                        }
                     }
                 }
             }
@@ -68,10 +50,28 @@ struct StopRowView: View {
             }
             
             Spacer()
-            
-            Image(systemName: "chevron.right")
-                .foregroundColor(.secondary)
-                .font(.system(size: 14, weight: .semibold))
+            HStack {
+                // distance calc
+                if let userLocation = locationManager.location {
+                    let distance = calculateDistance(
+                        userLat: userLocation.coordinate.latitude,
+                        userLon: userLocation.coordinate.longitude,
+                        stopLat: stop.lat,
+                        stopLon: stop.lon
+                    )
+                    HStack {
+                        Image(systemName: "location.fill")
+                            .font(.caption)
+                            .foregroundColor(.green)
+                        Text(formatDistance(distance))
+                            .foregroundColor(.green)
+                            .font(.subheadline)
+                    }
+                }
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.secondary)
+                    .font(.system(size: 14, weight: .semibold))
+            }
         }
         .padding(.horizontal)
         .contentShape(Rectangle())
