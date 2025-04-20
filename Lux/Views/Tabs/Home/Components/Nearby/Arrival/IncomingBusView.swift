@@ -27,7 +27,7 @@ struct IncomingBusView: View {
                     $0.place.track != nil || $0.place.scheduledTrack != nil
                 }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? "inconnu"
                 
-                let transport = group.stopTimes.first?.mode.rawValue.capitalized ?? "Bus"
+                let transport = group.stopTimes.first?.mode.displayName ?? "Bus"
                 
                 Text("\(transport) - Quai \(displayTrack)")
                     .font(.system(size: 11, weight: .medium))
@@ -43,6 +43,34 @@ struct IncomingBusView: View {
                     ArrivalMinuteView(incomingStop: group.stopTimes[1])
                 }
             }
+        }
+    }
+}
+
+extension TransportationMode {
+    var displayName: String {
+        switch self {
+        case .walk: return "À pied"
+        case .bike: return "Vélo"
+        case .rental: return "Location"
+        case .car: return "Voiture"
+        case .carParking: return "Parking"
+        case .odm: return "ODM"
+        case .transit: return "Transport en commun"
+        case .tram: return "Tram"
+        case .subway: return "Métro"
+        case .ferry: return "Mouette"
+        case .airplane: return "Avion"
+        case .metro: return "Métro"
+        case .bus: return "Bus"
+        case .coach: return "Autocar"
+        case .rail: return "Train"
+        case .highSpeedRail: return "Train"
+        case .longDistance: return "Train"
+        case .nightRail: return "Train"
+        case .regionalFastRail: return "Train"
+        case .regionalRail: return "Train"
+        case .other: return "Autre"
         }
     }
 }
