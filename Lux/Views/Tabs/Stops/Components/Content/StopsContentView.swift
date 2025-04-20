@@ -34,9 +34,7 @@ struct StopsContentView: View {
                 // Title section with icon
                 SectionTitleView(isSearchMode: isSearchMode)
                 
-                if !isSearchMode {
-                    Divider()
-                }
+                Divider()
                 
                 // Status messages
                 StopsStatusMessageView(

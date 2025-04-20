@@ -46,18 +46,14 @@ struct StopsSearchHeaderView: View {
                             }
                         }
                     )
-                    .onSubmit {
-                        if !searchQuery.isEmpty && searchQuery.count >= 3 {
-                            onSearch()
-                        }
+                    .onChange(of: searchQuery) {
+                        onSearch()
                     }
                 
                 Spacer()
                 
                 Button(action: {
-                    if !searchQuery.isEmpty && searchQuery.count >= 3 {
-                        onSearch()
-                    }
+                    onSearch()
                 }) {
                     Image(systemName: "magnifyingglass")
                         .font(.system(size: 20))

@@ -14,27 +14,36 @@ struct StopsStatusMessageView: View {
     let isSearchMode: Bool
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             if showMinCharactersMessage {
                 ScrollView {
-                    Text("Veuillez saisir au moins 3 caractères pour rechercher")
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal)
+                    VStack(alignment: .leading) {
+                        Text("Veuillez saisir au moins 3 caractères pour rechercher")
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
                 .scrollDisabled(true)
             }
             else if isLoading && isEmpty {
                 ScrollView {
-                    ProgressView(isSearchMode ? "Recherche en cours..." : "Chargement des arrêts à proximité...")
-                        .padding(.horizontal)
+                    VStack(alignment: .leading) {
+                        ProgressView(isSearchMode ? "Recherche en cours..." : "Chargement des arrêts à proximité...")
+                            .padding(.horizontal)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
                 .scrollDisabled(true)
             }
             else if isEmpty && !showMinCharactersMessage {
                 ScrollView {
-                    Text(isSearchMode ? "Aucun résultat trouvé." : "Aucun arrêt à proximité trouvé.")
-                        .foregroundColor(.gray)
-                        .padding(.horizontal)
+                    VStack(alignment: .leading) {
+                        Text(isSearchMode ? "Aucun résultat trouvé." : "Aucun arrêt à proximité trouvé.")
+                            .foregroundColor(.gray)
+                            .padding(.horizontal)
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                    }
                 }
                 .scrollDisabled(true)
             }

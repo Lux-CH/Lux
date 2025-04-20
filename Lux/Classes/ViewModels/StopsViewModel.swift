@@ -62,14 +62,21 @@ class StopsViewModel: ObservableObject {
     }
     
     func performSearch() {
-        guard searchQuery.count >= 3 else { return }
+        isSearchMode = !searchQuery.isEmpty
         
-        isSearchMode = true
-        
-        // Only show loading indicator if there are no current results
-        if searchResults.isEmpty {
-            isLoading = true
+        if searchQuery.isEmpty {
+            searchResults = []
+            showMinCharactersMessage = false
+            return
         }
+        
+        if searchQuery.count < 3 {
+            searchResults = []
+            showMinCharactersMessage = true
+            return
+        }
+        
+        showMinCharactersMessage = false
         
         cancelBackgroundTasks()
         
