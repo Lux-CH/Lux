@@ -62,9 +62,9 @@ struct StopRowView: View {
                     HStack {
                         Image(systemName: "location.fill")
                             .font(.caption)
-                            .foregroundColor(.green)
+                            .foregroundColor(.secondary)
                         Text(formatDistance(distance))
-                            .foregroundColor(.green)
+                            .foregroundColor(.secondary)
                             .font(.subheadline)
                     }
                 }
