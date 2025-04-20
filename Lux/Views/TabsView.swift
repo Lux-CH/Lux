@@ -8,35 +8,28 @@
 import SwiftUI
 
 struct TabsView: View {
-    @State private var selectedTab = 0
+    @State private var selectedTab = 1
     @EnvironmentObject var locationManager: LocationManager
     
     var body: some View {
-        TabView() {
-            HomeView()
-                .tabItem {
-                    Label("Home", systemImage: "square.grid.3x3")
-                }
-            
+        TabView(selection: $selectedTab) {
             StopsView()
                 .tabItem {
                     Label("Stops", systemImage: "signpost.right")
                 }
+                .tag(0)
             
-            OnboardView()
+            HomeView()
                 .tabItem {
-                    Label("Onboard", systemImage: "location.north")
+                    Label("Home", systemImage: "square.grid.3x3")
                 }
-            
-            TripPlannerView()
-                .tabItem {
-                    Label("Trip", systemImage: "point.bottomleft.forward.to.arrow.triangle.scurvepath.fill")
-                }
+                .tag(1)
             
             TicketsView()
                 .tabItem {
                     Label("Tickets", systemImage: "ticket")
                 }
+                .tag(2)
         }
     }
 }
