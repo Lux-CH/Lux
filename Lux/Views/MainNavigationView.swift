@@ -88,7 +88,7 @@ struct MainNavigationView: View {
                                             .foregroundColor(Color.primary.opacity(0.6))
                                             .font(.system(size: 20))
                                             .frame(width: 61, height: 52.5)
-                                            .background(Color(.secondarySystemBackground))
+                                            .background(Color(.secondarySystemFill).opacity(0.5))
                                             .cornerRadius(25)
                                     }
                                     .transition(.scale(scale: 0.8).combined(with: .opacity))

@@ -19,7 +19,7 @@ struct ShortcutButton: View {
                 .foregroundColor(Color.accentColor)
                 .font(.system(size: 20))
                 .frame(width: 134, height: 52.5)
-                .background(Color(.secondarySystemBackground))
+                .background(Color(.secondarySystemFill).opacity(0.5))
                 .cornerRadius(25)
         }
     }

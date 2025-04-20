@@ -52,7 +52,7 @@ struct AnimatedSearchBar: View {
             .padding(.trailing, 18)
         }
         .frame(width: 350, height: 60)
-        .background(Color(.secondarySystemBackground))
+        .background(Color(.secondarySystemFill).opacity(0.5))
         .cornerRadius(25)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: placeholderText)
     }
