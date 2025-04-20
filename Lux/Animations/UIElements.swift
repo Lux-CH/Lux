@@ -1,5 +1,5 @@
 //
-//  StopsSearchHeaderView.swift
+//  UIElements.swift
 //  Lux
 //
 //  Created by Constantin Clerc on 20.04.2025.
@@ -7,22 +7,23 @@
 
 import SwiftUI
 
-// MARK: - Search Header View
-struct StopsSearchHeaderView: View {
-    @Binding var searchQuery: String
+struct AnimatedSearchBar: View {
+    @Binding var searchText: String
+    var placeholderText: String
     var onSearch: () -> Void
     var onClear: () -> Void
+    var topPadding: CGFloat
     
     var body: some View {
         HStack {
-            TextField("Rechercher un arrêt...", text: $searchQuery)
+            TextField(placeholderText, text: $searchText)
                 .padding(.vertical, 20)
                 .padding(.horizontal, 20)
                 .font(.system(size: 16, weight: .medium))
                 .overlay(
                     HStack {
                         Spacer()
-                        if !searchQuery.isEmpty {
+                        if !searchText.isEmpty {
                             Button(action: onClear) {
                                 Image(systemName: "xmark.circle.fill")
                                     .foregroundColor(.gray)
@@ -32,8 +33,8 @@ struct StopsSearchHeaderView: View {
                         }
                     }
                 )
-                .onChange(of: searchQuery) {
-                    if searchQuery.isEmpty {
+                .onChange(of: searchText) {
+                    if searchText.isEmpty {
                         onClear()
                     }
                     else {
@@ -43,9 +44,7 @@ struct StopsSearchHeaderView: View {
             
             Spacer()
             
-            Button(action: {
-                onSearch()
-            }) {
+            Button(action: onSearch) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 20))
                     .foregroundColor(Color.accentColor)
@@ -55,6 +54,6 @@ struct StopsSearchHeaderView: View {
         .frame(width: 350, height: 60)
         .background(Color(.secondarySystemFill).opacity(0.5))
         .cornerRadius(25)
-        .padding(.top, 55)
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: placeholderText)
     }
 }

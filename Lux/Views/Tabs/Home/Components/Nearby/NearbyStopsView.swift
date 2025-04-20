@@ -10,6 +10,7 @@ import LuxCom
 import CoreLocation
 
 struct NearbyStopsView: View {
+    var onStopTap: () -> Void
     @EnvironmentObject var locationManager: LocationManager
     @State private var searchResults: [SearchResult] = []
     @State private var isLoading = false
