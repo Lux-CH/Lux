@@ -31,12 +31,10 @@ struct StopsContentView: View {
                 )
             
             VStack(alignment: .leading) {
-                // Title section with icon
                 SectionTitleView(isSearchMode: isSearchMode)
                 
                 Divider()
                 
-                // Status messages
                 StopsStatusMessageView(
                     showMinCharactersMessage: showMinCharactersMessage,
                     isLoading: isLoading,
@@ -44,7 +42,6 @@ struct StopsContentView: View {
                     isSearchMode: isSearchMode
                 )
                 
-                // Results list
                 if !searchResults.isEmpty {
                     StopsList(stops: searchResults, locationManager: locationManager)
                 }

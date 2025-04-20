@@ -17,7 +17,6 @@ struct StopRowView: View {
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
-                // Stop name with icon
                 HStack(spacing: 8) {
                     Image(systemName: "signpost.right")
                         .foregroundColor(.secondary)
@@ -27,7 +26,7 @@ struct StopRowView: View {
                         .foregroundColor(.primary)
                 }
                 
-                // Distance calculation
+                // distance calc
                 if let userLocation = locationManager.location {
                     let distance = calculateDistance(
                         userLat: userLocation.coordinate.latitude,
@@ -40,7 +39,7 @@ struct StopRowView: View {
                         .font(.subheadline)
                 }
                 
-                // Line pills
+                // TODO: Line pills
                 HStack(spacing: 4) {
                     LinePill(line: "80", mode: .bus)
                 }
