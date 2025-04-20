@@ -12,7 +12,7 @@ struct IndividualStopView: View {
     @State var stop : SearchResult
     var body: some View {
         ZStack {
-            Color(.black)
+            Color(.systemBackground)
                 .ignoresSafeArea()
                 .opacity(0.9)
             
