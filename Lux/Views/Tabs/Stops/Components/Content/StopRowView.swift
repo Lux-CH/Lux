@@ -24,7 +24,7 @@ struct StopRowView: View {
                         .foregroundColor(.secondary)
                     
                     Text(stop.name)
-                        .fontWeight(.medium)
+                        .fontWeight(.bold)
                         .foregroundColor(.primary)
                 }
                 HStack {
