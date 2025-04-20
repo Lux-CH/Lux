@@ -48,5 +48,6 @@ struct StopsStatusMessageView: View {
                 .scrollDisabled(true)
             }
         }
+        .padding(.top, 15)
     }
 }
