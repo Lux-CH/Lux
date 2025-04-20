@@ -13,10 +13,21 @@ struct StopsList: View {
     let locationManager: LocationManager
     let isSearching: Bool
     
+    private var uniqueStops: [SearchResult] {
+        var seen = Set<String>()
+        return stops.filter { stop in
+            guard !seen.contains(stop.id) else {
+                return false
+            }
+            seen.insert(stop.id)
+            return true
+        }
+    }
+    
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(stops) { stop in
+                ForEach(uniqueStops) { stop in
                     NavigationLink(destination: IndividualStopView(stop: stop)) {
                         StopRowView(
                             stop: stop,
@@ -27,7 +38,7 @@ struct StopsList: View {
                     }
                     .buttonStyle(PlainButtonStyle())
                     
-                    if stop.id != stops.last?.id {
+                    if stop.id != uniqueStops.last?.id {
                         Divider()
                             .padding(.horizontal)
                     }
