@@ -83,7 +83,7 @@ class StopsViewModel: ObservableObject {
         backgroundRefreshTask = Task {
             do {
                 if let coords = locationManager?.location?.coordinate {
-                    let results = try await geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude))
+                    let results = try await geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 15)
                     if !Task.isCancelled {
                         await MainActor.run {
                             self.searchResults = results

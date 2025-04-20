@@ -152,6 +152,9 @@ struct StopView: View {
                 ScrollView(.vertical, showsIndicators: true) {
                     routeGroupsContent
                 }
+                .safeAreaInset(edge: .bottom) {
+                    Spacer().frame(height: 85)
+                }
             } else {
                 routeGroupsContent
             }
