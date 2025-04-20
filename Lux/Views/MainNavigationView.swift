@@ -111,25 +111,36 @@ struct MainNavigationView: View {
                                 )
                             )
                         
-                        // Content - switches between home and stops content
-                        if viewMode == .home {
-                            VStack(alignment: .center) {
-                                NearbyStopsView(onStopTap: switchToStopsMode)
-                                Spacer()
+                        ZStack {
+                            if viewMode == .home {
+                                VStack(alignment: .center) {
+                                    NearbyStopsView(onStopTap: switchToStopsMode)
+                                    Spacer()
+                                }
                             }
-                            .opacity(viewMode == .home ? 1 : 0)
-                            .animation(animation.delay(0.1), value: viewMode)
-                        } else {
-                            StopsContentView(
-                                isSearchMode: stopsViewModel.isSearchMode,
-                                isLoading: stopsViewModel.isLoading,
-                                searchResults: stopsViewModel.searchResults,
-                                showMinCharactersMessage: stopsViewModel.showMinCharactersMessage,
-                                locationManager: locationManager
-                            )
-                            .opacity(viewMode == .stops ? 1 : 0)
-                            .animation(animation.delay(0.1), value: viewMode)
+                            
+                            // Stops content with transitions
+                            if viewMode == .stops {
+                                VStack {
+                                    VStack(alignment: .leading) {
+                                        SectionTitleView(isSearchMode: stopsViewModel.isSearchMode)
+                                            .transition(.opacity.combined(with: .move(edge: .top)))
+                                            .animation(.easeInOut(duration: 0.3), value: stopsViewModel.isSearchMode)
+                                        
+                                        Divider()
+                                    }
+                                    
+                                    StopsContentView(
+                                        isSearchMode: stopsViewModel.isSearchMode,
+                                        isLoading: stopsViewModel.isLoading,
+                                        searchResults: stopsViewModel.searchResults,
+                                        showMinCharactersMessage: stopsViewModel.showMinCharactersMessage,
+                                        locationManager: locationManager
+                                    )
+                                }
+                            }
                         }
+                        .animation(animation, value: viewMode)
                     }
                     .ignoresSafeArea(edges: .bottom)
                 }

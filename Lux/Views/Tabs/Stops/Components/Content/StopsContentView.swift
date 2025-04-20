@@ -16,11 +16,7 @@ struct StopsContentView: View {
     let locationManager: LocationManager
     
     var body: some View {
-        VStack(alignment: .leading) {
-            SectionTitleView(isSearchMode: isSearchMode)
-            
-            Divider()
-            
+        VStack(alignment: .leading) {            
             StopsStatusMessageView(
                 showMinCharactersMessage: showMinCharactersMessage,
                 isLoading: isLoading,
@@ -47,5 +43,6 @@ struct SectionTitleView: View {
         }
         .padding(.top, 17)
         .padding(.horizontal, 25)
+        .id("sectionTitle-\(isSearchMode ? "search" : "nearby")")
     }
 }
