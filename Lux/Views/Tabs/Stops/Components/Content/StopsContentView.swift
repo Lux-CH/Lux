@@ -16,38 +16,22 @@ struct StopsContentView: View {
     let locationManager: LocationManager
     
     var body: some View {
-        ZStack {
-            Rectangle()
-                .fill(Color(.secondarySystemBackground).opacity(0.8))
-                .frame(maxHeight: .infinity)
-                .clipShape(
-                    .rect(
-                        topLeadingRadius: 38,
-                        bottomLeadingRadius: 0,
-                        bottomTrailingRadius: 0,
-                        topTrailingRadius: 38,
-                        style: .continuous
-                    )
-                )
+        VStack(alignment: .leading) {
+            SectionTitleView(isSearchMode: isSearchMode)
             
-            VStack(alignment: .leading) {
-                SectionTitleView(isSearchMode: isSearchMode)
-                
-                Divider()
-                
-                StopsStatusMessageView(
-                    showMinCharactersMessage: showMinCharactersMessage,
-                    isLoading: isLoading,
-                    isEmpty: searchResults.isEmpty,
-                    isSearchMode: isSearchMode
-                )
-                
-                if !searchResults.isEmpty {
-                    StopsList(stops: searchResults, locationManager: locationManager, isSearching: isSearchMode)
-                }
+            Divider()
+            
+            StopsStatusMessageView(
+                showMinCharactersMessage: showMinCharactersMessage,
+                isLoading: isLoading,
+                isEmpty: searchResults.isEmpty,
+                isSearchMode: isSearchMode
+            )
+            
+            if !searchResults.isEmpty {
+                StopsList(stops: searchResults, locationManager: locationManager, isSearching: isSearchMode)
             }
         }
-        .ignoresSafeArea(edges: .bottom)
     }
 }
 
@@ -59,9 +43,9 @@ struct SectionTitleView: View {
             Image(systemName: isSearchMode ? "magnifyingglass" : "location.fill")
             Text(isSearchMode ? "Résultats de recherche" : "À proximité")
                 .font(.headline)
-                .fontWeight(.bold)
+                .fontWeight(.heavy)
         }
         .padding(.top, 17)
-        .padding(.horizontal)
+        .padding(.horizontal, 25)
     }
 }
