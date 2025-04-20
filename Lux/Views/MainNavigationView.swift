@@ -8,9 +8,22 @@
 import SwiftUI
 import LuxCom
 
-enum ViewMode {
+enum ViewMode: CaseIterable {
     case home
     case stops
+
+    var icon: String {
+        switch self {
+        case .home: return "house.fill"
+        case .stops: return "bus.fill"
+        }
+    }
+    var title: String {
+        switch self {
+        case .home: return "Home"
+        case .stops: return "Stops"
+        }
+    }
 }
 
 struct MainNavigationView: View {
@@ -180,19 +193,10 @@ struct MainNavigationView: View {
                 // Mode switcher
                 VStack {
                     Spacer()
-                    Button(action: toggleViewMode) {
-                        Image(systemName: viewMode == .home ? "bus.fill" : "house.fill")
-                            .font(.system(size: 22))
-                            .foregroundColor(.white)
-                            .frame(width: 60, height: 60)
-                            .background(Color.accentColor)
-                            .clipShape(Circle())
-                            .shadow(color: Color.black.opacity(0.2), radius: 4, x: 0, y: 2)
-                            .scaleEffect(1.0)
-                            .contentTransition(.symbolEffect(.replace.downUp))
-                    }
-                    .padding(.bottom, 16)
-                    .buttonStyle(BouncyButtonStyle())
+                    CustomTabBar(selectedTab: $viewMode)
+                        .onChange(of: viewMode) {
+                            toggleViewMode()
+                        }
                 }
             }
         }
@@ -215,6 +219,7 @@ struct MainNavigationView: View {
     }
     
     func toggleViewMode() {
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
         withAnimation(smoothSpring) {
             if viewMode == .home {
                 viewMode = .stops
