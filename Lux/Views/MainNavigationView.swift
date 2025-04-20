@@ -15,7 +15,7 @@ enum ViewMode: CaseIterable {
     var icon: String {
         switch self {
         case .home: return "house.fill"
-        case .stops: return "bus.fill"
+        case .stops: return "signpost.right.fill"
         }
     }
     var title: String {

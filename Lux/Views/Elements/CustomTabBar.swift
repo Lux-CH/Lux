@@ -66,7 +66,7 @@ struct TabButton: View {
                 
                 Spacer(minLength: 0)
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: 125)
             .padding(.vertical, 8)
             .background {
                 if selectedTab == tab {
