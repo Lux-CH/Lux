@@ -71,40 +71,42 @@ struct StopView: View {
     }
     
     private var regularHeaderView: some View {
-        VStack(spacing: 0) {
-            HStack {
-                Image(systemName: "signpost.right")
-                    .foregroundColor(.secondary)
-
-                Text(viewModel.stop.name)
-                    .fontWeight(.bold)
-                    .foregroundColor(.primary)
+        NavigationLink(destination: IndividualStopView(stop: viewModel.stop)) {
+            VStack(spacing: 0) {
+                HStack {
+                    Image(systemName: "signpost.right")
+                        .foregroundColor(.secondary)
+                    
+                    Text(viewModel.stop.name)
+                        .fontWeight(.bold)
+                        .foregroundColor(.primary)
+                    
+                    Spacer()
+                    
+                    connectionPills(prefix: 3)
+                }
+                .padding(.horizontal, 25)
+                .padding(.bottom, 12)
+                .padding(.top, 20)
                 
-                Spacer()
-                
-                connectionPills(prefix: 3)
+                Divider()
+                    .padding(.bottom, 0)
             }
-            .padding(.horizontal, 25)
-            .padding(.bottom, 12)
-            .padding(.top, 20)
-            
-            Divider()
-                .padding(.bottom, 0)
-        }
-        .background {
-            if colorScheme == .dark {
-                MaskedImageView()
+            .background {
+                if colorScheme == .dark {
+                    MaskedImageView()
+                        .edgesIgnoringSafeArea(.all)
+                } else {
+                    UnevenRoundedRectangle(
+                        topLeadingRadius: 38,
+                        bottomLeadingRadius: 2,
+                        bottomTrailingRadius: 2,
+                        topTrailingRadius: 38,
+                        style: .continuous
+                    )
+                    .strokeBorder(Color(UIColor.systemGray5), lineWidth: 1)
                     .edgesIgnoringSafeArea(.all)
-            } else {
-                UnevenRoundedRectangle(
-                    topLeadingRadius: 38,
-                    bottomLeadingRadius: 2,
-                    bottomTrailingRadius: 2,
-                    topTrailingRadius: 38,
-                    style: .continuous
-                )
-                .strokeBorder(Color(UIColor.systemGray5), lineWidth: 1)
-                .edgesIgnoringSafeArea(.all)
+                }
             }
         }
     }
