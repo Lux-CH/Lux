@@ -19,7 +19,7 @@ struct StopView: View {
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
     init(stop: SearchResult, maxGroupsToShow: Int, fromStops: Bool) {
-        self._viewModel = StateObject(wrappedValue: HomeStopViewModel(stop: stop))
+        self._viewModel = StateObject(wrappedValue: HomeStopViewModel(stop: stop, fromStops: fromStops))
         self.maxGroupsToShow = maxGroupsToShow
         self.fromStops = fromStops
     }

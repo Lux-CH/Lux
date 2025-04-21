@@ -31,12 +31,20 @@ struct NearbyStopsView: View {
                     .foregroundColor(.gray)
                     .padding()
             } else {
-                ForEach(searchResults.prefix(2)) { result in
+                ForEach(Array(searchResults.prefix(2).enumerated()), id: \.offset) { index, result in
                     ZStack {
-                        StopView(stop: result, maxGroupsToShow: 3, fromStops: false)
-                       }
-                       .frame(maxWidth: .infinity)
+                        if index == 1 {
+                            StopView(stop: result, maxGroupsToShow: 3, fromStops: false)
+                        }
+                        else {
+                            StopView(stop: result, maxGroupsToShow: 2, fromStops: false)
+                        }
+                    }
+                    .frame(maxWidth: .infinity)
                 }
+                Divider()
+                    .padding(.horizontal, 20)
+                    .padding(.top, -10)
             }
         }
         .onAppear {

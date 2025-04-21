@@ -18,16 +18,17 @@ class HomeStopViewModel: ObservableObject {
     @Published var currentPages: [String: Int] = [:]
     @Published var errorMessage: String?
     
-    // Make stop property accessible to the view
     let stop: SearchResult
     
     private var routeOrder: [String: Int] = [:]
     private var refreshTimer: AnyCancellable?
     private var departureCheckTimer: AnyCancellable?
     private var backgroundRefreshTask: Task<Void, Never>?
+    private var fromStops: Bool
     
-    init(stop: SearchResult) {
+    init(stop: SearchResult, fromStops: Bool) {
         self.stop = stop
+        self.fromStops = fromStops
         loadConnections()
     }
     
@@ -61,7 +62,6 @@ class HomeStopViewModel: ObservableObject {
         departureCheckTimer = Timer.publish(every: 5, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
-                // Call asynchronously to safely access the MainActor-isolated method
                 Task { @MainActor [weak self] in
                     self?.checkAndHandleDepartures()
                 }
@@ -87,7 +87,7 @@ class HomeStopViewModel: ObservableObject {
             }
             
             do {
-                let freshStopTimes = try await getDeparturesForStop(stopId: stop.id, numberOfEvents: 15)
+                let freshStopTimes = try await getDeparturesForStop(stopId: stop.id, numberOfEvents: fromStops ? 100 : 50)
                 if Task.isCancelled { return }
                 
                 self.stopTimes = freshStopTimes
@@ -116,7 +116,7 @@ class HomeStopViewModel: ObservableObject {
         
         backgroundRefreshTask = Task {
             do {
-                let freshStopTimes = try await getDeparturesForStop(stopId: stop.id, numberOfEvents: 15)
+                let freshStopTimes = try await getDeparturesForStop(stopId: stop.id, numberOfEvents: fromStops ? 100 : 50)
                 if Task.isCancelled { return }
                 
                 await MainActor.run {
