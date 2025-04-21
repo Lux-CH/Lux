@@ -26,14 +26,6 @@ class StopsViewModel: ObservableObject {
     var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     private var backgroundRefreshTask: Task<Void, Never>? = nil
     
-    init() {
-        setupSearchQueryObserver()
-    }
-    
-    private func setupSearchQueryObserver() {
-        // We'd use Combine here in a real implementation but for simplicity:
-        // This would monitor searchQuery changes
-    }
     
     func setupLocationManager(_ manager: LocationManager) {
         self.locationManager = manager
@@ -83,7 +75,7 @@ class StopsViewModel: ObservableObject {
         backgroundRefreshTask = Task {
             do {
                 if let coords = locationManager?.location?.coordinate {
-                    let results = try await geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 15)
+                    let results = try await geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 9)
                     if !Task.isCancelled {
                         await MainActor.run {
                             self.searchResults = results
