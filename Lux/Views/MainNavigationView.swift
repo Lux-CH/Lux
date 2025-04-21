@@ -89,7 +89,7 @@ struct MainNavigationView: View {
                                             .font(.system(size: 20))
                                             .frame(width: 61, height: 52.5)
                                             .background(Color(.secondarySystemFill).opacity(0.5))
-                                            .cornerRadius(25)
+                                            .cornerRadius(20)
                                     }
                                     .transition(.scale(scale: 0.8).combined(with: .opacity))
                                 }
