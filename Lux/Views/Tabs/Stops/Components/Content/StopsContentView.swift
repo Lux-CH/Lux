@@ -39,7 +39,7 @@ struct SectionTitleView: View {
             Image(systemName: isSearchMode ? "magnifyingglass" : "location.fill")
             Text(isSearchMode ? "Résultats de recherche" : "À proximité")
                 .font(.headline)
-                .fontWeight(.heavy)
+                .fontWeight(.bold)
         }
         .padding(.top, 17)
         .padding(.horizontal, 25)
