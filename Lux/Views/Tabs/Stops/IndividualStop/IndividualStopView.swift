@@ -9,7 +9,8 @@ import SwiftUI
 import LuxCom
 
 struct IndividualStopView: View {
-    @State var stop : SearchResult
+    @State var stop: SearchResult
+    
     var body: some View {
         ZStack {
             Color(.systemBackground)
@@ -17,51 +18,27 @@ struct IndividualStopView: View {
                 .opacity(0.9)
             
             VStack(spacing: 0) {
-                ZStack(alignment: .top) {
-                    Rectangle()
-                        .fill(Color(.secondarySystemBackground).opacity(0.8))
-                        .frame(maxHeight: .infinity)
-                        .frame(height: 175)
-                        .clipShape(
-                            .rect(
-                                topLeadingRadius: 0,
-                                bottomLeadingRadius: 40,
-                                bottomTrailingRadius: 40,
-                                topTrailingRadius: 0,
-                                style: .continuous
-                            )
-                        )
-                    
+                VStack(spacing: 0) {
                     StopHeaderView(stop: stop)
                         .padding(.top, 95)
                         .padding(.horizontal, 20)
-                }
-                .ignoresSafeArea(edges: .top)
-                ZStack {
-                    Rectangle()
-                        .fill(Color(.secondarySystemBackground).opacity(0.8))
-                        .frame(maxHeight: .infinity)
-                        .clipShape(
-                            .rect(
-                                topLeadingRadius: 38,
-                                bottomLeadingRadius: 0,
-                                bottomTrailingRadius: 0,
-                                topTrailingRadius: 38,
-                                style: .continuous
-                            )
-                        )
-                    
+                        .padding(.bottom, 20)
+                    Divider()
                     VStack(alignment: .center) {
                         StopView(stop: stop, maxGroupsToShow: 15, fromStops: true)
+                            .padding(.top, -5)
                     }
                 }
-                .padding(.top, -50)
-                .ignoresSafeArea(edges: .bottom)
+                .background(
+                    RoundedRectangle(cornerRadius: 40, style: .continuous)
+                        .fill(Color(.secondarySystemBackground).opacity(0.8))
+                        .edgesIgnoringSafeArea([.bottom, .horizontal])
+                )
+                .clipShape(
+                    ContainerRelativeShape()
+                )
             }
+            .edgesIgnoringSafeArea(.vertical)
         }
     }
 }
-
-//#Preview {
-//    IndividualStopView()
-//}
