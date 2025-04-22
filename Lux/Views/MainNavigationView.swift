@@ -198,6 +198,7 @@ struct MainNavigationView: View {
                             toggleViewMode()
                         }
                 }
+                .ignoresSafeArea(.keyboard)
             }
         }
         .onAppear {
