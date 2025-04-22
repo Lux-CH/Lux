@@ -225,9 +225,9 @@ struct MainNavigationView: View {
         }
         
         if newMode == .stops {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 if !stopsViewModel.isSearchMode {
-                    stopsViewModel.loadNearbyStops(showLoading: false)
+                    stopsViewModel.loadNearbyStops(showLoading: true)
                 }
             }
         } else {
@@ -236,17 +236,13 @@ struct MainNavigationView: View {
     }
     
     func switchToStopsMode() {
-        stopsViewModel.isLoading = true
-        
         withAnimation(smoothSpring) {
             viewMode = .stops
             headerHeight = 135
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            if !stopsViewModel.isSearchMode {
-                stopsViewModel.loadNearbyStops(showLoading: false)
-            }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+            stopsViewModel.loadNearbyStops(showLoading: true)
         }
     }
 }
