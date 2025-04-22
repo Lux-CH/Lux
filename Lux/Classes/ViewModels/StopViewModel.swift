@@ -52,7 +52,6 @@ class StopViewModel: ObservableObject {
             }
         }
         
-        // Only set up automatic refresh for non-fromStops mode
         if !fromStops {
             refreshTimer = Timer.publish(every: 7.5, on: .main, in: .common)
                 .autoconnect()
@@ -61,7 +60,7 @@ class StopViewModel: ObservableObject {
                         await self?.refreshDeparturesInBackground()
                     }
                 }
-                
+            
             departureCheckTimer = Timer.publish(every: 5, on: .main, in: .common)
                 .autoconnect()
                 .sink { [weak self] _ in
@@ -147,7 +146,6 @@ class StopViewModel: ObservableObject {
                 if !times.isEmpty {
                     self.groupStopTimes(times)
                 } else {
-                    // Keep the existing data if the new page is empty
                     if self.routeGroups.isEmpty {
                         self.routeGroups = [:]
                         self.routeNames = []
@@ -204,7 +202,6 @@ class StopViewModel: ObservableObject {
     
     @MainActor
     func checkAndHandleDepartures() {
-        // Skip auto-refresh when in fromStops mode
         if fromStops {
             return
         }

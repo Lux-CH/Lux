@@ -79,7 +79,7 @@ struct ExpandedStopView: View {
         }
     }
     
-    // MARK: - Sequential Animation Helper
+    // MARK: Anim helper
     private func contentTransition(task: @escaping () async -> Void) {
         guard !isChangingContent else { return }
         
@@ -108,7 +108,7 @@ struct ExpandedStopView: View {
         }
     }
     
-    // MARK: - API Methods
+    // MARK: API Methods
     private func loadDeparturesForSelectedTime() async {
         await viewModel.refreshDepartures(forTime: selectedDate, showLoading: true)
     }

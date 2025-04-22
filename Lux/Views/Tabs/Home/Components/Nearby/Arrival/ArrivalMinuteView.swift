@@ -14,7 +14,7 @@ struct ArrivalMinuteView: View {
     @State private var now = Date()
     
     private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
-
+    
     private static let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -80,13 +80,13 @@ struct ArrivalMinuteView: View {
     private var isVisibleNow: Bool {
         return Int(Date().timeIntervalSince1970) % 2 == 0
     }
-
+    
     private var latenessColor: Color {
         let scheduledArrival = incomingStop.place.scheduledDeparture ?? Date()
         let arrival = incomingStop.place.departure ?? Date()
-
+        
         let scheduledDifference = calendar.dateComponents([.minute], from: scheduledArrival, to: arrival).minute ?? 0
-
+        
         if !incomingStop.realTime {
             return .primary
         } else if scheduledDifference <= 2 && scheduledDifference >= -1 {
