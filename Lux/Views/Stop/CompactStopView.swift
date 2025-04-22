@@ -1,27 +1,25 @@
 //
-//  StopView.swift
+//  CompactStopView.swift
 //  Lux
 //
-//  Created by Constantin Clerc on 18.04.2025.
+//  Created by Constantin Clerc on 22.04.2025.
 //
 
 import SwiftUI
 import LuxCom
 import Combine
 
-struct StopView: View {
+struct CompactStopView: View {
     @Environment(\.colorScheme) var colorScheme
-    @StateObject private var viewModel: HomeStopViewModel
-    @State var fromStops: Bool
+    @StateObject private var viewModel: StopViewModel
     let maxGroupsToShow: Int
     
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
-    init(stop: SearchResult, maxGroupsToShow: Int, fromStops: Bool) {
-        self._viewModel = StateObject(wrappedValue: HomeStopViewModel(stop: stop, fromStops: fromStops))
+    init(stop: SearchResult, maxGroupsToShow: Int) {
+        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: false))
         self.maxGroupsToShow = maxGroupsToShow
-        self.fromStops = fromStops
     }
     
     var body: some View {
@@ -33,7 +31,7 @@ struct StopView: View {
             } else if viewModel.routeGroups.isEmpty && !viewModel.isLoading {
                 emptyStateView
             } else {
-                routeGroupsView
+                routeGroupsContent
             }
         }
         .onAppear {
@@ -47,37 +45,14 @@ struct StopView: View {
     // MARK: - Subviews
     
     private var headerView: some View {
-        Group {
-            if fromStops {
-                fromStopsHeaderView
-            } else {
-                regularHeaderView
-            }
-        }
-    }
-    
-    private var fromStopsHeaderView: some View {
-        VStack(alignment: .leading) {
-            HStack {
-                Image(systemName: "clock")
-                Text("Horaires")
-                    .fontWeight(.bold)
-            }
-            Divider()
-                .padding(.bottom, 0)
-        }
-        .padding(.top, 17.5)
-        .padding(.horizontal, 25)
-    }
-    
-    private var regularHeaderView: some View {
         NavigationLink(destination: IndividualStopView(stop: viewModel.stop)) {
-            VStack(spacing: 0) {
+            VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Image(systemName: "signpost.right")
                         .foregroundColor(.secondary)
                     
                     Text(viewModel.stop.name)
+                        .multilineTextAlignment(.leading)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
                     
@@ -146,21 +121,6 @@ struct StopView: View {
                 Text(error)
                     .foregroundColor(.red)
                     .padding()
-            }
-        }
-    }
-    
-    private var routeGroupsView: some View {
-        Group {
-            if fromStops {
-                ScrollView(.vertical, showsIndicators: true) {
-                    routeGroupsContent
-                }
-//                .safeAreaInset(edge: .bottom) {
-//                    Spacer().frame(height: 85)
-//                }
-            } else {
-                routeGroupsContent
             }
         }
     }

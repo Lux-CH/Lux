@@ -1,5 +1,5 @@
 //
-//  HomeStopViewModel.swift
+//  StopViewModel.swift
 //  Lux
 //
 //  Created by Constantin Clerc on 19.04.2025.
@@ -9,7 +9,7 @@ import SwiftUI
 import LuxCom
 import Combine
 
-class HomeStopViewModel: ObservableObject {
+class StopViewModel: ObservableObject {
     @Published var stopTimes: StopTimes?
     @Published var routeGroups: [String: [GroupedStopTime]] = [:]
     @Published var connections: [String] = []
@@ -25,6 +25,7 @@ class HomeStopViewModel: ObservableObject {
     private var departureCheckTimer: AnyCancellable?
     private var backgroundRefreshTask: Task<Void, Never>?
     private var fromStops: Bool
+    private var currentTime: Date = Date()
     
     init(stop: SearchResult, fromStops: Bool) {
         self.stop = stop
@@ -51,21 +52,24 @@ class HomeStopViewModel: ObservableObject {
             }
         }
         
-        refreshTimer = Timer.publish(every: 7.5, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                Task {
-                    await self?.refreshDeparturesInBackground()
+        // Only set up automatic refresh for non-fromStops mode
+        if !fromStops {
+            refreshTimer = Timer.publish(every: 7.5, on: .main, in: .common)
+                .autoconnect()
+                .sink { [weak self] _ in
+                    Task {
+                        await self?.refreshDeparturesInBackground()
+                    }
                 }
-            }
-            
-        departureCheckTimer = Timer.publish(every: 5, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                Task { @MainActor [weak self] in
-                    self?.checkAndHandleDepartures()
+                
+            departureCheckTimer = Timer.publish(every: 5, on: .main, in: .common)
+                .autoconnect()
+                .sink { [weak self] _ in
+                    Task { @MainActor [weak self] in
+                        self?.checkAndHandleDepartures()
+                    }
                 }
-            }
+        }
     }
     
     func stopMonitoring() {
@@ -76,8 +80,14 @@ class HomeStopViewModel: ObservableObject {
     
     @MainActor
     func refreshDepartures(showLoading: Bool) async {
+        await refreshDepartures(forTime: currentTime, showLoading: showLoading)
+    }
+    
+    @MainActor
+    func refreshDepartures(forTime time: Date, showLoading: Bool) async {
         if showLoading { isLoading = true }
         backgroundRefreshTask?.cancel()
+        currentTime = time
         
         backgroundRefreshTask = Task {
             defer {
@@ -87,7 +97,11 @@ class HomeStopViewModel: ObservableObject {
             }
             
             do {
-                let freshStopTimes = try await getDeparturesForStop(stopId: stop.id, numberOfEvents: fromStops ? 100 : 50)
+                let freshStopTimes = try await getDeparturesForStop(
+                    stopId: stop.id,
+                    time: time,
+                    numberOfEvents: fromStops ? 100 : 50
+                )
                 if Task.isCancelled { return }
                 
                 self.stopTimes = freshStopTimes
@@ -109,6 +123,47 @@ class HomeStopViewModel: ObservableObject {
         await backgroundRefreshTask?.value
     }
     
+    @MainActor
+    func loadPaginatedDepartures(cursor: String) async {
+        isLoading = true
+        backgroundRefreshTask?.cancel()
+        
+        backgroundRefreshTask = Task {
+            defer {
+                self.isLoading = false
+            }
+            
+            do {
+                let freshStopTimes = try await getDeparturesForStop(
+                    stopId: stop.id,
+                    time: currentTime,
+                    numberOfEvents: fromStops ? 100 : 50,
+                    pageCursor: cursor
+                )
+                if Task.isCancelled { return }
+                
+                self.stopTimes = freshStopTimes
+                let times = freshStopTimes.stopTimes
+                if !times.isEmpty {
+                    self.groupStopTimes(times)
+                } else {
+                    // Keep the existing data if the new page is empty
+                    if self.routeGroups.isEmpty {
+                        self.routeGroups = [:]
+                        self.routeNames = []
+                        self.currentPages = [:]
+                    }
+                }
+            } catch {
+                if !(error is CancellationError) {
+                    print("Failed to load paginated departures: \(error)")
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+        }
+        await backgroundRefreshTask?.value
+    }
+    
     private func refreshDeparturesInBackground() async {
         guard backgroundRefreshTask == nil || backgroundRefreshTask?.isCancelled == true else {
             return
@@ -116,7 +171,11 @@ class HomeStopViewModel: ObservableObject {
         
         backgroundRefreshTask = Task {
             do {
-                let freshStopTimes = try await getDeparturesForStop(stopId: stop.id, numberOfEvents: fromStops ? 100 : 50)
+                let freshStopTimes = try await getDeparturesForStop(
+                    stopId: stop.id,
+                    time: currentTime,
+                    numberOfEvents: fromStops ? 100 : 50
+                )
                 if Task.isCancelled { return }
                 
                 await MainActor.run {
@@ -145,6 +204,11 @@ class HomeStopViewModel: ObservableObject {
     
     @MainActor
     func checkAndHandleDepartures() {
+        // Skip auto-refresh when in fromStops mode
+        if fromStops {
+            return
+        }
+        
         let now = Date()
         
         outerLoop: for (_, groups) in routeGroups {
