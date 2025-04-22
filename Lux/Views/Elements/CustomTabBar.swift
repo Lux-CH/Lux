@@ -64,7 +64,6 @@ struct TabButton: View {
                     .foregroundStyle(selectedTab == tab ? Color.accentColor : Color.gray.opacity(0.8))
                     .frame(width: 30, height: 30)
             
-                // Only show text for selected tab
                 if selectedTab == tab {
                     Text(tab.title)
                         .font(.system(size: 16, weight: .medium))
