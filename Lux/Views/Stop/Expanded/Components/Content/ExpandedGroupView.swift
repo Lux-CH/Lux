@@ -17,7 +17,7 @@ struct ExpandedGroupView: View {
         VStack(alignment: .leading, spacing: 5) {
             HStack {
                 LinePill(line: group.routeShortName, mode: .bus)
-                    .matchedGeometryEffect(id: "pill_\(group.routeShortName)", in: animation)
+                    .matchedGeometryEffect(id: "pill_\(group.id)", in: animation)
                 Text(group.headsign)
                     .font(.headline)
                     .lineLimit(1)
