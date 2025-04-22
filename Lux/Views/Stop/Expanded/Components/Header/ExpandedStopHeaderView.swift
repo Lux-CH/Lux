@@ -39,14 +39,41 @@ struct ExpandedStopHeaderView: View {
         .padding(.horizontal, 25)
     }
     
+    private var formattedDate: String {
+        let calendar = Calendar.current
+        let formatter = DateFormatter()
+        
+        if calendar.isDateInToday(selectedDate) {
+            formatter.setLocalizedDateFormatFromTemplate("HH:mm")
+            return "Aujourd'hui \(formatter.string(from: selectedDate))"
+        } else if calendar.isDateInTomorrow(selectedDate) {
+            formatter.setLocalizedDateFormatFromTemplate("HH:mm")
+            return "Demain, \(formatter.string(from: selectedDate))"
+        } else {
+            formatter.setLocalizedDateFormatFromTemplate("dd/MM HH:mm")
+            return formatter.string(from: selectedDate)
+        }
+    }
+    
     private var datePickerButton: some View {
         Button {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
                 showDatePicker = true
             }
         } label: {
-            Label("Changer la date", systemImage: "calendar")
-                .font(.footnote)
+            HStack(spacing: 4) {
+                Text(formattedDate)
+                    .font(.footnote)
+                
+                Image(systemName: "calendar")
+                    .font(.footnote)
+            }
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.accentColor.opacity(0.1))
+            )
         }
         .buttonStyle(.borderless)
         .popover(isPresented: $showDatePicker, arrowEdge: .top) {

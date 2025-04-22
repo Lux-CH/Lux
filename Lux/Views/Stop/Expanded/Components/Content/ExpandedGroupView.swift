@@ -24,7 +24,6 @@ struct ExpandedGroupView: View {
                 Spacer()
             }
             
-            // Show multiple departure times
             VStack(alignment: .leading, spacing: 8) {
                 ForEach(Array(group.stopTimes.prefix(4).enumerated()), id: \.element.id) { index, stopTime in
                     DepartureTimeRow(stopTime: stopTime, animateIn: $animateIn, index: index)

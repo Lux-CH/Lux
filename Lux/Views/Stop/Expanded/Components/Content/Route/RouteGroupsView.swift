@@ -32,7 +32,7 @@ struct RouteGroupsView: View {
                     }
                 }
             }
-            .padding(.bottom, 10) // Additional padding to avoid content being hidden under controls
+            .padding(.bottom, 10)
         }
     }
 }
