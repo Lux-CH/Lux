@@ -15,7 +15,7 @@ struct StopView: View {
     
     var body: some View {
         if fromStops {
-            ExpandedStopView(stop: stop, maxGroupsToShow: maxGroupsToShow)
+            ExpandedStopView(viewModel: StopViewModel(stop: stop, fromStops: true), maxGroupsToShow: maxGroupsToShow)
         } else {
             CompactStopView(stop: stop, maxGroupsToShow: maxGroupsToShow)
         }

@@ -10,23 +10,15 @@ import LuxCom
 import Combine
 
 struct ExpandedStopView: View {
-    @StateObject private var viewModel: StopViewModel
+    @StateObject var viewModel: StopViewModel
     @State private var selectedDate = Date()
     @State private var showDatePicker = false
-    @State private var isLoadingEarlier = false
-    @State private var isLoadingLater = false
     @State private var contentTransitionId = UUID()
     @State private var animateIn = false
     @State private var isChangingContent = false
     @State private var showContent = true
-    @State private var showFloatingControls = false
     @Namespace private var animation
     let maxGroupsToShow: Int
-    
-    init(stop: SearchResult, maxGroupsToShow: Int) {
-        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: true))
-        self.maxGroupsToShow = maxGroupsToShow
-    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -73,40 +65,10 @@ struct ExpandedStopView: View {
                 }
                 .id(contentTransitionId)
                 
-                Spacer(minLength: 80)
-            }
-            
-            // Pagination ctrls
-            if showFloatingControls {
-                PaginationControlsView(
-                    isLoadingEarlier: $isLoadingEarlier,
-                    isLoadingLater: $isLoadingLater,
-                    isChangingContent: $isChangingContent,
-                    isLoading: viewModel.isLoading,
-                    animateIn: $animateIn,
-                    loadEarlier: {
-                        contentTransition {
-                            isLoadingEarlier = true
-                            await loadEarlierDepartures()
-                            isLoadingEarlier = false
-                        }
-                    },
-                    loadLater: {
-                        contentTransition {
-                            isLoadingLater = true
-                            await loadLaterDepartures()
-                            isLoadingLater = false
-                        }
-                    }
-                )
             }
         }
         .onAppear {
             viewModel.startMonitoring()
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                showFloatingControls = true
-            }
             
             withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
                 animateIn = true
@@ -114,13 +76,6 @@ struct ExpandedStopView: View {
         }
         .onDisappear {
             viewModel.stopMonitoring()
-        }
-        .onChange(of: viewModel.isLoading) {
-            if !viewModel.isLoading && !viewModel.routeGroups.isEmpty {
-                withAnimation {
-                    showFloatingControls = true
-                }
-            }
         }
     }
     
@@ -156,15 +111,5 @@ struct ExpandedStopView: View {
     // MARK: - API Methods
     private func loadDeparturesForSelectedTime() async {
         await viewModel.refreshDepartures(forTime: selectedDate, showLoading: true)
-    }
-    
-    private func loadEarlierDepartures() async {
-        guard let stopTimes = viewModel.stopTimes else { return }
-        await viewModel.loadPaginatedDepartures(cursor: stopTimes.previousPageCursor)
-    }
-    
-    private func loadLaterDepartures() async {
-        guard let stopTimes = viewModel.stopTimes else { return }
-        await viewModel.loadPaginatedDepartures(cursor: stopTimes.nextPageCursor)
     }
 }
