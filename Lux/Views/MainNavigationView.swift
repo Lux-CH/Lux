@@ -193,10 +193,9 @@ struct MainNavigationView: View {
                 // Mode switcher
                 VStack {
                     Spacer()
-                    CustomTabBar(selectedTab: $viewMode)
-                        .onChange(of: viewMode) {
-                            toggleViewMode()
-                        }
+                    CustomTabBar(selectedTab: $viewMode, onModeChange: { newMode in
+                        toggleViewMode(newMode)
+                    })
                 }
                 .ignoresSafeArea(.keyboard)
             }
@@ -219,25 +218,20 @@ struct MainNavigationView: View {
         }
     }
     
-    func toggleViewMode() {
+    func toggleViewMode(_ newMode: ViewMode) {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
         withAnimation(smoothSpring) {
-            if viewMode == .home {
-                viewMode = .stops
-                headerHeight = 135
-            } else {
-                viewMode = .home
-                headerHeight = 215
-                stopsViewModel.resetSearch()
-            }
+            headerHeight = newMode == .home ? 215 : 135
         }
         
-        if viewMode == .stops {
+        if newMode == .stops {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 if !stopsViewModel.isSearchMode {
                     stopsViewModel.loadNearbyStops(showLoading: false)
                 }
             }
+        } else {
+            stopsViewModel.resetSearch()
         }
     }
     

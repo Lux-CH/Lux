@@ -10,6 +10,7 @@ import SwiftUI
 struct CustomTabBar: View {
     @Binding var selectedTab: ViewMode
     @Namespace private var tabAnimation
+    var onModeChange: ((ViewMode) -> Void)
     
     var body: some View {
         HStack(spacing: 0) {
@@ -17,7 +18,12 @@ struct CustomTabBar: View {
                 TabButton(
                     tab: tab,
                     selectedTab: $selectedTab,
-                    namespace: tabAnimation
+                    namespace: tabAnimation,
+                    onSelect: {
+                        if selectedTab != tab {
+                            onModeChange(tab)
+                        }
+                    }
                 )
             }
         }
@@ -31,7 +37,7 @@ struct CustomTabBar: View {
                         .stroke(Color.gray.opacity(0.1), lineWidth: 1)
                 )
         )
-        .frame(height: 54) // Reduced height
+        .frame(height: 54)
         .padding(.horizontal, 24)
         .padding(.bottom, 8)
     }
@@ -41,9 +47,11 @@ struct TabButton: View {
     let tab: ViewMode
     @Binding var selectedTab: ViewMode
     var namespace: Namespace.ID
+    var onSelect: (() -> Void)
     
     var body: some View {
         Button(action: {
+            onSelect()
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                 selectedTab = tab
             }
