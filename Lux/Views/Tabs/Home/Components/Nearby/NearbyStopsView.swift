@@ -14,6 +14,7 @@ struct NearbyStopsView: View {
     @EnvironmentObject var locationManager: LocationManager
     @State private var searchResults: [SearchResult] = []
     @State private var isLoading = false
+    @State private var isWaitingForLocation = false
     
     @State private var lastFetchedLocation: CLLocation? = nil
     @State private var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -23,7 +24,10 @@ struct NearbyStopsView: View {
     
     var body: some View {
         VStack {
-            if isLoading {
+            if isWaitingForLocation {
+                ProgressView("En attente de votre position...")
+                    .padding()
+            } else if isLoading {
                 ProgressView("Chargement des arrêts à proximité...")
                     .padding()
             } else if searchResults.isEmpty {
@@ -48,18 +52,27 @@ struct NearbyStopsView: View {
             }
         }
         .onAppear {
-            if searchResults.isEmpty {
+            if locationManager.location == nil {
+                isWaitingForLocation = true
+            } else if searchResults.isEmpty {
                 loadNearbyStops(showLoading: true)
             } else {
                 checkLocationAndRefresh()
             }
         }
-        .onChange(of: locationManager.location) {
-            checkLocationAndRefresh()
+        .onChange(of: locationManager.location) { oldValue, newValue in
+            if isWaitingForLocation && newValue != nil {
+                isWaitingForLocation = false
+                loadNearbyStops(showLoading: true)
+            } else {
+                checkLocationAndRefresh()
+            }
         }
         .onReceive(refreshTimer) { _ in
             guard let currentLoc = locationManager.location, let lastLoc = lastFetchedLocation else {
-                refreshNearbyStopsInBackground()
+                if locationManager.location != nil {
+                    refreshNearbyStopsInBackground()
+                }
                 return
             }
             if currentLoc.distance(from: lastLoc) < significantDistance {
@@ -68,11 +81,17 @@ struct NearbyStopsView: View {
         }
         .onDisappear {
             backgroundRefreshTask?.cancel()
+            isWaitingForLocation = false
         }
     }
     
     private func checkLocationAndRefresh() {
-        guard let currentLoc = locationManager.location else { return }
+        guard let currentLoc = locationManager.location else {
+            isWaitingForLocation = true
+            return
+        }
+        
+        isWaitingForLocation = false
         
         if let lastLoc = lastFetchedLocation {
             let distance = currentLoc.distance(from: lastLoc)
@@ -91,10 +110,12 @@ struct NearbyStopsView: View {
         backgroundRefreshTask = Task {
             guard let loc = locationManager.location?.coordinate else {
                 if showLoading { isLoading = false }
+                isWaitingForLocation = true
                 print("loc not available for loading stops..:(")
                 return
             }
             
+            isWaitingForLocation = false
             let fetchLocation = locationManager.location
             
             defer {
