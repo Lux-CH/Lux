@@ -1,5 +1,5 @@
 {
-  "originHash" : "0b117b211b9deae880838240a2eda786d0986c707f51988b991d8c0130ae4704",
+  "originHash" : "5f4d5944ebaf24cbe113b88910ea638be9f83f18f7c469f76f9d28bbecc4ff12",
   "pins" : [
     {
       "identity" : "luxcom",
@@ -7,7 +7,16 @@
       "location" : "https://github.com/Lux-CH/LuxCom",
       "state" : {
         "branch" : "main",
-        "revision" : "732ee1d1e3adc4ad53b58f65adddd6f582fcfa64"
+        "revision" : "7a63d05b2452feadf61f1f06fb3d2307f11a18d5"
+      }
+    },
+    {
+      "identity" : "polyline",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/raphaelmor/Polyline",
+      "state" : {
+        "branch" : "master",
+        "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23"
       }
     }
   ],

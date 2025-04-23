@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 import LuxCom
+import Polyline
 
 @MainActor
 class ItineraryViewModel: ObservableObject {
@@ -88,23 +89,13 @@ class ItineraryViewModel: ObservableObject {
     }
     
     private func createRouteOverlay(for leg: Leg, withColor color: Color) {
-        var coordinates = [CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon)]
+        let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e7)
+        let coordinates: [CLLocationCoordinate2D]? = polyline.coordinates
         
-        if let intermediateStops = leg.intermediateStops, !intermediateStops.isEmpty {
-            coordinates.append(contentsOf: intermediateStops.map {
-                CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lon)
-            })
+        if let decodedCoords = coordinates {
+            routeOverlays.append(RouteOverlay(coordinates: decodedCoords, color: color))
         }
-        
-        if leg.mode == .walk, let steps = leg.steps, !steps.isEmpty {
-            // TODO steps
-        }
-        
-        coordinates.append(CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon))
-        
-        guard coordinates.count >= 2 else { return }
-        
-        routeOverlays.append(RouteOverlay(coordinates: coordinates, color: color))
+        else { return }
     }
     
     private func calculateMapPosition() {
@@ -116,6 +107,14 @@ class ItineraryViewModel: ObservableObject {
             let point = MKMapPoint(annotation.coordinate)
             let pointRect = MKMapRect(origin: point, size: MKMapSize(width: 0.1, height: 0.1))
             mapRect = mapRect.union(pointRect)
+        }
+        
+        for overlay in routeOverlays {
+            for coordinate in overlay.coordinates {
+                let point = MKMapPoint(coordinate)
+                let pointRect = MKMapRect(origin: point, size: MKMapSize(width: 0.1, height: 0.1))
+                mapRect = mapRect.union(pointRect)
+            }
         }
         
         let padding = 0.2
