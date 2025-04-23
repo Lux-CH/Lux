@@ -52,6 +52,12 @@ struct ItineraryView: View {
                         MapPolyline(coordinates: overlay.coordinates)
                             .stroke(overlay.color, lineWidth: 4)
                     }
+                    
+                    ForEach(viewModel.vehicleAnnotations) { vehicle in
+                        Annotation("", coordinate: vehicle.coordinate) {
+                            VehicleAnnotationView(annotation: vehicle)
+                        }
+                    }
                 }
                 .mapStyle(.standard)
                 .onMapCameraChange { context in
@@ -59,7 +65,6 @@ struct ItineraryView: View {
                 }
             }
         }
-        .mapStyle(.standard)
         .task {
             await viewModel.loadItinerary()
         }
