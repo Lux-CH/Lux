@@ -26,6 +26,19 @@ enum VehicleVisualisation {
         let heading: CLLocationDirection
         let time: TimeInterval
         let isStop: Bool
+        let isDwelling: Bool
+    }
+    
+    // MARK: - Default Dwell Times
+    private static func defaultDwellTime(for mode: TransportationMode) -> TimeInterval {
+        switch mode {
+        case .bus, .tram:
+            return 25
+        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .subway, .ferry:
+            return 50
+        default:
+            return 30
+        }
     }
     
     // MARK: - KeyFrame Calculation
@@ -36,138 +49,210 @@ enum VehicleVisualisation {
         let departureTime = leg.startTime.timeIntervalSince1970
         let arrivalTime = leg.endTime.timeIntervalSince1970
         
-        var stops: [(time: TimeInterval, coordinate: CLLocationCoordinate2D, isArrival: Bool)] = []
+        var stops: [(arrivalTime: TimeInterval?, departureTime: TimeInterval, coordinate: CLLocationCoordinate2D)] = []
         
-        stops.append((departureTime, CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon), false))
+        stops.append((nil, departureTime, CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon)))
         
         if let intermediateStops = leg.intermediateStops {
             for stop in intermediateStops {
-                if let arrivalTime = stop.arrival?.timeIntervalSince1970 ?? stop.scheduledArrival?.timeIntervalSince1970 {
-                    stops.append((arrivalTime, CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon), true))
-                }
+                let arrivalTime = stop.arrival?.timeIntervalSince1970 ?? stop.scheduledArrival?.timeIntervalSince1970
+                let departureTime = stop.departure?.timeIntervalSince1970 ?? stop.scheduledDeparture?.timeIntervalSince1970
                 
-                if let departureTime = stop.departure?.timeIntervalSince1970 ?? stop.scheduledDeparture?.timeIntervalSince1970 {
-                    stops.append((departureTime, CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon), false))
+                if let depTime = departureTime {
+                    stops.append((arrivalTime, depTime, CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon)))
+                } else if let arrTime = arrivalTime {
+                    stops.append((arrTime, arrTime, CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon)))
                 }
             }
         }
         
-        stops.append((arrivalTime, CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon), true))
+        stops.append((arrivalTime, arrivalTime, CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon)))
         
-        stops.sort { $0.time < $1.time }
+        let mode = leg.mode
+        for i in 1..<(stops.count-1) {
+            if let arrivalTime = stops[i].arrivalTime, abs(arrivalTime - stops[i].departureTime) < 1.0 {
+                stops[i].departureTime = arrivalTime + defaultDwellTime(for: mode)
+            }
+        }
         
-        var mappedStops: [(time: TimeInterval, index: Int, isArrival: Bool)] = []
+        var mappedStops: [(arrivalTime: TimeInterval?, departureTime: TimeInterval, index: Int)] = []
         
         for stop in stops {
             let closestIndex = findClosestPointIndex(coordinates: coordinates, to: stop.coordinate)
-            mappedStops.append((stop.time, closestIndex, stop.isArrival))
+            mappedStops.append((stop.arrivalTime, stop.departureTime, closestIndex))
         }
         
         var keyFrames: [KeyFrame] = []
+        
+        let firstStop = mappedStops.first!
+        keyFrames.append(KeyFrame(
+            point: coordinates[firstStop.index],
+            heading: firstStop.index + 1 < coordinates.count ?
+                coordinates[firstStop.index].heading(to: coordinates[firstStop.index + 1]) : 0,
+            time: firstStop.departureTime,
+            isStop: true,
+            isDwelling: false
+        ))
         
         for i in 0..<(mappedStops.count - 1) {
             let startStop = mappedStops[i]
             let endStop = mappedStops[i + 1]
             
-            if startStop.index == endStop.index && startStop.isArrival && !endStop.isArrival {
-                let point = coordinates[startStop.index]
-                let heading = (i > 0) ? keyFrames.last?.heading ?? 0 :
-                    (startStop.index + 1 < coordinates.count) ?
-                    coordinates[startStop.index].heading(to: coordinates[startStop.index + 1]) : 0
+            if let arrivalTime = endStop.arrivalTime, arrivalTime < endStop.departureTime {
+                createMovementSegment(
+                    coordinates: coordinates,
+                    fromIndex: startStop.index,
+                    toIndex: endStop.index,
+                    startTime: startStop.departureTime,
+                    endTime: arrivalTime,
+                    keyFrames: &keyFrames,
+                    isDepartingFromStop: true,
+                    isArrivingAtStop: true
+                )
                 
                 keyFrames.append(KeyFrame(
-                    point: point,
-                    heading: heading,
-                    time: startStop.time,
-                    isStop: true
+                    point: coordinates[endStop.index],
+                    heading: calculateHeading(coordinates: coordinates, atIndex: endStop.index),
+                    time: arrivalTime,
+                    isStop: true,
+                    isDwelling: true
                 ))
                 
                 keyFrames.append(KeyFrame(
-                    point: point,
-                    heading: heading,
-                    time: endStop.time,
-                    isStop: false
+                    point: coordinates[endStop.index],
+                    heading: calculateHeading(coordinates: coordinates, atIndex: endStop.index),
+                    time: endStop.departureTime,
+                    isStop: true,
+                    isDwelling: false
                 ))
-                
-                continue
-            }
-            
-            let segmentStartTime = startStop.time
-            let segmentEndTime = endStop.time
-            let segmentDuration = segmentEndTime - segmentStartTime
-            
-            let startIndex = startStop.index
-            let endIndex = endStop.index
-            
-            let increment = startIndex <= endIndex ? 1 : -1
-            let segmentRange = stride(from: startIndex, through: endIndex, by: increment)
-            
-            var segmentCoordinates: [CLLocationCoordinate2D] = []
-            for idx in segmentRange {
-                segmentCoordinates.append(coordinates[idx])
-            }
-            
-            let totalDistance = zip(segmentCoordinates, segmentCoordinates.dropFirst())
-                .reduce(0) { $0 + $1.0.distance(to: $1.1) }
-            
-            if totalDistance > 0 {
-                var currentDistance: CLLocationDistance = 0
-                var previousPoint: CLLocationCoordinate2D? = nil
-                
-                for idx in segmentRange {
-                    let point = coordinates[idx]
-                    
-                    if let prevPoint = previousPoint {
-                        let distance = prevPoint.distance(to: point)
-                        currentDistance += distance
-                        
-                        let ratio = currentDistance / totalDistance
-                        let time = segmentStartTime + ratio * segmentDuration
-                        
-                        let heading = prevPoint.heading(to: point)
-                        
-                        if idx != startIndex || keyFrames.isEmpty {
-                            keyFrames.append(KeyFrame(
-                                point: point,
-                                heading: heading,
-                                time: time,
-                                isStop: idx == endIndex && endStop.isArrival
-                            ))
-                        }
-                    } else if idx == startIndex {
-                        let heading = (idx + increment >= 0 && idx + increment < coordinates.count) ?
-                            point.heading(to: coordinates[idx + increment]) :
-                            keyFrames.last?.heading ?? 0
-                        
-                        keyFrames.append(KeyFrame(
-                            point: point,
-                            heading: heading,
-                            time: segmentStartTime,
-                            isStop: startStop.isArrival
-                        ))
-                    }
-                    
-                    previousPoint = point
-                }
             } else {
-                let heading = keyFrames.last?.heading ?? 0
-                keyFrames.append(KeyFrame(
-                    point: coordinates[startIndex],
-                    heading: heading,
-                    time: segmentStartTime,
-                    isStop: startStop.isArrival
-                ))
-                
-                keyFrames.append(KeyFrame(
-                    point: coordinates[endIndex],
-                    heading: heading,
-                    time: segmentEndTime,
-                    isStop: endStop.isArrival
-                ))
+                createMovementSegment(
+                    coordinates: coordinates,
+                    fromIndex: startStop.index,
+                    toIndex: endStop.index,
+                    startTime: startStop.departureTime,
+                    endTime: endStop.departureTime,
+                    keyFrames: &keyFrames,
+                    isDepartingFromStop: true,
+                    isArrivingAtStop: true
+                )
             }
         }
         
         return keyFrames
+    }
+    
+    private static func calculateHeading(coordinates: [CLLocationCoordinate2D], atIndex index: Int) -> CLLocationDirection {
+        if index + 1 < coordinates.count {
+            return coordinates[index].heading(to: coordinates[index + 1])
+        } else if index > 0 {
+            return coordinates[index - 1].heading(to: coordinates[index])
+        }
+        return 0
+    }
+    
+    private static func createMovementSegment(
+        coordinates: [CLLocationCoordinate2D],
+        fromIndex: Int,
+        toIndex: Int,
+        startTime: TimeInterval,
+        endTime: TimeInterval,
+        keyFrames: inout [KeyFrame],
+        isDepartingFromStop: Bool,
+        isArrivingAtStop: Bool
+    ) {
+        let segmentDuration = endTime - startTime
+        if segmentDuration <= 0 || fromIndex == toIndex { return }
+        
+        let increment = fromIndex <= toIndex ? 1 : -1
+        let segmentRange = stride(from: fromIndex, through: toIndex, by: increment)
+        
+        let segmentCoordinates: [CLLocationCoordinate2D] = segmentRange.map { coordinates[$0] }
+        
+        let totalDistance = zip(segmentCoordinates, segmentCoordinates.dropFirst())
+            .reduce(0) { $0 + $1.0.distance(to: $1.1) }
+        
+        if totalDistance > 0 {
+            var distances: [Double] = [0]
+            var cumulativeDistance: Double = 0
+            
+            for i in 1..<segmentCoordinates.count {
+                cumulativeDistance += segmentCoordinates[i-1].distance(to: segmentCoordinates[i])
+                distances.append(cumulativeDistance)
+            }
+            
+            // apply velocity profile,  3 sections :
+            // 1. Acceleration from stop (if exisitng)
+            // 2. Cruising at normal speed
+            // 3. Deceleration to stop (if applicable)
+            
+            let accelerationDistance = isDepartingFromStop ? min(totalDistance * 0.15, 200.0) : 0
+            let decelerationDistance = isArrivingAtStop ? min(totalDistance * 0.15, 200.0) : 0
+            let cruisingDistance = totalDistance - accelerationDistance - decelerationDistance
+            
+            let accelerationTime = isDepartingFromStop ? segmentDuration * 0.12 : 0
+            let decelerationTime = isArrivingAtStop ? segmentDuration * 0.12 : 0
+            let cruisingTime = segmentDuration - accelerationTime - decelerationTime
+            
+            for i in 0..<segmentCoordinates.count {
+                let distance = distances[i]
+                var time = startTime
+                
+                if distance <= accelerationDistance && accelerationDistance > 0 {
+                    let accelerationProgress = distance / accelerationDistance
+                    let easedProgress = easeInQuad(accelerationProgress)
+                    time += accelerationTime * easedProgress
+                } else if distance >= totalDistance - decelerationDistance && decelerationDistance > 0 {
+                    let decelerationProgress = (distance - (totalDistance - decelerationDistance)) / decelerationDistance
+                    let easedProgress = easeOutQuad(decelerationProgress)
+                    time += accelerationTime + cruisingTime + decelerationTime * easedProgress
+                } else if cruisingDistance > 0 {
+                    let cruisingProgress = (distance - accelerationDistance) / cruisingDistance
+                    time += accelerationTime + cruisingTime * cruisingProgress
+                }
+                
+                // Only add keyframe if this is a significant point in the journey
+                if i == 0 || i == segmentCoordinates.count - 1 || i % max(1, segmentCoordinates.count / 10) == 0 {
+                    let isFirstKeyFrame = i == 0
+                    let isLastKeyFrame = i == segmentCoordinates.count - 1
+                    
+                    var heading: CLLocationDirection = 0
+                    if i < segmentCoordinates.count - 1 {
+                        heading = segmentCoordinates[i].heading(to: segmentCoordinates[i+1])
+                    } else if i > 0 {
+                        heading = segmentCoordinates[i-1].heading(to: segmentCoordinates[i])
+                    } else if !keyFrames.isEmpty {
+                        heading = keyFrames.last!.heading
+                    }
+                    
+                    keyFrames.append(KeyFrame(
+                        point: segmentCoordinates[i],
+                        heading: heading,
+                        time: time,
+                        isStop: isFirstKeyFrame || isLastKeyFrame,
+                        isDwelling: false
+                    ))
+                }
+            }
+        } else {
+            // handle zero distance case (should be extra rare)
+            let heading = keyFrames.isEmpty ? 0 : keyFrames.last!.heading
+            keyFrames.append(KeyFrame(
+                point: coordinates[fromIndex],
+                heading: heading,
+                time: endTime,
+                isStop: true,
+                isDwelling: false
+            ))
+        }
+    }
+    
+    private static func easeInQuad(_ x: Double) -> Double {
+        return x*x // we could also have used pow
+    }
+    
+    private static func easeOutQuad(_ x: Double) -> Double {
+        return 2*x - x*x
     }
     
     private static func findClosestPointIndex(coordinates: [CLLocationCoordinate2D], to target: CLLocationCoordinate2D) -> Int {
@@ -197,14 +282,27 @@ enum VehicleVisualisation {
             let endFrame = keyFrames[i]
             
             if timestamp >= startFrame.time && timestamp <= endFrame.time {
+                if startFrame.isDwelling && endFrame.isDwelling {
+                    return startFrame.point
+                }
+                
                 let segmentDuration = endFrame.time - startFrame.time
                 let progress = (timestamp - startFrame.time) / segmentDuration
                 
-                let easedProgress = calculateEasedProgress(
-                    progress: progress,
-                    isStartStop: startFrame.isStop,
-                    isEndStop: endFrame.isStop
-                )
+                if startFrame.point.latitude == endFrame.point.latitude &&
+                   startFrame.point.longitude == endFrame.point.longitude {
+                    return startFrame.point
+                }
+                
+                let easedProgress: Double
+                
+                if startFrame.isStop && !startFrame.isDwelling {
+                    easedProgress = easeInQuad(progress)
+                } else if endFrame.isStop && !startFrame.isDwelling {
+                    easedProgress = easeOutQuad(progress)
+                } else {
+                    easedProgress = progress
+                }
                 
                 return interpolate(
                     from: startFrame.point,
@@ -213,19 +311,8 @@ enum VehicleVisualisation {
                 )
             }
         }
-        return nil
-    }
-    
-    private static func calculateEasedProgress(progress: Double, isStartStop: Bool, isEndStop: Bool) -> Double {
-        if isEndStop {
-            // Slow down when approaching a stop (ease out)
-            return 1 - pow(1 - progress, 2)
-        } else if isStartStop {
-            // Speed up when leaving a stop (ease in)
-            return progress * progress
-        }
         
-        return progress
+        return keyFrames.last!.point
     }
     
     private static func interpolate(
@@ -247,9 +334,19 @@ extension CLLocationCoordinate2D {
     }
     
     func heading(to other: CLLocationCoordinate2D) -> CLLocationDirection {
-        let deltaLon = other.longitude - longitude
-        let y = sin(deltaLon) * cos(other.latitude)
-        let x = cos(latitude) * sin(other.latitude) - sin(latitude) * cos(other.latitude) * cos(deltaLon)
-        return atan2(y, x) * 180 / .pi
+        let deltaLon = other.longitude.degreesToRadians - longitude.degreesToRadians
+        let lat1 = latitude.degreesToRadians
+        let lat2 = other.latitude.degreesToRadians
+        
+        let y = sin(deltaLon) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(deltaLon)
+        let bearing = atan2(y, x).radiansToDegrees
+        
+        return (bearing + 360).truncatingRemainder(dividingBy: 360)
     }
+}
+
+extension Double {
+    var degreesToRadians: Double { self * .pi / 180 }
+    var radiansToDegrees: Double { self * 180 / .pi }
 }
