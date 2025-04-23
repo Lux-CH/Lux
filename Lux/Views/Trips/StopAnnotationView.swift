@@ -84,21 +84,22 @@ struct StopAnnotationView: View {
         .fullScreenCover(isPresented: $showExpandedStop) {
             NavigationStack {
                 createExpandedStopView()
+                    .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
-                            Label(annotation.place.name, systemImage: "signpost.right")
-                                .font(.title3)
-                                .bold()
-                                .labelStyle(.titleAndIcon)
+                            Text(annotation.place.name)
+                                .font(.headline)
+                                .lineLimit(1)
                         }
                         ToolbarItem(placement: .topBarTrailing) {
                             Button {
                                 showExpandedStop = false
                             } label: {
-                                Label("Fermer", systemImage: "xmark")
-                                    .labelStyle(.iconOnly)
+                                Image(systemName: "xmark.circle.fill")
+                                    .symbolRenderingMode(.hierarchical)
+                                    .font(.body)
                             }
-                            .tint(.primary)
+                            .tint(.secondary)
                         }
                     }
             }
@@ -145,9 +146,9 @@ struct StopPopoverView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Image(systemName: "signpost.right")
-                    .foregroundStyle(color)
-                    .padding(.horizontal, 2.5)
+                Circle()
+                    .fill(color)
+                    .frame(width: 8, height: 8)
                 
                 Text(place.name)
                     .font(.headline)
