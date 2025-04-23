@@ -57,10 +57,20 @@ struct DepartureTimeRow: View {
             } else {
                 let hours = minutes / 60
                 let remainingMinutes = minutes % 60
-                if remainingMinutes == 0 {
-                    return "Dans \(hours)h"
+                if hours < 24 {
+                    if remainingMinutes == 0 {
+                        return "Dans \(hours)h"
+                    } else {
+                        return "Dans \(hours)h \(remainingMinutes)min"
+                    }
                 } else {
-                    return "Dans \(hours)h \(remainingMinutes)min"
+                    let days = hours / 24
+                    let remainingHours = hours % 24
+                    var result = "Dans \(days) jour" + (days > 1 ? "s" : "")
+                    if remainingHours > 0 {
+                        result += " \(remainingHours)h"
+                    }
+                    return result
                 }
             }
         }
