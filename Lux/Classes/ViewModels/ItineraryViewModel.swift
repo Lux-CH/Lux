@@ -19,6 +19,8 @@ final class ItineraryViewModel: ObservableObject {
     private var itinerary: Itinerary?
     private let zoomThreshold: CLLocationDistance = 50000
     private var cancellables = Set<AnyCancellable>()
+    private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
+    private var vehicleUpdateTask: Task<Void, Never>?
     
     // MARK: - Published Properties
     
@@ -26,6 +28,7 @@ final class ItineraryViewModel: ObservableObject {
     @Published var mapAnnotations: [StopAnnotation] = []
     @Published var routeOverlays: [RouteOverlay] = []
     @Published var showingIntermediateStops: Bool = true
+    @Published var vehicleAnnotations: [VehicleAnnotation] = []
     @Published var isLoading: Bool = true
     @Published var error: String?
     
@@ -59,19 +62,10 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     func departureTime(for annotation: StopAnnotation) -> Date? {
-        if let dep = annotation.place.departure {
-            return dep
-        }
-        if let schedDep = annotation.place.scheduledDeparture {
-            return schedDep
-        }
-        if let arr = annotation.place.arrival {
-            return arr
-        }
-        if let schedArr = annotation.place.scheduledArrival {
-            return schedArr
-        }
-        return nil
+        annotation.place.departure ??
+        annotation.place.scheduledDeparture ??
+        annotation.place.arrival ??
+        annotation.place.scheduledArrival
     }
     
     // MARK: - Private Methods
@@ -86,6 +80,85 @@ final class ItineraryViewModel: ObservableObject {
         mapAnnotations = annotations
         routeOverlays = overlays
         calculateMapPosition()
+        
+        // Calculate key frames for transit legs
+        prepareVehicleKeyframes(for: itinerary.legs)
+        
+        // Start vehicle position updates
+        startVehicleUpdates()
+    }
+    
+    private func prepareVehicleKeyframes(for legs: [Leg]) {
+        legKeyFrames.removeAll()
+        
+        for leg in legs where leg.mode != .walk && leg.mode != .bike {
+            let legId = getLegIdentifier(leg)
+            let keyFrames = VehicleVisualisation.calculateKeyFrames(for: leg)
+            legKeyFrames[legId] = keyFrames
+        }
+    }
+    
+    private func getLegIdentifier(_ leg: Leg) -> String {
+        "\(leg.routeShortName ?? "")_\(leg.headsign ?? "")"
+    }
+    
+    private func startVehicleUpdates() {
+        stopVehicleUpdates()
+        
+        vehicleUpdateTask = Task {
+            while !Task.isCancelled {
+                updateVehiclePositions()
+                try? await Task.sleep(for: .seconds(2))
+            }
+        }
+    }
+
+    deinit {
+        let task = vehicleUpdateTask
+        
+        Task.detached {
+            task?.cancel()
+        }
+        
+        vehicleUpdateTask = nil
+    }
+    
+    private func stopVehicleUpdates() {
+        vehicleUpdateTask?.cancel()
+        vehicleUpdateTask = nil
+    }
+
+    private func updateVehiclePositions() {
+        guard let itinerary = itinerary else { return }
+        
+        let currentTime = Date()
+        let currentTimeInterval = currentTime.timeIntervalSince1970
+        
+        let newVehicleAnnotations = itinerary.legs.compactMap { leg -> VehicleAnnotation? in
+            // Only consider transit vehicles (not walking or biking)
+            guard leg.mode != .walk && leg.mode != .bike else { return nil }
+            
+            // Skip legs that are already completed or haven't started yet
+            guard leg.startTime <= currentTime && leg.endTime >= currentTime else { return nil }
+            
+            let legId = getLegIdentifier(leg)
+            
+            guard let keyFrames = legKeyFrames[legId],
+                  let position = VehicleVisualisation.interpolatePosition(
+                    at: currentTimeInterval,
+                    using: keyFrames
+                  ) else { return nil }
+            
+            return VehicleAnnotation(
+                id: legId,
+                coordinate: position,
+                mode: leg.mode,
+                routeShortName: leg.routeShortName,
+                color: getLegColor(leg)
+            )
+        }
+        
+        vehicleAnnotations = newVehicleAnnotations
     }
     
     private func createAnnotationsAndOverlays(for itinerary: Itinerary) -> (annotations: [StopAnnotation], overlays: [RouteOverlay]) {
