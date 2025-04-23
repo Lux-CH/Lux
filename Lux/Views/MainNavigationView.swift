@@ -220,14 +220,20 @@ struct MainNavigationView: View {
     
     func toggleViewMode(_ newMode: ViewMode) {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        
+        if newMode == .stops {
+            stopsViewModel.isLoading = true
+        }
+        
         withAnimation(smoothSpring) {
+            viewMode = newMode
             headerHeight = newMode == .home ? 215 : 135
         }
         
         if newMode == .stops {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
                 if !stopsViewModel.isSearchMode {
-                    stopsViewModel.loadNearbyStops(showLoading: true)
+                    stopsViewModel.loadNearbyStops(showLoading: false)
                 }
             }
         } else {
@@ -236,13 +242,15 @@ struct MainNavigationView: View {
     }
     
     func switchToStopsMode() {
+        stopsViewModel.isLoading = true
+        
         withAnimation(smoothSpring) {
             viewMode = .stops
             headerHeight = 135
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
-            stopsViewModel.loadNearbyStops(showLoading: true)
+            stopsViewModel.loadNearbyStops(showLoading: false)
         }
     }
 }
