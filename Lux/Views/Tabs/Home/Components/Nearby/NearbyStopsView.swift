@@ -35,20 +35,19 @@ struct NearbyStopsView: View {
                     .foregroundColor(.gray)
                     .padding()
             } else {
-                ForEach(Array(searchResults.prefix(2).enumerated()), id: \.offset) { index, result in
-                    ZStack {
-                        if index == 1 {
-                            StopView(stop: result, maxGroupsToShow: 3, fromStops: false)
+                VStack(spacing: 2.5) {
+                    ForEach(searchResults.prefix(2)) { result in
+                        let maxGroups = (searchResults.firstIndex(where: { $0.id == result.id }) == 1) ? 2 : 3
+                        
+                        ZStack {
+                            StopView(stop: result, maxGroupsToShow: maxGroups, fromStops: false)
                         }
-                        else {
-                            StopView(stop: result, maxGroupsToShow: 2, fromStops: false)
-                        }
+                        .frame(maxWidth: .infinity)
                     }
-                    .frame(maxWidth: .infinity)
+                    
+                    Divider()
+                        .padding(.horizontal, 20)
                 }
-                Divider()
-                    .padding(.horizontal, 20)
-                    .padding(.top, -10)
             }
         }
         .onAppear {
