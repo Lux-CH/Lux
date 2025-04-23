@@ -10,18 +10,27 @@ import LuxCom
 
 struct IncomingBusView: View {
     let group: GroupedStopTime
+    @Environment(\.colorScheme) var colorScheme
+    
     var body: some View {
         HStack {
             VStack(alignment: .leading) {
-                HStack {
-                    LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus)
-                    Image(systemName: "arrow.right")
-                        .foregroundStyle(Color.primary.opacity(0.3))
-                    Text(group.headsign)
-                        .fontWeight(.regular)
+                NavigationLink(destination: {
+                    if let tripId = group.stopTimes.first?.tripId {
+                        ItineraryView(tripId: tripId)
+                    }
+                }) {
+                    HStack {
+                        LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus)
+                        Image(systemName: "arrow.right")
+                            .foregroundStyle(Color.primary.opacity(0.3))
+                        Text(group.headsign)
+                            .fontWeight(.regular)
+                            .foregroundStyle(colorScheme == .dark ? Color.white: Color.black)
+                    }
+                    .multilineTextAlignment(.leading)
+                    .padding(.bottom, 3)
                 }
-                .multilineTextAlignment(.leading)
-                .padding(.bottom, 3)
                 
                 let displayTrack = group.stopTimes.first {
                     $0.place.track != nil || $0.place.scheduledTrack != nil
@@ -29,7 +38,7 @@ struct IncomingBusView: View {
                 
                 let transport = group.stopTimes.first?.mode.displayName ?? "Bus"
                 
-                Text("\(transport) - Quai \(displayTrack)")
+                Text("\(transport) • Quai \(displayTrack)")
                     .font(.system(size: 11, weight: .medium))
                     .foregroundStyle(Color.primary.opacity(0.5))
                     .multilineTextAlignment(.leading)

@@ -12,35 +12,56 @@ import LuxCom
 struct ItineraryView: View {
     @StateObject private var viewModel: ItineraryViewModel
     
-    init(itinerary: Itinerary) {
-        _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary))
+    init(tripId: String) {
+        _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
     }
     
     var body: some View {
-        Map(position: $viewModel.position) {
-            ForEach(viewModel.mapAnnotations) { annotation in
-                if annotation.isTerminal {
-                    Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                        StopAnnotationView(annotation: annotation, isTerminal: true)
+        ZStack {
+            if viewModel.isLoading {
+                ProgressView("Chargement de l'itinéraire...")
+                    .progressViewStyle(CircularProgressViewStyle())
+            } else if let error = viewModel.error {
+                VStack {
+                    Image(systemName: "exclamationmark.triangle")
+                        .font(.largeTitle)
+                        .foregroundColor(.orange)
+                    Text("Une erreur est survenue lors du chargement de l'itinéraire.")
+                        .font(.headline)
+                    Text(error)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }
+            } else {
+                Map(position: $viewModel.position) {
+                    ForEach(viewModel.mapAnnotations) { annotation in
+                        if annotation.isTerminal {
+                            Annotation(annotation.place.name, coordinate: annotation.coordinate) {
+                                StopAnnotationView(annotation: annotation, isTerminal: true)
+                            }
+                        } else if viewModel.showingIntermediateStops {
+                            Annotation(annotation.place.name, coordinate: annotation.coordinate) {
+                                StopAnnotationView(annotation: annotation, isTerminal: false)
+                            }
+                        }
                     }
-                } else if viewModel.showingIntermediateStops {
-                    Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                        StopAnnotationView(annotation: annotation, isTerminal: false)
+                    
+                    ForEach(viewModel.routeOverlays) { overlay in
+                        MapPolyline(coordinates: overlay.coordinates)
+                            .stroke(overlay.color, lineWidth: 4)
                     }
                 }
-            }
-            
-            ForEach(viewModel.routeOverlays) { overlay in
-                MapPolyline(coordinates: overlay.coordinates)
-                    .stroke(overlay.color, lineWidth: 4)
+                .mapStyle(.standard)
+                .onMapCameraChange { context in
+                    viewModel.updateZoomLevel(distance: context.camera.distance)
+                }
             }
         }
         .mapStyle(.standard)
         .task {
-            viewModel.setupMap()
-        }
-        .onMapCameraChange { context in
-            viewModel.updateZoomLevel(distance: context.camera.distance)
+            await viewModel.loadItinerary()
         }
     }
 }

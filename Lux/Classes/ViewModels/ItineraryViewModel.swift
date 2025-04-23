@@ -15,7 +15,8 @@ import Combine
 final class ItineraryViewModel: ObservableObject {
     // MARK: - Properties
     
-    private let itinerary: Itinerary
+    private let tripId: String
+    private var itinerary: Itinerary?
     private let zoomThreshold: CLLocationDistance = 50000
     private var cancellables = Set<AnyCancellable>()
     
@@ -25,18 +26,32 @@ final class ItineraryViewModel: ObservableObject {
     @Published var mapAnnotations: [StopAnnotation] = []
     @Published var routeOverlays: [RouteOverlay] = []
     @Published var showingIntermediateStops: Bool = true
+    @Published var isLoading: Bool = true
+    @Published var error: String?
     
     // MARK: - Initialization
     
-    init(itinerary: Itinerary) {
-        self.itinerary = itinerary
+    init(tripId: String) {
+        self.tripId = tripId
     }
     
     // MARK: - Public Methods
-    func setupMap() {
-        Task {
-            await processItinerary()
+    func loadItinerary() async {
+        isLoading = true
+        error = nil
+        
+        do {
+            itinerary = try await getTrip(tripId: tripId)
+            if itinerary != nil {
+                await processItinerary()
+            } else {
+                error = "No itinerary data found"
+            }
+        } catch {
+            self.error = error.localizedDescription
         }
+        
+        isLoading = false
     }
     
     func updateZoomLevel(distance: CLLocationDistance) {
@@ -61,14 +76,19 @@ final class ItineraryViewModel: ObservableObject {
     
     // MARK: - Private Methods
     private func processItinerary() async {
-        let (annotations, overlays) = createAnnotationsAndOverlays()
+        guard let itinerary = itinerary else {
+            error = "Missing itinerary data"
+            return
+        }
+        
+        let (annotations, overlays) = createAnnotationsAndOverlays(for: itinerary)
         
         mapAnnotations = annotations
         routeOverlays = overlays
         calculateMapPosition()
     }
     
-    private func createAnnotationsAndOverlays() -> (annotations: [StopAnnotation], overlays: [RouteOverlay]) {
+    private func createAnnotationsAndOverlays(for itinerary: Itinerary) -> (annotations: [StopAnnotation], overlays: [RouteOverlay]) {
         var annotations: [StopAnnotation] = []
         var overlays: [RouteOverlay] = []
         
