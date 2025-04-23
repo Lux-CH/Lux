@@ -25,6 +25,7 @@ enum VehicleVisualisation {
         let point: CLLocationCoordinate2D
         let heading: CLLocationDirection
         let time: TimeInterval
+        let isStop: Bool
     }
     
     // MARK: - KeyFrame Calculation
@@ -34,33 +35,154 @@ enum VehicleVisualisation {
         
         let departureTime = leg.startTime.timeIntervalSince1970
         let arrivalTime = leg.endTime.timeIntervalSince1970
-        let totalDuration = arrivalTime - departureTime
         
-        let totalDistance = zip(coordinates, coordinates.dropFirst())
-            .reduce(0) { $0 + $1.0.distance(to: $1.1) }
+        var stops: [(time: TimeInterval, coordinate: CLLocationCoordinate2D, isArrival: Bool)] = []
         
-        var keyFrames: [KeyFrame] = []
-        var currentDistance: CLLocationDistance = 0
+        stops.append((departureTime, CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon), false))
         
-        for i in 0..<(coordinates.count - 1) {
-            let from = coordinates[i]
-            let to = coordinates[i + 1]
-            let distance = from.distance(to: to)
-            let heading = from.heading(to: to)
-            let ratio = currentDistance / totalDistance
-            let time = departureTime + ratio * totalDuration
-            
-            keyFrames.append(KeyFrame(point: from, heading: heading, time: time))
-            currentDistance += distance
+        if let intermediateStops = leg.intermediateStops {
+            for stop in intermediateStops {
+                if let arrivalTime = stop.arrival?.timeIntervalSince1970 ?? stop.scheduledArrival?.timeIntervalSince1970 {
+                    stops.append((arrivalTime, CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon), true))
+                }
+                
+                if let departureTime = stop.departure?.timeIntervalSince1970 ?? stop.scheduledDeparture?.timeIntervalSince1970 {
+                    stops.append((departureTime, CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon), false))
+                }
+            }
         }
         
-        keyFrames.append(KeyFrame(
-            point: coordinates.last!,
-            heading: keyFrames.last?.heading ?? 0,
-            time: arrivalTime
-        ))
+        stops.append((arrivalTime, CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon), true))
+        
+        stops.sort { $0.time < $1.time }
+        
+        var mappedStops: [(time: TimeInterval, index: Int, isArrival: Bool)] = []
+        
+        for stop in stops {
+            let closestIndex = findClosestPointIndex(coordinates: coordinates, to: stop.coordinate)
+            mappedStops.append((stop.time, closestIndex, stop.isArrival))
+        }
+        
+        var keyFrames: [KeyFrame] = []
+        
+        for i in 0..<(mappedStops.count - 1) {
+            let startStop = mappedStops[i]
+            let endStop = mappedStops[i + 1]
+            
+            if startStop.index == endStop.index && startStop.isArrival && !endStop.isArrival {
+                let point = coordinates[startStop.index]
+                let heading = (i > 0) ? keyFrames.last?.heading ?? 0 :
+                    (startStop.index + 1 < coordinates.count) ?
+                    coordinates[startStop.index].heading(to: coordinates[startStop.index + 1]) : 0
+                
+                keyFrames.append(KeyFrame(
+                    point: point,
+                    heading: heading,
+                    time: startStop.time,
+                    isStop: true
+                ))
+                
+                keyFrames.append(KeyFrame(
+                    point: point,
+                    heading: heading,
+                    time: endStop.time,
+                    isStop: false
+                ))
+                
+                continue
+            }
+            
+            let segmentStartTime = startStop.time
+            let segmentEndTime = endStop.time
+            let segmentDuration = segmentEndTime - segmentStartTime
+            
+            let startIndex = startStop.index
+            let endIndex = endStop.index
+            
+            let increment = startIndex <= endIndex ? 1 : -1
+            let segmentRange = stride(from: startIndex, through: endIndex, by: increment)
+            
+            var segmentCoordinates: [CLLocationCoordinate2D] = []
+            for idx in segmentRange {
+                segmentCoordinates.append(coordinates[idx])
+            }
+            
+            let totalDistance = zip(segmentCoordinates, segmentCoordinates.dropFirst())
+                .reduce(0) { $0 + $1.0.distance(to: $1.1) }
+            
+            if totalDistance > 0 {
+                var currentDistance: CLLocationDistance = 0
+                var previousPoint: CLLocationCoordinate2D? = nil
+                
+                for idx in segmentRange {
+                    let point = coordinates[idx]
+                    
+                    if let prevPoint = previousPoint {
+                        let distance = prevPoint.distance(to: point)
+                        currentDistance += distance
+                        
+                        let ratio = currentDistance / totalDistance
+                        let time = segmentStartTime + ratio * segmentDuration
+                        
+                        let heading = prevPoint.heading(to: point)
+                        
+                        if idx != startIndex || keyFrames.isEmpty {
+                            keyFrames.append(KeyFrame(
+                                point: point,
+                                heading: heading,
+                                time: time,
+                                isStop: idx == endIndex && endStop.isArrival
+                            ))
+                        }
+                    } else if idx == startIndex {
+                        let heading = (idx + increment >= 0 && idx + increment < coordinates.count) ?
+                            point.heading(to: coordinates[idx + increment]) :
+                            keyFrames.last?.heading ?? 0
+                        
+                        keyFrames.append(KeyFrame(
+                            point: point,
+                            heading: heading,
+                            time: segmentStartTime,
+                            isStop: startStop.isArrival
+                        ))
+                    }
+                    
+                    previousPoint = point
+                }
+            } else {
+                let heading = keyFrames.last?.heading ?? 0
+                keyFrames.append(KeyFrame(
+                    point: coordinates[startIndex],
+                    heading: heading,
+                    time: segmentStartTime,
+                    isStop: startStop.isArrival
+                ))
+                
+                keyFrames.append(KeyFrame(
+                    point: coordinates[endIndex],
+                    heading: heading,
+                    time: segmentEndTime,
+                    isStop: endStop.isArrival
+                ))
+            }
+        }
         
         return keyFrames
+    }
+    
+    private static func findClosestPointIndex(coordinates: [CLLocationCoordinate2D], to target: CLLocationCoordinate2D) -> Int {
+        var closestDistance = Double.infinity
+        var closestIndex = 0
+        
+        for (index, coordinate) in coordinates.enumerated() {
+            let distance = coordinate.distance(to: target)
+            if distance < closestDistance {
+                closestDistance = distance
+                closestIndex = index
+            }
+        }
+        
+        return closestIndex
     }
     
     // MARK: - Real-Time Position Interpolation
@@ -73,12 +195,37 @@ enum VehicleVisualisation {
         for i in 1..<keyFrames.count {
             let startFrame = keyFrames[i - 1]
             let endFrame = keyFrames[i]
+            
             if timestamp >= startFrame.time && timestamp <= endFrame.time {
-                let progress = (timestamp - startFrame.time) / (endFrame.time - startFrame.time)
-                return interpolate(from: startFrame.point, to: endFrame.point, progress: progress)
+                let segmentDuration = endFrame.time - startFrame.time
+                let progress = (timestamp - startFrame.time) / segmentDuration
+                
+                let easedProgress = calculateEasedProgress(
+                    progress: progress,
+                    isStartStop: startFrame.isStop,
+                    isEndStop: endFrame.isStop
+                )
+                
+                return interpolate(
+                    from: startFrame.point,
+                    to: endFrame.point,
+                    progress: easedProgress
+                )
             }
         }
         return nil
+    }
+    
+    private static func calculateEasedProgress(progress: Double, isStartStop: Bool, isEndStop: Bool) -> Double {
+        if isEndStop {
+            // Slow down when approaching a stop (ease out)
+            return 1 - pow(1 - progress, 2)
+        } else if isStartStop {
+            // Speed up when leaving a stop (ease in)
+            return progress * progress
+        }
+        
+        return progress
     }
     
     private static func interpolate(
