@@ -43,6 +43,22 @@ final class ItineraryViewModel: ObservableObject {
         showingIntermediateStops = distance < zoomThreshold
     }
     
+    func departureTime(for annotation: StopAnnotation) -> Date? {
+        if let dep = annotation.place.departure {
+            return dep
+        }
+        if let schedDep = annotation.place.scheduledDeparture {
+            return schedDep
+        }
+        if let arr = annotation.place.arrival {
+            return arr
+        }
+        if let schedArr = annotation.place.scheduledArrival {
+            return schedArr
+        }
+        return nil
+    }
+    
     // MARK: - Private Methods
     private func processItinerary() async {
         let (annotations, overlays) = createAnnotationsAndOverlays()
@@ -87,7 +103,7 @@ final class ItineraryViewModel: ObservableObject {
         case .walk: return .blue
         case .bike, .car: return .gray
         default: return leg.routeShortName
-            .flatMap { LineColors.color(for: $0) } ?? .accentColor
+                .flatMap { LineColors.color(for: $0) } ?? .accentColor
         }
     }
     
