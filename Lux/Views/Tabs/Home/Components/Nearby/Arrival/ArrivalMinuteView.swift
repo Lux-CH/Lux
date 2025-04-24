@@ -64,7 +64,7 @@ struct ArrivalMinuteView: View {
                 return "<1'"
             }
         } else {
-            let minutes = secondsDifference / 60
+            let minutes = Int(ceil(Double(secondsDifference) / 60.0))
             if minutes < 100 {
                 return "\(minutes)'"
             } else {
@@ -74,7 +74,27 @@ struct ArrivalMinuteView: View {
     }
     
     private var shouldBlink: Bool {
-        return timeDifferenceInSeconds <= 30
+        switch incomingStop.mode {
+        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail:
+            let arrival = incomingStop.place.arrival ?? incomingStop.place.scheduledArrival
+            let departure = incomingStop.place.departure ?? incomingStop.place.scheduledDeparture
+            
+            if arrival != departure {
+                if let arrival = arrival, let departure = departure {
+                    let now = Date()
+                    return now >= arrival && now <= departure
+                } else {
+                    return false
+                }
+            } else {
+                let secondsDiff = timeDifferenceInSeconds
+                return secondsDiff <= 50 && secondsDiff >= -50
+            }
+            
+        default:
+            let secondsDiff = timeDifferenceInSeconds
+            return secondsDiff <= 20 && secondsDiff >= -20
+        }
     }
     
     private var isVisibleNow: Bool {

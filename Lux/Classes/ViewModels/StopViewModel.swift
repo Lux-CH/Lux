@@ -61,7 +61,7 @@ class StopViewModel: ObservableObject {
                     }
                 }
             
-            departureCheckTimer = Timer.publish(every: 5, on: .main, in: .common)
+            departureCheckTimer = Timer.publish(every: 1, on: .main, in: .common)
                 .autoconnect()
                 .sink { [weak self] _ in
                     Task { @MainActor [weak self] in
@@ -207,6 +207,46 @@ class StopViewModel: ObservableObject {
         }
         
         let now = Date()
+        var needsRefresh = false
+
+        for routeName in routeNames {
+            guard var groups = routeGroups[routeName], !groups.isEmpty else { continue }
+            
+            var groupsModified = false
+            
+            for groupIndex in 0..<groups.count {
+                let group = groups[groupIndex]
+                
+                let filteredStopTimes = group.stopTimes.filter { stopTime in
+                    guard let departure = stopTime.place.departure else { return true }
+                    return departure.addingTimeInterval(20.0) > now
+                }
+                
+                if filteredStopTimes.count != group.stopTimes.count {
+                    if !filteredStopTimes.isEmpty {
+                        groups[groupIndex] = GroupedStopTime(
+                            routeShortName: group.routeShortName,
+                            headsign: group.headsign,
+                            stopTimes: filteredStopTimes
+                        )
+                        groupsModified = true
+                    } else {
+                        groups.remove(at: groupIndex)
+                        groupsModified = true
+                        break
+                    }
+                }
+            }
+            
+            if groupsModified {
+                if groups.isEmpty {
+                    routeGroups.removeValue(forKey: routeName)
+                    needsRefresh = true
+                } else {
+                    routeGroups[routeName] = groups
+                }
+            }
+        }
         
         outerLoop: for (_, groups) in routeGroups {
             guard !groups.isEmpty else { continue }
@@ -214,11 +254,28 @@ class StopViewModel: ObservableObject {
             for group in groups {
                 if let firstStopTime = group.stopTimes.first,
                    let arrival = firstStopTime.place.departure,
-                   arrival < now {
-                    Task {
-                        await refreshDepartures(showLoading: false)
-                    }
+                   arrival.addingTimeInterval(20.0) < now {
+                    needsRefresh = true
                     break outerLoop
+                }
+            }
+        }
+        
+        if needsRefresh {
+            let currentRouteNames = Set(routeGroups.keys)
+            let previousRouteNames = Set(routeNames)
+            
+            if currentRouteNames != previousRouteNames {
+                self.routeNames = Array(currentRouteNames).sorted { routeA, routeB in
+                    routeOrder[routeA] ?? Int.max < routeOrder[routeB] ?? Int.max
+                }
+            }
+            
+            for routeName in currentRouteNames {
+                if let groupCount = routeGroups[routeName]?.count,
+                   let currentPage = currentPages[routeName],
+                   currentPage >= groupCount && groupCount > 0 {
+                    currentPages[routeName] = groupCount - 1
                 }
             }
         }
@@ -226,7 +283,13 @@ class StopViewModel: ObservableObject {
     
     @MainActor
     private func groupStopTimes(_ stopTimes: [StopTime]) {
-        let routeGroups = Dictionary(grouping: stopTimes) { $0.routeShortName }
+        let now = Date()
+        let filteredStopTimes = stopTimes.filter { stopTime in
+            guard let departure = stopTime.place.departure else { return true }
+            return departure.addingTimeInterval(20.0) > now
+        }
+        
+        let routeGroups = Dictionary(grouping: filteredStopTimes) { $0.routeShortName }
         
         var result: [String: [GroupedStopTime]] = [:]
         var newCurrentPages: [String: Int] = [:]
