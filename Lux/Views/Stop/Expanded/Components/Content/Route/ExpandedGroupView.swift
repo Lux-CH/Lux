@@ -17,7 +17,7 @@ struct ExpandedGroupView: View {
     var body: some View {
         NavigationLink(destination: {
             if let tripId = group.stopTimes.first?.tripId {
-                ItineraryView(tripId: tripId)
+                ItineraryView(tripId: tripId, fromNearby: false)
             }
         }) {
             VStack(alignment: .leading, spacing: 5) {

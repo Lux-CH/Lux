@@ -15,7 +15,7 @@ struct IncomingBusView: View {
     var body: some View {
         NavigationLink(destination: {
             if let tripId = group.stopTimes.first?.tripId {
-                ItineraryView(tripId: tripId)
+                ItineraryView(tripId: tripId, fromNearby: true)
             }
         }) {
             HStack {

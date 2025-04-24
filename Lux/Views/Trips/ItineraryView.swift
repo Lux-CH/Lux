@@ -12,9 +12,11 @@ import LuxCom
 struct ItineraryView: View {
     @StateObject private var viewModel: ItineraryViewModel
     @EnvironmentObject var locationManager: LocationManager
+    let fromNearby: Bool
     
-    init(tripId: String) {
+    init(tripId: String, fromNearby: Bool) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
+        self.fromNearby = fromNearby
     }
     
     var body: some View {
@@ -74,6 +76,13 @@ struct ItineraryView: View {
         }
         .task {
             await viewModel.loadItinerary()
+        }
+        .onChange(of: viewModel.isLoading) { _, newValue in
+            if !newValue {
+                if fromNearby, let userLocation = locationManager.location?.coordinate {
+                    viewModel.position = .camera(MapCamera(centerCoordinate: userLocation, distance: 10000))
+                }
+            }
         }
     }
 }
