@@ -15,12 +15,12 @@ struct ExpandedGroupView: View {
     var animation: Namespace.ID
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
-            NavigationLink(destination: {
-                if let tripId = group.stopTimes.first?.tripId {
-                    ItineraryView(tripId: tripId)
-                }
-            }) {
+        NavigationLink(destination: {
+            if let tripId = group.stopTimes.first?.tripId {
+                ItineraryView(tripId: tripId)
+            }
+        }) {
+            VStack(alignment: .leading, spacing: 5) {
                 HStack {
                     LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus)
                         .matchedGeometryEffect(id: "pill_\(group.id)", in: animation)
@@ -29,12 +29,15 @@ struct ExpandedGroupView: View {
                         .lineLimit(1)
                         .foregroundStyle(colorScheme == .dark ? Color.white: Color.black)
                     Spacer()
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(Color.secondary.opacity(0.6))
                 }
-            }
-            
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(Array(group.stopTimes.prefix(4).enumerated()), id: \.element.id) { index, stopTime in
-                    DepartureTimeRow(stopTime: stopTime, animateIn: $animateIn, index: index)
+                
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(Array(group.stopTimes.prefix(4).enumerated()), id: \.element.id) { index, stopTime in
+                        DepartureTimeRow(stopTime: stopTime, animateIn: $animateIn, index: index)
+                    }
                 }
             }
         }
