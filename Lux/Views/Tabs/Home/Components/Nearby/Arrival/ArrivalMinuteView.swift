@@ -75,7 +75,7 @@ struct ArrivalMinuteView: View {
     
     private var shouldBlink: Bool {
         switch incomingStop.mode {
-        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail:
+        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .ferry:
             let arrival = incomingStop.place.arrival ?? incomingStop.place.scheduledArrival
             let departure = incomingStop.place.departure ?? incomingStop.place.scheduledDeparture
             
