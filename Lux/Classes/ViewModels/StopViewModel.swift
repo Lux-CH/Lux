@@ -200,6 +200,15 @@ class StopViewModel: ObservableObject {
         }
     }
     
+    private func bufferTimeForTransport(_ stopTime: StopTime) -> TimeInterval {
+        switch stopTime.mode {
+        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail:
+            return 50.0
+        default:
+            return 20.0
+        }
+    }
+    
     @MainActor
     func checkAndHandleDepartures() {
         if fromStops {
@@ -219,7 +228,7 @@ class StopViewModel: ObservableObject {
                 
                 let filteredStopTimes = group.stopTimes.filter { stopTime in
                     guard let departure = stopTime.place.departure else { return true }
-                    return departure.addingTimeInterval(20.0) > now
+                    return departure.addingTimeInterval(bufferTimeForTransport(stopTime)) > now
                 }
                 
                 if filteredStopTimes.count != group.stopTimes.count {
@@ -253,8 +262,9 @@ class StopViewModel: ObservableObject {
             
             for group in groups {
                 if let firstStopTime = group.stopTimes.first,
-                   let arrival = firstStopTime.place.departure,
-                   arrival.addingTimeInterval(20.0) < now {
+                   let departure = firstStopTime.place.departure,
+                   let bufferTime = group.stopTimes.first.map(bufferTimeForTransport),
+                   departure.addingTimeInterval(bufferTime) < now {
                     needsRefresh = true
                     break outerLoop
                 }
@@ -286,7 +296,7 @@ class StopViewModel: ObservableObject {
         let now = Date()
         let filteredStopTimes = stopTimes.filter { stopTime in
             guard let departure = stopTime.place.departure else { return true }
-            return departure.addingTimeInterval(20.0) > now
+            return departure.addingTimeInterval(bufferTimeForTransport(stopTime)) > now
         }
         
         let routeGroups = Dictionary(grouping: filteredStopTimes) { $0.routeShortName }
