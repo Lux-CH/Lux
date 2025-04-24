@@ -247,12 +247,13 @@ enum VehicleVisualisation {
         }
     }
     
+    // https://easings.net/fr
     private static func easeInQuad(_ x: Double) -> Double {
         return x*x // we could also have used pow
     }
     
     private static func easeOutQuad(_ x: Double) -> Double {
-        return 2*x - x*x
+        return 1 - (1 - x) * (1 - x)
     }
     
     private static func findClosestPointIndex(coordinates: [CLLocationCoordinate2D], to target: CLLocationCoordinate2D) -> Int {
