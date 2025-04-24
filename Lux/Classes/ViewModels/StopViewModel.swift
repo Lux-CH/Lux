@@ -202,10 +202,18 @@ class StopViewModel: ObservableObject {
     
     private func bufferTimeForTransport(_ stopTime: StopTime) -> TimeInterval {
         switch stopTime.mode {
-        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail:
-            return 50.0
+        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .ferry:
+            if let arrival = stopTime.place.arrival,
+                  let departure = stopTime.place.departure,
+               arrival != departure {
+                let timeDifference = departure.timeIntervalSince(arrival)
+                if timeDifference > 0 {
+                    return timeDifference
+                }
+            }
+            return 60.0
         default:
-            return 20.0
+            return 40.0
         }
     }
     
