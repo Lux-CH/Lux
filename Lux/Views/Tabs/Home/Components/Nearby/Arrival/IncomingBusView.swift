@@ -13,13 +13,13 @@ struct IncomingBusView: View {
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                NavigationLink(destination: {
-                    if let tripId = group.stopTimes.first?.tripId {
-                        ItineraryView(tripId: tripId)
-                    }
-                }) {
+        NavigationLink(destination: {
+            if let tripId = group.stopTimes.first?.tripId {
+                ItineraryView(tripId: tripId)
+            }
+        }) {
+            HStack {
+                VStack(alignment: .leading) {
                     HStack {
                         LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus)
                         Image(systemName: "arrow.right")
@@ -30,26 +30,26 @@ struct IncomingBusView: View {
                     }
                     .multilineTextAlignment(.leading)
                     .padding(.bottom, 3)
+                    
+                    let displayTrack = group.stopTimes.first {
+                        $0.place.track != nil || $0.place.scheduledTrack != nil
+                    }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? "inconnu"
+                    
+                    let transport = group.stopTimes.first?.mode.displayName ?? "Bus"
+                    
+                    Text("\(transport) • Quai \(displayTrack)")
+                        .font(.system(size: 11, weight: .medium))
+                        .foregroundStyle(Color.primary.opacity(0.5))
+                        .multilineTextAlignment(.leading)
                 }
-                
-                let displayTrack = group.stopTimes.first {
-                    $0.place.track != nil || $0.place.scheduledTrack != nil
-                }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? "inconnu"
-                
-                let transport = group.stopTimes.first?.mode.displayName ?? "Bus"
-                
-                Text("\(transport) • Quai \(displayTrack)")
-                    .font(.system(size: 11, weight: .medium))
-                    .foregroundStyle(Color.primary.opacity(0.5))
-                    .multilineTextAlignment(.leading)
-            }
-            Spacer()
-            VStack(alignment: .trailing) {
-                if let firstStop = group.stopTimes.first {
-                    ArrivalMinuteView(incomingStop: firstStop)
-                }
-                if group.stopTimes.count > 1 {
-                    ArrivalMinuteView(incomingStop: group.stopTimes[1])
+                Spacer()
+                VStack(alignment: .trailing) {
+                    if let firstStop = group.stopTimes.first {
+                        ArrivalMinuteView(incomingStop: firstStop)
+                    }
+                    if group.stopTimes.count > 1 {
+                        ArrivalMinuteView(incomingStop: group.stopTimes[1])
+                    }
                 }
             }
         }
