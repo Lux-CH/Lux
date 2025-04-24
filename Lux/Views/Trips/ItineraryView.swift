@@ -12,6 +12,7 @@ import LuxCom
 struct ItineraryView: View {
     @StateObject private var viewModel: ItineraryViewModel
     @EnvironmentObject var locationManager: LocationManager
+    @Environment(\.dismiss) private var dismiss
     let fromNearby: Bool
     
     init(tripId: String, fromNearby: Bool) {
@@ -65,12 +66,42 @@ struct ItineraryView: View {
                 }
                 .mapStyle(.standard)
                 .mapControls {
-                    MapUserLocationButton()
-                    MapCompass()
                     MapScaleView()
                 }
                 .onMapCameraChange { context in
                     viewModel.updateZoomLevel(distance: context.camera.distance)
+                }
+                .overlay(alignment: .trailing) {
+                    VStack(spacing: 12) {
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            Image(systemName: "xmark")
+                                .font(.headline)
+                                .foregroundColor(.accentColor)
+                                .frame(width: 45, height: 45)
+                                .background(.ultraThickMaterial)
+                                .clipShape(Circle())
+                                .shadow(radius: 2)
+                        }
+                        
+                        Button(action: {
+                            if let userLocation = locationManager.location?.coordinate {
+                                viewModel.position = .camera(MapCamera(centerCoordinate: userLocation, distance: 10000))
+                            }
+                        }) {
+                            Image(systemName: "location.fill")
+                                .font(.headline)
+                                .foregroundColor(.accentColor)
+                                .frame(width: 45, height: 45)
+                                .background(.ultraThickMaterial)
+                                .clipShape(Circle())
+                                .shadow(radius: 2)
+                        }
+                        Spacer()
+                    }
+                    .padding(.trailing, 16)
+//                    .padding(.top, 16)
                 }
             }
         }

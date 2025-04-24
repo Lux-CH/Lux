@@ -16,6 +16,8 @@ struct IncomingBusView: View {
         NavigationLink(destination: {
             if let tripId = group.stopTimes.first?.tripId {
                 ItineraryView(tripId: tripId, fromNearby: true)
+                    .toolbarBackground(.hidden, for: .navigationBar)
+                    .navigationBarBackButtonHidden(true)
             }
         }) {
             HStack {
