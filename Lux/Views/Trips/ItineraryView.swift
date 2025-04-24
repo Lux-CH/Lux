@@ -11,6 +11,7 @@ import LuxCom
 
 struct ItineraryView: View {
     @StateObject private var viewModel: ItineraryViewModel
+    @EnvironmentObject var locationManager: LocationManager
     
     init(tripId: String) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
@@ -36,6 +37,7 @@ struct ItineraryView: View {
                 }
             } else {
                 Map(position: $viewModel.position) {
+                    UserAnnotation()
                     ForEach(viewModel.mapAnnotations) { annotation in
                         if annotation.isTerminal {
                             Annotation(annotation.place.name, coordinate: annotation.coordinate) {
@@ -60,6 +62,11 @@ struct ItineraryView: View {
                     }
                 }
                 .mapStyle(.standard)
+                .mapControls {
+                    MapUserLocationButton()
+                    MapCompass()
+                    MapScaleView()
+                }
                 .onMapCameraChange { context in
                     viewModel.updateZoomLevel(distance: context.camera.distance)
                 }
