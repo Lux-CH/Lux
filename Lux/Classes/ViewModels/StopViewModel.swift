@@ -318,10 +318,7 @@ class StopViewModel: ObservableObject {
                         stopTimes: sortedTimes
                     )
                 }
-                .sorted {
-                    ($0.stopTimes.first?.place.departure ?? Date.distantFuture) <
-                        ($1.stopTimes.first?.place.departure ?? Date.distantFuture)
-                }
+                .sorted { $0.headsign < $1.headsign }
             
             result[routeName] = groupsByHeadsign
             
