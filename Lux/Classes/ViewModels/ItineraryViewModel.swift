@@ -16,7 +16,6 @@ final class ItineraryViewModel: ObservableObject {
     // MARK: - Properties
     
     private let tripId: String
-    private var itinerary: Itinerary?
     private let zoomThreshold: CLLocationDistance = 50000
     private var cancellables = Set<AnyCancellable>()
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
@@ -24,6 +23,7 @@ final class ItineraryViewModel: ObservableObject {
     
     // MARK: - Published Properties
     
+    @Published var itinerary: Itinerary?
     @Published var position: MapCameraPosition = .automatic
     @Published var mapAnnotations: [StopAnnotation] = []
     @Published var routeOverlays: [RouteOverlay] = []

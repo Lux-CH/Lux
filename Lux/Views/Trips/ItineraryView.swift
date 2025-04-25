@@ -13,6 +13,7 @@ struct ItineraryView: View {
     @StateObject private var viewModel: ItineraryViewModel
     @EnvironmentObject var locationManager: LocationManager
     @Environment(\.dismiss) private var dismiss
+    @State private var showDetails: Bool = true
     let fromNearby: Bool
     
     init(tripId: String, fromNearby: Bool) {
@@ -67,16 +68,21 @@ struct ItineraryView: View {
                 .mapStyle(.standard)
                 .mapControls {
                     MapScaleView()
+                    
+                }
+                .safeAreaInset(edge: .bottom) {
+                    Spacer().frame(height: 72.5)
                 }
                 .onMapCameraChange { context in
                     viewModel.updateZoomLevel(distance: context.camera.distance)
                 }
-                .overlay(alignment: .trailing) {
+                .overlay(alignment: .leading) {
                     VStack(spacing: 12) {
                         Button(action: {
+                            showDetails = false
                             dismiss()
                         }) {
-                            Image(systemName: "xmark")
+                            Image(systemName: "chevron.backward")
                                 .font(.headline)
                                 .foregroundColor(.accentColor)
                                 .frame(width: 45, height: 45)
@@ -100,8 +106,16 @@ struct ItineraryView: View {
                         }
                         Spacer()
                     }
-                    .padding(.trailing, 16)
-//                    .padding(.top, 16)
+                    .padding(.leading, 16)
+                    // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
+                    .sheet(isPresented: $showDetails) {
+                        ItineraryDetailSheet(itinerary: viewModel.itinerary)
+                            .presentationDetents([.fraction(0.1), .medium, .large])
+                            .presentationDragIndicator(.visible)
+                            .presentationCornerRadius(38)
+                            .presentationBackgroundInteraction(.enabled)
+                            .interactiveDismissDisabled()
+                    }
                 }
             }
         }
