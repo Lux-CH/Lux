@@ -45,11 +45,11 @@ struct ItineraryView: View {
                     ForEach(viewModel.mapAnnotations) { annotation in
                         if annotation.isTerminal {
                             Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                                StopAnnotationView(annotation: annotation, isTerminal: true)
+                                StopAnnotationView(annotation: annotation, isTerminal: true, showSheet: $showDetails)
                             }
                         } else if viewModel.showingIntermediateStops {
                             Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                                StopAnnotationView(annotation: annotation, isTerminal: false)
+                                StopAnnotationView(annotation: annotation, isTerminal: false, showSheet: $showDetails)
                             }
                         }
                     }

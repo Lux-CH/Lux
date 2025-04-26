@@ -31,6 +31,7 @@ struct StopAnnotationView: View {
     let isTerminal: Bool
     @State private var showPopover = false
     @State private var showExpandedStop = false
+    @Binding var showSheet: Bool
     
     private let circleSize: CGFloat = 16
     private let terminalSize: CGFloat = 20
@@ -47,6 +48,7 @@ struct StopAnnotationView: View {
                 .onTapGesture {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
                         isAnimating = true
+                        showSheet = false
                     }
                     
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
@@ -102,6 +104,16 @@ struct StopAnnotationView: View {
                             .tint(.secondary)
                         }
                     }
+            }
+        }
+        .onChange(of: showPopover) {
+            if !showPopover && !showExpandedStop {
+                showSheet = true
+            }
+        }
+        .onChange(of: showExpandedStop) {
+            if !showExpandedStop {
+                showSheet = true
             }
         }
     }
