@@ -190,15 +190,7 @@ final class ItineraryViewModel: ObservableObject {
         }
         return (annotations, overlays)
     }
-    
-    private func getLegColor(_ leg: Leg) -> Color {
-        switch leg.mode {
-        case .walk: return .blue
-        case .bike, .car: return .gray
-        default: return leg.routeShortName
-                .flatMap { LineColors.color(for: $0) } ?? .accentColor
-        }
-    }
+
     
     private func createRouteOverlay(for leg: Leg, withColor color: Color) -> RouteOverlay? {
         let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e7)
@@ -227,5 +219,23 @@ final class ItineraryViewModel: ObservableObject {
         
         let padding = 0.2
         position = .rect(mapRect.insetBy(dx: -mapRect.width * padding/2, dy: -mapRect.height * padding/2))
+    }
+}
+
+func getLegColor(_ leg: Leg) -> Color {
+    switch leg.mode {
+    case .walk:
+        return .blue
+    case .bike, .car:
+        return .gray
+    default:
+        if let routeName = leg.routeShortName,
+           let color = LineColors.color(for: routeName) {
+            return color
+        } else if leg.mode == .rail || leg.mode == .highSpeedRail || leg.mode == .regionalRail || leg.mode == .regionalFastRail {
+            return .red
+        } else {
+            return .accentColor
+        }
     }
 }
