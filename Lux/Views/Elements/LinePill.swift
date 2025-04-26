@@ -11,6 +11,9 @@ import LuxCom
 struct LinePill: View {
     let line: String
     let mode: TransportationMode
+    var width: CGFloat = 30
+    var height: CGFloat = 20
+    var fontSize: CGFloat = 11
     
     private var isSquared: Bool {
         mode == .regionalRail || mode == .ferry
@@ -31,10 +34,10 @@ struct LinePill: View {
         ZStack {
             RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
                 .fill(lineColor.opacity(0.25))
-                .frame(width: 30, height: 20)
+                .frame(width: width, height: height)
             
             Text(formattedLine)
-                .font(.custom("NimbusSansBeckerPBla", size: 11))
+                .font(.custom("NimbusSansBeckerPBla", size: fontSize))
                 .foregroundColor(lineColor == .black ? .white : lineColor)
                 .multilineTextAlignment(.center)
         }
