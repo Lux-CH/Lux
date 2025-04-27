@@ -85,7 +85,7 @@ struct StopAnnotationView: View {
         }
         .fullScreenCover(isPresented: $showExpandedStop) {
             NavigationStack {
-                createExpandedStopView()
+                createExpandedStopView(stop: annotation.place)
                     .navigationBarTitleDisplayMode(.inline)
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
@@ -126,25 +126,6 @@ struct StopAnnotationView: View {
         } else {
             return circleSize
         }
-    }
-    
-    private func createExpandedStopView() -> some View {
-        let searchResult = SearchResult(
-            type: .stop,
-            tokens: [[]],
-            name: annotation.place.name,
-            id: annotation.place.stopId ?? "",
-            lat: annotation.place.lat,
-            lon: annotation.place.lon,
-            level: Double(annotation.place.level),
-            street: nil,
-            houseNumber: nil,
-            zip: nil,
-            areas: [],
-            score: 1.0
-        )
-        return ExpandedStopView(viewModel: StopViewModel(stop: searchResult, fromStops: true), maxGroupsToShow: 50)
-            .background(Color(.secondarySystemBackground))
     }
 }
 
