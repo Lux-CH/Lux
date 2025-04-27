@@ -1,0 +1,104 @@
+//
+//  ItineraryStopTimelineView.swift
+//  Lux
+//
+//  Created by Constantin Clerc on 27.04.2025.
+//
+
+import SwiftUI
+import LuxCom
+
+struct ItineraryStopTimelineView: View {
+    let stops: [Place]
+    let legColor: Color
+    let fromStop: Place
+    let toStop: Place
+    
+    var body: some View {
+        TimelineView(.periodic(from: .now, by: 10)) { timeline in
+            LazyVStack(spacing: 0) {
+                ForEach(Array(stops.enumerated()), id: \.element.stopId) { index, stop in
+                    ItineraryStopTimelineRowView(
+                        stop: stop,
+                        legColor: legColor,
+                        isFirstStop: index == 0,
+                        isLastStop: index == stops.count - 1,
+                        isDepartureStop: stop.name == fromStop.name,
+                        isArrivalStop: stop.name == toStop.name,
+                        currentDate: timeline.date
+                    )
+                    .id(stop.stopId)
+                }
+            }
+        }
+    }
+}
+
+struct ItineraryStopTimelineRowView: View {
+    let stop: Place
+    let legColor: Color
+    let isFirstStop: Bool
+    let isLastStop: Bool
+    let isDepartureStop: Bool
+    let isArrivalStop: Bool
+    let currentDate: Date
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var showingStopDetail = false
+    
+    private var stopStatus: StopStatus {
+        calculateStopStatus(stop: stop, currentDate: currentDate)
+    }
+    
+    var body: some View {
+        Button {
+            showingStopDetail = true
+        } label: {
+            HStack(alignment: .center, spacing: 0) {
+                TimelineIndicatorView(
+                    legColor: legColor,
+                    isFirstStop: isFirstStop,
+                    isLastStop: isLastStop,
+                    isDepartureStop: isDepartureStop,
+                    isArrivalStop: isArrivalStop,
+                    isCurrentStop: stopStatus.isCurrentStop,
+                )
+                .frame(width: 60)
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(stop.name)
+                        .font(.system(size: 17, weight: stopStatus.isCurrentStop ? .bold : .medium))
+                        .foregroundColor(.primary)
+                    
+                    ItineraryStopTimeView(
+                        stop: stop,
+                        stopStatus: stopStatus,
+                        legColor: legColor,
+                        isDepartureStop: isDepartureStop,
+                        isArrivalStop: isArrivalStop
+                    )
+                }
+                .padding(.vertical, 16)
+                
+                Spacer()
+                
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.secondary.opacity(0.5))
+                    .padding(.trailing, 20)
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(stopStatus.isCurrentStop ?
+                      (colorScheme == .dark ? Color(.systemGray6) : Color(.systemGray5).opacity(0.5)) :
+                        Color.clear)
+                .padding(.horizontal, 8)
+        )
+        .fullScreenCover(isPresented: $showingStopDetail) {
+            ItineraryStopDetailView(stop: stop)
+        }
+    }
+}
