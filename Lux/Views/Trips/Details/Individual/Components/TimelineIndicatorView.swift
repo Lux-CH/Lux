@@ -14,7 +14,6 @@ struct TimelineIndicatorView: View {
     let isDepartureStop: Bool
     let isArrivalStop: Bool
     let isCurrentStop: Bool
-    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         ZStack(alignment: .center) {
@@ -32,28 +31,27 @@ struct TimelineIndicatorView: View {
                     .offset(y: 18)
             }
             
-            ZStack {
+            if isDepartureStop || isArrivalStop || isCurrentStop {
                 Circle()
-                    .fill(colorScheme == .dark ? Color(.systemGray6) : .white)
-                    .frame(width: isCurrentStop ? 32 : 26, height: isCurrentStop ? 32 : 26)
-                    .shadow(color: .black.opacity(0.15), radius: 2, x: 0, y: 1)
+                    .fill(isCurrentStop ? Color.accentColor.opacity(0.15) : Color.clear)
+                    .frame(width: 24, height: 24)
                 
-                if isDepartureStop || isArrivalStop || isCurrentStop {
-                    Circle()
-                        .strokeBorder(isCurrentStop ? .accentColor : legColor, lineWidth: 2.5)
-                        .background(Circle().fill(isCurrentStop ? Color.accentColor.opacity(0.15) : .clear))
-                        .frame(width: isCurrentStop ? 24 : 20, height: isCurrentStop ? 24 : 20)
-                    
-                    Image(systemName: isDepartureStop ? "arrow.up.circle.fill" :
-                            isArrivalStop ? "flag.circle.fill" : "bus.fill")
-                    .font(.system(size: isCurrentStop ? 12 : 10))
+                Image(systemName: symbolName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 22, height: 22)
                     .foregroundColor(isCurrentStop ? .accentColor : legColor)
-                } else {
-                    Circle()
-                        .fill(legColor)
-                        .frame(width: 16, height: 16)
-                }
+            } else {
+                Circle()
+                    .fill(legColor)
+                    .frame(width: 16, height: 16)
             }
         }
+    }
+    
+    private var symbolName: String {
+        if isDepartureStop { return "arrow.up.circle.fill" }
+        if isArrivalStop { return "flag.circle.fill" }
+        return "bus.fill"
     }
 }
