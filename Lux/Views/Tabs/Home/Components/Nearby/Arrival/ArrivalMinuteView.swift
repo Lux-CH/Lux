@@ -47,13 +47,13 @@ struct ArrivalMinuteView: View {
     }
     
     private var timeDifferenceInSeconds: Int {
-        let arrival = incomingStop.place.departure ?? now
+        let arrival = incomingStop.place.departure ?? incomingStop.place.arrival ?? now
         return Int(arrival.timeIntervalSince(now))
     }
     
     private var displayText: String {
         let secondsDifference = timeDifferenceInSeconds
-        let arrival = incomingStop.place.departure ?? now
+        let arrival = incomingStop.place.departure ?? incomingStop.place.arrival ?? now
         
         let isNextDay = !calendar.isDate(arrival, inSameDayAs: now)
         
@@ -102,8 +102,8 @@ struct ArrivalMinuteView: View {
     }
     
     private var latenessColor: Color {
-        let scheduledArrival = incomingStop.place.scheduledDeparture ?? Date()
-        let arrival = incomingStop.place.departure ?? Date()
+        let scheduledArrival = incomingStop.place.scheduledDeparture ?? incomingStop.place.scheduledArrival ?? Date()
+        let arrival = incomingStop.place.departure ?? incomingStop.place.arrival ?? Date()
         
         let scheduledDifference = calendar.dateComponents([.minute], from: scheduledArrival, to: arrival).minute ?? 0
         
