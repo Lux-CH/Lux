@@ -30,10 +30,10 @@ struct MainNavigationView: View {
     @State private var viewMode: ViewMode = .home
     @State private var headerHeight: CGFloat = 215
     @State private var searchText: String = ""
-    @FocusState private var isFocused: Bool
     @StateObject private var stopsViewModel = StopsViewModel()
     @EnvironmentObject var locationManager: LocationManager
     @Namespace private var animation
+    @Environment(\.colorScheme) private var colorScheme
     
     // Animation configs
     private let contentExitTransition: AnyTransition = .asymmetric(
@@ -54,15 +54,22 @@ struct MainNavigationView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                Color(.systemBackground)
-                    .ignoresSafeArea()
-                    .opacity(0.9)
+                LinearGradient(
+                    colors: colorScheme == .dark
+                    ? [Color(.systemBackground), Color(.systemBackground).opacity(0.8)]
+                    : [Color(.secondarySystemBackground), Color.white],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
                     // Header
                     ZStack(alignment: .top) {
                         Rectangle()
-                            .fill(Color(.secondarySystemBackground).opacity(0.8))
+                            .fill(colorScheme == .dark
+                                   ? Color(.secondarySystemBackground).opacity(0.7)
+                                   : Color.white)
                             .frame(height: headerHeight)
                             .clipShape(
                                 .rect(
@@ -73,6 +80,7 @@ struct MainNavigationView: View {
                                     style: .continuous
                                 )
                             )
+                            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
                             .animation(smoothSpring, value: headerHeight)
                         
                         VStack {
@@ -101,7 +109,6 @@ struct MainNavigationView: View {
                             
                             AnimatedSearchBar(
                                 searchText: viewMode == .home ? $searchText : $stopsViewModel.searchQuery,
-                                isFocused: $isFocused,
                                 placeholderText: viewMode == .home ? "Aller à..." : "Rechercher un arrêt...",
                                 onSearch: {
                                     if viewMode == .stops {
@@ -123,7 +130,6 @@ struct MainNavigationView: View {
                                 },
                                 topPadding: viewMode == .home ? 0 : 55
                             )
-                            .padding(.horizontal, 20)
                             .padding(.top, viewMode == .home ? 0 : 55)
                             .animation(smoothSpring, value: viewMode)
                         }
@@ -133,7 +139,9 @@ struct MainNavigationView: View {
                     // Content
                     ZStack {
                         Rectangle()
-                            .fill(Color(.secondarySystemBackground).opacity(0.8))
+                            .fill(colorScheme == .dark
+                                   ? Color(.secondarySystemBackground).opacity(0.7)
+                                   : Color.white)
                             .frame(maxHeight: .infinity)
                             .clipShape(
                                 .rect(
@@ -144,6 +152,7 @@ struct MainNavigationView: View {
                                     style: .continuous
                                 )
                             )
+                            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: -4)
                         
                         ZStack {
                             if viewMode == .home {
