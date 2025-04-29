@@ -30,6 +30,7 @@ struct MainNavigationView: View {
     @State private var viewMode: ViewMode = .home
     @State private var headerHeight: CGFloat = 215
     @State private var searchText: String = ""
+    @FocusState private var isFocused: Bool
     @StateObject private var stopsViewModel = StopsViewModel()
     @EnvironmentObject var locationManager: LocationManager
     @Namespace private var animation
@@ -100,6 +101,7 @@ struct MainNavigationView: View {
                             
                             AnimatedSearchBar(
                                 searchText: viewMode == .home ? $searchText : $stopsViewModel.searchQuery,
+                                isFocused: $isFocused,
                                 placeholderText: viewMode == .home ? "Aller à..." : "Rechercher un arrêt...",
                                 onSearch: {
                                     if viewMode == .stops {
@@ -121,6 +123,7 @@ struct MainNavigationView: View {
                                 },
                                 topPadding: viewMode == .home ? 0 : 55
                             )
+                            .padding(.horizontal, 20)
                             .padding(.top, viewMode == .home ? 0 : 55)
                             .animation(smoothSpring, value: viewMode)
                         }
