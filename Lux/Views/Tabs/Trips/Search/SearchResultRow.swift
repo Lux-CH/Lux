@@ -5,23 +5,21 @@
 //  Created by Constantin Clerc on 29.04.2025.
 //
 
-
 import SwiftUI
 import LuxCom
 
 struct SearchResultRow: View {
     let result: SearchResult
+    @Environment(\.colorScheme) private var colorScheme
     
-    private func getIconForType(_ type: LocationType)-> String {
+    private func getIconForType(_ type: LocationType)-> (String, Color) {
         switch type{
         case .adress:
-            return "building"
-            
+            return ("mappin.circle.fill", .red)
         case .place:
-            return "mappin"
-            
+            return ("building.fill", .blue)
         case .stop:
-            return "signpost.right"
+            return ("signpost.right", .accentColor)
         }
     }
     
@@ -60,33 +58,48 @@ struct SearchResultRow: View {
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            HStack(spacing: 12) {
-                Image(systemName: getIconForType(result.type))
-                    .foregroundColor(.accentColor)
-                    .frame(width: 20)
+        HStack(spacing: 16) {
+            let (iconName, iconColor) = getIconForType(result.type)
+            
+            // Icon
+            ZStack {
+                Circle()
+                    .fill(iconColor.opacity(0.15))
+                    .frame(width: 40, height: 40)
                 
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(result.name)
-                        .font(.headline)
+                Image(systemName: iconName)
+                    .font(.system(size: 18))
+                    .foregroundColor(iconColor)
+            }
+            
+            VStack(alignment: .leading, spacing: 3) {
+                Text(result.name)
+                    .font(.system(size: 16, weight: .semibold))
+                    .lineLimit(1)
+                    .foregroundColor(.primary)
+                
+                if result.type != .adress, let address = formattedAddress() {
+                    Text(address)
+                        .font(.system(size: 14))
+                        .foregroundColor(.secondary)
                         .lineLimit(1)
-                    
-                    if result.type != .adress, let address = formattedAddress() {
-                        Text(address)
-                            .font(.subheadline)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-                    
-                    if let area = relevantArea() {
-                        Text(area)
-                            .font(.caption)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
+                }
+                
+                if let area = relevantArea() {
+                    Text(area)
+                        .font(.system(size: 13))
+                        .foregroundColor(.secondary.opacity(0.8))
+                        .lineLimit(1)
+                        .padding(.top, 2)
                 }
             }
-            .padding(.vertical, 4)
+            
+            Spacer()
+            
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14))
+                .foregroundColor(.secondary.opacity(0.6))
+                .padding(.trailing, 4)
         }
         .contentShape(Rectangle())
     }
