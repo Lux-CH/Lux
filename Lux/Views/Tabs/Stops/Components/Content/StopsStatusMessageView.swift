@@ -18,10 +18,15 @@ struct StopsStatusMessageView: View {
             if showMinCharactersMessage {
                 ScrollView {
                     VStack {
-                        Text("Veuillez saisir au moins 3 caractères pour rechercher")
+                        Image(systemName: "character.cursor.ibeam")
+                            .font(.system(size: 36))
+                            .foregroundColor(.secondary.opacity(0.6))
+                            .padding(.top, 40)
+                        
+                        Text("Entrez au moins 3 caractères pour rechercher")
                             .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
                             .padding(.horizontal)
-                            .frame(maxWidth: .infinity, alignment: .center)
                     }
                 }
                 .scrollDisabled(true)
