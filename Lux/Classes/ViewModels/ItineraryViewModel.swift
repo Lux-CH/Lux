@@ -81,10 +81,8 @@ final class ItineraryViewModel: ObservableObject {
         routeOverlays = overlays
         calculateMapPosition()
         
-        // Calculate key frames for transit legs
         prepareVehicleKeyframes(for: itinerary.legs)
         
-        // Start vehicle position updates
         startVehicleUpdates()
     }
     
@@ -135,10 +133,8 @@ final class ItineraryViewModel: ObservableObject {
         let currentTimeInterval = currentTime.timeIntervalSince1970
         
         let newVehicleAnnotations = itinerary.legs.compactMap { leg -> VehicleAnnotation? in
-            // Only consider transit vehicles (not walking or biking)
             guard leg.mode != .walk && leg.mode != .bike else { return nil }
             
-            // Skip legs that are already completed or haven't started yet
             guard leg.startTime <= currentTime && leg.endTime >= currentTime else { return nil }
             
             let legId = getLegIdentifier(leg)
