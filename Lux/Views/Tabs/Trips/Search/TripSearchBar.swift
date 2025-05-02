@@ -24,7 +24,6 @@ struct TripSearchBar: View {
     
     var body: some View {
         HStack(spacing: 12) {
-            // Location icon with animated background
             ZStack {
                 Circle()
                     .fill(selectedLocation != nil ?
@@ -41,7 +40,6 @@ struct TripSearchBar: View {
                     .symbolEffect(.bounce, options: .speed(1.5), value: selectedLocation)
             }
             
-            // Location tag or search field
             if let location = selectedLocation {
                 LocationTagView(location: location) {
                     onRemoveTag?()
@@ -75,7 +73,6 @@ struct TripSearchBar: View {
             
             Spacer()
             
-            // Action buttons (clear/search)
             if selectedLocation == nil {
                 if !searchText.isEmpty {
                     Button(action: {
