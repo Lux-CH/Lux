@@ -38,7 +38,7 @@ enum SelectedLocation: Equatable {
         case .searchResult(let result):
             return (result.lat, result.lon)
         case .currentPosition:
-            return nil // This will be resolved with location manager
+            return nil
         }
     }
     
@@ -97,7 +97,7 @@ class TripsSearchViewModel: ObservableObject {
         viaMinimumStay: [],
         time: nil,
         arriveBy: false,
-        maxTransfers: 2,
+        maxTransfers: 3,
         minTransferTime: 120,
         pedestrianProfile: .foot,
         transitModes: nil,
@@ -151,12 +151,15 @@ class TripsSearchViewModel: ObservableObject {
             selectedFrom = .searchResult(location)
             fromQuery = ""
             activeSearchField = .to
+            
+            if selectedTo != nil {
+                searchTrips()
+            }
         } else if activeSearchField == .to {
             selectedTo = .searchResult(location)
             toQuery = ""
             activeSearchField = .none
             
-            // Auto search for trips when both locations are set
             searchTrips()
         }
         searchResults = []
@@ -167,12 +170,15 @@ class TripsSearchViewModel: ObservableObject {
             selectedFrom = .currentPosition
             fromQuery = ""
             activeSearchField = .to
+            
+            if selectedTo != nil {
+                searchTrips()
+            }
         } else if activeSearchField == .to {
             selectedTo = .currentPosition
             toQuery = ""
             activeSearchField = .none
             
-            // Auto search for trips when both locations are set
             searchTrips()
         }
         searchResults = []
@@ -197,7 +203,6 @@ class TripsSearchViewModel: ObservableObject {
         selectedFrom = selectedTo
         selectedTo = tempFrom
         
-        // If both are set, search again
         if selectedFrom != nil && selectedTo != nil {
             searchTrips()
         } else {
@@ -245,7 +250,7 @@ class TripsSearchViewModel: ObservableObject {
         backgroundRefreshTask = Task {
             do {
                 if let coords = locationManager?.location?.coordinate {
-                    let results = try await geocode(text: query, place: (coords.latitude, coords.longitude), placeBias: 9)
+                    let results = try await geocode(text: query, place: (coords.latitude, coords.longitude), placeBias: 3)
                     if !Task.isCancelled {
                         await MainActor.run {
                             self.searchResults = self.filterResultsForUniqueId(results)
@@ -256,7 +261,7 @@ class TripsSearchViewModel: ObservableObject {
                 }
             } catch {
                 if !(error is CancellationError) {
-                    print("Search error: \(error)")
+                    print("search error : \(error)")
                     await MainActor.run {
                         self.isLoading = false
                         self.backgroundRefreshTask = nil
@@ -288,7 +293,6 @@ class TripsSearchViewModel: ObservableObject {
     func setupLocationManager(_ manager: LocationManager) {
         self.locationManager = manager
         
-        // Set current position as default for "from" location
         if manager.location != nil && selectedFrom == nil {
             selectedFrom = .currentPosition
         }
@@ -397,7 +401,6 @@ class TripsSearchViewModel: ObservableObject {
     
     func updateRouteOptions(_ options: RouteOptions) {
         self.routeOptions = options
-        // If we have both locations, search with new options
         if selectedFrom != nil && selectedTo != nil {
             searchTrips()
         }
@@ -405,7 +408,6 @@ class TripsSearchViewModel: ObservableObject {
     
     func changeDepartureType(_ type: DepartureType) {
         self.departureType = type
-        // If we have both locations, search with new departure type
         if selectedFrom != nil && selectedTo != nil {
             searchTrips()
         }
