@@ -19,7 +19,7 @@ struct SearchResultRow: View {
         case .place:
             return ("building.fill", .blue)
         case .stop:
-            return ("signpost.right", .accentColor)
+            return ("signpost.right.fill", .accentColor)
         }
     }
     
@@ -58,21 +58,22 @@ struct SearchResultRow: View {
     }
     
     var body: some View {
-        HStack(spacing: 16) {
+        HStack(spacing: 18) {
             let (iconName, iconColor) = getIconForType(result.type)
             
-            // Icon
+            // Icon with animated background
             ZStack {
                 Circle()
                     .fill(iconColor.opacity(0.15))
-                    .frame(width: 40, height: 40)
+                    .frame(width: 44, height: 44)
                 
                 Image(systemName: iconName)
                     .font(.system(size: 18))
                     .foregroundColor(iconColor)
+                    .symbolRenderingMode(.hierarchical)
             }
             
-            VStack(alignment: .leading, spacing: 3) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(result.name)
                     .font(.system(size: 16, weight: .semibold))
                     .lineLimit(1)
@@ -90,16 +91,15 @@ struct SearchResultRow: View {
                         .font(.system(size: 13))
                         .foregroundColor(.secondary.opacity(0.8))
                         .lineLimit(1)
-                        .padding(.top, 2)
+                        .padding(.top, 1)
                 }
             }
             
             Spacer()
             
             Image(systemName: "chevron.right")
-                .font(.system(size: 14))
-                .foregroundColor(.secondary.opacity(0.6))
-                .padding(.trailing, 4)
+                .font(.system(size: 14, weight: .medium))
+                .foregroundColor(.secondary.opacity(0.7))
         }
         .contentShape(Rectangle())
     }

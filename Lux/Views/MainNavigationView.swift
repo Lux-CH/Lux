@@ -27,6 +27,8 @@ enum ViewMode: CaseIterable {
 }
 
 struct MainNavigationView: View {
+    @State private var debug: Bool = false
+    @State private var searchView: Bool = false
     @State private var viewMode: ViewMode = .home
     @State private var headerHeight: CGFloat = 215
     @State private var searchText: String = ""
@@ -92,6 +94,7 @@ struct MainNavigationView: View {
                                         .transition(.scale(scale: 0.8).combined(with: .opacity))
                                     Button {
                                         print("show settings")
+                                        debug.toggle()
                                     } label: {
                                         Image(systemName: "gearshape")
                                             .foregroundColor(Color.primary.opacity(0.6))
@@ -101,6 +104,21 @@ struct MainNavigationView: View {
                                             .cornerRadius(20)
                                     }
                                     .transition(.scale(scale: 0.8).combined(with: .opacity))
+                                }
+                                .fullScreenCover(isPresented: $debug) {
+                                    NavigationStack {
+                                        VStack {
+                                            List {
+                                                Button("open TripsSearchView") {
+                                                    searchView.toggle()
+                                                }
+                                            }
+                                        }
+                                    }
+                                    .navigationTitle("temp debug menu")
+                                    .fullScreenCover(isPresented: $searchView) {
+                                        TripsSearchView()
+                                    }
                                 }
                                 .padding(.top, 65)
                                 .padding(.bottom, 5)
