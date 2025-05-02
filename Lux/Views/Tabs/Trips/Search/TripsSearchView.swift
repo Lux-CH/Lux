@@ -30,7 +30,6 @@ struct TripsSearchView: View {
                 .ignoresSafeArea()
                 
                 VStack(spacing: 0) {
-                    // Header section with search bars
                     TripsSearchHeaderView(
                         viewModel: viewModel,
                         isFromFocused: $isFromFocused,
@@ -38,7 +37,6 @@ struct TripsSearchView: View {
                         animation: animation
                     )
                     
-                    // Content area
                     TripsSearchContentView(
                         viewModel: viewModel,
                         animation: animation
@@ -74,96 +72,18 @@ struct TripsSearchHeaderView: View {
     
     var body: some View {
         ZStack(alignment: .top) {
-            // Header background with dynamic height
-            RoundedRectangle(cornerRadius: 32, style: .continuous)
-                .fill(
-                    colorScheme == .dark
-                        ? Color(.secondarySystemBackground).opacity(0.8)
-                        : Color.white
-                )
-                .frame(height: viewModel.departureType != .leaveNow && viewModel.showTripResults ? 255 : 205)
-                .clipShape(
-                    .rect(
-                        topLeadingRadius: 0,
-                        bottomLeadingRadius: 40,
-                        bottomTrailingRadius: 40,
-                        topTrailingRadius: 0,
-                        style: .continuous
-                    )
-                )
-                .shadow(
-                    color: Color.black.opacity(colorScheme == .dark ? 0.2 : 0.08),
-                    radius: 15,
-                    x: 0,
-                    y: 5
-                )
-                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.departureType)
-                .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.showTripResults)
+            headerBackground
             
             VStack(alignment: .center, spacing: 20) {
                 HStack(spacing: 14) {
-                    // Route indicator dots and line
                     RouteIndicatorView()
                     
                     VStack(spacing: 18) {
-                        // From search bar
-                        TripSearchBar(
-                            searchText: $viewModel.fromQuery,
-                            isFocused: $isFromFocused,
-                            placeholderText: "Depuis",
-                            selectedLocation: viewModel.selectedFrom,
-                            onSearch: { viewModel.performSearch(viewModel.fromQuery) },
-                            onClear: { viewModel.resetSearch() },
-                            onRemoveTag: {
-                                withAnimation(.spring(response: 0.4)) {
-                                    viewModel.removeFromLocation()
-                                }
-                            },
-                            topPadding: 0,
-                            iconName: "location.circle.fill"
-                        )
-                        .onTapGesture {
-                            if viewModel.selectedFrom == nil {
-                                isFromFocused = true
-                                viewModel.setActiveSearchField(.from)
-                            }
-                        }
-                        .onChange(of: isFromFocused) {
-                            if isFromFocused {
-                                viewModel.setActiveSearchField(.from)
-                            }
-                        }
+                        fromSearchBar
                         
-                        // To search bar
-                        TripSearchBar(
-                            searchText: $viewModel.toQuery,
-                            isFocused: $isToFocused,
-                            placeholderText: "À",
-                            selectedLocation: viewModel.selectedTo,
-                            onSearch: { viewModel.performSearch(viewModel.toQuery) },
-                            onClear: { viewModel.resetSearch() },
-                            onRemoveTag: {
-                                withAnimation(.spring(response: 0.4)) {
-                                    viewModel.removeToLocation()
-                                }
-                            },
-                            topPadding: 0,
-                            iconName: "mappin.circle.fill"
-                        )
-                        .onTapGesture {
-                            if viewModel.selectedTo == nil {
-                                isToFocused = true
-                                viewModel.setActiveSearchField(.to)
-                            }
-                        }
-                        .onChange(of: isToFocused) {
-                            if isToFocused {
-                                viewModel.setActiveSearchField(.to)
-                            }
-                        }
+                        toSearchBar
                     }
                     
-                    // Action buttons
                     TripsSearchActionButtons(viewModel: viewModel)
                 }
             }
@@ -171,6 +91,91 @@ struct TripsSearchHeaderView: View {
             .padding(.horizontal, 20)
         }
         .ignoresSafeArea(edges: .top)
+    }
+    
+    private var headerBackground: some View {
+        RoundedRectangle(cornerRadius: 32, style: .continuous)
+            .fill(
+                colorScheme == .dark
+                    ? Color(.secondarySystemBackground).opacity(0.8)
+                    : Color.white
+            )
+            .frame(height: 205)
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 0,
+                    bottomLeadingRadius: 40,
+                    bottomTrailingRadius: 40,
+                    topTrailingRadius: 0,
+                    style: .continuous
+                )
+            )
+            .shadow(
+                color: Color.black.opacity(colorScheme == .dark ? 0.2 : 0.08),
+                radius: 15,
+                x: 0,
+                y: 5
+            )
+            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.departureType)
+            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.showTripResults)
+    }
+    
+    private var fromSearchBar: some View {
+        TripSearchBar(
+            searchText: $viewModel.fromQuery,
+            isFocused: $isFromFocused,
+            placeholderText: "Depuis",
+            selectedLocation: viewModel.selectedFrom,
+            onSearch: { viewModel.performSearch(viewModel.fromQuery) },
+            onClear: { viewModel.resetSearch() },
+            onRemoveTag: {
+                withAnimation(.spring(response: 0.4)) {
+                    viewModel.removeFromLocation()
+                }
+            },
+            topPadding: 0,
+            iconName: "location.circle.fill"
+        )
+        .onTapGesture {
+            if viewModel.selectedFrom == nil {
+                isFromFocused = true
+                viewModel.setActiveSearchField(.from)
+            }
+        }
+        .onChange(of: isFromFocused) {
+            if isFromFocused {
+                viewModel.setActiveSearchField(.from)
+            }
+        }
+    }
+    
+    private var toSearchBar: some View {
+        TripSearchBar(
+            searchText: $viewModel.toQuery,
+            isFocused: $isToFocused,
+            placeholderText: "À",
+            selectedLocation: viewModel.selectedTo,
+            onSearch: { viewModel.performSearch(viewModel.toQuery) },
+            onClear: { viewModel.resetSearch() },
+            onRemoveTag: {
+                withAnimation(.spring(response: 0.4)) {
+                    viewModel.removeToLocation()
+                }
+            },
+            topPadding: 0,
+            iconName: "mappin.circle.fill"
+        )
+        .onTapGesture {
+            if viewModel.selectedTo == nil {
+                isToFocused = true
+                viewModel.setActiveSearchField(.to)
+            }
+        }
+        .onChange(of: isToFocused) {
+            if isToFocused {
+                viewModel.setActiveSearchField(.to)
+            }
+        }
     }
 }
 
@@ -182,37 +187,19 @@ struct TripsSearchContentView: View {
     
     var body: some View {
         ZStack {
-            // Content background
-            RoundedRectangle(cornerRadius: 38, style: .continuous)
-                .fill(
-                    colorScheme == .dark
-                        ? Color(.secondarySystemBackground).opacity(0.7)
-                        : Color.white
-                )
-                .clipShape(
-                    .rect(
-                        topLeadingRadius: 38,
-                        bottomLeadingRadius: 0,
-                        bottomTrailingRadius: 0,
-                        topTrailingRadius: 38,
-                        style: .continuous
-                    )
-                )
-                .shadow(
-                    color: Color.black.opacity(colorScheme == .dark ? 0.15 : 0.05),
-                    radius: 12,
-                    x: 0,
-                    y: -4
-                )
+            contentBackground
             
             VStack(spacing: 0) {
                 Group {
                     if viewModel.showTripResults {
                         TripResultsContent(viewModel: viewModel)
+                            .transition(.opacity.combined(with: .move(edge: .leading)))
                     } else if viewModel.isSearchActive {
                         SearchResultsContent(viewModel: viewModel, animation: animation)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
                     } else {
                         EmptyStateContent(viewModel: viewModel)
+                            .transition(.opacity.combined(with: .scale(scale: 0.95)))
                     }
                 }
                 .animation(.easeInOut(duration: 0.3), value: viewModel.showMinCharactersMessage)
@@ -223,58 +210,108 @@ struct TripsSearchContentView: View {
         }
         .ignoresSafeArea(edges: .bottom)
     }
+    
+    private var contentBackground: some View {
+        RoundedRectangle(cornerRadius: 38, style: .continuous)
+            .fill(
+                colorScheme == .dark
+                    ? Color(.secondarySystemBackground).opacity(0.7)
+                    : Color.white
+            )
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 38,
+                    bottomLeadingRadius: 0,
+                    bottomTrailingRadius: 0,
+                    topTrailingRadius: 38,
+                    style: .continuous
+                )
+            )
+            .shadow(
+                color: Color.black.opacity(colorScheme == .dark ? 0.15 : 0.05),
+                radius: 12,
+                x: 0,
+                y: -4
+            )
+    }
 }
 
 // MARK: - Trip Results Content
 struct TripResultsContent: View {
     @ObservedObject var viewModel: TripsSearchViewModel
+    @State private var appearAnimation = false
     
     var body: some View {
         ZStack {
             if viewModel.isLoadingTrips {
-                // Loading state
                 LoadingView()
+                    .transition(.opacity)
             } else if let error = viewModel.errorMessage {
                 // Error state
                 ErrorView(message: error) {
                     viewModel.searchTrips()
                 }
             } else if viewModel.trips.isEmpty {
-                // No results state
                 NoResultsView()
             } else {
-                // Results list with pagination
-                ZStack {
-                    ScrollView {
-                        LazyVStack(spacing: 16) {
-                            ForEach(viewModel.trips, id: \.startTime) { itinerary in
-                                TripResultView(itinerary: itinerary)
-                                    .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .center)))
-                            }
-                            .padding(.bottom, 70) // Add space for the pagination controls
-                        }
-                        .padding(.vertical, 20)
-                    }
-                    .refreshable {
-                        viewModel.searchTrips()
-                    }
-                    
-                    // Floating pagination controls
-                    VStack {
-                        Spacer()
-                        
-                        if !viewModel.trips.isEmpty {
-                            PaginationControlsView(
-                                isLoadingEarlier: $viewModel.isLoadingEarlier,
-                                isLoadingLater: $viewModel.isLoadingLater,
-                                isChangingContent: $viewModel.isChangingContent,
-                                isLoading: viewModel.isLoadingTrips,
-                                animateIn: $viewModel.animateIn,
-                                loadEarlier: { viewModel.loadEarlier() },
-                                loadLater: { viewModel.loadLater() }
-                            )
+                resultsListWithPagination
+            }
+        }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.3)) {
+                appearAnimation = true
+            }
+        }
+    }
+    
+    private var resultsListWithPagination: some View {
+        ZStack {
+            ScrollViewReader { proxy in
+                ScrollView {
+                    VStack(spacing: 16) {
+                        ForEach(viewModel.trips.indices, id: \.self) { index in
+                            let itinerary = viewModel.trips[index]
+                            TripResultView(itinerary: itinerary)
+                                .id("trip-\(index)")
+                                .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .center)))
+                                .opacity(appearAnimation ? 1 : 0)
+                                .offset(y: appearAnimation ? 0 : 20)
+                                .animation(
+                                    .spring(response: 0.4, dampingFraction: 0.75)
+                                    .delay(Double(index) * 0.05),
+                                    value: appearAnimation
+                                )
                         }
                     }
+                    .padding(.vertical, 20)
+                }
+                .safeAreaInset(edge: .bottom) {
+                    Spacer().frame(height: 80)
+                }
+                .refreshable {
+                    viewModel.searchTrips()
+                }
+                .onChange(of: viewModel.trips) {
+                    if !viewModel.trips.isEmpty && viewModel.animateIn {
+                        withAnimation {
+                            proxy.scrollTo("trip-0", anchor: .top)
+                        }
+                    }
+                }
+            }
+            
+            if !viewModel.trips.isEmpty {
+                VStack {
+                    Spacer()
+                    PaginationControlsView(
+                        isLoadingEarlier: $viewModel.isLoadingEarlier,
+                        isLoadingLater: $viewModel.isLoadingLater,
+                        isChangingContent: $viewModel.isChangingContent,
+                        isLoading: viewModel.isLoadingTrips,
+                        animateIn: $viewModel.animateIn,
+                        loadEarlier: { viewModel.loadEarlier() },
+                        loadLater: { viewModel.loadLater() }
+                    )
                 }
             }
         }
@@ -289,16 +326,12 @@ struct SearchResultsContent: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if (viewModel.activeSearchField != .none && viewModel.fromQuery.isEmpty && viewModel.toQuery.isEmpty) && viewModel.isCurrentPositionAvailable() {
-                // Current location option
                 CurrentLocationOption(viewModel: viewModel)
             } else if viewModel.showMinCharactersMessage {
-                // Min characters message
                 MinCharactersView()
             } else if !viewModel.searchResults.isEmpty {
-                // Search results list
                 SearchResultsList(viewModel: viewModel, animation: animation)
             } else {
-                // Empty search prompt
                 EmptySearchView()
             }
         }
@@ -308,13 +341,14 @@ struct SearchResultsContent: View {
 // MARK: - Empty State Content
 struct EmptyStateContent: View {
     @ObservedObject var viewModel: TripsSearchViewModel
+    @State private var isAnimating = false
     
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "map")
                 .font(.system(size: 60, weight: .light))
                 .foregroundColor(.secondary.opacity(0.6))
-                .symbolEffect(.pulse, options: .repeating, value: true)
+                .symbolEffect(.pulse, options: .repeating, value: isAnimating)
                 .padding(.top, 60)
             
             Text("Entrez un point de départ et une destination")
@@ -330,10 +364,41 @@ struct EmptyStateContent: View {
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
                 .padding(.top, -8)
+            
+            if viewModel.isCurrentPositionAvailable() {
+                Button(action: {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                        viewModel.selectCurrentPosition()
+                        HapticFeedback.lightImpact()
+                    }
+                }) {
+                    HStack {
+                        Image(systemName: "location.fill")
+                            .font(.system(size: 16, weight: .medium))
+                        Text("Utiliser ma position actuelle")
+                            .fontWeight(.medium)
+                    }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
+                    .background(
+                        Capsule()
+                            .fill(Color.accentColor.opacity(0.15))
+                    )
+                    .foregroundColor(.accentColor)
+                }
+                .buttonStyle(ScaleButtonStyle())
+                .padding(.top, 16)
+            }
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 40)
         .padding(.bottom, 40)
+        .onAppear {
+            isAnimating = true
+        }
+        .onDisappear {
+            isAnimating = false
+        }
     }
 }
 
@@ -363,12 +428,18 @@ struct TripsSearchActionButtons: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
     @State private var showTimePicker = false
+    @State private var isSwapping = false
     
     var body: some View {
         VStack(spacing: 16) {
             Button(action: {
                 withAnimation(.spring(duration: 0.5, bounce: 0.3)) {
+                    isSwapping = true
                     viewModel.swapLocations()
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                        isSwapping = false
+                    }
                 }
             }) {
                 Image(systemName: "arrow.up.arrow.down")
@@ -382,127 +453,102 @@ struct TripsSearchActionButtons: View {
                                 ? Color.accentColor.opacity(0.4)
                                 : Color.accentColor
                             )
-                            .shadow(
-                                color: Color.accentColor.opacity(colorScheme == .dark ? 0.3 : 0.4),
-                                radius: 8,
-                                x: 0,
-                                y: 4
-                            )
                     )
-                    .symbolEffect(.bounce, value: viewModel.selectedFrom != nil || viewModel.selectedTo != nil)
+                    .rotationEffect(isSwapping ? Angle(degrees: 180) : .zero)
+                    .animation(.spring(response: 0.5, dampingFraction: 0.6), value: isSwapping)
             }
             .disabled(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
             .buttonStyle(SpringButtonStyle())
             
             HStack {
-                // Settings button
-                Button(action: {
-                    viewModel.showSettings = true
-                }) {
-                    Image(systemName: "slider.horizontal.3")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 42, height: 42)
-                        .background(
-                            Circle()
-                                .fill(Color.accentColor)
-                                .shadow(
-                                    color: Color.accentColor.opacity(colorScheme == .dark ? 0.3 : 0.4),
-                                    radius: 8,
-                                    x: 0,
-                                    y: 4
-                                )
-                        )
-                }
-                .buttonStyle(SpringButtonStyle())
+                settingsButton
                 
-                // Time selector button
-                Button(action: {
-                    showTimePicker = true
-                }) {
-                    Image(systemName: "clock")
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundColor(.white)
-                        .frame(width: 42, height: 42)
-                        .background(
-                            Circle()
-                                .fill(Color.accentColor)
-                                .shadow(
-                                    color: Color.accentColor.opacity(colorScheme == .dark ? 0.3 : 0.4),
-                                    radius: 8,
-                                    x: 0,
-                                    y: 4
-                                )
-                        )
-                }
-                .buttonStyle(SpringButtonStyle())
-                .popover(isPresented: $showTimePicker, attachmentAnchor: .point(.bottom)) {
-                    TripsSearchTimePickerView(
-                        selectedDate: $viewModel.selectedDate,
-                        departureType: $viewModel.departureType,
-                        showDatePicker: $showTimePicker
-                    ) {
-                        viewModel.changeDepartureType(viewModel.departureType)
-                    }
-                    .presentationCompactAdaptation(.popover)
-                }
+                timeButton
             }
         }
-        .offset(y: 15)
+    }
+    
+    private var settingsButton: some View {
+        Button(action: {
+            HapticFeedback.lightImpact()
+            viewModel.showSettings = true
+        }) {
+            Image(systemName: "slider.horizontal.3")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white)
+                .frame(width: 42, height: 42)
+                .background(
+                    Circle()
+                        .fill(Color.accentColor)
+                )
+        }
+        .buttonStyle(SpringButtonStyle())
+    }
+    
+    private var timeButton: some View {
+        Button(action: {
+            HapticFeedback.lightImpact()
+            showTimePicker = true
+        }) {
+            Image(systemName: "clock")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(.white)
+                .frame(width: 42, height: 42)
+                .background(
+                    Circle()
+                        .fill(Color.accentColor)
+                )
+        }
+        .buttonStyle(SpringButtonStyle())
+        .popover(isPresented: $showTimePicker, attachmentAnchor: .point(.bottom)) {
+            TripsSearchTimePickerView(
+                selectedDate: $viewModel.selectedDate,
+                departureType: $viewModel.departureType,
+                showDatePicker: $showTimePicker
+            ) {
+                viewModel.changeDepartureType(viewModel.departureType)
+            }
+            .presentationCompactAdaptation(.popover)
+        }
     }
 }
 
 struct LoadingView: View {
+    @State private var pulseAnimation = false
+    
     var body: some View {
         VStack(spacing: 20) {
-            LottieLoadingView()
+            ProgressView()
                 .frame(width: 80, height: 80)
                 
             Text("Recherche d'itinéraires...")
                 .font(.headline)
                 .foregroundColor(.secondary)
+                .opacity(pulseAnimation ? 0.7 : 1.0)
+                .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: pulseAnimation)
+                .onAppear {
+                    pulseAnimation = true
+                }
         }
         .padding(.top, 40)
         .transition(.opacity)
     }
 }
 
-struct LottieLoadingView: View {
-    @State private var isAnimating = false
-    
-    var body: some View {
-        ZStack {
-            Circle()
-                .stroke(Color.accentColor.opacity(0.2), lineWidth: 5)
-                .frame(width: 60, height: 60)
-            
-            Circle()
-                .trim(from: 0, to: 0.75)
-                .stroke(Color.accentColor, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                .frame(width: 60, height: 60)
-                .rotationEffect(Angle(degrees: isAnimating ? 360 : 0))
-                .animation(
-                    Animation.linear(duration: 1)
-                        .repeatForever(autoreverses: false),
-                    value: isAnimating
-                )
-                .onAppear {
-                    isAnimating = true
-                }
-        }
-    }
-}
-
 struct ErrorView: View {
     let message: String
     let retryAction: () -> Void
+    @State private var isAnimatingIcon = false
     
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.system(size: 46))
                 .foregroundColor(.orange)
-                .symbolEffect(.pulse, options: .repeating.speed(0.7), value: true)
+                .symbolEffect(.pulse, options: .repeating.speed(0.7), value: isAnimatingIcon)
+                .onAppear {
+                    isAnimatingIcon = true
+                }
                 
             Text(message)
                 .font(.headline)
@@ -519,15 +565,22 @@ struct ErrorView: View {
         }
         .padding(.top, 40)
         .padding(.horizontal, 20)
+        .transition(.opacity.combined(with: .scale(scale: 0.95)))
     }
 }
 
 struct NoResultsView: View {
+    @State private var isAnimating = false
+    
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "calendar.badge.exclamationmark")
                 .font(.system(size: 46))
                 .foregroundColor(.secondary)
+                .symbolEffect(.bounce.up, options: .repeating.speed(0.5), value: isAnimating)
+                .onAppear {
+                    isAnimating = true
+                }
                 
             Text("Aucun itinéraire trouvé")
                 .font(.headline)
@@ -541,12 +594,14 @@ struct NoResultsView: View {
         }
         .padding(.top, 40)
         .padding(.horizontal, 20)
+        .transition(.opacity.combined(with: .move(edge: .bottom)))
     }
 }
 
 struct CurrentLocationOption: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
+    @State private var isHovering = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -572,6 +627,8 @@ struct CurrentLocationOption: View {
                         Image(systemName: "location.fill")
                             .font(.system(size: 16))
                             .foregroundColor(.accentColor)
+                            .scaleEffect(isHovering ? 1.1 : 1.0)
+                            .animation(.easeInOut(duration: 0.2), value: isHovering)
                     }
                     
                     Text("Position Actuelle")
@@ -582,6 +639,9 @@ struct CurrentLocationOption: View {
                     Image(systemName: "chevron.right")
                         .font(.system(size: 14, weight: .medium))
                         .foregroundColor(.secondary)
+                        .opacity(isHovering ? 1 : 0.6)
+                        .offset(x: isHovering ? 4 : 0)
+                        .animation(.easeInOut(duration: 0.2), value: isHovering)
                 }
                 .padding(.vertical, 14)
                 .padding(.horizontal, 16)
@@ -593,6 +653,9 @@ struct CurrentLocationOption: View {
                         .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
                 )
                 .padding(.horizontal)
+                .onHover { hovering in
+                    isHovering = hovering
+                }
             }
             .buttonStyle(ScaleButtonStyle())
             
@@ -605,6 +668,8 @@ struct CurrentLocationOption: View {
 }
 
 struct MinCharactersView: View {
+    @State private var isAnimatingText = false
+    
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "character.cursor.ibeam")
@@ -616,6 +681,11 @@ struct MinCharactersView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
+                .opacity(isAnimatingText ? 1 : 0.7)
+                .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: isAnimatingText)
+                .onAppear {
+                    isAnimatingText = true
+                }
         }
         .frame(maxWidth: .infinity)
         .transition(.opacity)
@@ -628,6 +698,7 @@ struct SearchResultsList: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
     var animation: Namespace.ID
+    @State private var appearAnimation = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -639,8 +710,8 @@ struct SearchResultsList: View {
                 .padding(.bottom, 8)
             
             ScrollView {
-                LazyVStack(spacing: 12) {
-                    ForEach(viewModel.searchResults, id: \.id) { result in
+                VStack(spacing: 12) {
+                    ForEach(Array(viewModel.searchResults.enumerated()), id: \.element.id) { index, result in
                         Button(action: {
                             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                                 viewModel.selectLocation(result)
@@ -658,6 +729,13 @@ struct SearchResultsList: View {
                                         .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
                                 )
                                 .contentShape(Rectangle())
+                                .opacity(appearAnimation ? 1 : 0)
+                                .offset(y: appearAnimation ? 0 : 10)
+                                .animation(
+                                    .spring(response: 0.3, dampingFraction: 0.75)
+                                    .delay(Double(index) * 0.05),
+                                    value: appearAnimation
+                                )
                         }
                         .buttonStyle(ScaleButtonStyle())
                         .padding(.horizontal)
@@ -666,16 +744,37 @@ struct SearchResultsList: View {
                 .padding(.bottom, 16)
             }
         }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                withAnimation {
+                    appearAnimation = true
+                }
+            }
+        }
+        .onDisappear {
+            appearAnimation = false
+        }
     }
 }
 
 struct EmptySearchView: View {
+    @State private var isAnimating = false
+    
     var body: some View {
         VStack(spacing: 20) {
             Image(systemName: "magnifyingglass")
                 .font(.system(size: 40))
                 .foregroundColor(.secondary.opacity(0.6))
                 .padding(.top, 40)
+                .scaleEffect(isAnimating ? 1.05 : 1.0)
+                .animation(
+                    Animation.easeInOut(duration: 1.2)
+                        .repeatForever(autoreverses: true),
+                    value: isAnimating
+                )
+                .onAppear {
+                    isAnimating = true
+                }
             
             Text("Recherchez un lieu ou une adresse")
                 .foregroundColor(.secondary)
@@ -698,17 +797,28 @@ struct SpringButtonStyle: ButtonStyle {
 }
 
 struct PrimaryButtonStyle: ButtonStyle {
+    @Environment(\.isEnabled) private var isEnabled
+    
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding(.horizontal, 30)
             .padding(.vertical, 14)
-            .background(Color.accentColor)
+            .background(isEnabled ? Color.accentColor : Color.accentColor.opacity(0.5))
             .foregroundColor(.white)
             .clipShape(Capsule())
-            .shadow(color: Color.accentColor.opacity(0.4), radius: 6, x: 0, y: 3)
+            .shadow(color: isEnabled ? Color.accentColor.opacity(0.4) : Color.clear, radius: 6, x: 0, y: 3)
             .scaleEffect(configuration.isPressed ? 0.96 : 1)
             .opacity(configuration.isPressed ? 0.9 : 1)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
+    }
+}
+
+struct ScaleButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.97 : 1)
+            .opacity(configuration.isPressed ? 0.9 : 1)
+            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
     }
 }
 
@@ -728,6 +838,16 @@ struct HapticFeedback {
         let generator = UIImpactFeedbackGenerator(style: .heavy)
         generator.impactOccurred()
     }
+    
+    static func selectionChanged() {
+        let generator = UISelectionFeedbackGenerator()
+        generator.selectionChanged()
+    }
+    
+    static func notification(type: UINotificationFeedbackGenerator.FeedbackType) {
+        let generator = UINotificationFeedbackGenerator()
+        generator.notificationOccurred(type)
+    }
 }
 
 struct TripsSearchTimePickerView: View {
@@ -735,10 +855,19 @@ struct TripsSearchTimePickerView: View {
     @Binding var departureType: DepartureType
     @Binding var showDatePicker: Bool
     var onApply: () -> Void
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var localDate: Date
+    
+    init(selectedDate: Binding<Date>, departureType: Binding<DepartureType>, showDatePicker: Binding<Bool>, onApply: @escaping () -> Void) {
+        self._selectedDate = selectedDate
+        self._departureType = departureType
+        self._showDatePicker = showDatePicker
+        self.onApply = onApply
+        self._localDate = State(initialValue: selectedDate.wrappedValue)
+    }
     
     var body: some View {
         VStack(spacing: 12) {
-            // Type selector (Departure/Arrival)
             Picker("Type", selection: $departureType) {
                 Text("Départ").tag(DepartureType.leaveAt)
                 Text("Arrivée").tag(DepartureType.arriveBy)
@@ -747,23 +876,25 @@ struct TripsSearchTimePickerView: View {
             .padding(.horizontal)
             .padding(.top, 12)
             
-            // Date and time picker
             if departureType != .leaveNow {
                 DatePicker(
                     "Sélectionner",
-                    selection: $selectedDate,
+                    selection: $localDate,
                     displayedComponents: [.date, .hourAndMinute]
                 )
                 .datePickerStyle(.compact)
                 .labelsHidden()
                 .padding(.horizontal)
+                .onChange(of: localDate) {
+                    HapticFeedback.selectionChanged()
+                }
             }
             
-            // "Now" button
             Button {
                 withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                     departureType = .leaveNow
-                    selectedDate = Date()
+                    localDate = Date()
+                    HapticFeedback.lightImpact()
                 }
             } label: {
                 Label("Maintenant", systemImage: "clock.arrow.circlepath")
@@ -777,47 +908,55 @@ struct TripsSearchTimePickerView: View {
                             .background(Color.accentColor.opacity(0.1).cornerRadius(8))
                     )
             }
+            .buttonStyle(ScaleButtonStyle())
             .padding(.top, 4)
             
             Divider()
                 .padding(.horizontal)
             
-            // Action buttons
             HStack {
                 Button("Annuler") {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
                         showDatePicker = false
+                        HapticFeedback.lightImpact()
                     }
                 }
                 .foregroundColor(.secondary)
+                .buttonStyle(ScaleButtonStyle())
                 
                 Spacer()
                 
                 Button("Appliquer") {
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        selectedDate = localDate
                         showDatePicker = false
+                        HapticFeedback.mediumImpact()
+                        onApply()
                     }
-                    onApply()
                 }
                 .fontWeight(.bold)
                 .foregroundColor(.accentColor)
+                .buttonStyle(ScaleButtonStyle())
             }
             .padding(.horizontal)
             .padding(.bottom, 12)
         }
         .frame(width: 300)
-        .background(Color(.secondarySystemBackground))
+        .background(
+            colorScheme == .dark ?
+            Color(.secondarySystemBackground) :
+                Color(.systemBackground)
+        )
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
     }
 }
 
-
-struct ScaleButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.97 : 1)
-            .opacity(configuration.isPressed ? 0.9 : 1)
-            .animation(.easeInOut(duration: 0.2), value: configuration.isPressed)
+extension Itinerary: @retroactive Equatable {
+    public static func == (lhs: Itinerary, rhs: Itinerary) -> Bool {
+        return lhs.startTime == rhs.startTime &&
+        lhs.endTime == rhs.endTime &&
+        lhs.duration == rhs.duration &&
+        lhs.transfers == rhs.transfers
     }
 }
