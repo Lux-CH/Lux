@@ -10,6 +10,7 @@ import LuxCom
 
 struct StopHeaderView: View {
     @State var stop: SearchResult
+    @State private var showTripSearch: Bool = false
     @State private var connections: [String] = []
     
     var body: some View {
@@ -39,7 +40,7 @@ struct StopHeaderView: View {
             Spacer()
             HStack {
                 Button {
-                    print("go!")
+                    showTripSearch.toggle()
                 } label: {
                     Image(systemName: "arrow.triangle.turn.up.right.circle")
                         .foregroundColor(Color.accentColor)
@@ -49,6 +50,12 @@ struct StopHeaderView: View {
                         .clipShape(Circle())
                 }
             }
+        }
+        .fullScreenCover(isPresented: $showTripSearch) {
+            TripsSearchView(
+                initialSearchResult: stop,
+                initialTargetField: .to
+            )
         }
     }
 }
