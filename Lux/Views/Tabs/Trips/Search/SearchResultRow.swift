@@ -61,7 +61,6 @@ struct SearchResultRow: View {
         HStack(spacing: 18) {
             let (iconName, iconColor) = getIconForType(result.type)
             
-            // Icon with animated background
             ZStack {
                 Circle()
                     .fill(iconColor.opacity(0.15))

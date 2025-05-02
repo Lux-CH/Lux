@@ -24,7 +24,6 @@ struct RouteOptionsView: View {
         self.routeOptions = routeOptions
         self.onSave = onSave
         
-        // Initialize state variables with current values
         _maxTransfers = State(initialValue: routeOptions.maxTransfers)
         _minTransferTime = State(initialValue: routeOptions.minTransferTime)
         _pedestrianProfile = State(initialValue: routeOptions.pedestrianProfile)
@@ -36,16 +35,13 @@ struct RouteOptionsView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background color
                 Color(.systemGroupedBackground)
                     .ignoresSafeArea()
                 
                 ScrollView {
                     VStack(spacing: 20) {
-                        // Transfers section
                         OptionsSection(title: "Transferts") {
                             VStack(spacing: 16) {
-                                // Maximum transfers control
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("Nombre maximum")
                                         .font(.subheadline)
@@ -77,7 +73,6 @@ struct RouteOptionsView: View {
                                 
                                 Divider()
                                 
-                                // Minimum transfer time
                                 VStack(alignment: .leading, spacing: 8) {
                                     Text("Temps minimum entre transferts")
                                         .font(.subheadline)
@@ -93,7 +88,6 @@ struct RouteOptionsView: View {
                             )
                         }
                         
-                        // Accessibility section
                         OptionsSection(title: "Accessibilité") {
                             VStack(alignment: .leading, spacing: 12) {
                                 Text("Profil de déplacement")
@@ -133,7 +127,6 @@ struct RouteOptionsView: View {
                             )
                         }
                         
-                        // Transport modes section
                         OptionsSection(title: "Modes de transport") {
                             VStack(alignment: .leading, spacing: 8) {
                                 ForEach(availableTransportModes, id: \.self) { mode in
@@ -159,25 +152,6 @@ struct RouteOptionsView: View {
                                     .fill(Color(.secondarySystemGroupedBackground))
                             )
                         }
-                        
-                        // Save button
-                        Button(action: {
-                            saveOptions()
-                            HapticFeedback.mediumImpact()
-                        }) {
-                            Text("Enregistrer")
-                                .font(.headline)
-                                .foregroundColor(.white)
-                                .frame(height: 54)
-                                .frame(maxWidth: .infinity)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(Color.accentColor)
-                                        .shadow(color: Color.accentColor.opacity(0.4), radius: 8, x: 0, y: 4)
-                                )
-                        }
-                        .buttonStyle(ScaleButtonStyle())
-                        .padding(.top, 10)
                     }
                     .padding()
                 }
@@ -188,6 +162,15 @@ struct RouteOptionsView: View {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Annuler") {
                         dismiss()
+                    }
+                }
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button() {
+                        saveOptions()
+                        HapticFeedback.mediumImpact()
+                    } label: {
+                        Text("Appliquer")
+                            .bold()
                     }
                 }
             }
@@ -207,9 +190,6 @@ struct RouteOptionsView: View {
     }
     
     private func saveOptions() {
-        var updatedOptions = routeOptions
-        
-        // Create a new RouteOptions with updated values
         let newOptions = RouteOptions(
             from: routeOptions.from,
             to: routeOptions.to,
@@ -301,13 +281,11 @@ struct TransportModeToggle: View {
         case .bus:
             return ("Bus", "bus.fill", .orange)
         case .tram:
-            return ("Tramway", "tram.fill", .green)
-        case .subway:
-            return ("Métro", "tram.tunnel.fill", .blue)
+            return ("Tram", "tram.fill", .green)
         case .rail:
             return ("Train", "train.side.front.car", .red)
         case .ferry:
-            return ("Ferry", "ferry.fill", .cyan)
+            return ("Mouette", "ferry.fill", .cyan)
         default:
             return (mode.rawValue.capitalized, "car.fill", .gray)
         }
@@ -318,7 +296,6 @@ struct TransportModeToggle: View {
             let (name, icon, color) = getTransportModeInfo()
             
             HStack {
-                // Icon
                 ZStack {
                     Circle()
                         .fill(color.opacity(0.15))
@@ -329,13 +306,11 @@ struct TransportModeToggle: View {
                         .foregroundColor(color)
                 }
                 
-                // Name
                 Text(name)
                     .font(.system(size: 16, weight: .medium))
                     .foregroundColor(.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
-                // Selection indicator
                 ZStack {
                     Circle()
                         .stroke(Color.secondary.opacity(0.3), lineWidth: 2)
