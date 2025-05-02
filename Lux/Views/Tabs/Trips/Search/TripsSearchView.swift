@@ -17,11 +17,13 @@ struct TripsSearchView: View {
     @Environment(\.dismiss) var dismiss
     @State private var dragOffset: CGFloat = 0
     @Namespace private var animation
-    
+
+    var initialSearchResult: SearchResult? = nil
+    var initialTargetField: TripsSearchViewModel.SearchField = .to
+
     var body: some View {
         NavigationStack {
             ZStack {
-                // Background gradient
                 LinearGradient(
                     colors: colorScheme == .dark
                     ? [Color(.systemBackground), Color(.systemBackground).opacity(0.92)]
@@ -30,6 +32,7 @@ struct TripsSearchView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
+                .gesture(dragGesture)
                 
                 VStack(spacing: 0) {
                     TripsSearchHeaderView(
@@ -38,6 +41,7 @@ struct TripsSearchView: View {
                         isToFocused: $isToFocused,
                         animation: animation
                     )
+                    .gesture(dragGesture)
                     
                     TripsSearchContentView(
                         viewModel: viewModel,
@@ -57,6 +61,11 @@ struct TripsSearchView: View {
         }
         .onAppear {
             viewModel.setupLocationManager(locationManager)
+            if let result = initialSearchResult {
+                Task { @MainActor in
+                    viewModel.handleInitialSearchResult(result, targetField: initialTargetField)
+                }
+            }
         }
         .onChange(of: viewModel.fromQuery) {
             viewModel.onChange(of: viewModel.fromQuery)

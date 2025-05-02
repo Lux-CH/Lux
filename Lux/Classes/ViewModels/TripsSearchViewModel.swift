@@ -408,4 +408,35 @@ class TripsSearchViewModel: ObservableObject {
             searchTrips()
         }
     }
+    @MainActor
+    func handleInitialSearchResult(_ result: SearchResult, targetField: SearchField) {
+        if (targetField == .from && selectedFrom != nil) || (targetField == .to && selectedTo != nil) {
+            return
+        }
+        
+        if targetField == .from {
+            selectedFrom = .searchResult(result)
+            fromQuery = ""
+            if selectedTo != nil {
+                activeSearchField = .none
+                searchTrips()
+            } else {
+                activeSearchField = .to
+            }
+        } else {
+            selectedTo = .searchResult(result)
+            toQuery = ""
+            if selectedFrom != nil {
+                activeSearchField = .none
+                searchTrips()
+            } else {
+                // Otherwise, make the other field active
+                activeSearchField = .from
+            }
+        }
+        // Clear any active text search results list
+        searchResults = []
+        showMinCharactersMessage = false
+        isLoading = false // Ensure loading indicator is off
+    }
 }
