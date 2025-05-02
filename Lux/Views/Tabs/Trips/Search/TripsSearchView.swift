@@ -14,6 +14,8 @@ struct TripsSearchView: View {
     @FocusState private var isFromFocused: Bool
     @FocusState private var isToFocused: Bool
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.dismiss) var dismiss
+    @State private var dragOffset: CGFloat = 0
     @Namespace private var animation
     
     var body: some View {
@@ -22,8 +24,8 @@ struct TripsSearchView: View {
                 // Background gradient
                 LinearGradient(
                     colors: colorScheme == .dark
-                        ? [Color(.systemBackground), Color(.systemBackground).opacity(0.92)]
-                        : [Color(.secondarySystemBackground).opacity(0.7), Color.white],
+                    ? [Color(.systemBackground), Color(.systemBackground).opacity(0.92)]
+                    : [Color(.secondarySystemBackground).opacity(0.7), Color.white],
                     startPoint: .top,
                     endPoint: .bottom
                 )
@@ -41,6 +43,9 @@ struct TripsSearchView: View {
                         viewModel: viewModel,
                         animation: animation
                     )
+                    .offset(y: max(0, dragOffset))
+                    .animation(.interactiveSpring(), value: dragOffset)
+                    .gesture(dragGesture)
                 }
             }
             .sheet(isPresented: $viewModel.showSettings) {
@@ -59,6 +64,19 @@ struct TripsSearchView: View {
         .onChange(of: viewModel.toQuery) {
             viewModel.onChange(of: viewModel.toQuery)
         }
+    }
+    var dragGesture: some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                dragOffset = max(0, value.translation.height)
+            }
+            .onEnded { value in
+                if value.translation.height > 200 {
+                    dismiss()
+                } else {
+                    dragOffset = 0
+                }
+            }
     }
 }
 
@@ -952,14 +970,5 @@ struct TripsSearchTimePickerView: View {
         )
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
-    }
-}
-
-extension Itinerary: @retroactive Equatable {
-    public static func == (lhs: Itinerary, rhs: Itinerary) -> Bool {
-        return lhs.startTime == rhs.startTime &&
-        lhs.endTime == rhs.endTime &&
-        lhs.duration == rhs.duration &&
-        lhs.transfers == rhs.transfers
     }
 }
