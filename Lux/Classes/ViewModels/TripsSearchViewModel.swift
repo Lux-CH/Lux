@@ -48,7 +48,6 @@ enum SelectedLocation: Equatable {
 }
 
 enum DepartureType: String, CaseIterable, Identifiable {
-    case leaveNow = "Partir maintenant"
     case leaveAt = "Partir à"
     case arriveBy = "Arriver à"
     
@@ -56,7 +55,6 @@ enum DepartureType: String, CaseIterable, Identifiable {
     
     var systemImage: String {
         switch self {
-        case .leaveNow: return "arrow.right.circle.fill"
         case .leaveAt: return "clock.fill"
         case .arriveBy: return "flag.fill"
         }
@@ -109,7 +107,7 @@ class TripsSearchViewModel: ObservableObject {
     )
     
     // Departure settings
-    @Published var departureType: DepartureType = .leaveNow
+    @Published var departureType: DepartureType = .leaveAt
     @Published var selectedDate = Date()
     
     enum SearchField {
@@ -392,8 +390,6 @@ class TripsSearchViewModel: ObservableObject {
     
     private func getSearchTime() -> Date? {
         switch departureType {
-        case .leaveNow:
-            return Date()
         case .leaveAt, .arriveBy:
             return selectedDate
         }

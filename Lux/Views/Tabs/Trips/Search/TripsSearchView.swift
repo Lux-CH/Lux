@@ -500,7 +500,7 @@ struct TripsSearchActionButtons: View {
                 )
         }
         .buttonStyle(SpringButtonStyle())
-        .popover(isPresented: $showTimePicker, attachmentAnchor: .point(.bottom)) {
+        .popover(isPresented: $showTimePicker) {
             TripsSearchTimePickerView(
                 selectedDate: $viewModel.selectedDate,
                 departureType: $viewModel.departureType,
@@ -875,42 +875,45 @@ struct TripsSearchTimePickerView: View {
             .pickerStyle(.segmented)
             .padding(.horizontal)
             .padding(.top, 12)
-            
-            if departureType != .leaveNow {
-                DatePicker(
-                    "Sélectionner",
-                    selection: $localDate,
-                    displayedComponents: [.date, .hourAndMinute]
-                )
-                .datePickerStyle(.compact)
-                .labelsHidden()
-                .padding(.horizontal)
-                .onChange(of: localDate) {
-                    HapticFeedback.selectionChanged()
+            .onAppear {
+                if departureType != .leaveAt && departureType != .arriveBy {
+                    departureType = .leaveAt
                 }
             }
             
-            Button {
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                    departureType = .leaveNow
-                    localDate = Date()
-                    HapticFeedback.lightImpact()
-                }
-            } label: {
-                Label("Maintenant", systemImage: "clock.arrow.circlepath")
-                    .font(.footnote)
-                    .foregroundColor(.accentColor)
-                    .padding(.vertical, 8)
-                    .padding(.horizontal, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.accentColor.opacity(0.5), lineWidth: 1)
-                            .background(Color.accentColor.opacity(0.1).cornerRadius(8))
-                    )
+            DatePicker(
+                "Sélectionner",
+                selection: $localDate,
+                displayedComponents: [.date, .hourAndMinute]
+            )
+            .datePickerStyle(.compact)
+            .labelsHidden()
+            .padding(.horizontal)
+            .onChange(of: localDate) {
+                HapticFeedback.selectionChanged()
             }
-            .buttonStyle(ScaleButtonStyle())
-            .padding(.top, 4)
             
+            if departureType == .leaveAt {
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        localDate = Date()
+                        HapticFeedback.lightImpact()
+                    }
+                } label: {
+                    Label("Maintenant", systemImage: "clock.arrow.circlepath")
+                        .font(.footnote)
+                        .foregroundColor(.accentColor)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.accentColor.opacity(0.5), lineWidth: 1)
+                                .background(Color.accentColor.opacity(0.1).cornerRadius(8))
+                        )
+                }
+                .buttonStyle(ScaleButtonStyle())
+                .padding(.top, 4)
+            }
             Divider()
                 .padding(.horizontal)
             
