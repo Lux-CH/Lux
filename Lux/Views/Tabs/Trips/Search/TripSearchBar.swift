@@ -133,6 +133,5 @@ struct TripSearchBar: View {
         .scaleEffect(isFocused ? 1.02 : 1)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isFocused)
         .animation(.spring(response: 0.4), value: searchText)
-        .animation(.spring(response: 0.4), value: selectedLocation)
     }
 }
