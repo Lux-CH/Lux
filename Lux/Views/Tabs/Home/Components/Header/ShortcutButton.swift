@@ -37,7 +37,6 @@ struct ShortcutButton: View {
                     )
             )
         }
-        // Removed the disabled modifier so placeholders are clickable
     }
 }
 //
