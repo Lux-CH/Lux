@@ -274,14 +274,13 @@ struct TripResultsContent: View {
                 LoadingView()
                     .transition(.opacity)
             } else if let error = viewModel.errorMessage {
-                // Error state
                 ErrorView(message: error) {
                     viewModel.searchTrips()
                 }
             } else if viewModel.trips.isEmpty {
                 NoResultsView()
             } else {
-                resultsListWithPagination
+                resultsList
             }
         }
         .onAppear {
@@ -291,7 +290,7 @@ struct TripResultsContent: View {
         }
     }
     
-    private var resultsListWithPagination: some View {
+    private var resultsList: some View {
         ZStack {
             ScrollViewReader { proxy in
                 ScrollView {

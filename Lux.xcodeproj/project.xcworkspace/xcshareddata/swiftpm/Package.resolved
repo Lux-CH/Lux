@@ -1,5 +1,5 @@
 {
-  "originHash" : "5f4d5944ebaf24cbe113b88910ea638be9f83f18f7c469f76f9d28bbecc4ff12",
+  "originHash" : "b40d67625e9a99ec645e8643f04584748425642f58591bd9b55b0e3904e58718",
   "pins" : [
     {
       "identity" : "luxcom",
@@ -17,6 +17,15 @@
       "state" : {
         "branch" : "master",
         "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23"
+      }
+    },
+    {
+      "identity" : "symbolpicker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/xnth97/SymbolPicker",
+      "state" : {
+        "revision" : "8bb08c982235b8e601bc500a41e770d7e198759b",
+        "version" : "1.6.2"
       }
     }
   ],
