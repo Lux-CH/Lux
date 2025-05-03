@@ -220,7 +220,6 @@ struct TripsSearchContentView: View {
                 Group {
                     if viewModel.showTripResults {
                         TripResultsContent(viewModel: viewModel)
-                            .transition(.opacity.combined(with: .move(edge: .leading)))
                     } else if viewModel.isSearchActive {
                         SearchResultsContent(viewModel: viewModel, animation: animation)
                             .transition(.opacity.combined(with: .move(edge: .top)))
@@ -299,14 +298,7 @@ struct TripResultsContent: View {
                             let itinerary = viewModel.trips[index]
                             TripResultView(itinerary: itinerary)
                                 .id("trip-\(index)")
-                                .transition(.opacity.combined(with: .scale(scale: 0.95, anchor: .center)))
                                 .opacity(appearAnimation ? 1 : 0)
-                                .offset(y: appearAnimation ? 0 : 20)
-                                .animation(
-                                    .spring(response: 0.4, dampingFraction: 0.75)
-                                    .delay(Double(index) * 0.05),
-                                    value: appearAnimation
-                                )
                         }
                     }
                     .padding(.vertical, 20)
