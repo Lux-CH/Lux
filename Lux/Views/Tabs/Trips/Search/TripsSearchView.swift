@@ -359,12 +359,13 @@ struct SearchResultsContent: View {
 // MARK: - Empty State Content
 struct EmptyStateContent: View {
     @ObservedObject var viewModel: TripsSearchViewModel
+    @EnvironmentObject var shortcutManager: ShortcutManager
     @State private var isAnimating = false
     
     var body: some View {
         VStack(spacing: 24) {
             Image(systemName: "map")
-                .font(.system(size: 60, weight: .light))
+                .font(.system(size: 40, weight: .light))
                 .foregroundColor(.secondary.opacity(0.6))
                 .symbolEffect(.pulse, options: .repeating, value: isAnimating)
                 .padding(.top, 60)
@@ -376,37 +377,79 @@ struct EmptyStateContent: View {
                 .padding(.horizontal)
                 .transition(.scale.combined(with: .opacity))
             
-            Text("Nous vous aiderons à trouver le meilleur itinéraire")
-                .font(.subheadline)
-                .foregroundColor(.secondary.opacity(0.7))
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
-                .padding(.top, -8)
-            
-            if viewModel.isCurrentPositionAvailable() {
-                Button(action: {
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                        viewModel.selectCurrentPosition()
-                        HapticFeedback.lightImpact()
+            VStack(spacing: 12) {
+                if viewModel.isCurrentPositionAvailable() {
+                    Button(action: {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                            viewModel.selectCurrentPosition()
+                            HapticFeedback.lightImpact()
+                        }
+                    }) {
+                        HStack {
+                            Image(systemName: "location.fill")
+                                .font(.system(size: 16, weight: .medium))
+                            Text("Utiliser ma position actuelle")
+                                .fontWeight(.medium)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 12)
+                        .background(
+                            Capsule()
+                                .fill(Color.accentColor.opacity(0.15))
+                        )
+                        .foregroundColor(.accentColor)
                     }
-                }) {
-                    HStack {
-                        Image(systemName: "location.fill")
-                            .font(.system(size: 16, weight: .medium))
-                        Text("Utiliser ma position actuelle")
-                            .fontWeight(.medium)
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
-                    .background(
-                        Capsule()
-                            .fill(Color.accentColor.opacity(0.15))
-                    )
-                    .foregroundColor(.accentColor)
+                    .buttonStyle(ScaleButtonStyle())
                 }
-                .buttonStyle(ScaleButtonStyle())
-                .padding(.top, 16)
+                
+                if !shortcutManager.shortcuts.isEmpty {
+                    Text("Raccourcis")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal, 8)
+                        .padding(.top, 8)
+                    
+                    ForEach(shortcutManager.shortcuts) { shortcut in
+                        Button(action: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                viewModel.handleInitialSearchResult(shortcut.toSearchResult(), targetField: viewModel.activeSearchField)
+                                HapticFeedback.lightImpact()
+                            }
+                        }) {
+                            HStack(spacing: 12) {
+                                Image(systemName: shortcut.symbol)
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.accentColor)
+                                    .frame(width: 24, height: 24)
+                                
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(shortcut.name)
+                                        .fontWeight(.medium)
+                                        .foregroundColor(.primary)
+                                    
+                                    Text(shortcut.coordinates.locationName)
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                                
+                                Spacer()
+                            }
+                            .frame(maxWidth: .infinity)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .fill(Color.secondary.opacity(0.1))
+                            )
+                        }
+                        .buttonStyle(ScaleButtonStyle())
+                    }
+                }
             }
+            .padding(.top, 16)
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 40)
