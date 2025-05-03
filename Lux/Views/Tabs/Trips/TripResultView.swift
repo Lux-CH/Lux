@@ -111,7 +111,9 @@ struct TripResultView: View {
             .padding(18)
             .background(
                 RoundedRectangle(cornerRadius: 20)
-                    .fill(Color(.systemBackground))
+                    .fill(colorScheme == .dark ?
+                          Color(.systemFill).opacity(0.3) :
+                          Color(.systemBackground))
                     .shadow(
                         color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1),
                         radius: isPressed ? 4 : 10,
