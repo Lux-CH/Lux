@@ -11,11 +11,13 @@ import SwiftUI
 struct LuxApp: App {
     @StateObject private var connectionService = ConnectionService.shared
     @StateObject private var locationManager = LocationManager()
+    @StateObject private var shortcutManager = ShortcutManager()
     
     var body: some Scene {
         WindowGroup {
             MainNavigationView()
                 .environmentObject(locationManager)
+                .environmentObject(shortcutManager)
         }
     }
 }
