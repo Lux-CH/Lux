@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SymbolPicker */; };
 		799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 799D2A762D98AC420066E9F5 /* LuxCom */; };
 		79A912462DB341660032AB9D /* GPSTests.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 79A912452DB341660032AB9D /* GPSTests.gpx */; };
 		79C64D402DB930DC00C01B89 /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 79C64D3F2DB930DC00C01B89 /* Polyline */; };
@@ -45,6 +46,7 @@
 			files = (
 				79C64D402DB930DC00C01B89 /* Polyline in Frameworks */,
 				799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */,
+				791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -90,6 +92,7 @@
 			packageProductDependencies = (
 				799D2A762D98AC420066E9F5 /* LuxCom */,
 				79C64D3F2DB930DC00C01B89 /* Polyline */,
+				791F49B02DC58AB4006B5565 /* SymbolPicker */,
 			);
 			productName = Lux;
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
@@ -122,6 +125,7 @@
 			packageReferences = (
 				799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */,
 				79C64D3E2DB930DC00C01B89 /* XCRemoteSwiftPackageReference "Polyline" */,
+				791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 799D2A682D98ABF80066E9F5 /* Products */;
@@ -368,6 +372,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/xnth97/SymbolPicker";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.2;
+			};
+		};
 		799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Lux-CH/LuxCom";
@@ -387,6 +399,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		791F49B02DC58AB4006B5565 /* SymbolPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
+			productName = SymbolPicker;
+		};
 		799D2A762D98AC420066E9F5 /* LuxCom */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */;
