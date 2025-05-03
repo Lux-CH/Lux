@@ -27,13 +27,15 @@ enum ViewMode: CaseIterable {
 }
 
 struct MainNavigationView: View {
-    @State private var debug: Bool = false
-    @State private var searchView: Bool = false
     @State private var viewMode: ViewMode = .home
     @State private var headerHeight: CGFloat = 215
     @State private var searchText: String = ""
+    @State private var showSettings: Bool = false
     @StateObject private var stopsViewModel = StopsViewModel()
     @EnvironmentObject var locationManager: LocationManager
+    @EnvironmentObject var shortcutManager: ShortcutManager
+    @State private var selectedShortcut: UserShortcut? = nil
+    @State private var showTripSearch: Bool = false
     @Namespace private var animation
     @Environment(\.colorScheme) private var colorScheme
     
@@ -88,13 +90,10 @@ struct MainNavigationView: View {
                         VStack {
                             if viewMode == .home {
                                 HStack {
-                                    ShortcutButton(symbol: "house", coords: (0.0, 0.0))
-                                        .transition(.scale(scale: 0.8).combined(with: .opacity))
-                                    ShortcutButton(symbol: "suitcase", coords: (0.0, 0.0))
-                                        .transition(.scale(scale: 0.8).combined(with: .opacity))
+                                    shortcutsRow
+                                    
                                     Button {
-                                        print("show settings")
-                                        debug.toggle()
+                                        showSettings.toggle()
                                     } label: {
                                         Image(systemName: "gearshape")
                                             .foregroundColor(Color.primary.opacity(0.6))
@@ -105,20 +104,8 @@ struct MainNavigationView: View {
                                     }
                                     .transition(.scale(scale: 0.8).combined(with: .opacity))
                                 }
-                                .fullScreenCover(isPresented: $debug) {
-                                    NavigationStack {
-                                        VStack {
-                                            List {
-                                                Button("open TripsSearchView") {
-                                                    searchView.toggle()
-                                                }
-                                            }
-                                        }
-                                    }
-                                    .navigationTitle("temp debug menu")
-                                    .fullScreenCover(isPresented: $searchView) {
-                                        TripsSearchView()
-                                    }
+                                .sheet(isPresented: $showSettings) {
+                                    SettingsView()
                                 }
                                 .padding(.top, 65)
                                 .padding(.bottom, 5)
@@ -245,6 +232,46 @@ struct MainNavigationView: View {
         }
         .onDisappear {
             stopsViewModel.cancelBackgroundTasks()
+        }
+        .fullScreenCover(isPresented: $showTripSearch) {
+            if let shortcut = selectedShortcut {
+                TripsSearchView(
+                    initialSearchResult: shortcut.toSearchResult(),
+                    initialTargetField: .to
+                )
+            } else {
+                TripsSearchView()
+            }
+        }
+    }
+    
+    private var shortcutsRow: some View {
+        HStack {
+            ForEach(Array(shortcutManager.visibleShortcuts.enumerated()), id: \.element.id) { index, shortcut in
+                ShortcutButton(
+                    symbol: shortcut.symbol,
+                    coords: (shortcut.coordinates.latitude, shortcut.coordinates.longitude),
+                    name: shortcut.name
+                ) {
+                    selectedShortcut = shortcut
+                    showTripSearch = true
+                }
+                .transition(.scale(scale: 0.8).combined(with: .opacity))
+            }
+            
+            if shortcutManager.visibleShortcuts.count < 2 {
+                ForEach(0..<(2 - shortcutManager.visibleShortcuts.count), id: \.self) { _ in
+                    ShortcutButton(
+                        symbol: "plus",
+                        name: "Ajouter",
+                        isPlaceholder: true
+                    ) {
+                        // Modified to open settings directly
+                        showSettings = true
+                    }
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                }
+            }
         }
     }
     
