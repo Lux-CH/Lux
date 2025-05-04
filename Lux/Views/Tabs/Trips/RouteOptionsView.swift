@@ -333,7 +333,7 @@ struct TransportModeToggle: View {
 
 struct TransferTimeSelector: View {
     @Binding var selectedTime: Int
-    private let timeOptions = [60, 120, 180, 240, 300]
+    private let timeOptions = [0, 2, 5, 7, 10]
     
     var body: some View {
         HStack(spacing: 8) {
@@ -345,13 +345,9 @@ struct TransferTimeSelector: View {
                     }
                 }) {
                     VStack(spacing: 4) {
-                        Text("\(seconds/60)m")
+                        Text("\(seconds)m")
                             .font(.system(size: 15, weight: selectedTime == seconds ? .semibold : .regular))
                             .foregroundColor(selectedTime == seconds ? .white : .primary)
-                        
-                        Text("\(seconds)s")
-                            .font(.system(size: 12))
-                            .foregroundColor(selectedTime == seconds ? .white.opacity(0.9) : .secondary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)

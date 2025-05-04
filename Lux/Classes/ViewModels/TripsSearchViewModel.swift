@@ -96,7 +96,7 @@ class TripsSearchViewModel: ObservableObject {
         time: nil,
         arriveBy: false,
         maxTransfers: 3,
-        minTransferTime: 120,
+        minTransferTime: 0,
         pedestrianProfile: .foot,
         transitModes: nil,
         numItineraries: 5,
@@ -430,13 +430,11 @@ class TripsSearchViewModel: ObservableObject {
                 activeSearchField = .none
                 searchTrips()
             } else {
-                // Otherwise, make the other field active
                 activeSearchField = .from
             }
         }
-        // Clear any active text search results list
         searchResults = []
         showMinCharactersMessage = false
-        isLoading = false // Ensure loading indicator is off
+        isLoading = false
     }
 }
