@@ -31,7 +31,11 @@ struct TripResultView: View {
     }
     
     var body: some View {
-        NavigationLink(destination: EmptyView()) {
+        NavigationLink(destination:
+                        ItineraryView(itinerary: itinerary, fromNearby: false)
+                            .toolbarBackground(.hidden, for: .navigationBar)
+                            .navigationBarBackButtonHidden(true)
+        ) {
             VStack(alignment: .leading, spacing: 18) {
                 HStack(alignment: .center) {
                     HStack(alignment: .firstTextBaseline, spacing: 10) {
@@ -147,30 +151,104 @@ struct RouteVisualizationView: View {
     let legs: [Leg]
     
     private var totalDuration: Int {
-        legs.reduce(0) { $0 + $1.duration }
+        legs.reduce(0) { $0 + $1.duration } + calculateTotalWaitingTime()
+    }
+
+    private func calculateWaitingTime(between currentLeg: Leg, and nextLeg: Leg) -> Int {
+        max(0, Int(nextLeg.startTime.timeIntervalSince(currentLeg.endTime)))
+    }
+
+    private func calculateTotalWaitingTime() -> Int {
+        guard legs.count > 1 else { return 0 }
+        
+        return zip(legs, legs.dropFirst()).reduce(0) { totalWaiting, legPair in
+            let (currentLeg, nextLeg) = legPair
+            return totalWaiting + calculateWaitingTime(between: currentLeg, and: nextLeg)
+        }
     }
     
     var body: some View {
         GeometryReader { geometry in
             HStack(spacing: 0) {
-                ForEach(legs.indices, id: \.self) { index in
-                    let leg = legs[index]
-                    let proportion = CGFloat(leg.duration) / CGFloat(totalDuration)
-                    let calculatedWidth = geometry.size.width * proportion
-                    let width = min(calculatedWidth, geometry.size.width - CGFloat(legs.count - 1) * 4)
-                    
-                    let finalWidth = max(width, CGFloat(10))
-                    
-                    LegSegmentView(
-                        leg: leg,
-                        isFirst: index == 0,
-                        isLast: index == legs.count - 1
-                    )
-                    .frame(width: finalWidth)
+                ForEach(0..<(legs.count * 2 - 1), id: \.self) { index in
+                    if index % 2 == 0 {
+                        let legIndex = index / 2
+                        let leg = legs[legIndex]
+                        let proportion = CGFloat(leg.duration) / CGFloat(totalDuration)
+                        let calculatedWidth = geometry.size.width * proportion
+                        let width = min(calculatedWidth, geometry.size.width - CGFloat(legs.count - 1) * 4)
+                        
+                        let finalWidth = max(width, CGFloat(10))
+                        
+                        LegSegmentView(
+                            leg: leg,
+                            isFirst: legIndex == 0,
+                            isLast: legIndex == legs.count - 1
+                        )
+                        .frame(width: finalWidth)
+                    } else {
+                        let previousLegIndex = index / 2
+                        let nextLegIndex = previousLegIndex + 1
+                        
+                        if nextLegIndex < legs.count {
+                            let waitingTime = calculateWaitingTime(between: legs[previousLegIndex], and: legs[nextLegIndex])
+                            
+                            if waitingTime > 120 {
+                                let proportion = CGFloat(waitingTime) / CGFloat(totalDuration)
+                                let calculatedWidth = geometry.size.width * proportion
+                                let finalWidth = max(calculatedWidth, 10)
+                                
+                                WaitingTimeView(seconds: waitingTime)
+                                    .frame(width: finalWidth)
+                            }
+                        }
+                    }
                 }
             }
             .frame(height: geometry.size.height)
             .frame(maxWidth: geometry.size.width)
+        }
+    }
+}
+
+struct WaitingTimeView: View {
+    let seconds: Int
+    @Environment(\.colorScheme) private var colorScheme
+    
+    private var formattedTime: String {
+        let minutes = seconds / 60
+        return "\(minutes)m"
+    }
+    
+    var body: some View {
+        ZStack {
+            Rectangle()
+                .fill(Color.gray.opacity(0.15))
+                .overlay(
+                    Rectangle()
+                        .fill(
+                            LinearGradient(
+                                gradient: Gradient(colors: [
+                                    Color.white.opacity(colorScheme == .dark ? 0.05 : 0.08),
+                                    Color.black.opacity(0.05)
+                                ]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                        )
+                        .blendMode(.overlay)
+                )
+            
+            VStack(spacing: 1) {
+                Image(systemName: "clock")
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundColor(.secondary)
+                
+                Text(formattedTime)
+                    .font(.system(size: 8, weight: .medium))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.vertical, 2)
         }
     }
 }
