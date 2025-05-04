@@ -21,6 +21,11 @@ struct ItineraryView: View {
         self.fromNearby = fromNearby
     }
     
+    init(itinerary: Itinerary, fromNearby: Bool) {
+        _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary))
+        self.fromNearby = fromNearby
+    }
+    
     var body: some View {
         ZStack {
             if viewModel.isLoading {

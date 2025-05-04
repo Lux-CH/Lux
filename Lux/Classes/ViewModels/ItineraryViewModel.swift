@@ -38,8 +38,19 @@ final class ItineraryViewModel: ObservableObject {
         self.tripId = tripId
     }
     
+    convenience init(itinerary: Itinerary) {
+        self.init(tripId: "")
+        self.itinerary = itinerary
+    }
+    
     // MARK: - Public Methods
     func loadItinerary() async {
+        if itinerary != nil {
+            await processItinerary()
+            isLoading = false
+            return
+        }
+        
         isLoading = true
         error = nil
         
