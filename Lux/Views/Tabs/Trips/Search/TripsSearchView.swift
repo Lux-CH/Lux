@@ -56,6 +56,20 @@ struct TripsSearchView: View {
                     }
                 }
             }
+            .keyboardToolbar {
+                ShortcutsKeyboardToolbar(
+                    onShortcutSelected: { result in
+                        let targetField: TripsSearchViewModel.SearchField = isFromFocused ? .from : .to
+                        viewModel.handleInitialSearchResult(result, targetField: targetField)
+                    },
+                    onCurrentPositionSelected: {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                            viewModel.selectCurrentPosition()
+                            HapticFeedback.lightImpact()
+                        }
+                    }
+                )
+            }
             .sheet(isPresented: $viewModel.showSettings) {
                 RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
                     viewModel.updateRouteOptions(newOptions)
