@@ -23,33 +23,37 @@ struct TripsSearchView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                LinearGradient(
-                    colors: colorScheme == .dark
-                    ? [Color(.systemBackground), Color(.systemBackground).opacity(0.92)]
-                    : [Color(.secondarySystemBackground).opacity(0.7), Color.white],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .ignoresSafeArea()
-                .gesture(dragGesture)
-                
-                VStack(spacing: 0) {
-                    TripsSearchHeaderView(
-                        viewModel: viewModel,
-                        isFromFocused: $isFromFocused,
-                        isToFocused: $isToFocused,
-                        animation: animation
+            GeometryReader {_ in 
+                ZStack {
+                    LinearGradient(
+                        colors: colorScheme == .dark
+                        ? [Color(.systemBackground), Color(.systemBackground).opacity(0.92)]
+                        : [Color(.secondarySystemBackground).opacity(0.7), Color.white],
+                        startPoint: .top,
+                        endPoint: .bottom
                     )
+                    .ignoresSafeArea()
                     .gesture(dragGesture)
                     
-                    TripsSearchContentView(
-                        viewModel: viewModel,
-                        animation: animation
-                    )
-                    .offset(y: max(0, dragOffset))
-                    .animation(.interactiveSpring(), value: dragOffset)
-                    .gesture(dragGesture)
+                    VStack(spacing: 0) {
+                        TripsSearchHeaderView(
+                            viewModel: viewModel,
+                            isFromFocused: $isFromFocused,
+                            isToFocused: $isToFocused,
+                            animation: animation
+                        )
+                        .gesture(dragGesture)
+                        .ignoresSafeArea(.keyboard)
+                        
+                        TripsSearchContentView(
+                            viewModel: viewModel,
+                            animation: animation
+                        )
+                        .offset(y: max(0, dragOffset))
+                        .animation(.interactiveSpring(), value: dragOffset)
+                        .gesture(dragGesture)
+                        .ignoresSafeArea(.keyboard)
+                    }
                 }
             }
             .sheet(isPresented: $viewModel.showSettings) {
