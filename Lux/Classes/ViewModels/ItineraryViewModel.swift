@@ -200,7 +200,7 @@ final class ItineraryViewModel: ObservableObject {
 
     
     private func createRouteOverlay(for leg: Leg, withColor color: Color) -> RouteOverlay? {
-        let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e6)
+        let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e7)
         
         guard let coordinates = polyline.coordinates, !coordinates.isEmpty else { return nil }
         

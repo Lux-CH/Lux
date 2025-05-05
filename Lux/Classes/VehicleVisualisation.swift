@@ -43,7 +43,7 @@ enum VehicleVisualisation {
     
     // MARK: - KeyFrame Calculation
     static func calculateKeyFrames(for leg: Leg) -> [KeyFrame] {
-        let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e6)
+        let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e7)
         guard let coordinates = polyline.coordinates, coordinates.count >= 2 else { return [] }
         
         let departureTime = leg.startTime.timeIntervalSince1970
