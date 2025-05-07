@@ -121,7 +121,7 @@ struct MainNavigationView: View {
                                             stopsViewModel.performSearch()
                                         }
                                     } else {
-                                        switchToStopsMode()
+                                        print("should be searching for geocoding..")
                                     }
                                 },
                                 onClear: {
