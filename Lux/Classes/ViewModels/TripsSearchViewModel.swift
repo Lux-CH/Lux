@@ -87,6 +87,11 @@ class TripsSearchViewModel: ObservableObject {
     @Published var isLoadingLater = false
     @Published var isChangingContent = false
     @Published var animateIn = false
+    private var allTrips: [Itinerary] = []
+    private var currentPageIndex = 0
+    private let itemsPerPage = 6
+    private var hasMoreEarlier = true
+    private var hasMoreLater = true
     
     // Route options
     @Published var routeOptions = RouteOptions(
@@ -311,6 +316,10 @@ class TripsSearchViewModel: ObservableObject {
         
         if pageCursor == nil {
             isLoadingTrips = true
+            allTrips = []
+            currentPageIndex = 0
+            hasMoreEarlier = true
+            hasMoreLater = true
         }
         
         showTripResults = true
@@ -339,10 +348,30 @@ class TripsSearchViewModel: ObservableObject {
                 let result = try await getRoute(options)
                 
                 await MainActor.run {
-                    self.trips = result.itineraries
+                    if isLoadingEarlier {
+                        allTrips.insert(contentsOf: result.itineraries, at: 0)
+                        currentPageIndex += result.itineraries.count / itemsPerPage
+                    } else if isLoadingLater {
+                        allTrips.append(contentsOf: result.itineraries)
+                    } else {
+                        allTrips = result.itineraries
+                        
+                        if departureType == .arriveBy && !allTrips.isEmpty {
+                            currentPageIndex = (allTrips.count - 1) / itemsPerPage
+                        } else {
+                            currentPageIndex = 0
+                        }
+                    }
+                    
                     self.directs = result.direct
                     self.previousPageCursor = result.previousPageCursor
                     self.nextPageCursor = result.nextPageCursor
+                    
+                    self.hasMoreEarlier = !(result.previousPageCursor.isEmpty)
+                    self.hasMoreLater = !(result.nextPageCursor.isEmpty)
+                    
+                    self.updateDisplayedTrips()
+                    
                     self.isLoadingTrips = false
                     self.isLoadingEarlier = false
                     self.isLoadingLater = false
@@ -363,20 +392,61 @@ class TripsSearchViewModel: ObservableObject {
         }
     }
     
-    func loadEarlier() {
-        guard let cursor = previousPageCursor, !cursor.isEmpty else { return }
+    private func updateDisplayedTrips() {
+        let startIndex = currentPageIndex * itemsPerPage
+        let endIndex = min(startIndex + itemsPerPage, allTrips.count)
         
-        isLoadingEarlier = true
+        if startIndex < allTrips.count {
+            self.trips = Array(allTrips[startIndex..<endIndex])
+        } else {
+            self.trips = []
+        }
+    }
+    
+    func loadEarlier() {
         isChangingContent = true
-        searchTrips(pageCursor: cursor)
+        
+        if currentPageIndex > 0 {
+            isLoadingEarlier = true
+            currentPageIndex -= 1
+            updateDisplayedTrips()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.isLoadingEarlier = false
+                self.isChangingContent = false
+                self.animateIn = true
+            }
+        }
+        else if hasMoreEarlier && !(previousPageCursor?.isEmpty ?? true) {
+            isLoadingEarlier = true
+            searchTrips(pageCursor: previousPageCursor)
+        } else {
+            isChangingContent = false
+        }
     }
     
     func loadLater() {
-        guard let cursor = nextPageCursor, !cursor.isEmpty else { return }
-        
-        isLoadingLater = true
         isChangingContent = true
-        searchTrips(pageCursor: cursor)
+        
+        let maxPageIndex = max(0, (allTrips.count - 1) / itemsPerPage)
+        
+        if currentPageIndex < maxPageIndex {
+            isLoadingLater = true
+            currentPageIndex += 1
+            updateDisplayedTrips()
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                self.isLoadingLater = false
+                self.isChangingContent = false
+                self.animateIn = true
+            }
+        }
+        else if hasMoreLater && !(nextPageCursor?.isEmpty ?? true) {
+            isLoadingLater = true
+            searchTrips(pageCursor: nextPageCursor)
+        } else {
+            isChangingContent = false
+        }
     }
     
     private func getCoordinates(for location: SelectedLocation?) -> (Double, Double)? {
