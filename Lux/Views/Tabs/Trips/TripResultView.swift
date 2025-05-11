@@ -281,16 +281,31 @@ struct LegSegmentView: View {
             
             Group {
                 if leg.mode == .walk {
-                    Image(systemName: "figure.walk")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundColor(.blue)
-                        .shadow(color: Color.black.opacity(0.3), radius: 1, x: 0, y: 1)
-                        .scaleEffect(isAnimating ? 1.05 : 1)
-                        .onAppear {
-                            withAnimation(Animation.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
-                                isAnimating = true
-                            }
+                    HStack(spacing: 4) {
+                        Image(systemName: "figure.walk")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.blue)
+                            .shadow(color: Color.black.opacity(0.3), radius: 1, x: 0, y: 1)
+                            .scaleEffect(isAnimating ? 1.05 : 1)
+                        
+                        if isFirst && isLast {
+                            let distanceKm = (leg.distance ?? 0.0) / 1000.0
+                            let formattedDistance = distanceKm >= 1.0 ?
+                            String(format: "%.1f km", distanceKm) :
+                            String(format: "%d m", Int(leg.distance ?? 0.0))
+                            
+                            Text(formattedDistance)
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundColor(.blue)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                         }
+                    }
+                    .onAppear {
+                        withAnimation(Animation.easeInOut(duration: 1.2).repeatForever(autoreverses: true)) {
+                            isAnimating = true
+                        }
+                    }
                 } else if let routeName = leg.routeShortName {
                     Text(routeName)
                         .font(.custom("NimbusSansBeckerPBla", size: 14))

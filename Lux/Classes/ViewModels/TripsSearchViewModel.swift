@@ -74,6 +74,7 @@ class TripsSearchViewModel: ObservableObject {
     
     // Trip search related
     @Published var trips: [Itinerary] = []
+    @Published var directs: [Itinerary] = []
     @Published var isLoadingTrips = false
     @Published var errorMessage: String? = nil
     @Published var showTripResults = false
@@ -187,6 +188,7 @@ class TripsSearchViewModel: ObservableObject {
         activeSearchField = .from
         showTripResults = false
         trips = []
+        directs = []
     }
     
     func removeToLocation() {
@@ -194,6 +196,7 @@ class TripsSearchViewModel: ObservableObject {
         activeSearchField = .to
         showTripResults = false
         trips = []
+        directs = []
     }
     
     func swapLocations() {
@@ -206,6 +209,7 @@ class TripsSearchViewModel: ObservableObject {
         } else {
             showTripResults = false
             trips = []
+            directs = []
         }
     }
     
@@ -336,6 +340,7 @@ class TripsSearchViewModel: ObservableObject {
                 
                 await MainActor.run {
                     self.trips = result.itineraries
+                    self.directs = result.direct
                     self.previousPageCursor = result.previousPageCursor
                     self.nextPageCursor = result.nextPageCursor
                     self.isLoadingTrips = false

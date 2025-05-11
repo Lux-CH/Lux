@@ -294,7 +294,7 @@ struct TripResultsContent: View {
                 ErrorView(message: error) {
                     viewModel.searchTrips()
                 }
-            } else if viewModel.trips.isEmpty {
+            } else if viewModel.trips.isEmpty && viewModel.directs.isEmpty {
                 NoResultsView()
             } else {
                 resultsList
@@ -312,11 +312,27 @@ struct TripResultsContent: View {
             ScrollViewReader { proxy in
                 ScrollView {
                     VStack(spacing: 16) {
+                        if !viewModel.directs.isEmpty {
+                            ForEach(viewModel.directs.indices, id: \.self) { index in
+                                let itinerary = viewModel.directs[index]
+                                TripResultView(itinerary: itinerary)
+                                    .id("direct-\(index)")
+                                    .opacity(appearAnimation ? 1 : 0)
+                                    .animation(.easeOut(duration: 0.3).delay(Double(viewModel.trips.count + index) * 0.05), value: appearAnimation)
+                            }
+                            
+                            if !viewModel.trips.isEmpty {
+                                Divider()
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 32)
+                            }
+                        }
                         ForEach(viewModel.trips.indices, id: \.self) { index in
                             let itinerary = viewModel.trips[index]
                             TripResultView(itinerary: itinerary)
                                 .id("trip-\(index)")
                                 .opacity(appearAnimation ? 1 : 0)
+                                .animation(.easeOut(duration: 0.3).delay(Double(index) * 0.05), value: appearAnimation)
                         }
                     }
                     .padding(.vertical, 20)

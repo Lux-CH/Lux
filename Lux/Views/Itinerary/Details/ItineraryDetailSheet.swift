@@ -14,7 +14,7 @@ struct ItineraryDetailSheet: View {
     
     var body: some View {
         if let itinerary = itinerary {
-            if itinerary.legs.count == 1 {
+            if itinerary.legs.count == 1 && itinerary.legs.first?.mode != .walk {
                 IndividualItineraryDetailView(itinerary: itinerary)
             } else {
                 Text("idk")
