@@ -172,30 +172,56 @@ final class ItineraryViewModel: ObservableObject {
         var annotations: [StopAnnotation] = []
         var overlays: [RouteOverlay] = []
         
-        itinerary.legs.enumerated().forEach { index, leg in
-            let isFirstLeg = index == 0
-            let isLastLeg = index == itinerary.legs.count - 1
+        if let firstLeg = itinerary.legs.first {
+            let firstLegColor = getLegColor(firstLeg)
+            annotations.append(StopAnnotation(place: firstLeg.from, color: firstLegColor, isTerminal: true))
+        }
+        
+        for (index, leg) in itinerary.legs.enumerated() {
             let legColor = getLegColor(leg)
             
-            if isFirstLeg {
-                annotations.append(StopAnnotation(place: leg.from, color: legColor, isTerminal: true))
+            if let intermediateStops = leg.intermediateStops {
+                for stop in intermediateStops {
+                    annotations.append(StopAnnotation(place: stop, color: legColor, isIntermediate: true))
+                }
             }
             
-            if isLastLeg {
-                annotations.append(StopAnnotation(place: leg.to, color: legColor, isTerminal: true))
-            }
+            let isLastLeg = index == itinerary.legs.count - 1
+            let isTransferPoint = !isLastLeg && itinerary.legs[index + 1].mode != leg.mode
             
-            if let intermediateStops = leg.intermediateStops, !intermediateStops.isEmpty {
-                annotations.append(contentsOf: intermediateStops.map {
-                    StopAnnotation(place: $0, color: legColor, isIntermediate: true)
-                })
-            }
+            annotations.append(StopAnnotation(
+                place: leg.to,
+                color: legColor,
+                isTerminal: isLastLeg || isTransferPoint,
+                isIntermediate: !isLastLeg && !isTransferPoint
+            ))
             
             if let overlay = createRouteOverlay(for: leg, withColor: legColor) {
                 overlays.append(overlay)
             }
         }
-        return (annotations, overlays)
+        
+        return (removeDuplicateAnnotations(annotations), overlays)
+    }
+
+    private func removeDuplicateAnnotations(_ annotations: [StopAnnotation]) -> [StopAnnotation] {
+        var uniqueAnnotations: [StopAnnotation] = []
+        var seenCoordinates: [String: Int] = [:]
+        
+        for annotation in annotations {
+            let key = "\(annotation.coordinate.latitude),\(annotation.coordinate.longitude)"
+            
+            if let existingIndex = seenCoordinates[key] {
+                if annotation.isTerminal && !uniqueAnnotations[existingIndex].isTerminal {
+                    uniqueAnnotations[existingIndex] = annotation
+                }
+            } else {
+                uniqueAnnotations.append(annotation)
+                seenCoordinates[key] = uniqueAnnotations.count - 1
+            }
+        }
+        
+        return uniqueAnnotations
     }
 
     
