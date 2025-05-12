@@ -46,14 +46,19 @@ struct DepartureTimeRow: View {
         
         let now = Date()
         let components = Calendar.current.dateComponents([.minute], from: now, to: date)
-        
+        let secs = Calendar.current.dateComponents([.second], from: now, to: date)
         if let minutes = components.minute {
             if minutes < 0 {
                 return "Passé"
             } else if minutes == 0 {
                 return "Maintenant"
             } else if minutes < 60 {
-                return "Dans \(minutes) min"
+                if let sec = secs.second {
+                    return "Dans \(Int(ceil(Double(sec) / 60.0))) min"
+                }
+                else {
+                    return "Dans \(minutes) min"
+                }
             } else {
                 let hours = minutes / 60
                 let remainingMinutes = minutes % 60
