@@ -18,9 +18,10 @@ struct DepartureTimeRow: View {
             if let departure = stopTime.place.departure {
                 Text(formatTime(departure))
                     .font(.system(.body, design: .monospaced))
-                    .foregroundStyle(stopTime.realTime ? .green : .primary)
+                    .foregroundStyle(stopTime.cancelled ? .red : stopTime.realTime ? .green : .primary)
                     .fontWeight(.medium)
                     .contentTransition(.numericText())
+                    .strikethrough(stopTime.cancelled, color: .red)
             }
             
             Spacer()

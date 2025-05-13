@@ -39,6 +39,7 @@ struct ArrivalMinuteView: View {
             } else {
                 Text(displayText)
                     .foregroundColor(latenessColor)
+                    .strikethrough(incomingStop.cancelled, color: .red)
             }
         }
         .onReceive(timer) { _ in
@@ -107,7 +108,9 @@ struct ArrivalMinuteView: View {
         
         let scheduledDifference = calendar.dateComponents([.minute], from: scheduledArrival, to: arrival).minute ?? 0
         
-        if !incomingStop.realTime {
+        if incomingStop.cancelled {
+            return .red
+        } else if !incomingStop.realTime {
             return .primary
         } else if scheduledDifference <= 2 && scheduledDifference >= -1 {
             return .green
