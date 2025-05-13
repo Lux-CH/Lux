@@ -34,5 +34,8 @@ struct RouteGroupsView: View {
             }
             .padding(.bottom, 10)
         }
+        .refreshable {
+            await viewModel.refreshDepartures(showLoading: false)
+        }
     }
 }
