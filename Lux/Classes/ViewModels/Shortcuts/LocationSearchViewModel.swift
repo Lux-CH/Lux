@@ -43,7 +43,7 @@ class LocationSearchViewModel: ObservableObject {
                     results = try await geocode(
                         text: query,
                         place: location,
-                        placeBias: 3
+                        placeBias: 2
                     )
                 } else {
                     results = try await geocode(text: query)

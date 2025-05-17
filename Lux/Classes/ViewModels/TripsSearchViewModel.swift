@@ -257,7 +257,7 @@ class TripsSearchViewModel: ObservableObject {
         backgroundRefreshTask = Task {
             do {
                 if let coords = locationManager?.location?.coordinate {
-                    let results = try await geocode(text: query, place: (coords.latitude, coords.longitude), placeBias: 3)
+                    let results = try await geocode(text: query, place: (coords.latitude, coords.longitude), placeBias: 2)
                     if !Task.isCancelled {
                         await MainActor.run {
                             self.searchResults = self.filterResultsForUniqueId(results)
