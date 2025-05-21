@@ -53,7 +53,7 @@ class StopViewModel: ObservableObject {
         }
         
         if !fromStops {
-            refreshTimer = Timer.publish(every: 7.5, on: .main, in: .common)
+            refreshTimer = Timer.publish(every: 5, on: .main, in: .common)
                 .autoconnect()
                 .sink { [weak self] _ in
                     Task {
@@ -163,9 +163,7 @@ class StopViewModel: ObservableObject {
     }
     
     private func refreshDeparturesInBackground() async {
-        guard backgroundRefreshTask == nil || backgroundRefreshTask?.isCancelled == true else {
-            return
-        }
+        backgroundRefreshTask?.cancel()
         
         backgroundRefreshTask = Task {
             do {
@@ -174,7 +172,10 @@ class StopViewModel: ObservableObject {
                     time: currentTime,
                     numberOfEvents: fromStops ? 100 : 50
                 )
-                if Task.isCancelled { return }
+                if Task.isCancelled {
+                    backgroundRefreshTask = nil
+                    return
+                }
                 
                 await MainActor.run {
                     self.stopTimes = freshStopTimes
