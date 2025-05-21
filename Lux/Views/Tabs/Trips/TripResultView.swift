@@ -10,6 +10,7 @@ import LuxCom
 
 struct TripResultView: View {
     let itinerary: Itinerary
+    @State var dontGoToView: Bool = false
     @Environment(\.colorScheme) private var colorScheme
     @State private var isPressed = false
     
@@ -31,119 +32,128 @@ struct TripResultView: View {
     }
     
     var body: some View {
-        NavigationLink(destination:
-                        ItineraryView(itinerary: itinerary, fromNearby: false)
-                            .toolbarBackground(.hidden, for: .navigationBar)
-                            .navigationBarBackButtonHidden(true)
-        ) {
-            VStack(alignment: .leading, spacing: 18) {
-                HStack(alignment: .center) {
-                    HStack(alignment: .firstTextBaseline, spacing: 10) {
-                        Text(dateFormatter.string(from: itinerary.startTime))
-                            .font(.system(size: 20, weight: .bold))
-                        
-                        Image(systemName: "arrow.right")
-                            .font(.system(size: 16, weight: .semibold))
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal, -4)
-                        
-                        Text(dateFormatter.string(from: itinerary.endTime))
-                            .font(.system(size: 20, weight: .bold))
+        if !dontGoToView {
+            NavigationLink(destination:
+                            ItineraryView(itinerary: itinerary, fromNearby: false)
+                .toolbarBackground(.hidden, for: .navigationBar)
+                .navigationBarBackButtonHidden(true)
+            ) {
+                buttonContent
+            }
+            .buttonStyle(PlainButtonStyle())
+            .simultaneousGesture(
+                DragGesture(minimumDistance: 0)
+                    .onChanged { _ in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isPressed = true
+                        }
                     }
-                    
-                    Spacer()
-                    
-                    HStack(spacing: 4) {
-                        Image(systemName: "clock.fill")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                        
-                        Text(durationFormatter(itinerary.duration))
-                            .font(.system(size: 14, weight: .medium))
+                    .onEnded { _ in
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            isPressed = false
+                        }
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.vertical, 6)
-                    .background(
-                        Capsule()
-                            .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
-                    )
+            )
+            .padding(.horizontal, 16)
+        }
+        else {
+            buttonContent
+                .padding(.horizontal, 16)
+        }
+    }
+    private var buttonContent: some View {
+        VStack(alignment: .leading, spacing: 18) {
+            HStack(alignment: .center) {
+                HStack(alignment: .firstTextBaseline, spacing: 10) {
+                    Text(dateFormatter.string(from: itinerary.startTime))
+                        .font(.system(size: 20, weight: .bold))
+                    
+                    Image(systemName: "arrow.right")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.secondary)
+                        .padding(.horizontal, -4)
+                    
+                    Text(dateFormatter.string(from: itinerary.endTime))
+                        .font(.system(size: 20, weight: .bold))
                 }
                 
-                HStack(spacing: 16) {
-                    HStack(spacing: 6) {
-                        Image(systemName: "point.bottomleft.forward.to.point.topright.filled.scurvepath")
-                            .font(.system(size: 13))
-                            .foregroundColor(itinerary.transfers == 0 ? .green : .secondary)
-                        
-                        if itinerary.transfers > 0 {
-                            Text("\(itinerary.transfers) transfer\(itinerary.transfers > 1 ? "s" : "")")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.secondary)
-                        }
-                        else {
-                            Text("Direct")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.green)
-                        }
-                    }
-                    Image(systemName: "circle.fill")
-                        .font(.system(size: 5))
+                Spacer()
+                
+                HStack(spacing: 4) {
+                    Image(systemName: "clock.fill")
+                        .font(.system(size: 12))
                         .foregroundColor(.secondary)
                     
-                    let walkingLegs = itinerary.legs.filter { $0.mode == .walk }
-                    if !walkingLegs.isEmpty {
-                        HStack(spacing: 6) {
-                            Image(systemName: "figure.walk")
-                                .font(.system(size: 13))
-                                .foregroundColor(.secondary)
-                            
-                            let totalWalkingDuration = walkingLegs.reduce(0) { $0 + $1.duration }
-                            let walkingMinutes = totalWalkingDuration / 60
-                            
-                            Text("\(walkingMinutes) min")
-                                .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.secondary)
-                        }
-                    }
+                    Text(durationFormatter(itinerary.duration))
+                        .font(.system(size: 14, weight: .medium))
                 }
-                .padding(.top, -8)
-                
-                RouteVisualizationView(legs: itinerary.legs)
-                    .frame(height: 48)
-                    .padding(.top, 2)
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .background(
+                    Capsule()
+                        .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
+                )
             }
-            .padding(18)
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(colorScheme == .dark ?
-                          Color(.systemFill).opacity(0.3) :
-                          Color(.systemBackground))
-                    .shadow(
-                        color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1),
-                        radius: isPressed ? 4 : 10,
-                        x: 0,
-                        y: isPressed ? 2 : 4
-                    )
-            )
-            .scaleEffect(isPressed ? 0.98 : 1)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
-            .contentShape(RoundedRectangle(cornerRadius: 20))
+            
+            HStack(spacing: 16) {
+                HStack(spacing: 6) {
+                    Image(systemName: "point.bottomleft.forward.to.point.topright.filled.scurvepath")
+                        .font(.system(size: 13))
+                        .foregroundColor(itinerary.transfers == 0 ? .green : .secondary)
+                    
+                    if itinerary.transfers > 0 {
+                        Text("\(itinerary.transfers) transfer\(itinerary.transfers > 1 ? "s" : "")")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
+                    else {
+                        Text("Direct")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.green)
+                    }
+                }
+                Image(systemName: "circle.fill")
+                    .font(.system(size: 5))
+                    .foregroundColor(.secondary)
+                
+                let walkingLegs = itinerary.legs.filter { $0.mode == .walk }
+                if !walkingLegs.isEmpty {
+                    HStack(spacing: 6) {
+                        Image(systemName: "figure.walk")
+                            .font(.system(size: 13))
+                            .foregroundColor(.secondary)
+                        
+                        let totalWalkingDuration = walkingLegs.reduce(0) { $0 + $1.duration }
+                        let walkingMinutes = totalWalkingDuration / 60
+                        
+                        Text("\(walkingMinutes) min")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
+                }
+            }
+            .padding(.top, -8)
+            
+            RouteVisualizationView(legs: itinerary.legs)
+                .frame(height: 48)
+                .padding(.top, 2)
         }
-        .buttonStyle(PlainButtonStyle())
-        .simultaneousGesture(
-            DragGesture(minimumDistance: 0)
-                .onChanged { _ in
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        isPressed = true
-                    }
-                }
-                .onEnded { _ in
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        isPressed = false
-                    }
-                }
+        .padding(18)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(colorScheme == .dark ?
+                      Color(.systemFill).opacity(0.3) :
+                      Color(.systemBackground))
+                .shadow(
+                    color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1),
+                    radius: isPressed ? 4 : 10,
+                    x: 0,
+                    y: isPressed ? 2 : 4
+                )
         )
-        .padding(.horizontal, 16)
+        .scaleEffect(isPressed ? 0.98 : 1)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
+        .contentShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 

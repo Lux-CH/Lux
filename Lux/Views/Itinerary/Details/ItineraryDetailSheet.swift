@@ -17,7 +17,7 @@ struct ItineraryDetailSheet: View {
             if itinerary.legs.count == 1 && itinerary.legs.first?.mode != .walk {
                 IndividualItineraryDetailView(itinerary: itinerary)
             } else {
-                Text("idk")
+                MultipleItineraryDetailView(itinerary: itinerary)
             }
         } else {
             ContentUnavailableView {
@@ -37,10 +37,10 @@ struct LegHeaderView: View {
     var body: some View {
         HStack(spacing: 15) {
             LinePill(line: leg.routeShortName ?? "",
-                   mode: leg.mode,
-                   width: 64,
-                   height: 40,
-                   fontSize: 19)
+                     mode: leg.mode,
+                     width: 64,
+                     height: 40,
+                     fontSize: 19)
             .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
             
             VStack(alignment: .leading, spacing: 3) {

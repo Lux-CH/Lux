@@ -115,7 +115,7 @@ struct ItineraryView: View {
                     // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
                     .sheet(isPresented: $showDetails) {
                         ItineraryDetailSheet(itinerary: viewModel.itinerary)
-                            .presentationDetents([.fraction(0.1), .medium, .large])
+                            .presentationDetents([viewModel.itinerary?.legs.count == 1 ? .fraction(0.1) : .fraction(0.225), .medium, .large])
                             .presentationDragIndicator(.visible)
                             .presentationCornerRadius(38)
                             .presentationBackgroundInteraction(.enabled)
