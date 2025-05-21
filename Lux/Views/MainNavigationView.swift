@@ -259,14 +259,41 @@ struct MainNavigationView: View {
                 .transition(.scale(scale: 0.8).combined(with: .opacity))
             }
             
-            if shortcutManager.visibleShortcuts.count < 2 {
+            if shortcutManager.visibleShortcuts.isEmpty {
+                Button {
+                    showSettings = true
+                } label: {
+                    VStack(spacing: 4) {
+                        HStack {
+                            Image(systemName: "plus")
+                                .foregroundColor(Color.accentColor.opacity(0.5))
+                                .font(.system(size: 20))
+                            Text("Ajouter des raccourcis")
+                                .foregroundColor(Color.accentColor.opacity(0.5))
+                        }
+                    }
+                    .frame(width: 275, height: 52)
+                    .background(
+                        RoundedRectangle(cornerRadius: 20)
+                            .stroke(Color.secondary.opacity(0.3),
+                                    style: StrokeStyle(lineWidth: 2, dash: [6])
+                                   )
+                            .background(
+                                Color(.secondarySystemFill)
+                                    .opacity(0.3)
+                                    .cornerRadius(20)
+                            )
+                    )
+                }
+                .transition(.scale(scale: 0.8).combined(with: .opacity))
+            }
+            else if shortcutManager.visibleShortcuts.count < 2 {
                 ForEach(0..<(2 - shortcutManager.visibleShortcuts.count), id: \.self) { _ in
                     ShortcutButton(
                         symbol: "plus",
                         name: "Ajouter",
                         isPlaceholder: true
                     ) {
-                        // Modified to open settings directly
                         showSettings = true
                     }
                     .transition(.scale(scale: 0.8).combined(with: .opacity))

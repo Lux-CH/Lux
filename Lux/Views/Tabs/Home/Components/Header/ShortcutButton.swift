@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ShortcutButton: View {
+    @ObservedObject var settings = Settings.shared
     var symbol: String
     var coords: (Double, Double)?
     var name: String?
@@ -19,9 +20,15 @@ struct ShortcutButton: View {
             action()
         } label: {
             VStack(spacing: 4) {
-                Image(systemName: symbol)
-                    .foregroundColor(isPlaceholder ? Color.accentColor.opacity(0.5) : Color.accentColor)
-                    .font(.system(size: 20))
+                HStack {
+                    Image(systemName: symbol)
+                        .foregroundColor(isPlaceholder ? Color.accentColor.opacity(0.5) : Color.accentColor)
+                        .font(.system(size: 20))
+                    if let shortcutName = name, !isPlaceholder, settings.showShortcutLabel {
+                        Text(shortcutName)
+                            .font(.system(size: 15))
+                    }
+                }
             }
             .frame(width: 134, height: 52.5)
             .background(
