@@ -12,6 +12,9 @@ import Combine
 struct CompactStopView: View {
     @Environment(\.colorScheme) var colorScheme
     @StateObject private var viewModel: StopViewModel
+    @ObservedObject var settings = Settings.shared
+    @State private var animateIn = false
+
     let maxGroupsToShow: Int
     
     private let activeDotColor = Color.primary.opacity(0.5)
@@ -68,18 +71,18 @@ struct CompactStopView: View {
                     .padding(.bottom, 0)
             }
             .background {
-                if colorScheme == .dark {
+                if colorScheme == .dark && settings.showModern {
                     MaskedImageView()
                         .edgesIgnoringSafeArea(.all)
                 } else {
                     UnevenRoundedRectangle(
                         topLeadingRadius: 38,
-                        bottomLeadingRadius: 2,
-                        bottomTrailingRadius: 2,
+                        bottomLeadingRadius: 0,
+                        bottomTrailingRadius: 0,
                         topTrailingRadius: 38,
                         style: .continuous
                     )
-                    .strokeBorder(Color(UIColor.systemGray5), lineWidth: 1)
+                    .strokeBorder(colorScheme == .dark ? Color(UIColor.secondarySystemFill) : Color(UIColor.systemGray5), lineWidth: 1)
                     .edgesIgnoringSafeArea(.all)
                 }
             }
