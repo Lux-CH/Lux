@@ -11,6 +11,8 @@ struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var shortcutManager: ShortcutManager
+    @ObservedObject var settings = Settings.shared
+    
     @State private var showAddShortcutSheet = false
     @State private var editingShortcut: UserShortcut? = nil
     @State private var isReordering = false
@@ -19,6 +21,7 @@ struct SettingsView: View {
         NavigationStack {
             List {
                 shortcutsSection
+                customisationSection
                 infoSection
             }
             .environment(\.defaultMinListRowHeight, 60)
@@ -60,6 +63,7 @@ struct SettingsView: View {
                         .foregroundColor(.accentColor)
                 }
             }
+            Toggle("Afficher les titres", isOn: $settings.showShortcutLabel)
         } header: {
             HStack {
                 Text("Raccourcis")
@@ -121,6 +125,13 @@ struct SettingsView: View {
             }
         } header: {
             Text("À propos")
+        }
+    }
+    private var customisationSection: some View {
+        Section {
+            Toggle("Afficher les images", isOn: $settings.showModern)
+        } header: {
+            Text("Personnalisation")
         }
     }
 }

@@ -12,6 +12,7 @@ struct LuxApp: App {
     @StateObject private var connectionService = ConnectionService.shared
     @StateObject private var locationManager = LocationManager()
     @StateObject private var shortcutManager = ShortcutManager()
+    @ObservedObject var settings = Settings.shared
     
     var body: some Scene {
         WindowGroup {
