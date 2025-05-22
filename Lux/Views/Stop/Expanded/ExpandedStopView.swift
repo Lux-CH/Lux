@@ -44,12 +44,14 @@ struct ExpandedStopView: View {
                                 insertion: .move(edge: .bottom).combined(with: .opacity),
                                 removal: .move(edge: .bottom).combined(with: .opacity)
                             ))
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else if viewModel.routeGroups.isEmpty && !viewModel.isLoading {
                         StopContentEmptyView(animateIn: $animateIn, errorMessage: viewModel.errorMessage)
                             .transition(.asymmetric(
                                 insertion: .move(edge: .bottom).combined(with: .opacity),
                                 removal: .move(edge: .bottom).combined(with: .opacity)
                             ))
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else if showContent {
                         RouteGroupsView(
                             viewModel: viewModel,
