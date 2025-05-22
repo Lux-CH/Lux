@@ -14,4 +14,5 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("firstLaunch") var firstLaunch: Bool = true
     @AppStorage("showModern") var showModern: Bool = true
     @AppStorage("showShortcutLabel") var showShortcutLabel: Bool = true
+    @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false
 }
