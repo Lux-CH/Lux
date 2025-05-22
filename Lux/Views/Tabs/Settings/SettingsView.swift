@@ -22,6 +22,7 @@ struct SettingsView: View {
             List {
                 shortcutsSection
                 customisationSection
+                experimentalSection
                 infoSection
             }
             .environment(\.defaultMinListRowHeight, 60)
@@ -132,6 +133,19 @@ struct SettingsView: View {
             Toggle("Afficher les images", isOn: $settings.showModern)
         } header: {
             Text("Personnalisation")
+        }
+    }
+    private var experimentalSection: some View {
+        Section {
+            Toggle("Aperçu des trajets amélioré", isOn: $settings.getPolylineWithOSRM)
+        } header: {
+            Text("Experimental")
+        } footer: {
+            Text("""
+Cette fonctionnalité permet de calculer les aperçus des trajets de bus (polylignes) à l'aide d'OSRM. Si le calcul est correct, cela permet d'améliorer la précision des estimations d’arrivée des bus.
+
+L'activation des fonctionnalités ci-dessus n'est pas recommendée.
+""")
         }
     }
 }
