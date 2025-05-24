@@ -3,7 +3,7 @@
 //  Lux
 //
 //  Created by Constantin Clerc on 03.05.2025.
-//  Improved UI Version
+//
 
 import SwiftUI
 import SymbolPicker
@@ -362,7 +362,7 @@ struct ShortcutEditorView: View {
     }
     
     private var timeScheduleSection: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .center, spacing: 16) {
             HStack {
                 SectionHeader(title: "Programmation", icon: "clock.circle")
                 
@@ -374,55 +374,67 @@ struct ShortcutEditorView: View {
             
             if hasTimeSchedule {
                 ModernCard {
-                    VStack(alignment: .leading, spacing: 20) {
-                        VStack(alignment: .leading, spacing: 12) {
+                    VStack(spacing: 16) {
+                        // Days of the week picker
+                        VStack(spacing: 12) {
                             Text("Jours de la semaine")
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(.primary)
                             
-                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
+                            HStack(spacing: 6) {
                                 ForEach(UserShortcut.TimeSchedule.Weekday.allCases, id: \.self) { day in
-                                    Button {
-                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                                            if selectedDays.contains(day) {
-                                                selectedDays.remove(day)
-                                            } else {
-                                                selectedDays.insert(day)
+                                    DayPickerButton(
+                                        day: day,
+                                        isSelected: selectedDays.contains(day),
+                                        onTap: {
+                                            withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                                                let impactFeedback = UIImpactFeedbackGenerator(style: .light)
+                                                impactFeedback.impactOccurred()
+                                                
+                                                if selectedDays.contains(day) {
+                                                    selectedDays.remove(day)
+                                                } else {
+                                                    selectedDays.insert(day)
+                                                }
                                             }
                                         }
-                                    } label: {
-                                        Text(day.displayName)
-                                            .font(.caption.weight(.medium))
-                                            .foregroundStyle(selectedDays.contains(day) ? .white : .primary)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.vertical, 12)
-                                            .background {
-                                                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                                                    .fill(selectedDays.contains(day) ? Color.accentColor : Color(.quaternarySystemFill))
-                                            }
-                                            .scaleEffect(selectedDays.contains(day) ? 1.05 : 1.0)
-                                    }
-                                    .buttonStyle(PlainButtonStyle())
+                                    )
                                 }
                             }
                         }
                         
                         Divider()
+                            .opacity(0.5)
+                            .frame(height: 0.5)
+                            .padding(.horizontal, -8)
                         
                         VStack(spacing: 12) {
-                            VStack(alignment: .leading) {
-                                Text("Heure habituelle")
-                                    .font(.subheadline.weight(.medium))
-                                    .foregroundStyle(.primary)
-                            }
-                            VStack(alignment: .center) {
+                            Text("Heure habituelle")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            
+                            VStack(spacing: 6) {
                                 DatePicker("", selection: $selectedTime, displayedComponents: .hourAndMinute)
-                                    .datePickerStyle(.compact)
+                                    .datePickerStyle(.wheel)
                                     .labelsHidden()
+                                    .clipped()
+                                    .padding(.top, -15)
+                                
+                                Text("Lux vous suggérera ce raccourci à cette heure")
+                                    .font(.caption2)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal, 12)
+                                    .padding(.top, -4)
                             }
                         }
                     }
+                    .padding(.vertical, 4)
                 }
+                .transition(.asymmetric(
+                    insertion: .scale(scale: 0.95).combined(with: .opacity).combined(with: .offset(y: -20)),
+                    removal: .scale(scale: 0.95).combined(with: .opacity).combined(with: .offset(y: -20))
+                ))
             }
         }
         .opacity(showContent ? 1 : 0)
@@ -431,8 +443,6 @@ struct ShortcutEditorView: View {
         .animation(.spring(response: 0.6, dampingFraction: 0.8), value: hasTimeSchedule)
     }
 }
-
-// MARK: - Custom Components
 
 struct SectionHeader: View {
     let title: String
@@ -448,104 +458,5 @@ struct SectionHeader: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.primary)
         }
-    }
-}
-
-struct ModernCard<Content: View>: View {
-    enum Style {
-        case normal
-        case accent
-        case subtle
-    }
-    
-    let style: Style
-    @ViewBuilder let content: Content
-    
-    init(style: Style = .normal, @ViewBuilder content: () -> Content) {
-        self.style = style
-        self.content = content()
-    }
-    
-    var body: some View {
-        content
-            .padding(16)
-            .background {
-                RoundedRectangle(cornerRadius: 16, style: .continuous)
-                    .fill(backgroundColor)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(strokeColor, lineWidth: strokeWidth)
-                    }
-            }
-    }
-    
-    private var backgroundColor: Color {
-        switch style {
-        case .normal:
-            return Color(.secondarySystemGroupedBackground)
-        case .accent:
-            return Color.accentColor.opacity(0.05)
-        case .subtle:
-            return Color(.tertiarySystemGroupedBackground)
-        }
-    }
-    
-    private var strokeColor: Color {
-        switch style {
-        case .normal:
-            return Color(.separator).opacity(0.3)
-        case .accent:
-            return Color.accentColor.opacity(0.2)
-        case .subtle:
-            return Color(.separator).opacity(0.2)
-        }
-    }
-    
-    private var strokeWidth: CGFloat {
-        switch style {
-        case .normal:
-            return 0.5
-        case .accent:
-            return 1
-        case .subtle:
-            return 0.5
-        }
-    }
-}
-
-struct ModernTextFieldStyle: TextFieldStyle {
-    func _body(configuration: TextField<Self._Label>) -> some View {
-        configuration
-            .padding(16)
-            .background {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .fill(Color(.secondarySystemGroupedBackground))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(Color(.separator).opacity(0.3), lineWidth: 0.5)
-                    }
-            }
-            .font(.body)
-    }
-}
-
-struct ModernToggleStyle: ToggleStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        Button {
-            configuration.isOn.toggle()
-        } label: {
-            RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(configuration.isOn ? Color.accentColor : Color(.systemGray4))
-                .frame(width: 50, height: 30)
-                .overlay {
-                    Circle()
-                        .fill(.white)
-                        .frame(width: 26, height: 26)
-                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-                        .offset(x: configuration.isOn ? 10 : -10)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isOn)
-                }
-        }
-        .buttonStyle(PlainButtonStyle())
     }
 }
