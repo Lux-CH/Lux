@@ -134,6 +134,9 @@ struct ItineraryView: View {
                 }
             }
         }
+        .onDisappear {
+            viewModel.stopAllTasks()
+        }
     }
 }
 

@@ -20,8 +20,10 @@ final class ItineraryViewModel: ObservableObject {
     private var cancellables = Set<AnyCancellable>()
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
     private var vehicleUpdateTask: Task<Void, Never>?
+    private var itineraryRefreshTask: Task<Void, Never>?
     private var osrmPolylines: [String: String] = [:]
     
+    private var shouldStop = false
     // MARK: - Published Properties
     
     @Published var itinerary: Itinerary?
@@ -47,10 +49,21 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     // MARK: - Public Methods
+    
+    func stopAllTasks() {
+        shouldStop = true
+        stopItineraryRefresh()
+        stopVehicleUpdates()
+    }
+    
     func loadItinerary() async {
+        guard !shouldStop else { return }
+        
         if itinerary != nil {
             await processItinerary()
+            await refreshItinerary(dontActuallyFetch: true)
             isLoading = false
+            startItineraryRefresh()
             return
         }
         
@@ -61,6 +74,7 @@ final class ItineraryViewModel: ObservableObject {
             itinerary = try await getTrip(tripId: tripId)
             if itinerary != nil {
                 await processItinerary()
+                startItineraryRefresh()
             } else {
                 error = "No itinerary data found"
             }
@@ -69,6 +83,46 @@ final class ItineraryViewModel: ObservableObject {
         }
         
         isLoading = false
+    }
+    
+    private func startItineraryRefresh() {
+        guard !tripId.isEmpty && !shouldStop else { return }
+        
+        stopItineraryRefresh()
+        
+        itineraryRefreshTask = Task {
+            while !Task.isCancelled && !shouldStop {
+                try? await Task.sleep(for: .seconds(10))
+                
+                guard !Task.isCancelled && !shouldStop else { break }
+                
+                await refreshItinerary()
+            }
+        }
+    }
+    
+    private func stopItineraryRefresh() {
+        itineraryRefreshTask?.cancel()
+        itineraryRefreshTask = nil
+    }
+    
+    private func refreshItinerary(dontActuallyFetch: Bool = false) async {
+        guard !tripId.isEmpty && !shouldStop else { return }
+        
+        do {
+            if !dontActuallyFetch {
+                let newItinerary = try await getTrip(tripId: tripId)
+                itinerary = newItinerary
+                print("updated!")
+            }
+            else {
+                itinerary = itinerary
+            }
+            
+            await processItinerary(shouldCalculateMapPosition: false)
+        } catch {
+            print("failed to refresh! \(error.localizedDescription)")
+        }
     }
     
     func updateZoomLevel(distance: CLLocationDistance) {
@@ -83,19 +137,20 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     // MARK: - Private Methods
-    private func processItinerary() async {
-        guard let itinerary = itinerary else {
+    private func processItinerary(shouldCalculateMapPosition: Bool = true) async {
+        guard let itinerary = itinerary, !shouldStop else {
             error = "Missing itinerary data"
             return
         }
-        
-        await fetchOSRMPolylines(for: itinerary.legs)
-        
-        let (annotations, overlays) = createAnnotationsAndOverlays(for: itinerary)
-        
-        mapAnnotations = annotations
-        routeOverlays = overlays
-        calculateMapPosition()
+                
+        if shouldCalculateMapPosition {
+            await fetchOSRMPolylines(for: itinerary.legs)
+
+            let (annotations, overlays) = createAnnotationsAndOverlays(for: itinerary)
+            mapAnnotations = annotations
+            routeOverlays = overlays
+            calculateMapPosition()
+        }
         
         prepareVehicleKeyframes(for: itinerary.legs)
         
@@ -104,6 +159,8 @@ final class ItineraryViewModel: ObservableObject {
     
     private func fetchOSRMPolylines(for legs: [Leg]) async {
         for leg in legs {
+            guard !shouldStop else { break }
+            
             if settings.getPolylineWithOSRM && (leg.mode == .bus || leg.mode == .tram) {
                 let legId = getLegIdentifier(leg)
                 if osrmPolylines[legId] == nil {
@@ -114,6 +171,8 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     private func fetchOSRMPolyline(for leg: Leg, legId: String) async {
+        guard !shouldStop else { return }
+        
         let stops = extractStopPoints(from: leg)
         guard stops.count >= 2 else { return }
         
@@ -165,6 +224,8 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     private func prepareVehicleKeyframes(for legs: [Leg]) {
+        guard !shouldStop else { return }
+        
         legKeyFrames.removeAll()
         
         for leg in legs where leg.mode != .walk && leg.mode != .bike {
@@ -181,10 +242,12 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     private func startVehicleUpdates() {
+        guard !shouldStop else { return }
+        
         stopVehicleUpdates()
         
         vehicleUpdateTask = Task {
-            while !Task.isCancelled {
+            while !Task.isCancelled && !shouldStop {
                 updateVehiclePositions()
                 try? await Task.sleep(for: .seconds(2))
             }
@@ -192,13 +255,11 @@ final class ItineraryViewModel: ObservableObject {
     }
 
     deinit {
-        let task = vehicleUpdateTask
-        
-        Task.detached {
-            task?.cancel()
-        }
-        
+        shouldStop = true
+        vehicleUpdateTask?.cancel()
+        itineraryRefreshTask?.cancel()
         vehicleUpdateTask = nil
+        itineraryRefreshTask = nil
     }
     
     private func stopVehicleUpdates() {
@@ -207,7 +268,7 @@ final class ItineraryViewModel: ObservableObject {
     }
 
     private func updateVehiclePositions() {
-        guard let itinerary = itinerary else { return }
+        guard let itinerary = itinerary, !shouldStop else { return }
         
         let currentTime = Date()
         let currentTimeInterval = currentTime.timeIntervalSince1970
