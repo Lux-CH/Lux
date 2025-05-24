@@ -8,8 +8,10 @@
 import Foundation
 import Combine
 import SwiftUI
+import CoreLocation
 
 class ShortcutManager: ObservableObject {
+    @ObservedObject var settings = Settings.shared
     @Published var shortcuts: [UserShortcut] = []
     @Published var visibleShortcuts: [UserShortcut] = []
     
@@ -32,8 +34,22 @@ class ShortcutManager: ObservableObject {
         updateVisibleShortcuts()
     }
     
-    private func updateVisibleShortcuts() {
-        visibleShortcuts = Array(shortcuts.prefix(maxVisibleShortcuts))
+    private func updateVisibleShortcuts(userLocation: CLLocation? = nil) {
+        if settings.useTimeBasedRelevance {
+            let sortedByRelevance = shortcuts.enumerated().sorted { element1, element2 in
+                let score1 = element1.element.relevanceScore(userLocation: userLocation, originalIndex: element1.offset)
+                let score2 = element2.element.relevanceScore(userLocation: userLocation, originalIndex: element2.offset)
+                return score1 > score2
+            }.map { $0.element }
+            
+            visibleShortcuts = Array(sortedByRelevance.prefix(maxVisibleShortcuts))
+        } else {
+            visibleShortcuts = Array(shortcuts.prefix(maxVisibleShortcuts))
+        }
+    }
+    
+    func updateVisibleShortcuts(with userLocation: CLLocation?) {
+        updateVisibleShortcuts(userLocation: userLocation)
     }
     
     func addShortcut(_ shortcut: UserShortcut) {

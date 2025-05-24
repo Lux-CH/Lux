@@ -3,7 +3,7 @@
 //  Lux
 //
 //  Created by Constantin Clerc on 03.05.2025.
-//
+//  Improved UI Version
 
 import SwiftUI
 import SymbolPicker
@@ -25,47 +25,81 @@ struct ShortcutEditorView: View {
     @State private var isSearchActive = false
     @State private var isEditing = false
     
+    // Time scheduling states
+    @State private var hasTimeSchedule = false
+    @State private var selectedDays: Set<UserShortcut.TimeSchedule.Weekday> = []
+    @State private var selectedTime = Date()
+    
+    // Animation states
+    @State private var showContent = false
+    @Namespace private var heroNamespace
+    
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                headerSection
-                
+            GeometryReader { geometry in
                 ScrollView {
-                    VStack(spacing: 24) {
-                        nameSection
+                    LazyVStack(spacing: 0) {
+                        headerSection
+                            .padding(.horizontal)
+                            .padding(.top, 20)
                         
-                        symbolSection
-                        
-                        locationSection
-                        Spacer()
+                        VStack(spacing: 24) {
+                            nameSection
+                            symbolSection
+                            locationSection
+                            timeScheduleSection
+                        }
+                        .padding(.horizontal)
+                        .padding(.top, 32)
+                        .padding(.bottom, 100)
                     }
-                    .padding()
                 }
+                .scrollDismissesKeyboard(.immediately)
             }
-            .background(Color(.systemGroupedBackground).ignoresSafeArea())
-            .navigationTitle(isEditing ? "Modifier le raccourci" : "Nouveau raccourci")
-            .navigationBarTitleDisplayMode(.inline)
+            .background {
+                // Dynamic gradient background
+                LinearGradient(
+                    colors: [
+                        Color(.systemBackground),
+                        Color(.systemGroupedBackground).opacity(0.3),
+                        Color(.systemGroupedBackground)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+            }
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Annuler") {
                         dismiss()
                     }
+                    .font(.body.weight(.medium))
+                    .foregroundStyle(.secondary)
                 }
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(isEditing ? "Enregistrer" : "Ajouter") {
                         saveShortcut()
                     }
-                    .bold()
-                    .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || selectedLocation == nil)
+                    .font(.body.weight(.bold))
+                    .foregroundStyle(canSave ? .white : .secondary)
+                    .disabled(!canSave)
+                    .scaleEffect(canSave ? 1.0 : 0.95)
+                    .animation(.spring(response: 0.3, dampingFraction: 0.8), value: canSave)
                 }
             }
             .onAppear {
                 setupForEditing()
+                withAnimation(.easeOut(duration: 0.6).delay(0.1)) {
+                    showContent = true
+                }
             }
             .sheet(isPresented: $showSymbolPicker) {
                 SymbolPicker(symbol: $selectedSymbol)
                     .navigationTitle("Choisir un symbole")
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
             }
             .sheet(isPresented: $isSearchActive) {
                 LocationSearchView(
@@ -76,8 +110,14 @@ struct ShortcutEditorView: View {
                         isSearchActive = false
                     }
                 )
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
         }
+    }
+    
+    private var canSave: Bool {
+        !name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty && selectedLocation != nil
     }
     
     private func setupForEditing() {
@@ -85,6 +125,16 @@ struct ShortcutEditorView: View {
             isEditing = true
             name = shortcut.name
             selectedSymbol = shortcut.symbol
+            
+            // Setup time schedule
+            if let schedule = shortcut.timeSchedule {
+                hasTimeSchedule = true
+                selectedDays = schedule.daysOfWeek
+                
+                let calendar = Calendar.current
+                let timeComponents = DateComponents(hour: schedule.time.hour, minute: schedule.time.minute)
+                selectedTime = calendar.date(from: timeComponents) ?? Date()
+            }
             
             viewModel.convertToSearchResult(shortcut: shortcut) { result in
                 if let result = result {
@@ -106,19 +156,37 @@ struct ShortcutEditorView: View {
             locationName: location.name
         )
         
+        var timeSchedule: UserShortcut.TimeSchedule? = nil
+        if hasTimeSchedule && !selectedDays.isEmpty {
+            let calendar = Calendar.current
+            let hour = calendar.component(.hour, from: selectedTime)
+            let minute = calendar.component(.minute, from: selectedTime)
+            
+            timeSchedule = UserShortcut.TimeSchedule(
+                daysOfWeek: selectedDays,
+                time: UserShortcut.TimeSchedule.TimeComponents(hour: hour, minute: minute)
+            )
+        }
+        
+        // Haptic feedback
+        let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
+        impactFeedback.impactOccurred()
+        
         if isEditing, let shortcutId = shortcutToEdit?.id {
             let updatedShortcut = UserShortcut(
                 id: shortcutId,
                 name: name,
                 symbol: selectedSymbol,
-                coordinates: coordinates
+                coordinates: coordinates,
+                timeSchedule: timeSchedule
             )
             shortcutManager.updateShortcut(updatedShortcut)
         } else {
             let newShortcut = UserShortcut(
                 name: name,
                 symbol: selectedSymbol,
-                coordinates: coordinates
+                coordinates: coordinates,
+                timeSchedule: timeSchedule
             )
             shortcutManager.addShortcut(newShortcut)
         }
@@ -130,125 +198,357 @@ struct ShortcutEditorView: View {
     private var headerSection: some View {
         VStack(spacing: 16) {
             if !isEditing {
-                Text("Créez un raccourci pour accéder rapidement à vos destinations préférées")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-                    .padding(.top, 8)
-                    .padding(.bottom, 4)
+                HStack {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Créer un raccourci")
+                            .font(.title2.weight(.bold))
+                            .foregroundStyle(.primary)
+                        
+                        Text("Accédez rapidement à vos destinations préférées")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                    }
+                    
+                    Spacer()
+                    
+                    // Decorative element
+                    ZStack {
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                            .frame(width: 60, height: 60)
+                        
+                        Image(systemName: "plus.circle.fill")
+                            .font(.title)
+                            .foregroundStyle(.accent)
+                    }
+                }
+                .opacity(showContent ? 1 : 0)
+                .offset(y: showContent ? 0 : 20)
             }
         }
     }
     
     private var nameSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Nom du raccourci")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .fontWeight(.medium)
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Nom du raccourci", icon: "textformat")
             
             TextField("Ex: Maison, Travail, École...", text: $name)
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(12)
+                .textFieldStyle(ModernTextFieldStyle())
+                .matchedGeometryEffect(id: "nameField", in: heroNamespace)
         }
+        .opacity(showContent ? 1 : 0)
+        .offset(y: showContent ? 0 : 30)
+        .animation(.easeOut(duration: 0.6).delay(0.2), value: showContent)
     }
     
     private var symbolSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Icône")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .fontWeight(.medium)
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Icône", icon: "heart.circle")
             
             Button {
                 showSymbolPicker = true
             } label: {
-                HStack {
-                    Image(systemName: selectedSymbol)
-                        .font(.title2)
-                        .foregroundColor(.accentColor)
-                        .frame(width: 40)
-                    
-                    Text(selectedSymbol)
-                        .foregroundColor(.primary)
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                        .font(.footnote)
+                ModernCard {
+                    HStack(spacing: 16) {
+                        ZStack {
+                            Circle()
+                                .fill(Color.accentColor.opacity(0.1))
+                                .frame(width: 44, height: 44)
+                            
+                            Image(systemName: selectedSymbol)
+                                .font(.title2.weight(.medium))
+                                .foregroundStyle(.accent)
+                        }
+                        
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Symbole sélectionné")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            
+                            Text(selectedSymbol)
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        
+                        Spacer()
+                        
+                        Image(systemName: "chevron.right")
+                            .foregroundStyle(.tertiary)
+                            .font(.caption.weight(.semibold))
+                    }
                 }
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(12)
             }
+            .buttonStyle(ScaleButtonStyle())
         }
+        .opacity(showContent ? 1 : 0)
+        .offset(y: showContent ? 0 : 40)
+        .animation(.easeOut(duration: 0.6).delay(0.3), value: showContent)
     }
     
     private var locationSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Destination")
-                .font(.caption)
-                .foregroundColor(.secondary)
-                .fontWeight(.medium)
+        VStack(alignment: .leading, spacing: 12) {
+            SectionHeader(title: "Destination", icon: "location.circle")
             
-            Button {
-                isSearchActive = true
-            } label: {
-                HStack {
-                    if let location = selectedLocation {
-                        Image(systemName: "mappin.circle.fill")
-                            .font(.title2)
-                            .foregroundColor(.red)
-                        
-                        Text(location.name)
-                            .foregroundColor(.primary)
-                            .lineLimit(1)
-                    } else {
-                        Image(systemName: "magnifyingglass")
-                            .font(.headline)
-                            .foregroundColor(.secondary)
-                        
-                        Text("Rechercher une destination")
-                            .foregroundColor(.secondary)
-                    }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .foregroundColor(.secondary)
-                        .font(.footnote)
-                }
-                .padding()
-                .background(Color(.secondarySystemBackground))
-                .cornerRadius(12)
-            }
-            
-            if selectedLocation == nil {
+            VStack(spacing: 12) {
                 Button {
-                    viewModel.useCurrentLocation(locationManager: locationManager) { result in
-                        if let result = result {
-                            selectedLocation = result
+                    isSearchActive = true
+                } label: {
+                    ModernCard {
+                        HStack(spacing: 16) {
+                            ZStack {
+                                Circle()
+                                    .fill(selectedLocation != nil ? Color.red.opacity(0.1) : Color(.systemGray5))
+                                    .frame(width: 44, height: 44)
+                                
+                                Image(systemName: selectedLocation != nil ? "mappin.circle.fill" : "magnifyingglass")
+                                    .font(.title3.weight(.medium))
+                                    .foregroundStyle(selectedLocation != nil ? .red : .secondary)
+                            }
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(selectedLocation?.name ?? "Rechercher une destination")
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundStyle(selectedLocation != nil ? .primary : .secondary)
+                                    .lineLimit(2)
+                                
+                                if selectedLocation != nil {
+                                    Text("Destination sélectionnée")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            
+                            Spacer()
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundStyle(.tertiary)
+                                .font(.caption.weight(.semibold))
                         }
                     }
-                } label: {
-                    HStack {
-                        Image(systemName: "location.fill")
-                            .foregroundColor(.accentColor)
-                            .font(.headline)
-                        
-                        Text("Utiliser ma position actuelle")
-                            .foregroundColor(.accentColor)
-                        
-                        Spacer()
+                }
+                .buttonStyle(ScaleButtonStyle())
+                
+                if selectedLocation == nil {
+                    Button {
+                        viewModel.useCurrentLocation(locationManager: locationManager) { result in
+                            if let result = result {
+                                selectedLocation = result
+                            }
+                        }
+                    } label: {
+                        ModernCard(style: .accent) {
+                            HStack(spacing: 12) {
+                                Image(systemName: "location.fill")
+                                    .foregroundStyle(.accent)
+                                    .font(.headline.weight(.medium))
+                                
+                                Text("Utiliser ma position actuelle")
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundStyle(.accent)
+                                
+                                Spacer()
+                            }
+                        }
                     }
-                    .padding()
-                    .background(Color(.secondarySystemBackground))
-                    .cornerRadius(12)
+                    .buttonStyle(ScaleButtonStyle())
+                    .transition(.asymmetric(
+                        insertion: .scale.combined(with: .opacity),
+                        removal: .scale.combined(with: .opacity)
+                    ))
                 }
             }
         }
+        .opacity(showContent ? 1 : 0)
+        .offset(y: showContent ? 0 : 50)
+        .animation(.easeOut(duration: 0.6).delay(0.4), value: showContent)
+    }
+    
+    private var timeScheduleSection: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                SectionHeader(title: "Programmation", icon: "clock.circle")
+                
+                Spacer()
+                
+                Toggle("", isOn: $hasTimeSchedule)
+                    .toggleStyle(ModernToggleStyle())
+            }
+            
+            if hasTimeSchedule {
+                ModernCard {
+                    VStack(alignment: .leading, spacing: 20) {
+                        VStack(alignment: .leading, spacing: 12) {
+                            Text("Jours de la semaine")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 4), spacing: 8) {
+                                ForEach(UserShortcut.TimeSchedule.Weekday.allCases, id: \.self) { day in
+                                    Button {
+                                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                                            if selectedDays.contains(day) {
+                                                selectedDays.remove(day)
+                                            } else {
+                                                selectedDays.insert(day)
+                                            }
+                                        }
+                                    } label: {
+                                        Text(day.displayName)
+                                            .font(.caption.weight(.medium))
+                                            .foregroundStyle(selectedDays.contains(day) ? .white : .primary)
+                                            .frame(maxWidth: .infinity)
+                                            .padding(.vertical, 12)
+                                            .background {
+                                                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                                                    .fill(selectedDays.contains(day) ? Color.accentColor : Color(.quaternarySystemFill))
+                                            }
+                                            .scaleEffect(selectedDays.contains(day) ? 1.05 : 1.0)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                            }
+                        }
+                        
+                        Divider()
+                        
+                        VStack(spacing: 12) {
+                            VStack(alignment: .leading) {
+                                Text("Heure habituelle")
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundStyle(.primary)
+                            }
+                            VStack(alignment: .center) {
+                                DatePicker("", selection: $selectedTime, displayedComponents: .hourAndMinute)
+                                    .datePickerStyle(.compact)
+                                    .labelsHidden()
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        .opacity(showContent ? 1 : 0)
+        .offset(y: showContent ? 0 : 60)
+        .animation(.easeOut(duration: 0.6).delay(0.5), value: showContent)
+        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: hasTimeSchedule)
+    }
+}
+
+// MARK: - Custom Components
+
+struct SectionHeader: View {
+    let title: String
+    let icon: String
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .foregroundStyle(.accent)
+                .font(.caption.weight(.medium))
+            
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.primary)
+        }
+    }
+}
+
+struct ModernCard<Content: View>: View {
+    enum Style {
+        case normal
+        case accent
+        case subtle
+    }
+    
+    let style: Style
+    @ViewBuilder let content: Content
+    
+    init(style: Style = .normal, @ViewBuilder content: () -> Content) {
+        self.style = style
+        self.content = content()
+    }
+    
+    var body: some View {
+        content
+            .padding(16)
+            .background {
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
+                    .fill(backgroundColor)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 16, style: .continuous)
+                            .stroke(strokeColor, lineWidth: strokeWidth)
+                    }
+            }
+    }
+    
+    private var backgroundColor: Color {
+        switch style {
+        case .normal:
+            return Color(.secondarySystemGroupedBackground)
+        case .accent:
+            return Color.accentColor.opacity(0.05)
+        case .subtle:
+            return Color(.tertiarySystemGroupedBackground)
+        }
+    }
+    
+    private var strokeColor: Color {
+        switch style {
+        case .normal:
+            return Color(.separator).opacity(0.3)
+        case .accent:
+            return Color.accentColor.opacity(0.2)
+        case .subtle:
+            return Color(.separator).opacity(0.2)
+        }
+    }
+    
+    private var strokeWidth: CGFloat {
+        switch style {
+        case .normal:
+            return 0.5
+        case .accent:
+            return 1
+        case .subtle:
+            return 0.5
+        }
+    }
+}
+
+struct ModernTextFieldStyle: TextFieldStyle {
+    func _body(configuration: TextField<Self._Label>) -> some View {
+        configuration
+            .padding(16)
+            .background {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                    .fill(Color(.secondarySystemGroupedBackground))
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .stroke(Color(.separator).opacity(0.3), lineWidth: 0.5)
+                    }
+            }
+            .font(.body)
+    }
+}
+
+struct ModernToggleStyle: ToggleStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        Button {
+            configuration.isOn.toggle()
+        } label: {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(configuration.isOn ? Color.accentColor : Color(.systemGray4))
+                .frame(width: 50, height: 30)
+                .overlay {
+                    Circle()
+                        .fill(.white)
+                        .frame(width: 26, height: 26)
+                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                        .offset(x: configuration.isOn ? 10 : -10)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isOn)
+                }
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }

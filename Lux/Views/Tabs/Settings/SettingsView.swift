@@ -20,7 +20,19 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                shortcutsSection
+                Section(header: Text("Raccourcis"), footer: Text("Les raccourcis offrent un accès rapide à vos destinations favorites. Ils s'adaptent intelligemment selon l'heure et vos habitudes.")) {
+                    NavigationLink(destination: {
+                        List {
+                            shortcutsSection
+
+                        }
+                    }) {
+                        Text("Raccourcis")
+                    }
+                    Toggle("Afficher les titres", isOn: $settings.showShortcutLabel)
+
+                }
+                
                 customisationSection
                 experimentalSection
                 infoSection
@@ -64,7 +76,7 @@ struct SettingsView: View {
                         .foregroundColor(.accentColor)
                 }
             }
-            Toggle("Afficher les titres", isOn: $settings.showShortcutLabel)
+            Toggle("Tri par pertinence temporelle", isOn: $settings.useTimeBasedRelevance)
         } header: {
             HStack {
                 Text("Raccourcis")
@@ -79,7 +91,11 @@ struct SettingsView: View {
             }
         } footer: {
             if !shortcutManager.shortcuts.isEmpty {
-                Text("Les deux premiers raccourcis seront affichés sur l'écran d'accueil.")
+                if settings.useTimeBasedRelevance {
+                    Text("Les raccourcis seront triés par pertinence temporelle. Les plus proches en termes d'horaire et de jour seront affichés en premier, sauf si vous êtes très proche de la destination.")
+                } else {
+                    Text("Les deux premiers raccourcis seront affichés sur l'écran d'accueil.")
+                }
             }
         }
     }
@@ -103,6 +119,23 @@ struct SettingsView: View {
                         .font(.footnote)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
+                    
+                    if let schedule = shortcut.timeSchedule {
+                        HStack {
+                            ForEach(Array(schedule.daysOfWeek.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { day in
+                                Text(day.displayName)
+                                    .font(.caption2)
+                                    .padding(.horizontal, 4)
+                                    .padding(.vertical, 2)
+                                    .background(Color.accentColor.opacity(0.2))
+                                    .cornerRadius(4)
+                            }
+                            
+                            Text(schedule.time.displayString)
+                                .font(.caption2)
+                                .foregroundColor(.secondary)
+                        }
+                    }
                 }
                 
                 Spacer()
@@ -128,6 +161,7 @@ struct SettingsView: View {
             Text("À propos")
         }
     }
+    
     private var customisationSection: some View {
         Section {
             Toggle("Afficher les images", isOn: $settings.showModern)
@@ -136,6 +170,7 @@ struct SettingsView: View {
             Text("Personnalisation")
         }
     }
+    
     private var experimentalSection: some View {
         Section {
             Toggle("Aperçu des trajets amélioré", isOn: $settings.getPolylineWithOSRM)
@@ -143,7 +178,7 @@ struct SettingsView: View {
             Text("Experimental")
         } footer: {
             Text("""
-Cette fonctionnalité permet de calculer les aperçus des trajets de bus (polylignes) à l'aide d'OSRM. Si le calcul est correct, cela permet d'améliorer la précision des estimations d’arrivée des bus.
+Cette fonctionnalité permet de calculer les aperçus des trajets de bus (polylignes) à l'aide d'OSRM. Si le calcul est correct, cela permet d'améliorer la précision des estimations d'arrivée des bus.
 
 L'activation des fonctionnalités ci-dessus n'est pas recommendée.
 """)

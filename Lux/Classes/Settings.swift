@@ -16,4 +16,5 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("showShortcutLabel") var showShortcutLabel: Bool = true
     @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false
     @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContent: Bool = false
+    @AppStorage("useTimeBasedRelevance") var useTimeBasedRelevance: Bool = true
 }

@@ -41,7 +41,8 @@ struct MainNavigationView: View {
     @Namespace private var animation
     @Environment(\.colorScheme) private var colorScheme
     
-    // Gesture state for drag/swipe
+    @State private var shortcutUpdateTimer: Timer?
+    
     @GestureState private var dragTranslation: CGSize = .zero
     
     // Animation configs
@@ -249,19 +250,25 @@ struct MainNavigationView: View {
         }
         .onAppear {
             stopsViewModel.setupLocationManager(locationManager)
+            setupShortcutUpdateTimer()
+        }
+        .onDisappear {
+            stopsViewModel.cancelBackgroundTasks()
+            stopShortcutUpdateTimer()
         }
         .onChange(of: locationManager.location) {
             if viewMode == .stops && !stopsViewModel.isSearchMode {
                 stopsViewModel.checkLocationAndRefresh()
             }
+            updateShortcutsWithCurrentLocation()
+        }
+        .onChange(of: settings.useTimeBasedRelevance) {
+            updateShortcutsWithCurrentLocation()
         }
         .onReceive(stopsViewModel.refreshTimer) { _ in
             if viewMode == .stops && !stopsViewModel.isSearchMode {
                 stopsViewModel.refreshNearbyStopsInBackground()
             }
-        }
-        .onDisappear {
-            stopsViewModel.cancelBackgroundTasks()
         }
         .fullScreenCover(isPresented: $showTripSearch) {
             if let shortcut = selectedShortcut {
@@ -329,6 +336,29 @@ struct MainNavigationView: View {
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
                 }
             }
+        }
+    }
+    
+    // MARK: - Shortcut Update Methods
+    
+    private func setupShortcutUpdateTimer() {
+        shortcutUpdateTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
+            if settings.useTimeBasedRelevance {
+                updateShortcutsWithCurrentLocation()
+            }
+        }
+    }
+    
+    private func stopShortcutUpdateTimer() {
+        shortcutUpdateTimer?.invalidate()
+        shortcutUpdateTimer = nil
+    }
+    
+    private func updateShortcutsWithCurrentLocation() {
+        guard settings.useTimeBasedRelevance else { return }
+        
+        withAnimation(.easeInOut(duration: 0.3)) {
+            shortcutManager.updateVisibleShortcuts(with: locationManager.location)
         }
     }
     
