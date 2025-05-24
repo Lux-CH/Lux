@@ -162,7 +162,7 @@ struct StopPopoverView: View {
                     HStack(spacing: 6) {
                         Image(systemName: "train.side.front.car")
                             .foregroundColor(color)
-                        Text("Quai \(track)")
+                        Text(getTrackType(track))
                             .fontWeight(.medium)
                     }
                 }

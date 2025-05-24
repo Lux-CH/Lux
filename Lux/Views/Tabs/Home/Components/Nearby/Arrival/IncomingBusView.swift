@@ -39,7 +39,7 @@ struct IncomingBusView: View {
                     
                     let transport = group.stopTimes.first?.mode.displayName ?? "Bus"
                     
-                    Text("\(transport) • Quai \(displayTrack)")
+                    Text("\(transport) • \(getTrackType(displayTrack))")
                         .font(.system(size: 11, weight: .medium))
                         .foregroundStyle(Color.primary.opacity(0.5))
                         .multilineTextAlignment(.leading)
