@@ -39,6 +39,9 @@ struct MainNavigationView: View {
     @Namespace private var animation
     @Environment(\.colorScheme) private var colorScheme
     
+    // Gesture state for drag/swipe
+    @GestureState private var dragTranslation: CGSize = .zero
+    
     // Animation configs
     private let contentExitTransition: AnyTransition = .asymmetric(
         insertion: .opacity.combined(with: .move(edge: .bottom).combined(with: .scale(scale: 0.96))),
@@ -72,8 +75,8 @@ struct MainNavigationView: View {
                     ZStack(alignment: .top) {
                         Rectangle()
                             .fill(colorScheme == .dark
-                                   ? Color(.secondarySystemBackground).opacity(0.7)
-                                   : Color.white)
+                                  ? Color(.secondarySystemBackground).opacity(0.7)
+                                  : Color.white)
                             .frame(height: headerHeight)
                             .clipShape(
                                 .rect(
@@ -145,8 +148,8 @@ struct MainNavigationView: View {
                     ZStack {
                         Rectangle()
                             .fill(colorScheme == .dark
-                                   ? Color(.secondarySystemBackground).opacity(0.7)
-                                   : Color.white)
+                                  ? Color(.secondarySystemBackground).opacity(0.7)
+                                  : Color.white)
                             .frame(maxHeight: .infinity)
                             .clipShape(
                                 .rect(
@@ -205,6 +208,20 @@ struct MainNavigationView: View {
                         .animation(contentTransition, value: viewMode)
                     }
                     .ignoresSafeArea(edges: .bottom)
+                    .simultaneousGesture(
+                        DragGesture(minimumDistance: 5, coordinateSpace: .local)
+                            .updating($dragTranslation) { value, state, _ in
+                                state = value.translation
+                            }
+                            .onEnded { value in
+                                let vertical = value.translation.height
+                                if viewMode == .home && vertical < -50 {
+                                    switchToStopsMode()
+                                } else if viewMode == .stops && vertical > 150 {
+                                    toggleViewMode(.home)
+                                }
+                            }
+                    )
                 }
                 
                 // Mode switcher
