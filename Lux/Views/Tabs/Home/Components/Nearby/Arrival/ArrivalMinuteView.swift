@@ -11,10 +11,9 @@ import LuxCom
 struct ArrivalMinuteView: View {
     let incomingStop: StopTime
     @Environment(\.calendar) private var calendar
+    @StateObject private var blinkManager = BlinkManager.shared
     @State private var now = Date()
-    
-    private let timer = Timer.publish(every: 0.5, on: .main, in: .common).autoconnect()
-    
+        
     private static let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -41,9 +40,6 @@ struct ArrivalMinuteView: View {
                     .foregroundColor(latenessColor)
                     .strikethrough(incomingStop.cancelled, color: .red)
             }
-        }
-        .onReceive(timer) { _ in
-            self.now = Date()
         }
     }
     
@@ -98,10 +94,6 @@ struct ArrivalMinuteView: View {
         }
     }
     
-    private var isVisibleNow: Bool {
-        return Int(Date().timeIntervalSince1970) % 2 == 0
-    }
-    
     private var latenessColor: Color {
         let scheduledArrival = incomingStop.place.scheduledDeparture ?? incomingStop.place.scheduledArrival ?? Date()
         let arrival = incomingStop.place.departure ?? incomingStop.place.arrival ?? Date()
@@ -123,7 +115,7 @@ struct ArrivalMinuteView: View {
         Image(systemName: systemName)
             .foregroundColor(latenessColor)
             .font(.system(size: 15))
-            .opacity(isVisibleNow ? 1.0 : 0.0)
-            .animation(.easeInOut(duration: 0.1), value: isVisibleNow)
+            .opacity(blinkManager.isVisible ? 1.0 : 0.0)
+            .animation(.easeInOut(duration: 0.1), value: blinkManager.isVisible)
     }
 }
