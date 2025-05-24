@@ -31,9 +31,18 @@ struct ExpandedGroupView: View {
                         .lineLimit(1)
                         .foregroundStyle(colorScheme == .dark ? Color.white: Color.black)
                     Spacer()
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundStyle(Color.secondary.opacity(0.6))
+                    HStack {
+                        let displayTrack = group.stopTimes.first {
+                            $0.place.track != nil || $0.place.scheduledTrack != nil
+                        }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? "inconnu"
+                        
+                            Text(getTrackType(displayTrack))
+                                .font(.caption)
+                                .foregroundStyle(Color.secondary.opacity(0.7))
+                        Image(systemName: "chevron.right")
+                            .font(.caption)
+                            .foregroundStyle(Color.secondary.opacity(0.6))
+                    }
                 }
                 
                 VStack(alignment: .leading, spacing: 8) {
@@ -43,5 +52,14 @@ struct ExpandedGroupView: View {
                 }
             }
         }
+    }
+}
+
+func getTrackType(_ track: String) -> String {
+    if Int(track) != nil {
+        return "Voie \(track)"
+    }
+    else {
+        return "Quai \(track)"
     }
 }
