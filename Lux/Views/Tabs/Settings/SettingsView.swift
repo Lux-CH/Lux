@@ -131,6 +131,7 @@ struct SettingsView: View {
     private var customisationSection: some View {
         Section {
             Toggle("Afficher les images", isOn: $settings.showModern)
+            Toggle("Séprarer la recherche des résultats", isOn: $settings.reduceSpacerBtwnStopContent)
         } header: {
             Text("Personnalisation")
         }

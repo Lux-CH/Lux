@@ -15,4 +15,5 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("showModern") var showModern: Bool = true
     @AppStorage("showShortcutLabel") var showShortcutLabel: Bool = true
     @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false
+    @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContent: Bool = false
 }

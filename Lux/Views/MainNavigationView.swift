@@ -30,6 +30,8 @@ struct MainNavigationView: View {
     @State private var viewMode: ViewMode = .home
     @State private var headerHeight: CGFloat = 215
     @State private var searchText: String = ""
+    @ObservedObject var settings = Settings.shared
+
     @State private var showSettings: Bool = false
     @StateObject private var stopsViewModel = StopsViewModel()
     @EnvironmentObject var locationManager: LocationManager
@@ -70,7 +72,7 @@ struct MainNavigationView: View {
                 )
                 .ignoresSafeArea()
                 
-                VStack(spacing: 0) {
+                VStack(spacing: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? -47 : 0) {
                     // Header
                     ZStack(alignment: .top) {
                         Rectangle()
@@ -81,13 +83,18 @@ struct MainNavigationView: View {
                             .clipShape(
                                 .rect(
                                     topLeadingRadius: 0,
-                                    bottomLeadingRadius: 40,
-                                    bottomTrailingRadius: 40,
+                                    bottomLeadingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 40,
+                                    bottomTrailingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 40,
                                     topTrailingRadius: 0,
                                     style: .continuous
                                 )
                             )
-                            .shadow(color: Color.black.opacity(0.05), radius: 10, x: 0, y: 5)
+                            .shadow(
+                                color: Color.black.opacity(viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0.0 : 0.05),
+                                radius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 10,
+                                x: 0,
+                                y: viewMode == .stops ? 0 : 5
+                            )
                             .animation(smoothSpring, value: headerHeight)
                         
                         VStack {
@@ -143,6 +150,7 @@ struct MainNavigationView: View {
                         }
                     }
                     .ignoresSafeArea(edges: .top)
+                    .zIndex(viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 1 : 0)
                     
                     // Content
                     ZStack {
@@ -153,14 +161,19 @@ struct MainNavigationView: View {
                             .frame(maxHeight: .infinity)
                             .clipShape(
                                 .rect(
-                                    topLeadingRadius: 38,
+                                    topLeadingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 38,
                                     bottomLeadingRadius: 0,
                                     bottomTrailingRadius: 0,
-                                    topTrailingRadius: 38,
+                                    topTrailingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 38,
                                     style: .continuous
                                 )
                             )
-                            .shadow(color: Color.black.opacity(0.05), radius: 8, x: 0, y: -4)
+                            .shadow(
+                                color: Color.black.opacity(viewMode == .stops ? 0.0 : 0.05),
+                                radius: viewMode == .stops ? 0 : 8,
+                                x: 0,
+                                y: viewMode == .stops ? 0 : -4
+                            )
                         
                         ZStack {
                             if viewMode == .home {
