@@ -41,7 +41,7 @@ struct ShortcutEditorView: View {
                     LazyVStack(spacing: 0) {
                         headerSection
                             .padding(.horizontal)
-                            .padding(.top, 20)
+                            .padding(.top, isEditing ? -20 : 10)
                         
                         VStack(spacing: 24) {
                             nameSection
@@ -126,7 +126,6 @@ struct ShortcutEditorView: View {
             name = shortcut.name
             selectedSymbol = shortcut.symbol
             
-            // Setup time schedule
             if let schedule = shortcut.timeSchedule {
                 hasTimeSchedule = true
                 selectedDays = schedule.daysOfWeek
@@ -168,7 +167,6 @@ struct ShortcutEditorView: View {
             )
         }
         
-        // Haptic feedback
         let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
         impactFeedback.impactOccurred()
         
@@ -212,7 +210,6 @@ struct ShortcutEditorView: View {
                     
                     Spacer()
                     
-                    // Decorative element
                     ZStack {
                         Circle()
                             .fill(.ultraThinMaterial)
