@@ -17,4 +17,5 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false
     @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContent: Bool = false
     @AppStorage("useTimeBasedRelevance") var useTimeBasedRelevance: Bool = true
+    @AppStorage("highContrastButAccurateLinePill") var highContrastButAccurateLinePill: Bool = false
 }

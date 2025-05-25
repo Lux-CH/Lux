@@ -9,6 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct LinePill: View {
+    @ObservedObject var settings = Settings.shared
     let line: String
     let mode: TransportationMode
     var width: CGFloat = 30
@@ -33,12 +34,12 @@ struct LinePill: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
-                .fill(lineColor.opacity(0.25))
+                .fill(settings.highContrastButAccurateLinePill ? lineColor : lineColor.opacity(0.25))
                 .frame(width: width, height: height)
             
             Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
-                .foregroundColor(lineColor == .black ? .white : lineColor)
+                .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: line) : (lineColor == .black ? .white : lineColor))
                 .multilineTextAlignment(.center)
         }
     }

@@ -108,7 +108,7 @@ struct SettingsView: View {
                 SettingsToggle(
                     icon: "photo.fill",
                     title: "Afficher les images",
-                    subtitle: "Interface moderne avec visuels",
+                    subtitle: "Interface plus harmonieuse et agréable",
                     isOn: $settings.showModern
                 )
                 
@@ -117,6 +117,13 @@ struct SettingsView: View {
                     title: "Interface compacte",
                     subtitle: "Réduire l'espacement dans l'onglet des arrêts",
                     isOn: $settings.reduceSpacerBtwnStopContent
+                )
+                
+                SettingsToggle(
+                    icon: "lightspectrum.horizontal",
+                    title: "Contraste plus important",
+                    subtitle: "Augmente le contraste des lignes (design officiel des tpgs).",
+                    isOn: $settings.highContrastButAccurateLinePill
                 )
             } header: {
                 SectionHeader(
