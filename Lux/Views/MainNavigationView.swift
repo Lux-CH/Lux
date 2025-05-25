@@ -22,8 +22,8 @@ enum ViewMode: CaseIterable {
     }
     var title: String {
         switch self {
-        case .home: return "Home"
-        case .stops: return "Stops"
+        case .home: return "Accueil"
+        case .stops: return "Arrêts"
         case .search: return "Search"
         }
     }
