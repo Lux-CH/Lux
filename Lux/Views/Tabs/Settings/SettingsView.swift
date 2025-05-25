@@ -19,25 +19,21 @@ struct SettingsView: View {
     
     var body: some View {
         NavigationStack {
-            List {
-                Section(header: Text("Raccourcis"), footer: Text("Les raccourcis offrent un accès rapide à vos destinations favorites. Ils s'adaptent intelligemment selon l'heure et vos habitudes.")) {
-                    NavigationLink(destination: {
-                        List {
-                            shortcutsSection
-
-                        }
-                    }) {
-                        Text("Raccourcis")
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    headerCard
+                    
+                    VStack(spacing: 16) {
+                        shortcutsCard
+                        customizationCard
+                        experimentalCard
+                        aboutCard
                     }
-                    Toggle("Afficher les titres", isOn: $settings.showShortcutLabel)
-
+                    .padding(.horizontal)
                 }
-                
-                customisationSection
-                experimentalSection
-                infoSection
+                .padding(.vertical)
             }
-            .environment(\.defaultMinListRowHeight, 60)
+            .background(Color(.systemGroupedBackground))
             .navigationTitle("Paramètres")
             .navigationBarTitleDisplayMode(.large)
             .sheet(item: $editingShortcut) { shortcut in
@@ -49,54 +45,336 @@ struct SettingsView: View {
         }
     }
     
-    private var shortcutsSection: some View {
-        Section {
-            ForEach(shortcutManager.shortcuts) { shortcut in
-                shortcutRow(for: shortcut)
-            }
-            .onMove { from, to in
-                if let index = from.first {
-                    shortcutManager.moveShortcut(fromIndex: index, toIndex: to)
+    // MARK: - Header Card
+    private var headerCard: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "gear")
+                .font(.system(size: 40))
+                .foregroundColor(.accentColor)
+            
+            Text("Paramètres")
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            Text("Personnalisez votre expérience Lux")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding(.vertical, 24)
+        .frame(maxWidth: .infinity)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.secondarySystemGroupedBackground))
+        )
+        .padding(.horizontal)
+    }
+    
+    // MARK: - Shortcuts Card
+    private var shortcutsCard: some View {
+        SettingsCard {
+            Section {
+                NavigationLink(destination: ShortcutsListView()) {
+                    SettingsRow(
+                        icon: "list.bullet",
+                        title: "Gérer les raccourcis",
+                        subtitle: "\(shortcutManager.shortcuts.count) raccourci(s) configuré(s)",
+                        showChevron: true
+                    )
                 }
+                .buttonStyle(.plain)
+                
+                SettingsToggle(
+                    icon: "textformat",
+                    title: "Afficher les titres",
+                    subtitle: "Affiche le nom des raccourcis",
+                    isOn: $settings.showShortcutLabel
+                )
+            } header: {
+                SectionHeader(
+                    icon: "location.fill",
+                    iconColor: .blue,
+                    title: "Raccourcis",
+                    subtitle: "Accès rapide à vos destinations"
+                )
             }
-            .onDelete { indexSet in
-                if let index = indexSet.first {
-                    let shortcutId = shortcutManager.shortcuts[index].id
-                    shortcutManager.deleteShortcut(withId: shortcutId)
-                }
+        }
+    }
+    
+    // MARK: - Customization Card
+    private var customizationCard: some View {
+        SettingsCard {
+            Section {
+                SettingsToggle(
+                    icon: "photo.fill",
+                    title: "Afficher les images",
+                    subtitle: "Interface moderne avec visuels",
+                    isOn: $settings.showModern
+                )
+                
+                SettingsToggle(
+                    icon: "rectangle.compress.vertical",
+                    title: "Interface compacte",
+                    subtitle: "Réduire l'espacement dans l'onglet des arrêts",
+                    isOn: $settings.reduceSpacerBtwnStopContent
+                )
+            } header: {
+                SectionHeader(
+                    icon: "paintbrush.fill",
+                    iconColor: .orange,
+                    title: "Personnalisation",
+                    subtitle: "Adaptez l'interface à vos préférences"
+                )
+            }
+        }
+    }
+    
+    // MARK: - Experimental Card
+    private var experimentalCard: some View {
+        SettingsCard {
+            Section {
+                SettingsToggle(
+                    icon: "map.fill",
+                    title: "Aperçu des trajets amélioré",
+                    subtitle: "Calcul avec OSRM pour plus de précision",
+                    isOn: $settings.getPolylineWithOSRM
+                )
+            } header: {
+                SectionHeader(
+                    icon: "flask.fill",
+                    iconColor: .purple,
+                    title: "Fonctionnalités expérimentales",
+                    subtitle: "⚠️ Utilisation non recommandée"
+                )
+            }
+        }
+    }
+    
+    // MARK: - About Card
+    private var aboutCard: some View {
+        SettingsCard {
+            Section {
+                SettingsRow(
+                    icon: "app.badge",
+                    title: "Version",
+                    subtitle: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Inconnue",
+                    showChevron: false
+                )
+            } header: {
+                SectionHeader(
+                    icon: "info.circle.fill",
+                    iconColor: .gray,
+                    title: "À propos",
+                    subtitle: "Informations sur l'application"
+                )
+            }
+        }
+    }
+}
+
+// MARK: - Supporting Views
+
+struct SettingsCard<Content: View>: View {
+    let content: Content
+    
+    init(@ViewBuilder content: () -> Content) {
+        self.content = content()
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            content
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color(.secondarySystemGroupedBackground))
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+}
+
+struct SectionHeader: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let subtitle: String
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .font(.caption)
+                .foregroundColor(iconColor)
+                .frame(width: 16, height: 16)
+            
+            VStack(alignment: .leading, spacing: 1) {
+                Text(title)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .textCase(.uppercase)
+                    .foregroundColor(.secondary)
+                
+                Text(subtitle)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
             }
             
-            Button {
-                showAddShortcutSheet = true
-            } label: {
-                HStack {
-                    Image(systemName: "plus.circle.fill")
-                        .foregroundColor(.accentColor)
-                    Text("Ajouter un raccourci")
-                        .foregroundColor(.accentColor)
-                }
-            }
-            Toggle("Tri par pertinence temporelle", isOn: $settings.useTimeBasedRelevance)
-        } header: {
-            HStack {
-                Text("Raccourcis")
+            Spacer()
+        }
+        .padding(.horizontal, 20)
+        .padding(.top, 16)
+        .padding(.bottom, 8)
+    }
+}
+
+struct SettingsRow: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    let showChevron: Bool
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(.accentColor)
+                .frame(width: 24, height: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.body)
+                    .fontWeight(.medium)
                 
-                if !shortcutManager.shortcuts.isEmpty {
-                    Spacer()
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            if showChevron {
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+        .contentShape(Rectangle())
+    }
+}
+
+struct SettingsToggle: View {
+    let icon: String
+    let title: String
+    let subtitle: String
+    @Binding var isOn: Bool
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.title3)
+                .foregroundColor(.accentColor)
+                .frame(width: 24, height: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.body)
+                    .fontWeight(.medium)
+                
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            Toggle("", isOn: $isOn)
+                .labelsHidden()
+        }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
+    }
+}
+
+// MARK: - Shortcuts List View
+struct ShortcutsListView: View {
+    @EnvironmentObject private var shortcutManager: ShortcutManager
+    @ObservedObject var settings = Settings.shared
+    @Environment(\.colorScheme) private var colorScheme
+    @State private var showAddShortcutSheet = false
+    @State private var editingShortcut: UserShortcut? = nil
+    
+    var body: some View {
+        List {
+            Section {
+                ForEach(shortcutManager.shortcuts) { shortcut in
+                    Button {
+                        editingShortcut = shortcut
+                    } label: {
+                        shortcutRow(for: shortcut)
+                    }
+                    .buttonStyle(.plain)
+                }
+                .onMove { from, to in
+                    if let index = from.first {
+                        shortcutManager.moveShortcut(fromIndex: index, toIndex: to)
+                    }
+                }
+                .onDelete { indexSet in
+                    if let index = indexSet.first {
+                        let shortcutId = shortcutManager.shortcuts[index].id
+                        shortcutManager.deleteShortcut(withId: shortcutId)
+                    }
+                }
+                
+                Button {
+                    showAddShortcutSheet = true
+                } label: {
+                    HStack {
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundColor(.accentColor)
+                        Text("Ajouter un raccourci")
+                            .foregroundColor(.accentColor)
+                    }
+                    .padding(.vertical, 8)
+                }
+                
+                SettingsToggle(
+                    icon: "clock.fill",
+                    title: "Tri par pertinence temporelle",
+                    subtitle: "Affiche les raccourcis les plus pertinents en premier",
+                    isOn: $settings.useTimeBasedRelevance
+                )
+                
+            } header: {
+                HStack {
+                    Text("Raccourcis")
                     
-                    Text("\(shortcutManager.visibleShortcuts.count)/\(shortcutManager.shortcuts.count) affichés")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
+                    if !shortcutManager.shortcuts.isEmpty {
+                        Spacer()
+                        
+                        Text("\(shortcutManager.visibleShortcuts.count)/\(shortcutManager.shortcuts.count) affichés")
+                            .font(.footnote)
+                            .foregroundColor(.secondary)
+                    }
+                }
+            } footer: {
+                if !shortcutManager.shortcuts.isEmpty {
+                    if settings.useTimeBasedRelevance {
+                        Text("Les raccourcis seront triés par pertinence temporelle. Les plus proches en termes d'horaire et de jour seront affichés en premier, sauf si vous êtes très proche de la destination.")
+                    } else {
+                        Text("Les deux premiers raccourcis seront affichés sur l'écran d'accueil.")
+                    }
                 }
             }
-        } footer: {
-            if !shortcutManager.shortcuts.isEmpty {
-                if settings.useTimeBasedRelevance {
-                    Text("Les raccourcis seront triés par pertinence temporelle. Les plus proches en termes d'horaire et de jour seront affichés en premier, sauf si vous êtes très proche de la destination.")
-                } else {
-                    Text("Les deux premiers raccourcis seront affichés sur l'écran d'accueil.")
-                }
-            }
+        }
+        .navigationTitle("Raccourcis")
+        .navigationBarTitleDisplayMode(.large)
+        .sheet(item: $editingShortcut) { shortcut in
+            ShortcutEditorView(shortcutToEdit: shortcut)
+        }
+        .sheet(isPresented: $showAddShortcutSheet) {
+            ShortcutEditorView(shortcutToEdit: nil)
         }
     }
     
@@ -147,41 +425,5 @@ struct SettingsView: View {
         }
         .contentShape(Rectangle())
         .padding(.vertical, 4)
-    }
-    
-    private var infoSection: some View {
-        Section {
-            HStack {
-                Text("Version")
-                Spacer()
-                Text(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")
-                    .foregroundColor(.secondary)
-            }
-        } header: {
-            Text("À propos")
-        }
-    }
-    
-    private var customisationSection: some View {
-        Section {
-            Toggle("Afficher les images", isOn: $settings.showModern)
-            Toggle("Réduire l'espacement dans l'onglet des arrêts", isOn: $settings.reduceSpacerBtwnStopContent)
-        } header: {
-            Text("Personnalisation")
-        }
-    }
-    
-    private var experimentalSection: some View {
-        Section {
-            Toggle("Aperçu des trajets amélioré", isOn: $settings.getPolylineWithOSRM)
-        } header: {
-            Text("Experimental")
-        } footer: {
-            Text("""
-Cette fonctionnalité permet de calculer les aperçus des trajets de bus (polylignes) à l'aide d'OSRM. Si le calcul est correct, cela permet d'améliorer la précision des estimations d'arrivée des bus.
-
-L'activation des fonctionnalités ci-dessus n'est pas recommendée.
-""")
-        }
     }
 }

@@ -225,7 +225,7 @@ struct ShortcutEditorView: View {
     
     private var nameSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Nom du raccourci", icon: "textformat")
+            EditorSectionHeader(title: "Nom du raccourci", icon: "textformat")
             
             TextField("Ex: Maison, Travail, École...", text: $name)
                 .textFieldStyle(ModernTextFieldStyle())
@@ -238,7 +238,7 @@ struct ShortcutEditorView: View {
     
     private var symbolSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Icône", icon: "heart.circle")
+            EditorSectionHeader(title: "Icône", icon: "heart.circle")
             
             Button {
                 showSymbolPicker = true
@@ -282,7 +282,7 @@ struct ShortcutEditorView: View {
     
     private var locationSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SectionHeader(title: "Destination", icon: "location.circle")
+            EditorSectionHeader(title: "Destination", icon: "location.circle")
             
             VStack(spacing: 12) {
                 Button {
@@ -361,7 +361,7 @@ struct ShortcutEditorView: View {
     private var timeScheduleSection: some View {
         VStack(alignment: .center, spacing: 16) {
             HStack {
-                SectionHeader(title: "Programmation", icon: "clock.circle")
+                EditorSectionHeader(title: "Programmation", icon: "clock.circle")
                 
                 Spacer()
                 
@@ -441,7 +441,7 @@ struct ShortcutEditorView: View {
     }
 }
 
-struct SectionHeader: View {
+struct EditorSectionHeader: View {
     let title: String
     let icon: String
     
