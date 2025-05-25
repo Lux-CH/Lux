@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject var lineScoreManager = LineScoreManager.shared
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var shortcutManager: ShortcutManager
     @ObservedObject var settings = Settings.shared
@@ -25,6 +26,7 @@ struct SettingsView: View {
                     
                     VStack(spacing: 16) {
                         shortcutsCard
+                        lineScoreCard
                         customizationCard
                         experimentalCard
                         aboutCard
@@ -131,6 +133,32 @@ struct SettingsView: View {
                     iconColor: .orange,
                     title: "Personnalisation",
                     subtitle: "Adaptez l'interface à vos préférences"
+                )
+            }
+        }
+    }
+    
+    // MARK: Line Score Card
+    private var lineScoreCard: some View {
+        SettingsCard {
+            Section {
+                NavigationLink(destination: LineScoreView()) {
+                    SettingsRow(
+                        icon: "chart.bar.fill",
+                        title: "Lignes préférées",
+                        subtitle: lineScoreManager.lineScores.isEmpty ?
+                                                "Aucune ligne enregistrée" :
+                                                "\(lineScoreManager.lineScores.count) ligne(s)",
+                        showChevron: true
+                    )
+                }
+                .buttonStyle(.plain)
+            } header: {
+                SectionHeader(
+                    icon: "chart.line.uptrend.xyaxis",
+                    iconColor: .green,
+                    title: "Lignes",
+                    subtitle: "Gérez les lignes que vous fréquentez le plus souvent."
                 )
             }
         }
