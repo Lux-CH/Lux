@@ -18,6 +18,8 @@ class StopViewModel: ObservableObject {
     @Published var currentPages: [String: Int] = [:]
     @Published var errorMessage: String?
     
+    @ObservedObject var lineScoreManager = LineScoreManager.shared
+    
     let stop: SearchResult
     
     private var routeOrder: [String: Int] = [:]
@@ -338,31 +340,20 @@ class StopViewModel: ObservableObject {
             }
         }
         
-        let sortedRouteNames = routeGroups.keys.sorted { routeA, routeB in
-            if let orderA = routeOrder[routeA], let orderB = routeOrder[routeB] {
-                return orderA < orderB
-            } else if routeOrder[routeA] != nil {
-                return true
-            } else if routeOrder[routeB] != nil {
-                return false
-            } else {
-                return routeTiming[routeA] ?? Date.distantFuture < routeTiming[routeB] ?? Date.distantFuture
-            }
-        }
+        let sortedRouteNames = lineScoreManager.getSortedRouteNames(Array(routeGroups.keys))
         
-        if routeOrder.isEmpty {
-            for (index, name) in sortedRouteNames.enumerated() {
-                routeOrder[name] = index
-            }
-        } else {
-            let maxOrder = routeOrder.values.max() ?? -1
-            for (offset, name) in sortedRouteNames.filter({ routeOrder[$0] == nil }).enumerated() {
-                routeOrder[name] = maxOrder + offset + 1
-            }
+        for (index, name) in sortedRouteNames.enumerated() {
+            routeOrder[name] = index
         }
         
         self.routeNames = sortedRouteNames
         self.routeGroups = result
         self.currentPages = newCurrentPages
+    }
+    
+    
+    func userSelectedLine(_ routeShortName: String) {
+        let trimmedLine = routeShortName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        lineScoreManager.addScore(to: trimmedLine)
     }
 }
