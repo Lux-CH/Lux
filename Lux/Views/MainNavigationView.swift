@@ -320,6 +320,12 @@ struct MainNavigationView: View {
                     }
                 )
                 .ignoresSafeArea(.keyboard)
+                .sheet(isPresented: $searchViewModel.showSettings) {
+                    RouteOptionsView(routeOptions: searchViewModel.routeOptions) { newOptions in
+                        searchViewModel.updateRouteOptions(newOptions)
+                    }
+                    .presentationDetents([.medium, .large])
+                }
             }
         }
         .onAppear {
