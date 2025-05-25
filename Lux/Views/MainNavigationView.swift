@@ -327,6 +327,20 @@ struct MainNavigationView: View {
                     .presentationDetents([.medium, .large])
                 }
             }
+            .keyboardToolbarIf(viewMode == .search) {
+                ShortcutsKeyboardToolbar(
+                    onShortcutSelected: { result in
+                        let targetField: TripsSearchViewModel.SearchField = isFromFocused ? .from : .to
+                        searchViewModel.handleInitialSearchResult(result, targetField: targetField)
+                    },
+                    onCurrentPositionSelected: {
+                        withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                            searchViewModel.selectCurrentPosition()
+                            HapticFeedback.lightImpact()
+                        }
+                    }
+                )
+            }
         }
         .onAppear {
             stopsViewModel.setupLocationManager(locationManager)
@@ -621,6 +635,17 @@ struct MainNavigationView: View {
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             stopsViewModel.loadNearbyStops(showLoading: false)
+        }
+    }
+}
+
+extension View {
+    @ViewBuilder
+    func keyboardToolbarIf<Content: View>(_ condition: Bool, @ViewBuilder content: @escaping () -> Content) -> some View {
+        if condition {
+            self.keyboardToolbar(view: content)
+        } else {
+            self
         }
     }
 }
