@@ -184,7 +184,7 @@ struct SettingsView: View {
                 SettingsToggle(
                     icon: "figure.walk",
                     title: "Obtenir les instructions",
-                    subtitle: "Calculer des instructions de marche via MKDirection.",
+                    subtitle: "Calculer les instructions de marche via MKDirection",
                     isOn: $settings.fetchWalkingDirectionsUsingMKDirections
                 )
             } header: {
