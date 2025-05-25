@@ -7,10 +7,12 @@
 
 import SwiftUI
 import LuxCom
+import MapKit
 
 struct MultipleItineraryDetailView: View {
     @State var itinerary: Itinerary
     @State private var expandedLegIds: Set<String> = []
+    let viewModel: ItineraryViewModel
     
     private func calculateUpcomingStops(leg: Leg) -> [Place] {
         guard let intermediateStops = leg.intermediateStops else { return [] }
@@ -51,32 +53,32 @@ struct MultipleItineraryDetailView: View {
         return "\(leg.startTime.timeIntervalSince1970)-\(leg.from.name)-\(leg.to.name)"
     }
     
-    private func getDirectionIcon(_ direction: Direction) -> String {
-        switch direction {
-        case .depart:
-            return "location.fill"
-        case .hardLeft:
-            return "arrow.turn.up.left"
-        case .left:
-            return "arrow.left"
-        case .slightlyLeft:
-            return "arrow.up.left"
-        case .continueStraight:
+    private func getDirectionIcon(for step: MKRoute.Step, index: Int, totalSteps: Int) -> String {
+        let instructions = step.instructions.lowercased()
+        
+        if instructions.contains("left") || instructions.contains("gauche") {
+            if instructions.contains("slight") || instructions.contains("légèrement") {
+                return "arrow.up.left"
+            } else {
+                return "arrow.turn.up.left"
+            }
+        } else if instructions.contains("right") || instructions.contains("droite") {
+            if instructions.contains("slight") || instructions.contains("légèrement") {
+                return "arrow.up.right"
+            } else {
+                return "arrow.turn.up.right"
+            }
+        } else if instructions.contains("straight") || instructions.contains("continue") ||
+                    instructions.contains("droit") || instructions.contains("continuer") {
             return "arrow.up"
-        case .slightlyRight:
-            return "arrow.up.right"
-        case .right:
-            return "arrow.right"
-        case .hardRight:
-            return "arrow.turn.up.right"
-        case .circleClockwise, .circleCounterClockwise:
-            return "arrow.clockwise"
-        case .stairs:
-            return "stairs"
-        case .elevator:
-            return "arrow.up.to.line.alt"
-        case .uturnLeft, .uturnRight:
+        } else if instructions.contains("u-turn") || instructions.contains("demi-tour") {
             return "arrow.uturn.left"
+        } else if instructions.contains("roundabout") || instructions.contains("rond-point") {
+            return "arrow.clockwise"
+        } else if instructions.contains("merge") || instructions.contains("rejoindre") {
+            return "arrow.merge"
+        } else {
+            return "arrow.up"
         }
     }
     
@@ -89,45 +91,12 @@ struct MultipleItineraryDetailView: View {
         }
     }
     
-    private func getDirectionText(_ instruction: StepInstruction) -> String {
-        switch instruction.relativeDirection {
-        case .depart:
-            return "Départ sur \(instruction.streetName)"
-        case .hardLeft:
-            return "Tournez complètement à gauche sur \(instruction.streetName)"
-        case .left:
-            return "Tournez à gauche sur \(instruction.streetName)"
-        case .slightlyLeft:
-            return "Tournez légèrement à gauche sur \(instruction.streetName)"
-        case .continueStraight:
-            return "Continuez tout droit sur \(instruction.streetName)"
-        case .slightlyRight:
-            return "Tournez légèrement à droite sur \(instruction.streetName)"
-        case .right:
-            return "Tournez à droite sur \(instruction.streetName)"
-        case .hardRight:
-            return "Tournez complètement à droite sur \(instruction.streetName)"
-        case .circleClockwise:
-            return "Au rond-point, prenez \(instruction.exit) dans le sens horaire"
-        case .circleCounterClockwise:
-            return "Au rond-point, prenez \(instruction.exit) dans le sens anti-horaire"
-        case .stairs:
-            if instruction.toLevel > instruction.fromLevel {
-                return "Montez les escaliers vers \(instruction.streetName)"
-            } else {
-                return "Descendez les escaliers vers \(instruction.streetName)"
-            }
-        case .elevator:
-            if instruction.toLevel > instruction.fromLevel {
-                return "Prenez l'ascenseur vers le niveau \(instruction.toLevel)"
-            } else {
-                return "Prenez l'ascenseur vers le niveau \(instruction.toLevel)"
-            }
-        case .uturnLeft:
-            return "Faites demi-tour à gauche sur \(instruction.streetName)"
-        case .uturnRight:
-            return "Faites demi-tour à droite sur \(instruction.streetName)"
+    private func getInstructionText(for step: MKRoute.Step) -> String {
+        if !step.instructions.isEmpty {
+            return step.instructions
         }
+        
+        return "Continuer sur \(formatDistance(step.distance))"
     }
     
     var body: some View {
@@ -161,6 +130,7 @@ struct MultipleItineraryDetailView: View {
                             // Walking leg
                             let legId = getLegId(leg)
                             let isExpanded = expandedLegIds.contains(legId)
+                            let walkingSteps = viewModel.walkingDirections[viewModel.getLegIdentifier(leg)] ?? []
                             
                             VStack(spacing: 0) {
                                 HStack {
@@ -208,60 +178,60 @@ struct MultipleItineraryDetailView: View {
                                 .padding(.horizontal, 20)
                                 .padding(.vertical, 15)
                                 
-                                if isExpanded, let instructions = leg.steps, !instructions.isEmpty {
+                                if isExpanded {
                                     VStack(spacing: 0) {
-                                        //                                        ForEach(Array(instructions.enumerated()), id: \.offset) { index, instruction in
-                                        //                                            HStack(alignment: .top, spacing: 10) {
-                                        //                                                Image(systemName: getDirectionIcon(instruction.relativeDirection))
-                                        //                                                    .foregroundColor(.blue)
-                                        //                                                    .frame(width: 28, height: 28)
-                                        //                                                    .background(Color.blue.opacity(0.1))
-                                        //                                                    .clipShape(Circle())
-                                        //
-                                        //                                                VStack(alignment: .leading, spacing: 4) {
-                                        //                                                    Text(getDirectionText(instruction))
-                                        //                                                        .font(.subheadline)
-                                        //                                                        .multilineTextAlignment(.leading)
-                                        //
-                                        //                                                    if instruction.distance > 0 {
-                                        //                                                        Text(formatDistance(instruction.distance))
-                                        //                                                            .font(.caption)
-                                        //                                                            .foregroundColor(.secondary)
-                                        //                                                    }
-                                        //                                                }
-                                        //
-                                        //                                                Spacer()
-                                        //                                            }
-                                        //                                            .padding(.vertical, 10)
-                                        //                                            .padding(.horizontal, 20)
-                                        //
-                                        //                                            if index < instructions.count - 1 {
-                                        //                                                Divider()
-                                        //                                                    .padding(.leading, 58)
-                                        //                                                    .padding(.trailing, 20)
-                                        //                                            }
-                                        //                                        }
-                                        HStack(alignment: .top, spacing: 10) {
-                                            Image(systemName: "arrow.turn.up.left")
-                                                .foregroundColor(.blue)
-                                                .frame(width: 28, height: 28)
-                                                .background(Color.blue.opacity(0.1))
-                                                .clipShape(Circle())
-                                            
-                                            VStack(alignment: .leading, spacing: 4) {
-                                                Text("TODO")
-                                                    .font(.subheadline)
-                                                    .multilineTextAlignment(.leading)
+                                        if !walkingSteps.isEmpty {
+                                            ForEach(Array(walkingSteps.enumerated()), id: \.offset) { index, step in
+                                                HStack(alignment: .top, spacing: 10) {
+                                                    Image(systemName: getDirectionIcon(for: step, index: index, totalSteps: walkingSteps.count))
+                                                        .foregroundColor(.blue)
+                                                        .frame(width: 28, height: 28)
+                                                        .background(Color.blue.opacity(0.1))
+                                                        .clipShape(Circle())
+                                                    
+                                                    VStack(alignment: .leading, spacing: 4) {
+                                                        Text(getInstructionText(for: step))
+                                                            .font(.subheadline)
+                                                            .multilineTextAlignment(.leading)
+                                                        
+                                                        if step.distance > 0 {
+                                                            Text(formatDistance(step.distance))
+                                                                .font(.caption)
+                                                                .foregroundColor(.secondary)
+                                                        }
+                                                    }
+                                                    
+                                                    Spacer()
+                                                }
+                                                .padding(.vertical, 10)
+                                                .padding(.horizontal, 20)
                                                 
-                                                Text("0m")
-                                                    .font(.caption)
-                                                    .foregroundColor(.secondary)
+                                                if index < walkingSteps.count - 1 {
+                                                    Divider()
+                                                        .padding(.leading, 58)
+                                                        .padding(.trailing, 20)
+                                                }
                                             }
-                                            
-                                            Spacer()
+                                        } else {
+                                            HStack(alignment: .top, spacing: 10) {
+                                                Image(systemName: "figure.walk")
+                                                    .foregroundColor(.blue)
+                                                    .frame(width: 28, height: 28)
+                                                    .background(Color.blue.opacity(0.1))
+                                                    .clipShape(Circle())
+                                                
+                                                VStack(alignment: .leading, spacing: 4) {
+                                                    Text("Aucune instruction disponible")
+                                                        .font(.subheadline)
+                                                        .multilineTextAlignment(.leading)
+                                                        .foregroundColor(.secondary)
+                                                }
+                                                
+                                                Spacer()
+                                            }
+                                            .padding(.vertical, 10)
+                                            .padding(.horizontal, 20)
                                         }
-                                        .padding(.vertical, 10)
-                                        .padding(.horizontal, 20)
                                     }
                                     .background(Color.blue.opacity(0.05))
                                     .clipShape(RoundedRectangle(cornerRadius: 8))

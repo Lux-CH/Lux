@@ -34,6 +34,7 @@ final class ItineraryViewModel: ObservableObject {
     @Published var vehicleAnnotations: [VehicleAnnotation] = []
     @Published var isLoading: Bool = true
     @Published var error: String?
+    @Published var walkingDirections: [String: [MKRoute.Step]] = [:]
     @ObservedObject var settings = Settings.shared
 
     
@@ -85,6 +86,46 @@ final class ItineraryViewModel: ObservableObject {
         isLoading = false
     }
     
+    // MARK: - MKDirections Methods
+    func fetchWalkingDirections(for leg: Leg) async {
+        guard leg.mode == .walk else { return }
+        
+        let legId = getLegIdentifier(leg)
+        
+        if walkingDirections[legId] != nil {
+            return
+        }
+        
+        let request = MKDirections.Request()
+        
+        let sourceCoordinate = CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon)
+        let destinationCoordinate = CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon)
+        
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: sourceCoordinate))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destinationCoordinate))
+        request.transportType = .walking
+        
+        let directions = MKDirections(request: request)
+        
+        do {
+            let response = try await directions.calculate()
+            if let route = response.routes.first {
+                var steps = route.steps
+                
+                if steps.count > 2 {
+                    steps.removeFirst() // remove "Head to.." instruction
+                    steps.removeLast()  // remove "Arrive to..." instruction
+                }
+                
+                await MainActor.run {
+                    walkingDirections[legId] = steps
+                }
+            }
+        } catch {
+            print("failed to calculate walking directions for leg \(legId) !!! \(error)")
+        }
+    }
+        
     private func startItineraryRefresh() {
         guard !tripId.isEmpty && !shouldStop else { return }
         
@@ -152,9 +193,23 @@ final class ItineraryViewModel: ObservableObject {
             calculateMapPosition()
         }
         
+        if settings.fetchWalkingDirectionsUsingMKDirections {
+            await fetchWalkingDirectionsForAllLegs(itinerary.legs)
+        }
+        
         prepareVehicleKeyframes(for: itinerary.legs)
         
         startVehicleUpdates()
+    }
+    
+    private func fetchWalkingDirectionsForAllLegs(_ legs: [Leg]) async {
+        await withTaskGroup(of: Void.self) { group in
+            for leg in legs where leg.mode == .walk {
+                group.addTask {
+                    await self.fetchWalkingDirections(for: leg)
+                }
+            }
+        }
     }
     
     private func fetchOSRMPolylines(for legs: [Leg]) async {
@@ -237,8 +292,8 @@ final class ItineraryViewModel: ObservableObject {
         }
     }
     
-    private func getLegIdentifier(_ leg: Leg) -> String {
-        "\(leg.routeShortName ?? "")_\(leg.headsign ?? "")"
+    func getLegIdentifier(_ leg: Leg) -> String {
+        "\(leg.routeShortName ?? "")_\(leg.headsign ?? "")_\(leg.startTime.timeIntervalSince1970)"
     }
     
     private func startVehicleUpdates() {
