@@ -11,6 +11,7 @@ struct CustomTabBar: View {
     @Binding var selectedTab: ViewMode
     @Namespace private var tabAnimation
     var onModeChange: ((ViewMode) -> Void)
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         HStack(spacing: 0) {
@@ -32,11 +33,25 @@ struct CustomTabBar: View {
         .padding(8)
         .background(
             Capsule()
-                .fill(Color(.secondarySystemBackground))
-                .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
+                .fill(
+                    colorScheme == .dark
+                    ? Color(.secondarySystemBackground).opacity(0.7)
+                    : Color.white
+                )
+                .shadow(
+                    color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
+                    radius: 10,
+                    x: 0,
+                    y: 5
+                )
                 .overlay(
                     Capsule()
-                        .stroke(Color.gray.opacity(0.1), lineWidth: 1)
+                        .stroke(
+                            colorScheme == .dark
+                            ? Color.white.opacity(0.1)
+                            : Color.gray.opacity(0.1),
+                            lineWidth: 1
+                        )
                 )
         )
         .frame(height: 54)
@@ -50,6 +65,7 @@ struct TabButton: View {
     @Binding var selectedTab: ViewMode
     var namespace: Namespace.ID
     var onSelect: (() -> Void)
+    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         Button(action: {
@@ -63,7 +79,7 @@ struct TabButton: View {
                 
                 Image(systemName: tab.icon)
                     .font(.system(size: 16, weight: selectedTab == tab ? .semibold : .regular))
-                    .foregroundStyle(selectedTab == tab ? Color.accentColor : Color.gray.opacity(0.8))
+                    .foregroundStyle(selectedTab == tab ? Color.accentColor : Color.primary.opacity(0.6))
                     .frame(width: 30, height: 30)
             
                 if selectedTab == tab {
@@ -80,7 +96,11 @@ struct TabButton: View {
             .background {
                 if selectedTab == tab {
                     Capsule()
-                        .fill(Color.accentColor.opacity(0.1))
+                        .fill(
+                            colorScheme == .dark
+                            ? Color.accentColor.opacity(0.15)
+                            : Color.accentColor.opacity(0.1)
+                        )
                         .matchedGeometryEffect(id: "TAB", in: namespace)
                 }
             }
