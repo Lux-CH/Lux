@@ -96,7 +96,7 @@ struct UserShortcut: Identifiable, Codable, Equatable {
         return SearchResult(
             type: .place,
             tokens: [[0, name.count]],
-            name: coordinates.locationName,
+            name: name,
             id: id.uuidString,
             lat: coordinates.latitude,
             lon: coordinates.longitude,
