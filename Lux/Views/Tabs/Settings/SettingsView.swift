@@ -122,7 +122,7 @@ struct SettingsView: View {
                 SettingsToggle(
                     icon: "lightspectrum.horizontal",
                     title: "Contraste plus important",
-                    subtitle: "Augmente le contraste des lignes (design officiel des tpgs).",
+                    subtitle: "Augmente le contraste des lignes (design officiel des tpgs)",
                     isOn: $settings.highContrastButAccurateLinePill
                 )
             } header: {
