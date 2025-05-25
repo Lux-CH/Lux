@@ -205,7 +205,8 @@ struct SettingsView: View {
                 SettingsRow(
                     icon: "app.badge",
                     title: "Version",
-                    subtitle: Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Inconnue",
+                    // MARK: CHANGE THAT WHEN IN PROD
+                    subtitle: "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "Inconnue") Beta \(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "Inconnue")",
                     showChevron: false
                 )
             } header: {
