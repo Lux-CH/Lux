@@ -31,7 +31,7 @@ struct RouteGroupView: View {
                     }
                 )) {
                     ForEach(Array(groups.enumerated()), id: \.element.id) { index, group in
-                        ExpandedGroupView(group: group, animateIn: $animateIn, animation: animation)
+                        ExpandedGroupView(group: group, viewModel: viewModel, animateIn: $animateIn, animation: animation)
                             .padding(.horizontal)
                             .tag(index)
                     }

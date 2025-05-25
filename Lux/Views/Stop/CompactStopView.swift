@@ -147,7 +147,7 @@ struct CompactStopView: View {
                 )) {
                     ForEach(Array(groups.enumerated()), id: \.element.id) { index, group in
                         if !group.stopTimes.isEmpty {
-                            IncomingBusView(group: group)
+                            IncomingBusView(group: group, viewModel: viewModel)
                                 .padding(.horizontal)
                                 .tag(index)
                         }

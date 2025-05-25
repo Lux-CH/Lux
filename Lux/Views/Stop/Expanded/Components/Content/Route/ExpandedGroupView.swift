@@ -11,6 +11,7 @@ import LuxCom
 struct ExpandedGroupView: View {
     @Environment(\.colorScheme) var colorScheme
     let group: GroupedStopTime
+    let viewModel: StopViewModel
     @Binding var animateIn: Bool
     var animation: Namespace.ID
     
@@ -20,6 +21,9 @@ struct ExpandedGroupView: View {
                 ItineraryView(tripId: tripId, fromNearby: false)
                     .toolbarBackground(.hidden, for: .navigationBar)
                     .navigationBarBackButtonHidden(true)
+                    .onAppear {
+                        viewModel.userSelectedLine(group.routeShortName)
+                    }
             }
         }) {
             VStack(alignment: .leading, spacing: 5) {

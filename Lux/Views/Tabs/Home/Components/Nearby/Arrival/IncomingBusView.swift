@@ -10,6 +10,7 @@ import LuxCom
 
 struct IncomingBusView: View {
     let group: GroupedStopTime
+    let viewModel: StopViewModel
     @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
@@ -18,6 +19,9 @@ struct IncomingBusView: View {
                 ItineraryView(tripId: tripId, fromNearby: true)
                     .toolbarBackground(.hidden, for: .navigationBar)
                     .navigationBarBackButtonHidden(true)
+                    .onAppear {
+                        viewModel.userSelectedLine(group.routeShortName)
+                    }
             }
         }) {
             HStack {
