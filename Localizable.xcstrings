@@ -2,7 +2,15 @@
   "sourceLanguage" : "fr",
   "strings" : {
     "" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ""
+          }
+        }
+      },
+      "shouldTranslate" : false
     },
     "%@ • %@" : {
       "localizations" : {
@@ -18,7 +26,8 @@
             "value" : "%1$@ • %2$@"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "%lld" : {
       "localizations" : {
@@ -28,7 +37,8 @@
             "value" : "%lld"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "%lld arrêts" : {
       "localizations" : {
@@ -90,7 +100,8 @@
             "value" : "%lldm"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "•" : {
       "localizations" : {
@@ -100,7 +111,8 @@
             "value" : "•"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "0m" : {
       "localizations" : {
@@ -110,7 +122,8 @@
             "value" : "0m"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "À proximité" : {
       "localizations" : {
@@ -438,6 +451,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter at least 3 characters to search"
+          }
+        }
+      }
+    },
+    "Entrez le numéro de ligne que vous souhaitez ajouter aux favoris" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter the line that you want to add in your favorites"
           }
         }
       }
@@ -928,16 +951,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selected symbol"
-          }
-        }
-      }
-    },
-    "Tapez le numéro de ligne pour l'ajouter aux favoris" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap the number of the line to add it to your favorites"
           }
         }
       }
