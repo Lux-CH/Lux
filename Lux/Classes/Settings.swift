@@ -18,4 +18,5 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContent: Bool = false
     @AppStorage("useTimeBasedRelevance") var useTimeBasedRelevance: Bool = true
     @AppStorage("highContrastButAccurateLinePill") var highContrastButAccurateLinePill: Bool = false
+    @AppStorage("fetchWalkingDirectionsUsingMKDirections") var fetchWalkingDirectionsUsingMKDirections: Bool = true
 }

@@ -181,12 +181,18 @@ struct SettingsView: View {
                     subtitle: "Affichage plus précis du tracé des routes avec OSRM",
                     isOn: $settings.getPolylineWithOSRM
                 )
+                SettingsToggle(
+                    icon: "figure.walk",
+                    title: "Obtenir les instructions",
+                    subtitle: "Calculer des instructions de marche via MKDirection.",
+                    isOn: $settings.fetchWalkingDirectionsUsingMKDirections
+                )
             } header: {
                 SectionHeader(
                     icon: "flask.fill",
                     iconColor: .purple,
                     title: "Fonctionnalités expérimentales",
-                    subtitle: "⚠️ Utilisation non recommandée"
+                    subtitle: "⚠️ Changements non recommandés"
                 )
             }
         }
