@@ -114,11 +114,11 @@
 				};
 			};
 			buildConfigurationList = 799D2A622D98ABF80066E9F5 /* Build configuration list for PBXProject "Lux" */;
-			developmentRegion = en;
+			developmentRegion = fr;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				en,
 				Base,
+				fr,
 			);
 			mainGroup = 799D2A5E2D98ABF80066E9F5;
 			minimizedProjectReferenceProxies = 1;
