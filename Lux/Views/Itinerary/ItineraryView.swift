@@ -116,7 +116,7 @@ struct ItineraryView: View {
                     .padding(.leading, 16)
                     // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
                     .sheet(isPresented: $showDetails) {
-                        ItineraryDetailSheet(itinerary: viewModel.itinerary)
+                        ItineraryDetailSheet(viewModel: viewModel)
                             .presentationDetents([viewModel.itinerary?.legs.count == 1 && viewModel.itinerary?.legs.first?.mode != .walk ? .fraction(0.1) : .fraction(0.225), .medium, .large])
                             .presentationDragIndicator(.visible)
                             .presentationCornerRadius(38)

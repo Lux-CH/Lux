@@ -10,14 +10,14 @@ import SwiftUI
 import LuxCom
 
 struct ItineraryDetailSheet: View {
-    let itinerary: Itinerary?
+    let viewModel: ItineraryViewModel
     
     var body: some View {
-        if let itinerary = itinerary {
+        if let itinerary = viewModel.itinerary {
             if itinerary.legs.count == 1 && itinerary.legs.first?.mode != .walk {
                 IndividualItineraryDetailView(itinerary: itinerary)
             } else {
-                MultipleItineraryDetailView(itinerary: itinerary)
+                MultipleItineraryDetailView(itinerary: itinerary, viewModel: viewModel)
             }
         } else {
             ContentUnavailableView {
