@@ -192,7 +192,7 @@ struct SettingsView: View {
                     icon: "flask.fill",
                     iconColor: .purple,
                     title: "Fonctionnalités expérimentales",
-                    subtitle: "⚠️ Changements non recommandés"
+                    subtitle: "⚠️ Effectuer des changements n'est pas recommandé"
                 )
             }
         }
