@@ -98,7 +98,9 @@ struct ItineraryView: View {
                         
                         Button(action: {
                             if let userLocation = locationManager.location?.coordinate {
-                                viewModel.position = .camera(MapCamera(centerCoordinate: userLocation, distance: 10000))
+                                withAnimation(.easeInOut(duration: 1.0)) {
+                                    viewModel.position = .camera(MapCamera(centerCoordinate: userLocation, distance: 10000))
+                                }
                             }
                         }) {
                             Image(systemName: "location.fill")
