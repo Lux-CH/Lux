@@ -41,8 +41,6 @@ struct ShortcutEditorView: View {
                     LazyVStack(spacing: 0) {
                         headerSection
                             .padding(.horizontal)
-                            .padding(.top, isEditing ? -20 : 10)
-                        
                         VStack(spacing: 24) {
                             nameSection
                             symbolSection
@@ -50,14 +48,13 @@ struct ShortcutEditorView: View {
                             timeScheduleSection
                         }
                         .padding(.horizontal)
-                        .padding(.top, 32)
+                        .padding(.top, isEditing ? 0 : 22)
                         .padding(.bottom, 100)
                     }
                 }
                 .scrollDismissesKeyboard(.immediately)
             }
             .background {
-                // Dynamic gradient background
                 LinearGradient(
                     colors: [
                         Color(.systemBackground),
@@ -69,12 +66,12 @@ struct ShortcutEditorView: View {
                 )
                 .ignoresSafeArea()
             }
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Annuler") {
                         dismiss()
                     }
-                    .font(.body.weight(.medium))
                     .foregroundStyle(.secondary)
                 }
                 
@@ -83,7 +80,7 @@ struct ShortcutEditorView: View {
                         saveShortcut()
                     }
                     .font(.body.weight(.bold))
-                    .foregroundStyle(canSave ? .white : .secondary)
+                    .foregroundStyle(canSave ? .accent : .secondary)
                     .disabled(!canSave)
                     .scaleEffect(canSave ? 1.0 : 0.95)
                     .animation(.spring(response: 0.3, dampingFraction: 0.8), value: canSave)
