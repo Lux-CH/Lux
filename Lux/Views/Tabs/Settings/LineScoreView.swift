@@ -354,7 +354,7 @@ struct AddLineScoreView: View {
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text("Tapez le numéro de ligne pour l'ajouter aux favoris")
+                    Text("Entrez le numéro de ligne que vous souhaitez ajouter aux favoris")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
