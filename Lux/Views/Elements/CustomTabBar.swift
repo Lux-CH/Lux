@@ -15,16 +15,18 @@ struct CustomTabBar: View {
     var body: some View {
         HStack(spacing: 0) {
             ForEach(ViewMode.allCases, id: \.self) { tab in
-                TabButton(
-                    tab: tab,
-                    selectedTab: $selectedTab,
-                    namespace: tabAnimation,
-                    onSelect: {
-                        if selectedTab != tab {
-                            onModeChange(tab)
+                if tab != .search {
+                    TabButton(
+                        tab: tab,
+                        selectedTab: $selectedTab,
+                        namespace: tabAnimation,
+                        onSelect: {
+                            if selectedTab != tab {
+                                onModeChange(tab)
+                            }
                         }
-                    }
-                )
+                    )
+                }
             }
         }
         .padding(8)

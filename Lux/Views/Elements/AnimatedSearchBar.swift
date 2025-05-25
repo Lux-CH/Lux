@@ -41,6 +41,9 @@ struct AnimatedSearchBar: View {
                         onSearch()
                     }
                 }
+                .onSubmit {
+                    onSearch()
+                }
             
             Spacer()
             
@@ -55,5 +58,37 @@ struct AnimatedSearchBar: View {
         .background(Color(.secondarySystemFill).opacity(0.5))
         .cornerRadius(25)
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: placeholderText)
+    }
+}
+
+extension AnyTransition {
+    static var searchExpansion: AnyTransition {
+        .asymmetric(
+            insertion: .opacity.combined(with: .scale(scale: 0.95).animation(.spring(response: 0.5, dampingFraction: 0.7))),
+            removal: .opacity.combined(with: .scale(scale: 0.95).animation(.spring(response: 0.5, dampingFraction: 0.7)))
+        )
+    }
+}
+
+struct ExpandingFrameModifier: ViewModifier {
+    var isExpanded: Bool
+    var expandedWidth: CGFloat
+    var expandedHeight: CGFloat
+    var cornerRadius: CGFloat
+    
+    func body(content: Content) -> some View {
+        content
+            .frame(
+                width: isExpanded ? expandedWidth : 350,
+                height: isExpanded ? expandedHeight : 60
+            )
+            .cornerRadius(isExpanded ? cornerRadius : 25)
+            .animation(.spring(response: 0.5, dampingFraction: 0.7), value: isExpanded)
+    }
+}
+
+extension View {
+    func expandingFrame(isExpanded: Bool, width: CGFloat, height: CGFloat, cornerRadius: CGFloat = 18) -> some View {
+        self.modifier(ExpandingFrameModifier(isExpanded: isExpanded, expandedWidth: width, expandedHeight: height, cornerRadius: cornerRadius))
     }
 }
