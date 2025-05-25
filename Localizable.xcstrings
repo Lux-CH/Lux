@@ -114,17 +114,6 @@
       },
       "shouldTranslate" : false
     },
-    "0m" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "0m"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "À proximité" : {
       "localizations" : {
         "en" : {
@@ -321,6 +310,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No result found."
+          }
+        }
+      }
+    },
+    "Aucune instruction disponible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No instructions available"
           }
         }
       }
@@ -971,16 +970,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Done"
-          }
-        }
-      }
-    },
-    "TODO" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "TODO"
           }
         }
       }
