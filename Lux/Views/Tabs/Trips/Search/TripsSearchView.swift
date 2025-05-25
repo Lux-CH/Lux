@@ -23,7 +23,7 @@ struct TripsSearchView: View {
 
     var body: some View {
         NavigationStack {
-            GeometryReader {_ in 
+            GeometryReader {_ in
                 ZStack {
                     LinearGradient(
                         colors: colorScheme == .dark
@@ -70,6 +70,29 @@ struct TripsSearchView: View {
                     }
                 )
             }
+            .overlay(
+                VStack {
+                    HStack {
+                        Button(action: { dismiss() }) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 16, weight: .semibold))
+                                .foregroundColor(.accentColor)
+                                .padding(10)
+                                .background(
+                                    Circle()
+                                        .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
+                                )
+                        }
+                        .padding(.leading, 12)
+                        .padding(.top, 5)
+                        
+                        Spacer()
+                    }
+                    Spacer()
+                }
+                    .padding(.top, 50)
+                    .transition(.opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.9)))
+            )
             .sheet(isPresented: $viewModel.showSettings) {
                 RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
                     viewModel.updateRouteOptions(newOptions)
