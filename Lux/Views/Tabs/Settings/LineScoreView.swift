@@ -14,6 +14,7 @@ struct LineScoreView: View {
     @Environment(\.colorScheme) private var colorScheme
     
     @State private var showAddLineSheet = false
+    @State private var showLowScoreLines = false
     
     var body: some View {
         NavigationStack {
@@ -36,6 +37,15 @@ struct LineScoreView: View {
                     .presentationDragIndicator(.visible)
             }
         }
+    }
+    
+    // MARK: - Computed Properties for Filtering
+    private var highScoreLines: [LineScore] {
+        lineScoreManager.lineScores.filter { $0.totalScore >= 2.0 }.sorted { $0.totalScore > $1.totalScore }
+    }
+    
+    private var lowScoreLines: [LineScore] {
+        lineScoreManager.lineScores.filter { $0.totalScore < 2.0 }.sorted { $0.totalScore > $1.totalScore }
     }
     
     // MARK: - Header Card
@@ -85,8 +95,60 @@ struct LineScoreView: View {
                     .padding(.vertical, 40)
                     .frame(maxWidth: .infinity)
                 } else {
-                    ForEach(lineScoreManager.lineScores.sorted { $0.totalScore > $1.totalScore }, id: \.routeShortName) { lineScore in
+                    ForEach(highScoreLines, id: \.routeShortName) { lineScore in
                         LineScoreRow(lineScore: lineScore)
+                    }
+                    
+                    if !lowScoreLines.isEmpty {
+                        VStack(spacing: 0) {
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    showLowScoreLines.toggle()
+                                }
+                            } label: {
+                                HStack {
+                                    Image(systemName: "eye.slash")
+                                        .foregroundColor(.secondary)
+                                        .font(.caption)
+                                    
+                                    Text("Ajoutées automatiquement")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                    
+                                    Spacer()
+                                    
+                                    Text("\(lowScoreLines.count)")
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                        .padding(.horizontal, 6)
+                                        .padding(.vertical, 2)
+                                        .background(Color(.tertiarySystemFill))
+                                        .clipShape(Capsule())
+                                    
+                                    Image(systemName: showLowScoreLines ? "chevron.up" : "chevron.down")
+                                        .foregroundColor(.secondary)
+                                        .font(.caption2)
+                                        .fontWeight(.medium)
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.vertical, 8)
+                                .background(Color(.quaternarySystemFill))
+                            }
+                            .buttonStyle(.plain)
+                            
+                            if showLowScoreLines {
+                                VStack(spacing: 0) {
+                                    ForEach(lowScoreLines, id: \.routeShortName) { lineScore in
+                                        LineScoreRow(lineScore: lineScore)
+                                            .opacity(0.7)
+                                    }
+                                }
+                                .transition(.asymmetric(
+                                    insertion: .opacity.combined(with: .move(edge: .top)),
+                                    removal: .opacity.combined(with: .move(edge: .top))
+                                ))
+                            }
+                        }
                     }
                 }
                 
