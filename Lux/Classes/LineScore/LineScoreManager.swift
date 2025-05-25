@@ -36,14 +36,14 @@ class LineScoreManager: ObservableObject {
             do {
                 try storage.updateLineScore(updatedScore)
             } catch {
-                print("error updating line score: \(error.localizedDescription)")
+                print("error updating line score \(error.localizedDescription)")
             }
         } else {
             let newScore = LineScore(routeShortName: routeShortName, initialScore: points)
             do {
                 try storage.addLineScore(newScore)
             } catch {
-                print("error adding line score: \(error.localizedDescription)")
+                print("error adding line score!! \(error.localizedDescription)")
             }
         }
     }
@@ -72,7 +72,7 @@ class LineScoreManager: ObservableObject {
             do {
                 try storage.updateLineScore(updatedScore)
             } catch {
-                print("Error resetting line score: \(error.localizedDescription)")
+                print("error resetting line score \(error.localizedDescription)")
             }
         }
     }
@@ -81,7 +81,7 @@ class LineScoreManager: ObservableObject {
         do {
             try storage.deleteLineScore(for: routeShortName)
         } catch {
-            print("Error deleting line score: \(error.localizedDescription)")
+            print("error deleting line score !!\(error.localizedDescription)")
         }
     }
 }

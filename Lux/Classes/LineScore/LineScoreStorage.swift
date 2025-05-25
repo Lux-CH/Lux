@@ -31,8 +31,12 @@ class LineScoreStorage: LineScoreStorageProtocol {
     }
     
     private var lineScoresURL: URL {
-        let documentsDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return documentsDirectory.appendingPathComponent("lineScores.data")
+        let appSupportDirectory = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
+        let luxDirectory = appSupportDirectory.appendingPathComponent("Lux")
+        
+        try? fileManager.createDirectory(at: luxDirectory, withIntermediateDirectories: true)
+        
+        return luxDirectory.appendingPathComponent("lineScores.data")
     }
     
     init() {
