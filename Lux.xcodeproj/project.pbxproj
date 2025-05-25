@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		791994C72DE374CF00B2080C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 791994C62DE374CF00B2080C /* Localizable.xcstrings */; };
 		791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SymbolPicker */; };
 		799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 799D2A762D98AC420066E9F5 /* LuxCom */; };
 		79A912462DB341660032AB9D /* GPSTests.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 79A912452DB341660032AB9D /* GPSTests.gpx */; };
@@ -14,6 +15,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		791994C62DE374CF00B2080C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		799D2A672D98ABF80066E9F5 /* Lux.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lux.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A912452DB341660032AB9D /* GPSTests.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GPSTests.gpx; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -56,6 +58,7 @@
 		799D2A5E2D98ABF80066E9F5 = {
 			isa = PBXGroup;
 			children = (
+				791994C62DE374CF00B2080C /* Localizable.xcstrings */,
 				79A912452DB341660032AB9D /* GPSTests.gpx */,
 				799D2A692D98ABF80066E9F5 /* Lux */,
 				799D2A682D98ABF80066E9F5 /* Products */,
@@ -119,6 +122,7 @@
 			knownRegions = (
 				Base,
 				fr,
+				en,
 			);
 			mainGroup = 799D2A5E2D98ABF80066E9F5;
 			minimizedProjectReferenceProxies = 1;
@@ -142,6 +146,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				791994C72DE374CF00B2080C /* Localizable.xcstrings in Resources */,
 				79A912462DB341660032AB9D /* GPSTests.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -219,6 +224,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -276,6 +282,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

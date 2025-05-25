@@ -58,7 +58,7 @@ extension View {
         modifier(KeyboardToolbar {
             HStack {
                 Spacer()
-                Button("Done") {
+                Button("Terminer") {
                     UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
                 }
                 .padding(.horizontal)

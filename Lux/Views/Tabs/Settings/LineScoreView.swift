@@ -59,7 +59,7 @@ struct LineScoreView: View {
                 .font(.title2)
                 .fontWeight(.semibold)
             
-            Text("Mettez les lignes que vous fréquentez le plus en avant.")
+            Text("Mettez en avant les lignes que vous fréquentez le plus.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -87,7 +87,7 @@ struct LineScoreView: View {
                             .font(.headline)
                             .foregroundColor(.secondary)
                         
-                        Text("Ajoutez des lignes pour commencer à suivre leurs scores")
+                        Text("Ajoutez des lignes pour qu'elles soient mises en avant.")
                             .font(.subheadline)
                             .foregroundColor(.secondary)
                             .multilineTextAlignment(.center)
