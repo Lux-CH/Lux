@@ -92,6 +92,13 @@ struct SettingsView: View {
                     subtitle: "Affiche le nom des raccourcis",
                     isOn: $settings.showShortcutLabel
                 )
+                
+                SettingsToggle(
+                    icon: "clock.fill",
+                    title: "Tri par pertinence",
+                    subtitle: "Affiche les raccourcis les plus pertinents en premier",
+                    isOn: $settings.useTimeBasedRelevance
+                )
             } header: {
                 SectionHeader(
                     icon: "location.fill",
@@ -373,13 +380,6 @@ struct ShortcutsListView: View {
                     }
                     .padding(.vertical, 8)
                 }
-                
-                SettingsToggle(
-                    icon: "clock.fill",
-                    title: "Tri par pertinence temporelle",
-                    subtitle: "Affiche les raccourcis les plus pertinents en premier",
-                    isOn: $settings.useTimeBasedRelevance
-                )
                 
             } header: {
                 HStack {

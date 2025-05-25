@@ -37,6 +37,7 @@ struct MainNavigationView: View {
     @FocusState private var isSearchBarFocused: Bool
 
     @State private var showSettings: Bool = false
+    @State private var showShortcutsSettings: Bool = false
     @StateObject private var stopsViewModel = StopsViewModel()
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var shortcutManager: ShortcutManager
@@ -138,6 +139,12 @@ struct MainNavigationView: View {
                                             }
                                             .sheet(isPresented: $showSettings) {
                                                 SettingsView()
+                                            }
+                                            .sheet(isPresented: $showShortcutsSettings) {
+                                                NavigationStack {
+                                                    ShortcutsListView()
+                                                        .navigationTitle("Raccourcis")
+                                                }
                                             }
                                             .padding(.top, 65)
                                             .padding(.bottom, 5)
@@ -405,7 +412,7 @@ struct MainNavigationView: View {
             
             if shortcutManager.visibleShortcuts.isEmpty {
                 Button {
-                    showSettings = true
+                    showShortcutsSettings = true
                 } label: {
                     VStack(spacing: 4) {
                         HStack {
