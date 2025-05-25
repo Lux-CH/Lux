@@ -177,8 +177,8 @@ struct SettingsView: View {
             Section {
                 SettingsToggle(
                     icon: "map.fill",
-                    title: "Aperçu des trajets amélioré",
-                    subtitle: "Calcul avec OSRM pour plus de précision",
+                    title: "Tracés plus détaillées",
+                    subtitle: "Affichage plus précis du tracé des routes avec OSRM",
                     isOn: $settings.getPolylineWithOSRM
                 )
             } header: {
