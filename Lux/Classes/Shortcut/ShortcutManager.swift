@@ -34,7 +34,7 @@ class ShortcutManager: ObservableObject {
         updateVisibleShortcuts()
     }
     
-    private func updateVisibleShortcuts(userLocation: CLLocation? = nil) {
+    func updateVisibleShortcuts(userLocation: CLLocation? = nil) {
         if settings.useTimeBasedRelevance {
             let sortedByRelevance = shortcuts.enumerated().sorted { element1, element2 in
                 let score1 = element1.element.relevanceScore(userLocation: userLocation, originalIndex: element1.offset)
@@ -46,10 +46,6 @@ class ShortcutManager: ObservableObject {
         } else {
             visibleShortcuts = Array(shortcuts.prefix(maxVisibleShortcuts))
         }
-    }
-    
-    func updateVisibleShortcuts(with userLocation: CLLocation?) {
-        updateVisibleShortcuts(userLocation: userLocation)
     }
     
     func addShortcut(_ shortcut: UserShortcut) {

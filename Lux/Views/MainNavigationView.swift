@@ -45,10 +45,11 @@ struct MainNavigationView: View {
     @State private var showTripSearch: Bool = false
     @Namespace private var animation
     @Environment(\.colorScheme) private var colorScheme
-    
-    @State private var shortcutUpdateTimer: Timer?
-    
+        
     @GestureState private var dragTranslation: CGSize = .zero
+    
+    @State private var lastLocationUpdateTime: Date = Date.distantPast
+    private let locationUpdateThrottleInterval: TimeInterval = 2.5
     
     // Animation configs
     private let ultraSmoothSpring = Animation.interactiveSpring(response: 0.4, dampingFraction: 0.85, blendDuration: 0.1)
@@ -352,17 +353,21 @@ struct MainNavigationView: View {
         .onAppear {
             stopsViewModel.setupLocationManager(locationManager)
             searchViewModel.setupLocationManager(locationManager)
-            setupShortcutUpdateTimer()
         }
         .onDisappear {
             stopsViewModel.cancelBackgroundTasks()
-            stopShortcutUpdateTimer()
         }
         .onChange(of: locationManager.location) {
+            let now = Date()
+            
+            if now.timeIntervalSince(lastLocationUpdateTime) >= locationUpdateThrottleInterval {
+                lastLocationUpdateTime = now
+                updateShortcutsWithCurrentLocation()
+            }
+            
             if viewMode == .stops && !stopsViewModel.isSearchMode {
                 stopsViewModel.checkLocationAndRefresh()
             }
-            updateShortcutsWithCurrentLocation()
         }
         .onChange(of: settings.useTimeBasedRelevance) {
             updateShortcutsWithCurrentLocation()
@@ -585,25 +590,11 @@ struct MainNavigationView: View {
     }
     
     // MARK: - Shortcut Update Methods
-    
-    private func setupShortcutUpdateTimer() {
-        shortcutUpdateTimer = Timer.scheduledTimer(withTimeInterval: 30, repeats: true) { _ in
-            if settings.useTimeBasedRelevance {
-                updateShortcutsWithCurrentLocation()
-            }
-        }
-    }
-    
-    private func stopShortcutUpdateTimer() {
-        shortcutUpdateTimer?.invalidate()
-        shortcutUpdateTimer = nil
-    }
-    
     private func updateShortcutsWithCurrentLocation() {
         guard settings.useTimeBasedRelevance else { return }
         
         withAnimation(ultraSmoothSpring) {
-            shortcutManager.updateVisibleShortcuts(with: locationManager.location)
+            shortcutManager.updateVisibleShortcuts(userLocation: locationManager.location)
         }
     }
     
