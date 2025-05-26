@@ -144,11 +144,7 @@ struct UserShortcut: Identifiable, Codable, Equatable {
             let distance = userLoc.distance(from: shortcutLocation)
             
             let distancePenalty = calculateDistancePenalty(distance: distance)
-            print(name)
-            print(distance)
-            print(distancePenalty)
             score -= distancePenalty
-            print(score)
         }
         
         return score
