@@ -123,6 +123,13 @@ struct SettingsView: View {
                 )
                 
                 SettingsToggle(
+                    icon: "clock.badge",
+                    title: "Afficher le retard exact",
+                    subtitle: "Affiche le retard à côté de l'heure prévue (sinon, inclus dans l'heure)",
+                    isOn: $settings.showDelayInsteadOfDirectTime
+                )
+                
+                SettingsToggle(
                     icon: "rectangle.compress.vertical",
                     title: "Interface compacte",
                     subtitle: "Réduire l'espacement dans l'onglet des arrêts",
