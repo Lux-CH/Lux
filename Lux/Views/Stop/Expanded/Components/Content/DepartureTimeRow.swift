@@ -9,6 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct DepartureTimeRow: View {
+    @Environment(\.calendar) private var calendar
     let stopTime: StopTime
     @Binding var animateIn: Bool
     let index: Int
@@ -19,7 +20,7 @@ struct DepartureTimeRow: View {
                 if let departure = stopTime.place.departure {
                     Text(formatTime(departure))
                         .font(.system(.body, design: .monospaced))
-                        .foregroundStyle(stopTime.cancelled ? .red : stopTime.realTime ? .green : .primary)
+                        .foregroundColor(latenessColor)
                         .fontWeight(.medium)
                         .contentTransition(.numericText())
                         .strikethrough(stopTime.cancelled, color: .red)
@@ -42,6 +43,23 @@ struct DepartureTimeRow: View {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: date)
+    }
+    
+    private var latenessColor: Color {
+        let scheduledArrival = stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival ?? Date()
+        let arrival = stopTime.place.departure ?? stopTime.place.arrival ?? Date()
+        
+        let scheduledDifference = calendar.dateComponents([.minute], from: scheduledArrival, to: arrival).minute ?? 0
+        
+        if stopTime.cancelled {
+            return .red
+        } else if !stopTime.realTime {
+            return .primary
+        } else if scheduledDifference <= 2 && scheduledDifference >= -1 {
+            return .green
+        } else {
+            return .red
+        }
     }
     
     private func relativeTime(for date: Date?) -> String {
