@@ -14,26 +14,28 @@ struct DepartureTimeRow: View {
     let index: Int
     
     var body: some View {
-        HStack {
-            if let departure = stopTime.place.departure {
-                Text(formatTime(departure))
-                    .font(.system(.body, design: .monospaced))
-                    .foregroundStyle(stopTime.cancelled ? .red : stopTime.realTime ? .green : .primary)
-                    .fontWeight(.medium)
+        TimelineView(.periodic(from: .now, by: 5)) { _ in
+            HStack {
+                if let departure = stopTime.place.departure {
+                    Text(formatTime(departure))
+                        .font(.system(.body, design: .monospaced))
+                        .foregroundStyle(stopTime.cancelled ? .red : stopTime.realTime ? .green : .primary)
+                        .fontWeight(.medium)
+                        .contentTransition(.numericText())
+                        .strikethrough(stopTime.cancelled, color: .red)
+                }
+                
+                Spacer()
+                
+                Text(relativeTime(for: stopTime.place.departure))
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
                     .contentTransition(.numericText())
-                    .strikethrough(stopTime.cancelled, color: .red)
             }
-            
-            Spacer()
-            
-            Text(relativeTime(for: stopTime.place.departure))
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .contentTransition(.numericText())
+            .offset(x: animateIn ? 0 : -10)
+            .opacity(animateIn ? 1 : 0)
+            .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(Double(index) * 0.1 + 0.1), value: animateIn)
         }
-        .offset(x: animateIn ? 0 : -10)
-        .opacity(animateIn ? 1 : 0)
-        .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(Double(index) * 0.1 + 0.1), value: animateIn)
     }
     
     private func formatTime(_ date: Date) -> String {
