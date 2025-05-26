@@ -143,11 +143,32 @@ struct UserShortcut: Identifiable, Codable, Equatable {
             let shortcutLocation = CLLocation(latitude: coordinates.latitude, longitude: coordinates.longitude)
             let distance = userLoc.distance(from: shortcutLocation)
             
-            if distance < 100 {
-                score -= 5.0
-            }
+            let distancePenalty = calculateDistancePenalty(distance: distance)
+            print(name)
+            print(distance)
+            print(distancePenalty)
+            score -= distancePenalty
+            print(score)
         }
         
         return score
+    }
+
+    private func calculateDistancePenalty(distance: Double) -> Double {
+        if distance < 25 {
+            return 50.0
+        } else if distance < 50 {
+            return 35.0 * exp(-distance / 25.0) + 15.0
+        } else if distance < 100 {
+            return 25.0 * exp(-distance / 35.0) + 10.0
+        } else if distance < 200 {
+            let normalizedDistance = (distance - 100) / 100
+            return 8.0 * (1.0 - normalizedDistance)
+        } else if distance < 500 {
+            let normalizedDistance = (distance - 200) / 300
+            return 3.0 * (1.0 - normalizedDistance)
+        } else {
+            return 0.0
+        }
     }
 }
