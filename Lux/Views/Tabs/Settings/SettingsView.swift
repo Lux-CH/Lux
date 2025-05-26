@@ -76,11 +76,12 @@ struct SettingsView: View {
     private var shortcutsCard: some View {
         SettingsCard {
             Section {
+                let plural = shortcutManager.shortcuts.count > 1 ? "s" : ""
                 NavigationLink(destination: ShortcutsListView()) {
                     SettingsRow(
                         icon: "list.bullet",
                         title: "Gérer les raccourcis",
-                        subtitle: "\(shortcutManager.shortcuts.count) raccourci(s) configuré(s)",
+                        subtitle: "\(shortcutManager.shortcuts.count) raccourci\(plural) configuré\(plural)",
                         showChevron: true
                     )
                 }
@@ -155,7 +156,7 @@ struct SettingsView: View {
                         title: "Lignes préférées",
                         subtitle: lineScoreManager.lineScores.isEmpty ?
                                                 "Aucune ligne enregistrée" :
-                                                "\(lineScoreManager.lineScores.count) ligne(s)",
+                            "\(lineScoreManager.lineScores.count) ligne\(lineScoreManager.lineScores.count > 1 ? "s" : "")",
                         showChevron: true
                     )
                 }
