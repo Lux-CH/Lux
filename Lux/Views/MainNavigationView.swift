@@ -279,10 +279,16 @@ struct MainNavigationView: View {
                                 }
                                 .onEnded { value in
                                     let vertical = value.translation.height
-                                    if viewMode == .home && vertical < -50 {
-                                        switchToStopsMode()
-                                    } else if viewMode == .stops && vertical > 150 {
-                                        toggleViewMode(.home)
+                                    let horizontal = abs(value.translation.width)
+                                    
+                                    if horizontal < 100 {
+                                        if viewMode == .home && vertical < -50 {
+                                            switchToStopsMode()
+                                        } else if viewMode == .home && vertical > 50 {
+                                            transitionToSearchMode()
+                                        } else if viewMode == .stops && vertical > 150 {
+                                            toggleViewMode(.home)
+                                        }
                                     }
                                 }
                         )
