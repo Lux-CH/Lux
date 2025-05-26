@@ -136,6 +136,12 @@ struct UserShortcut: Identifiable, Codable, Equatable {
                     let proximityScore = max(0, 5.0 - (Double(timeDifference) / 48.0))
                     score += proximityScore
                 }
+            } else {
+                let timeDifference = abs(currentHour * 60 + currentMinute - schedule.time.hour * 60 + schedule.time.minute)
+                if timeDifference <= 240 {
+                    let timeOnlyScore = max(0, 3.0 - (Double(timeDifference) / 80.0))
+                    score += timeOnlyScore
+                }
             }
         }
         
