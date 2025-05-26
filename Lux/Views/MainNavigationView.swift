@@ -456,7 +456,7 @@ struct MainNavigationView: View {
                         name: "Ajouter",
                         isPlaceholder: true
                     ) {
-                        showSettings = true
+                        showShortcutsSettings = true
                     }
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
                 }
