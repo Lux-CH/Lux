@@ -104,7 +104,7 @@ struct ArrivalMinuteView: View {
             return .red
         } else if !incomingStop.realTime {
             return .primary
-        } else if scheduledDifference <= 2 && scheduledDifference >= -1 {
+        } else if scheduledDifference < 2 && scheduledDifference >= -1 {
             return .green
         } else {
             return .red
