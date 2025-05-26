@@ -29,6 +29,17 @@
       },
       "shouldTranslate" : false
     },
+    "%@%lld'" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@%2$lld'"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
     "%lld" : {
       "localizations" : {
         "en" : {

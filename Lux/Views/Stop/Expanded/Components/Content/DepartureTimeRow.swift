@@ -10,6 +10,7 @@ import LuxCom
 
 struct DepartureTimeRow: View {
     @Environment(\.calendar) private var calendar
+    @ObservedObject var settings = Settings.shared
     let stopTime: StopTime
     @Binding var animateIn: Bool
     let index: Int
@@ -17,13 +18,23 @@ struct DepartureTimeRow: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: 5)) { _ in
             HStack {
-                if let departure = stopTime.place.departure {
-                    Text(formatTime(departure))
-                        .font(.system(.body, design: .monospaced))
-                        .foregroundColor(latenessColor)
-                        .fontWeight(.medium)
-                        .contentTransition(.numericText())
-                        .strikethrough(stopTime.cancelled, color: .red)
+                if let departure = stopTime.place.departure, let scheduledDeparture = stopTime.place.scheduledDeparture {
+                    let scheduledDifference = calendar.dateComponents([.minute], from: stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival ?? Date(), to: stopTime.place.departure ?? stopTime.place.arrival ?? Date()).minute ?? 0
+                    HStack(spacing:6) {
+                        Text(settings.showDelayInsteadOfDirectTime ? formatTime(scheduledDeparture) : formatTime(departure))
+                            .font(.system(.body, design: .monospaced))
+                            .foregroundColor(settings.showDelayInsteadOfDirectTime ? .primary : latenessColor)
+                            .fontWeight(.medium)
+                            .contentTransition(.numericText())
+                            .strikethrough(stopTime.cancelled, color: .red)
+                        if settings.showDelayInsteadOfDirectTime && !stopTime.cancelled && stopTime.realTime {
+                            Text("\(scheduledDifference >= 0 ? "+" : "-")\(scheduledDifference)'")
+                                .font(.system(.subheadline, design: .monospaced))
+                                .fontWeight(.bold)
+                                .foregroundColor(scheduledDifference == 0 ? .green : .red)
+                                .contentTransition(.numericText())
+                        }
+                    }
                 }
                 
                 Spacer()
@@ -55,7 +66,7 @@ struct DepartureTimeRow: View {
             return .red
         } else if !stopTime.realTime {
             return .primary
-        } else if scheduledDifference <= 2 && scheduledDifference >= -1 {
+        } else if scheduledDifference < 2 && scheduledDifference >= -1 {
             return .green
         } else {
             return .red
