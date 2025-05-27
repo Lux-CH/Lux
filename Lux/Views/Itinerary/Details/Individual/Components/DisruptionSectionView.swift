@@ -14,10 +14,6 @@ struct DisruptionSectionView: View {
     @State private var isExpanded: Bool = false
     @Environment(\.colorScheme) private var colorScheme
     
-    private var sectionTitle: String {
-        return isExpanded ? "Masquer les perturbations" : "Perturbations (\(disruptions.count))"
-    }
-    
     var body: some View {
         if !disruptions.isEmpty {
             VStack(alignment: .leading, spacing: 0) {
@@ -32,17 +28,17 @@ struct DisruptionSectionView: View {
                             .fill(Color.red)
                             .frame(width: 8, height: 8)
                         
-                        Text(sectionTitle)
+                        Text("Perturbations (\(disruptions.count))")
                             .font(.subheadline)
                             .fontWeight(.medium)
                             .foregroundColor(.red)
                         
                         Spacer()
                         
-                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        Image(systemName: "chevron.right")
                             .font(.caption)
                             .foregroundColor(.red)
-                            .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                            .rotationEffect(.degrees(isExpanded ? 90 : 0))
                     }
                     .padding(.horizontal, 20)
                     .padding(.vertical, 12)

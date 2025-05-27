@@ -735,6 +735,16 @@
         }
       }
     },
+    "Perturbations (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disruptions (%lld)"
+          }
+        }
+      }
+    },
     "Plus d'arrêts prévus sur cette ligne." : {
       "localizations" : {
         "en" : {
