@@ -28,7 +28,7 @@ struct DepartureTimeRow: View {
                             .contentTransition(.numericText())
                             .strikethrough(stopTime.cancelled, color: .red)
                         if settings.showDelayInsteadOfDirectTime && !stopTime.cancelled && stopTime.realTime {
-                            Text("\(scheduledDifference >= 0 ? "+" : "-")\(scheduledDifference)'")
+                            Text("\(scheduledDifference >= 0 ? "+" : "")\(scheduledDifference)'")
                                 .font(.system(.subheadline, design: .monospaced))
                                 .fontWeight(.bold)
                                 .foregroundColor(scheduledDifference == 0 ? .green : .red)
