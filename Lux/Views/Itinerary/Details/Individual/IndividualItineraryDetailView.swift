@@ -12,7 +12,9 @@ struct IndividualItineraryDetailView: View {
     let itinerary: Itinerary
     private let mainLeg: Leg?
     private let legColor: Color
+    @State private var isExpanded: Bool = false
     @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject var disruptionManager: DisruptionManager
     
     private let upcomingStops: [Place]
     private let nextStop: Place?
@@ -86,6 +88,15 @@ struct IndividualItineraryDetailView: View {
                         .padding(.horizontal, 20)
                     ScrollViewReader { proxy in
                         ScrollView {
+                            if let actualName = leg.routeShortName {
+                                DisruptionSectionView(
+                                    leg: leg,
+                                    disruptions: disruptionManager.disruptions(for: actualName)
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.top, 15)
+                                .padding(.bottom, -10)
+                            }
                             ItinerarySheetDetailStopsContentView(
                                 stops: upcomingStops,
                                 legColor: legColor,
