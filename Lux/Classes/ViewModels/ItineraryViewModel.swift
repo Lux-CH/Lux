@@ -154,7 +154,6 @@ final class ItineraryViewModel: ObservableObject {
             if !dontActuallyFetch {
                 let newItinerary = try await getTrip(tripId: tripId)
                 itinerary = newItinerary
-                print("updated!")
             }
             else {
                 itinerary = itinerary
