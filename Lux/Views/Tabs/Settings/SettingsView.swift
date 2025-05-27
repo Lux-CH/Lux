@@ -137,6 +137,13 @@ struct SettingsView: View {
                 )
                 
                 SettingsToggle(
+                    icon: "exclamationmark.triangle",
+                    title: "Perturbations prioritaires",
+                    subtitle: "Afficher les perturbations d'une ligne avant son trajet (sinon en dessous).",
+                    isOn: $settings.showDisruptionsAsPrioritary
+                )
+                
+                SettingsToggle(
                     icon: "lightspectrum.horizontal",
                     title: "Contraste plus important",
                     subtitle: "Augmente le contraste des lignes (design officiel des tpgs)",

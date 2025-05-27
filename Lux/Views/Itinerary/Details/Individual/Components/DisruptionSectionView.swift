@@ -14,75 +14,63 @@ struct DisruptionSectionView: View {
     @State private var isExpanded: Bool = false
     @Environment(\.colorScheme) private var colorScheme
     
-    private var hasDisruptions: Bool {
-        !disruptions.isEmpty
-    }
-    
-    private var disruptionCount: Int {
-        disruptions.count
-    }
-    
     private var sectionTitle: String {
-        if hasDisruptions {
-            return isExpanded ? "Masquer les perturbations" : "Perturbations (\(disruptionCount))"
-        } else {
-            return "Aucune perturbation"
-        }
-    }
-    
-    private var titleColor: Color {
-        hasDisruptions ? .red : .secondary
+        return isExpanded ? "Masquer les perturbations" : "Perturbations (\(disruptions.count))"
     }
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Button(action: {
-                if hasDisruptions {
-                    withAnimation(.spring(response: 0.3)) {
+        if !disruptions.isEmpty {
+            VStack(alignment: .leading, spacing: 0) {
+                Button(action: {
+                    HapticFeedback.lightImpact()
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                         isExpanded.toggle()
                     }
-                }
-            }) {
-                HStack {
-                    Circle()
-                        .fill(hasDisruptions ? Color.red : Color.green)
-                        .frame(width: 8, height: 8)
-                    
-                    Text(sectionTitle)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(titleColor)
-                    
-                    Spacer()
-                    
-                    if hasDisruptions {
+                }) {
+                    HStack {
+                        Circle()
+                            .fill(Color.red)
+                            .frame(width: 8, height: 8)
+                        
+                        Text(sectionTitle)
+                            .font(.subheadline)
+                            .fontWeight(.medium)
+                            .foregroundColor(.red)
+                        
+                        Spacer()
+                        
                         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                             .font(.caption)
-                            .foregroundColor(titleColor)
-                            .rotationEffect(.degrees(isExpanded ? 0 : 0))
+                            .foregroundColor(.red)
+                            .rotationEffect(.degrees(isExpanded ? 180 : 0))
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.vertical, 12)
                 }
-            }
-            .disabled(!hasDisruptions)
-            
-            if isExpanded && hasDisruptions {
+                
                 VStack(alignment: .leading, spacing: 8) {
-                    ForEach(disruptions) { disruption in
+                    ForEach(Array(disruptions.enumerated()), id: \.element.id) { index, disruption in
                         DisruptionCardView(disruption: disruption)
+                            .opacity(isExpanded ? 1 : 0)
+                            .scaleEffect(isExpanded ? 1 : 0.95, anchor: .top)
+                            .animation(
+                                .spring(response: 0.4, dampingFraction: 0.8)
+                                .delay(Double(index) * 0.05),
+                                value: isExpanded
+                            )
                     }
                 }
-                .transition(.asymmetric(
-                    insertion: .opacity.combined(with: .move(edge: .top)),
-                    removal: .opacity.combined(with: .move(edge: .top))
-                ))
+                .padding(.horizontal, 20)
+                .padding(.bottom, isExpanded ? 12 : 0)
+                .frame(maxHeight: isExpanded ? .infinity : 0)
+                .clipped()
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isExpanded)
             }
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(colorScheme == .dark ? Color(.secondarySystemBackground) : Color(.systemGray6))
+            )
         }
-        .padding(.horizontal, 20)
-        .padding(.vertical, 12)
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(colorScheme == .dark ? Color(.secondarySystemBackground) : Color(.systemGray6))
-        )
     }
 }
 
@@ -117,13 +105,10 @@ struct DisruptionCardView: View {
         )
     }
     private func extractTitleAndDesc(_ disr: String) -> (String, String) {
-        let parts = disr.components(separatedBy: " - ")
-
-        if parts.count >= 2 {
-            let title = parts[0].trimmingCharacters(in: .whitespaces)
-            let desc = parts[1...].joined(separator: " - ").trimmingCharacters(in: .whitespaces)
-
-            return(title, desc)
+        if let range = disr.range(of: " - ") {
+            let title = String(disr[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
+            let desc = String(disr[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+            return (title, desc)
         } else {
             return ("", disr)
         }

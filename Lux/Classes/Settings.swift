@@ -22,6 +22,7 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContent: Bool = false
     @AppStorage("highContrastButAccurateLinePill") var highContrastButAccurateLinePill: Bool = false
     @AppStorage("showDelayInsteadOfDirectTime") var showDelayInsteadOfDirectTime: Bool = false
+    @AppStorage("showDisruptionsAsPrioritary") var showDisruptionsAsPrioritary: Bool = false
 
     /// Experimental
     @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false
