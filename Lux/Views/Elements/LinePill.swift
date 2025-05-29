@@ -46,10 +46,11 @@ struct LinePill: View {
 }
 
 struct MorePill: View {
+    @ObservedObject var settings = Settings.shared
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: 50)
-                .fill(Color.accentColor.opacity(0.25))
+                .fill(settings.highContrastButAccurateLinePill ? Color(.secondarySystemFill) : Color.accentColor.opacity(0.25))
                 .frame(width: 30, height: 20)
             Image(systemName: "ellipsis")
                 .foregroundColor(Color.accentColor)
