@@ -93,12 +93,6 @@ struct TripsSearchView: View {
                     .padding(.top, 50)
                     .transition(.opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.9)))
             )
-            .sheet(isPresented: $viewModel.showSettings) {
-                RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
-                    viewModel.updateRouteOptions(newOptions)
-                }
-                .presentationDetents([.medium, .large])
-            }
         }
         .onAppear {
             viewModel.setupLocationManager(locationManager)
@@ -577,7 +571,12 @@ struct TripsSearchActionButtons: View {
             }
             .disabled(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
             .buttonStyle(SpringButtonStyle())
-            
+            .sheet(isPresented: $viewModel.showSettings) {
+                RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
+                    viewModel.updateRouteOptions(newOptions)
+                }
+                .presentationDetents([.medium, .large])
+            }
             HStack {
                 settingsButton
                 
