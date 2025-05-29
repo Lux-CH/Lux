@@ -51,6 +51,9 @@ struct MainNavigationView: View {
     @State private var lastLocationUpdateTime: Date = Date.distantPast
     private let locationUpdateThrottleInterval: TimeInterval = 2.5
     
+    @State private var initialScreenSize: CGSize = .zero
+    @State private var hasInitializedScreenSize = false
+    
     // Animation configs
     private let ultraSmoothSpring = Animation.interactiveSpring(response: 0.4, dampingFraction: 0.85, blendDuration: 0.1)
     private let contentSpring = Animation.interactiveSpring(response: 0.5, dampingFraction: 0.85, blendDuration: 0.15)
@@ -94,7 +97,7 @@ struct MainNavigationView: View {
                     .ignoresSafeArea()
                     .animation(ultraSmoothSpring, value: colorScheme)
                     
-                    VStack(spacing: compactSize(screenSize: screenSize)) {
+                    VStack(spacing: compactSize()) {
                         ZStack(alignment: .top) {
                             Rectangle()
                                 .fill(colorScheme == .dark
@@ -257,6 +260,12 @@ struct MainNavigationView: View {
                                             showMinCharactersMessage: stopsViewModel.showMinCharactersMessage,
                                             locationManager: locationManager
                                         )
+                                        .onAppear {
+                                            if !hasInitializedScreenSize {
+                                                initialScreenSize = screenSize
+                                                hasInitializedScreenSize = true
+                                            }
+                                        }
                                         .transition(.asymmetric(
                                             insertion: .move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.97)),
                                             removal: .move(edge: .bottom).combined(with: .opacity).combined(with: .scale(scale: 0.97))
@@ -612,14 +621,15 @@ struct MainNavigationView: View {
     }
     
     // doing cas par cas is a really ugly solution
-    func compactSize(screenSize: CGSize) -> CGFloat {
+    private func compactSize() -> CGFloat {
         if viewMode == .stops && settings.reduceSpacerBtwnStopContent {
-            if screenSize.height >= 840 {
+            let height = initialScreenSize.height
+            if height >= 840 {
                 return -62
             }
-            else if screenSize.height <= 728 {
+            else if height <= 728 {
                 return -50
-            } else if screenSize.height == 778 {
+            } else if height == 778 {
                 return -62
             } else {
                 return -47
