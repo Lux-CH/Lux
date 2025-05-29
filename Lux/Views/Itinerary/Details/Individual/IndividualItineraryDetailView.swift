@@ -89,7 +89,7 @@ struct IndividualItineraryDetailView: View {
                         .padding(.horizontal, 20)
                     ScrollViewReader { proxy in
                         ScrollView {
-                            if let actualName = leg.routeShortName, settings.showDisruptionsAsPrioritary {
+                            if let actualName = leg.routeShortName {
                                 DisruptionSectionView(
                                     leg: leg,
                                     disruptions: disruptionManager.disruptions(for: actualName)
@@ -106,14 +106,6 @@ struct IndividualItineraryDetailView: View {
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
-                            if let actualName = leg.routeShortName, !settings.showDisruptionsAsPrioritary {
-                                DisruptionSectionView(
-                                    leg: leg,
-                                    disruptions: disruptionManager.disruptions(for: actualName)
-                                )
-                                .padding(.horizontal, 20)
-                                .padding(.top, 5)
-                            }
                         }
                     }
                 }

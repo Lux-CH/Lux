@@ -116,13 +116,6 @@ struct SettingsView: View {
         SettingsCard {
             Section {
                 SettingsToggle(
-                    icon: "photo.fill",
-                    title: "Afficher les images",
-                    subtitle: "Interface plus harmonieuse et agréable",
-                    isOn: $settings.showModern
-                )
-                
-                SettingsToggle(
                     icon: "clock.badge",
                     title: "Afficher le retard exact",
                     subtitle: "Affiche le retard à côté de l'heure prévue (sinon, inclus dans l'heure)",
@@ -135,18 +128,11 @@ struct SettingsView: View {
                     subtitle: "Réduire l'espacement dans l'onglet des arrêts",
                     isOn: $settings.reduceSpacerBtwnStopContent
                 )
-                
-                SettingsToggle(
-                    icon: "exclamationmark.triangle",
-                    title: "Perturbations prioritaires",
-                    subtitle: "Afficher les perturbations d'une ligne avant son trajet (sinon en dessous).",
-                    isOn: $settings.showDisruptionsAsPrioritary
-                )
-                
+    
                 SettingsToggle(
                     icon: "lightspectrum.horizontal",
                     title: "Contraste plus important",
-                    subtitle: "Augmente le contraste des lignes (design officiel des tpgs)",
+                    subtitle: "Augmente la lisibilité de l'interface",
                     isOn: $settings.highContrastButAccurateLinePill
                 )
             } header: {

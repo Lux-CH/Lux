@@ -71,7 +71,7 @@ struct CompactStopView: View {
                     .padding(.bottom, 0)
             }
             .background {
-                if colorScheme == .dark && settings.showModern {
+                if colorScheme == .dark && !settings.highContrastButAccurateLinePill {
                     MaskedImageView()
                         .edgesIgnoringSafeArea(.all)
                 } else {
