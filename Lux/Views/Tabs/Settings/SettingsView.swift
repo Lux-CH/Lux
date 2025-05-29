@@ -154,9 +154,11 @@ struct SettingsView: View {
                     SettingsRow(
                         icon: "chart.bar.fill",
                         title: "Lignes préférées",
-                        subtitle: lineScoreManager.lineScores.isEmpty ?
-                                                "Aucune ligne enregistrée" :
-                            "\(lineScoreManager.lineScores.count) ligne\(lineScoreManager.lineScores.count > 1 ? "s" : "")",
+                        subtitle: {
+                            let highScoreLines = lineScoreManager.lineScores.filter { $0.totalScore >= 2.0 }
+                            return highScoreLines.isEmpty ? "Aucune ligne enregistrée" :
+                            "\(highScoreLines.count) ligne\(highScoreLines.count > 1 ? "s" : "")"
+                        }(),
                         showChevron: true
                     )
                 }
