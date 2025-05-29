@@ -45,7 +45,7 @@ struct LineScoreView: View {
     }
     
     private var lowScoreLines: [LineScore] {
-        lineScoreManager.lineScores.filter { $0.totalScore < 2.0 }.sorted { $0.totalScore > $1.totalScore }
+        lineScoreManager.lineScores.filter { $0.totalScore < 2.0 && $0.totalScore != 0.0 }.sorted { $0.totalScore > $1.totalScore }
     }
     
     // MARK: - Header Card
@@ -102,7 +102,7 @@ struct LineScoreView: View {
                     if !lowScoreLines.isEmpty {
                         VStack(spacing: 0) {
                             Button {
-                                withAnimation(.easeInOut(duration: 0.3)) {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
                                     showLowScoreLines.toggle()
                                 }
                             } label: {
@@ -125,7 +125,8 @@ struct LineScoreView: View {
                                         .background(Color(.tertiarySystemFill))
                                         .clipShape(Capsule())
                                     
-                                    Image(systemName: showLowScoreLines ? "chevron.up" : "chevron.down")
+                                    Image(systemName: "chevron.right")
+                                        .rotationEffect(.degrees(showLowScoreLines ? 90 : 0))
                                         .foregroundColor(.secondary)
                                         .font(.caption2)
                                         .fontWeight(.medium)
@@ -143,10 +144,10 @@ struct LineScoreView: View {
                                             .opacity(0.7)
                                     }
                                 }
-                                .transition(.asymmetric(
-                                    insertion: .opacity.combined(with: .move(edge: .top)),
-                                    removal: .opacity.combined(with: .move(edge: .top))
-                                ))
+                                .frame(maxHeight: showLowScoreLines ? .infinity : 0)
+                                .clipped()
+                                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: showLowScoreLines)
+                                .clipped()
                             }
                         }
                     }
@@ -207,7 +208,7 @@ struct LineScoreView: View {
     
     private func resetAllScores() {
         for lineScore in lineScoreManager.lineScores {
-            lineScoreManager.resetScore(for: lineScore.routeShortName)
+            lineScoreManager.deleteScore(for: lineScore.routeShortName)
         }
     }
 }
@@ -243,23 +244,31 @@ struct LineScoreRow: View {
             
             HStack(spacing: 8) {
                 Button {
-                    lineScoreManager.addScore(to: lineScore.routeShortName, points: 1.0)
+                    withAnimation {
+                        lineScoreManager.addScore(to: lineScore.routeShortName, points: 1.0)
+                    }
                 } label: {
                     Image(systemName: "plus.circle.fill")
                         .foregroundColor(.green)
                         .font(.title3)
                 }
                 
-                Button {
-                    lineScoreManager.resetScore(for: lineScore.routeShortName)
-                } label: {
-                    Image(systemName: "arrow.clockwise.circle.fill")
-                        .foregroundColor(.orange)
-                        .font(.title3)
+                if lineScore.totalScore > 2.9 {
+                    Button {
+                        withAnimation {
+                            lineScoreManager.addScore(to: lineScore.routeShortName, points: -1.0)
+                        }
+                    } label: {
+                        Image(systemName: "minus.circle.fill")
+                            .foregroundColor(.orange)
+                            .font(.title3)
+                    }
                 }
                 
                 Button {
-                    showingDeleteAlert = true
+                    withAnimation {
+                        lineScoreManager.deleteScore(for: lineScore.routeShortName)
+                    }
                 } label: {
                     Image(systemName: "trash.circle.fill")
                         .foregroundColor(.red)
@@ -269,14 +278,6 @@ struct LineScoreRow: View {
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
-        .alert("Supprimer la ligne", isPresented: $showingDeleteAlert) {
-            Button("Supprimer", role: .destructive) {
-                lineScoreManager.deleteScore(for: lineScore.routeShortName)
-            }
-            Button("Annuler", role: .cancel) { }
-        } message: {
-            Text("Êtes-vous sûr de vouloir supprimer la ligne \(lineScore.routeShortName) de vos favoris ?")
-        }
     }
 }
 
