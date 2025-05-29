@@ -82,6 +82,7 @@ struct MainNavigationView: View {
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
+                let screenSize = geometry.size
                 ZStack {
                     LinearGradient(
                         colors: colorScheme == .dark
@@ -93,7 +94,7 @@ struct MainNavigationView: View {
                     .ignoresSafeArea()
                     .animation(ultraSmoothSpring, value: colorScheme)
                     
-                    VStack(spacing: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? -47 : 0) {
+                    VStack(spacing: compactSize(screenSize: screenSize)) {
                         ZStack(alignment: .top) {
                             Rectangle()
                                 .fill(colorScheme == .dark
@@ -608,6 +609,23 @@ struct MainNavigationView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             stopsViewModel.loadNearbyStops(showLoading: false)
         }
+    }
+    
+    // doing cas par cas is a really ugly solution
+    func compactSize(screenSize: CGSize) -> CGFloat {
+        if viewMode == .stops && settings.reduceSpacerBtwnStopContent {
+            if screenSize.height >= 840 {
+                return -62
+            }
+            else if screenSize.height <= 728 {
+                return -50
+            } else if screenSize.height == 778 {
+                return -62
+            } else {
+                return -47
+            }
+        }
+        return 0
     }
 }
 
