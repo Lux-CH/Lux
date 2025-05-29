@@ -91,7 +91,7 @@ struct CompactStopView: View {
     
     private func connectionPills(prefix: Int) -> some View {
         HStack(spacing: 4) {
-            ForEach(viewModel.connections.prefix(prefix), id: \.self) { connection in
+            ForEach(viewModel.connections.dropFirst(maxGroupsToShow).prefix(prefix), id: \.self) { connection in
                 LinePill(line: connection, mode: .bus)
             }
             if viewModel.connections.count > prefix {
