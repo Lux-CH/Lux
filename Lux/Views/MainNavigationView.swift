@@ -284,7 +284,7 @@ struct MainNavigationView: View {
                                     if horizontal < 100 {
                                         if viewMode == .home && vertical < -50 {
                                             switchToStopsMode()
-                                        } else if viewMode == .home && vertical > 50 {
+                                        } else if viewMode == .home && vertical > 100 {
                                             transitionToSearchMode()
                                         } else if viewMode == .stops && vertical > 150 {
                                             toggleViewMode(.home)
