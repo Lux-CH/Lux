@@ -495,16 +495,6 @@
         }
       }
     },
-    "Êtes-vous sûr de vouloir supprimer la ligne %@ de vos favoris ?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Are you sure you want to delete %@ from your favorites?"
-          }
-        }
-      }
-    },
     "Ex: Maison, Travail, École..." : {
       "localizations" : {
         "en" : {
@@ -941,26 +931,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Select a date and an hour"
-          }
-        }
-      }
-    },
-    "Supprimer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete"
-          }
-        }
-      }
-    },
-    "Supprimer la ligne" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete the line"
           }
         }
       }
