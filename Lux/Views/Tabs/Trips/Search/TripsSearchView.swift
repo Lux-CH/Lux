@@ -40,7 +40,8 @@ struct TripsSearchView: View {
                             viewModel: viewModel,
                             isFromFocused: $isFromFocused,
                             isToFocused: $isToFocused,
-                            animation: animation
+                            animation: animation,
+                            onBack: { dismiss() }
                         )
                         .gesture(dragGesture)
                         .ignoresSafeArea(.keyboard)
@@ -70,29 +71,6 @@ struct TripsSearchView: View {
                     }
                 )
             }
-            .overlay(
-                VStack {
-                    HStack {
-                        Button(action: { dismiss() }) {
-                            Image(systemName: "chevron.left")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(.accentColor)
-                                .padding(10)
-                                .background(
-                                    Circle()
-                                        .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
-                                )
-                        }
-                        .padding(.leading, 12)
-                        .padding(.top, 5)
-                        
-                        Spacer()
-                    }
-                    Spacer()
-                }
-                    .padding(.top, 50)
-                    .transition(.opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.9)))
-            )
         }
         .onAppear {
             viewModel.setupLocationManager(locationManager)
@@ -131,6 +109,7 @@ struct TripsSearchHeaderView: View {
     @FocusState.Binding var isToFocused: Bool
     @Environment(\.colorScheme) private var colorScheme
     var animation: Namespace.ID
+    var onBack: (() -> Void)?
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -138,7 +117,7 @@ struct TripsSearchHeaderView: View {
             
             VStack(alignment: .center, spacing: 20) {
                 HStack(spacing: 14) {
-                    RouteIndicatorView()
+                    RouteIndicatorView(onBack: onBack)
                     
                     VStack(spacing: 18) {
                         fromSearchBar
@@ -516,16 +495,24 @@ struct EmptyStateContent: View {
 
 // MARK: - Helper Views
 struct RouteIndicatorView: View {
+    var onBack: (() -> Void)?
+    @Environment(\.colorScheme) private var colorScheme
+    
     var body: some View {
         VStack(spacing: 22) {
             Circle()
                 .fill(Color.accentColor)
                 .frame(width: 14, height: 14)
             
-            ForEach(0..<3) { _ in
+            ForEach(0..<3) { index in
                 Circle()
-                    .fill(Color.gray.opacity(0.5))
+                    .fill(index != 1 ? Color.gray.opacity(0.5) : Color.clear)
                     .frame(width: 4, height: 4)
+                    .overlay(alignment: .center) {
+                        if index == 1 {
+                            backButton
+                        }
+                    }
             }
             
             RoundedRectangle(cornerRadius: 4)
@@ -533,6 +520,26 @@ struct RouteIndicatorView: View {
                 .frame(width: 14, height: 14)
         }
         .padding(.vertical, 4)
+    }
+    
+    @ViewBuilder
+    private var backButton: some View {
+        Button(action: { onBack?() }) {
+            Image(systemName: "chevron.left")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.accentColor)
+                .padding(10)
+                .background(
+                    Circle()
+                        .fill(backgroundColorForButton)
+                )
+        }
+        .padding(.leading, 2)
+        .transition(.opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.9)))
+    }
+    
+    private var backgroundColorForButton: Color {
+        colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6)
     }
 }
 

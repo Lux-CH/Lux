@@ -189,7 +189,8 @@ struct MainNavigationView: View {
                                         viewModel: searchViewModel,
                                         isFromFocused: $isFromFocused,
                                         isToFocused: $isToFocused,
-                                        animation: animation
+                                        animation: animation,
+                                        onBack: {exitSearchMode()}
                                     )
                                     .transition(searchModeTransition)
                                     .zIndex(1)
@@ -306,33 +307,6 @@ struct MainNavigationView: View {
                         .animation(ultraSmoothSpring, value: viewMode == .search)
                     }
                 }
-                .overlay(
-                    Group {
-                        if viewMode == .search {
-                            VStack {
-                                HStack {
-                                    Button(action: exitSearchMode) {
-                                        Image(systemName: "chevron.left")
-                                            .font(.system(size: 16, weight: .semibold))
-                                            .foregroundColor(.accentColor)
-                                            .padding(10)
-                                            .background(
-                                                Circle()
-                                                    .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
-                                            )
-                                    }
-                                    .padding(.leading, 12)
-                                    .padding(.top, 5)
-                                    
-                                    Spacer()
-                                }
-                                Spacer()
-                            }
-                            .padding(.top, 50)
-                            .transition(.opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.9)))
-                        }
-                    }
-                )
                 .ignoresSafeArea(.keyboard)
             }
             .keyboardToolbarIf(viewMode == .search) {
