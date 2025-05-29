@@ -30,10 +30,10 @@ struct StopRowView: View {
                 HStack {
                     if !isSearching {
                         HStack(spacing: 4) {
-                            ForEach(connections.prefix(3), id: \.self) { routeName in
+                            ForEach(connections.prefix(5), id: \.self) { routeName in
                                 LinePill(line: routeName, mode: .bus)
                             }
-                            if connections.count > 3 {
+                            if connections.count > 5 {
                                 MorePill()
                             }
                         }
