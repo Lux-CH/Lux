@@ -157,6 +157,14 @@ struct StopPopoverView: View {
                             .fontWeight(.medium)
                     }
                 }
+                else if let departure = place.departure {
+                    HStack(spacing: 6) {
+                        Image(systemName: "clock")
+                            .foregroundColor(color)
+                        Text("Départ à : \(formatTime(departure))")
+                            .fontWeight(.medium)
+                    }
+                }
                 
                 if let track = place.track {
                     HStack(spacing: 6) {

@@ -415,6 +415,16 @@
         }
       }
     },
+    "Départ à : %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departure at : %@"
+          }
+        }
+      }
+    },
     "Destination sélectionnée" : {
       "localizations" : {
         "en" : {
