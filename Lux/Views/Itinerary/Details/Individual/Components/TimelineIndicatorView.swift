@@ -17,41 +17,104 @@ struct TimelineIndicatorView: View {
     
     var body: some View {
         ZStack(alignment: .center) {
-            if !isFirstStop {
-                Rectangle()
-                    .fill(legColor.opacity(0.3))
-                    .frame(width: 3)
-                    .offset(y: -18)
-            }
+            timelineLines
             
-            if !isLastStop {
-                Rectangle()
-                    .fill(legColor.opacity(0.3))
-                    .frame(width: 3)
-                    .offset(y: 18)
-            }
-            
-            if isDepartureStop || isArrivalStop || isCurrentStop {
-                Circle()
-                    .fill(isCurrentStop ? Color.accentColor.opacity(0.15) : Color.clear)
-                    .frame(width: 24, height: 24)
-                
-                Image(systemName: symbolName)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 22, height: 22)
-                    .foregroundColor(isCurrentStop ? .accentColor : legColor)
-            } else {
-                Circle()
-                    .fill(legColor)
-                    .frame(width: 16, height: 16)
-            }
+            stopIndicator
         }
     }
     
+    @ViewBuilder
+    private var timelineLines: some View {
+        if !isFirstStop {
+            Rectangle()
+                .fill(lineColor)
+                .frame(width: 3)
+                .offset(y: -18)
+        }
+        
+        if !isLastStop {
+            Rectangle()
+                .fill(lineColor)
+                .frame(width: 3)
+                .offset(y: 18)
+        }
+    }
+    
+    @ViewBuilder
+    private var stopIndicator: some View {
+        if isSpecialStop {
+            specialStopView
+        } else if isCurrentStop {
+            currentStopView
+        }
+        else {
+            standardStopView
+        }
+    }
+    
+    @ViewBuilder
+    private var specialStopView: some View {
+        ZStack {
+            Circle()
+                .fill(backgroundCircleColor)
+                .frame(width: 28, height: 28)
+                .overlay(
+                    Circle()
+                        .stroke(legColor, lineWidth: 2)
+                )
+            
+            Image(systemName: symbolName)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 18, height: 18)
+                .foregroundStyle(legColor)
+                .fontWeight(.medium)
+        }
+    }
+    
+    @ViewBuilder
+    private var currentStopView: some View {
+        Circle()
+            .fill(legColor)
+            .frame(width: 18, height: 18)
+            .overlay(
+                Circle()
+                    .stroke(Color.accentColor, lineWidth: 2.5)
+            )
+    }
+    
+    @ViewBuilder
+    private var standardStopView: some View {
+        Circle()
+            .fill(legColor)
+            .frame(width: 16, height: 16)
+            .overlay(
+                Circle()
+                    .stroke(Color.white, lineWidth: 1)
+            )
+    }
+    
+    private var isSpecialStop: Bool {
+        isDepartureStop || isArrivalStop
+    }
+    
     private var symbolName: String {
-        if isDepartureStop { return "arrow.up.circle.fill" }
-        if isArrivalStop { return "flag.circle.fill" }
-        return "bus.fill"
+        switch true {
+        case isDepartureStop: return "arrow.down.circle.fill"
+        case isArrivalStop: return "flag.circle.fill"
+        case isCurrentStop: return "circle.fill"
+        default: return "circle.fill"
+        }
+    }
+    
+    private var lineColor: Color {
+        isCurrentStop ? .accentColor : legColor
+    }
+    
+    private var backgroundCircleColor: Color {
+        if isDepartureStop || isArrivalStop {
+            return Color(.systemBackground)
+        }
+        return .clear
     }
 }
