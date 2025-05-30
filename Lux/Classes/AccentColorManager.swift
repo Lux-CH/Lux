@@ -21,8 +21,7 @@ class AccentColorManager: ObservableObject {
         ("Jaune Mouettes", .yellow),
         ("Rouge Grenat", Color(hex: "85142B")),
         ("Bleu Ice Tea", Color(hex: "3182DB")),
-        ("Orange Ice Tea", Color(hex: "E33716")),
-        
+        ("Rose UNIGE", Color(hex: "D9005D")),
     ]
     
     var selectedAccentColor: Color {

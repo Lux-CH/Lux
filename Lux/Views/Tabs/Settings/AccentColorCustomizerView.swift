@@ -21,10 +21,9 @@ struct AccentColorCustomizerView: View {
                     colors: [
                         accentColorManager.selectedAccentColor.opacity(0.1),
                         Color.clear,
-                        accentColorManager.selectedAccentColor.opacity(0.05)
                     ],
-                    startPoint: .topLeading,
-                    endPoint: .bottomTrailing
+                    startPoint: .top,
+                    endPoint: .bottom
                 )
                 .ignoresSafeArea()
                 
@@ -33,10 +32,10 @@ struct AccentColorCustomizerView: View {
                         ZStack {
                             Circle()
                                 .fill(accentColorManager.selectedAccentColor)
-                                .frame(width: 80, height: 80)
+                                .frame(width: 65, height: 65)
                             
-                            Image(systemName: "paintbrush.pointed.fill")
-                                .font(.system(size: 32, weight: .medium))
+                            Image(systemName: "paintpalette")
+                                .font(.system(size: 24, weight: .medium))
                                 .foregroundColor(.white)
                         }
                         .scaleEffect(selectedColorScale)
@@ -55,7 +54,7 @@ struct AccentColorCustomizerView: View {
                         }
                         .padding(.horizontal, 15)
                     }
-                    .padding(.top, 20)
+                    .padding(.top, 15)
                     
                     VStack(spacing: 20) {
                         HStack {
@@ -126,12 +125,12 @@ struct ModernColorOptionView: View {
                     Circle()
                         .fill(color)
                         .frame(width: 70, height: 70)
-                        .shadow(
-                            color: color.opacity(0.3),
-                            radius: isSelected ? 15 : 8,
-                            x: 0,
-                            y: isSelected ? 8 : 4
-                        )
+//                        .shadow(
+//                            color: color.opacity(0.3),
+//                            radius: isSelected ? 15 : 8,
+//                            x: 0,
+//                            y: isSelected ? 8 : 4
+//                        )
                     
                     if isSelected {
                         Circle()
