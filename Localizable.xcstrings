@@ -125,6 +125,16 @@
       },
       "shouldTranslate" : false
     },
+    "⚠︎ Couleur Sombre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "⚠︎ Dark Color"
+          }
+        }
+      }
+    },
     "À proximité" : {
       "localizations" : {
         "en" : {
@@ -391,6 +401,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose a symbol"
+          }
+        }
+      }
+    },
+    "Couleur de l'app" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App color"
+          }
+        }
+      }
+    },
+    "Couleurs disponibles" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available colors"
           }
         }
       }
@@ -941,6 +971,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Select a date and an hour"
+          }
+        }
+      }
+    },
+    "Séléctionnez la couleur de l'application" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select the app color"
           }
         }
       }

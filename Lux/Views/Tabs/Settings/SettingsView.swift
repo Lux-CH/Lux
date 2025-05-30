@@ -135,6 +135,16 @@ struct SettingsView: View {
                     subtitle: "Augmente la lisibilité de l'interface",
                     isOn: $settings.highContrastButAccurateLinePill
                 )
+                
+                NavigationLink(destination: AccentColorCustomizerView()) {
+                    SettingsRow(
+                        icon: "paintpalette",
+                        title: "Couleur de l’app",
+                        subtitle: "Personnalisez l’apparence de l'application",
+                        showChevron: true
+                    )
+                }
+                .buttonStyle(.plain)
             } header: {
                 SectionHeader(
                     icon: "paintbrush.fill",
