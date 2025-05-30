@@ -13,6 +13,7 @@ struct SettingsView: View {
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var shortcutManager: ShortcutManager
     @ObservedObject var settings = Settings.shared
+    @ObservedObject var accentColorManager = AccentColorManager.shared
     
     @State private var showAddShortcutSheet = false
     @State private var editingShortcut: UserShortcut? = nil
@@ -52,7 +53,7 @@ struct SettingsView: View {
         VStack(spacing: 12) {
             Image(systemName: "gear")
                 .font(.system(size: 40))
-                .foregroundColor(.accentColor)
+                .foregroundColor(accentColorManager.selectedAccentColor)
             
             Text("Paramètres")
                 .font(.title2)
@@ -289,6 +290,8 @@ struct SectionHeader: View {
 }
 
 struct SettingsRow: View {
+    @ObservedObject var accentColorManager = AccentColorManager.shared
+
     let icon: String
     let title: String
     let subtitle: String
@@ -298,7 +301,7 @@ struct SettingsRow: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundColor(.accentColor)
+                .foregroundColor(accentColorManager.selectedAccentColor)
                 .frame(width: 24, height: 24)
             
             VStack(alignment: .leading, spacing: 2) {
@@ -326,6 +329,7 @@ struct SettingsRow: View {
 }
 
 struct SettingsToggle: View {
+    @ObservedObject var accentColorManager = AccentColorManager.shared
     let icon: String
     let title: String
     let subtitle: String
@@ -335,7 +339,7 @@ struct SettingsToggle: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundColor(.accentColor)
+                .foregroundColor(accentColorManager.selectedAccentColor)
                 .frame(width: 24, height: 24)
             
             VStack(alignment: .leading, spacing: 2) {
@@ -360,6 +364,7 @@ struct SettingsToggle: View {
 
 // MARK: - Shortcuts List View
 struct ShortcutsListView: View {
+    @ObservedObject var accentColorManager = AccentColorManager.shared
     @EnvironmentObject private var shortcutManager: ShortcutManager
     @ObservedObject var settings = Settings.shared
     @Environment(\.colorScheme) private var colorScheme
@@ -394,9 +399,9 @@ struct ShortcutsListView: View {
                 } label: {
                     HStack {
                         Image(systemName: "plus.circle.fill")
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(accentColorManager.selectedAccentColor)
                         Text("Ajouter un raccourci")
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(accentColorManager.selectedAccentColor)
                     }
                     .padding(.vertical, 8)
                 }
@@ -439,7 +444,7 @@ struct ShortcutsListView: View {
                 editingShortcut = shortcut
             } label: {
                 Image(systemName: shortcut.symbol)
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(accentColorManager.selectedAccentColor)
                     .font(.title3)
                     .frame(width: 40)
                 
@@ -460,7 +465,7 @@ struct ShortcutsListView: View {
                                     .font(.caption2)
                                     .padding(.horizontal, 4)
                                     .padding(.vertical, 2)
-                                    .background(Color.accentColor.opacity(0.2))
+                                    .background(accentColorManager.selectedAccentColor.opacity(0.2))
                                     .cornerRadius(4)
                             }
                             
@@ -474,7 +479,7 @@ struct ShortcutsListView: View {
                 Spacer()
                 
                 Image(systemName: "pencil")
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(accentColorManager.selectedAccentColor)
             }
             .buttonStyle(.borderless)
         }
