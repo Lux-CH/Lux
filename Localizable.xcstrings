@@ -625,6 +625,16 @@
         }
       }
     },
+    "L'itinéraire n'a pas pu être ouvert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The trip could not be opened."
+          }
+        }
+      }
+    },
     "Les deux premiers raccourcis seront affichés sur l'écran d'accueil." : {
       "localizations" : {
         "en" : {
@@ -755,6 +765,16 @@
         }
       }
     },
+    "OK" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        }
+      }
+    },
     "Options d'itinéraire" : {
       "localizations" : {
         "en" : {
@@ -766,7 +786,14 @@
       }
     },
     "Ouvrir" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open"
+          }
+        }
+      }
     },
     "Paramètres" : {
       "localizations" : {
@@ -1054,6 +1081,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Type"
+          }
+        }
+      }
+    },
+    "Une erreur est survenue lors de son ouverture. Assurez-vous que son contenu soit valide." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An error occurred during processing. Please ensure it’s content is valid."
           }
         }
       }

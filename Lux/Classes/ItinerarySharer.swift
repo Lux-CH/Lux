@@ -53,4 +53,78 @@ class ItinerarySharer {
         try data.write(to: fileURL)
         return fileURL
     }
+    
+    func validateItinerary(_ itinerary: Itinerary) -> Bool {
+        let now = Date()
+        let oneYearFromNow = now.addingTimeInterval(365 * 24 * 60 * 60)
+        let oneYearAgo = now.addingTimeInterval(-365 * 24 * 60 * 60)
+        
+        guard itinerary.startTime >= oneYearAgo && itinerary.startTime <= oneYearFromNow else {
+            return false
+        }
+        
+        guard itinerary.endTime >= oneYearAgo && itinerary.endTime <= oneYearFromNow else {
+            return false
+        }
+        
+        guard itinerary.startTime <= itinerary.endTime else {
+            return false
+        }
+        
+        guard itinerary.duration > 0 && itinerary.duration <= 86400 else { // 24hr
+            return false
+        }
+        
+        guard itinerary.legs.count > 0 && itinerary.legs.count <= 20 else {
+            return false
+        }
+        
+        for leg in itinerary.legs {
+            guard validateLeg(leg) else {
+                return false
+            }
+        }
+        
+        return true
+    }
+
+    private func validateLeg(_ leg: Leg) -> Bool {
+        guard validatePlace(leg.from) && validatePlace(leg.to) else {
+            return false
+        }
+        
+        guard leg.duration > 0 && leg.duration <= 86400 else {
+            return false
+        }
+        
+        if let stops = leg.intermediateStops, stops.count > 100 {
+            return false
+        }
+        
+        if let headsign = leg.headsign, headsign.count > 200 {
+            return false
+        }
+        
+        if let routeShortName = leg.routeShortName, routeShortName.count > 50 {
+            return false
+        }
+        
+        return true
+    }
+
+    private func validatePlace(_ place: Place) -> Bool {
+        guard place.lat >= -90 && place.lat <= 90 else {
+            return false
+        }
+        
+        guard place.lon >= -180 && place.lon <= 180 else {
+            return false
+        }
+        
+        guard place.name.count <= 300 else {
+            return false
+        }
+        
+        return true
+    }
 }

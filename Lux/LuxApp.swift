@@ -15,10 +15,13 @@ struct LuxApp: App {
     @StateObject private var shortcutManager = ShortcutManager()
     @StateObject private var disruptionManager = DisruptionManager()
     @StateObject private var accentColorManager = AccentColorManager.shared
+    
     @State private var showItinerarySheet: Bool = false
     @State private var showConfirmation: Bool = false
+    @State private var showItineraryProcessingError: Bool = false
     @State private var inputedURL: URL?
     @State private var sharedItinerary: Itinerary?
+    
     @ObservedObject var settings = Settings.shared
     
     var body: some Scene {
@@ -45,7 +48,7 @@ struct LuxApp: App {
                     Alert(
                         title: Text("Êtes-vous sûr de vouloir ouvrir cet itinéraire ?"),
                         message: Text("Cet itinéraire vous a été partagé. Assurez-vous qu’il provient d’une source fiable."),
-                        primaryButton: .default(Text("Ouvrir").bold()) {
+                        primaryButton: .default(Text("Ouvrir")) {
                             if let url = inputedURL {
                                 handleItinerary(url)
                             }
@@ -53,9 +56,17 @@ struct LuxApp: App {
                         secondaryButton: .cancel(Text("Annuler"))
                     )
                 }
+                .alert(isPresented: $showItineraryProcessingError) {
+                    Alert(
+                        title: Text("L'itinéraire n'a pas pu être ouvert."),
+                        message: Text("Une erreur est survenue lors de son ouverture. Assurez-vous que son contenu soit valide."),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
         }
     }
-    func handleItinerary(_ url: URL) {
+    
+    private func handleItinerary(_ url: URL) {
         let hasSSRAccess = url.startAccessingSecurityScopedResource()
         
         defer {
@@ -67,10 +78,18 @@ struct LuxApp: App {
         do {
             if let fileAttributes = try? FileManager.default.attributesOfItem(atPath: url.path), let size = fileAttributes[.size] as? Int64, size > 51200 {
                 print("invalid file!")
+                showItineraryProcessingError.toggle()
                 return
             }
             let data = try Data(contentsOf: url)
-            let decodedItinerary = try ItinerarySharer().decode(data)
+            let itinerarySharer = ItinerarySharer()
+            let decodedItinerary = try itinerarySharer.decode(data)
+            
+            guard itinerarySharer.validateItinerary(decodedItinerary) else {
+                print("invalid file!")
+                showItineraryProcessingError.toggle()
+                return
+            }
             
             DispatchQueue.main.async {
                 self.sharedItinerary = decodedItinerary
@@ -78,6 +97,7 @@ struct LuxApp: App {
             }
             
         } catch {
+            showItineraryProcessingError.toggle()
             print(error)
         }
     }
