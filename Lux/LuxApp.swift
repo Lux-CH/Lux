@@ -41,13 +41,12 @@ struct LuxApp: App {
         }
     }
     func handleItinerary(_ url: URL) {
-        guard url.startAccessingSecurityScopedResource() else {
-            print("failed to acces ssr!")
-            return
-        }
+        let hasSSRAccess = url.startAccessingSecurityScopedResource()
         
         defer {
-            url.stopAccessingSecurityScopedResource()
+            if hasSSRAccess {
+                url.stopAccessingSecurityScopedResource()
+            }
         }
         
         do {
