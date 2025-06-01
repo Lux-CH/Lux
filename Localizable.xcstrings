@@ -365,6 +365,16 @@
         }
       }
     },
+    "Cet itinéraire vous a été partagé. Assurez-vous qu’il provient d’une source fiable." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You were shared this trip. Ensure it is from a trustable source."
+          }
+        }
+      }
+    },
     "Chargement de l'itinéraire..." : {
       "localizations" : {
         "en" : {
@@ -531,6 +541,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Try adjusting your search criteria or departure time."
+          }
+        }
+      }
+    },
+    "Êtes-vous sûr de vouloir ouvrir cet itinéraire ?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to open this trip ?"
           }
         }
       }
@@ -744,6 +764,9 @@
           }
         }
       }
+    },
+    "Ouvrir" : {
+
     },
     "Paramètres" : {
       "localizations" : {
