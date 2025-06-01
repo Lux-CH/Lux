@@ -335,6 +335,16 @@
         }
       }
     },
+    "Aucune connexion à Internet." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Internet connection."
+          }
+        }
+      }
+    },
     "Aucune instruction disponible" : {
       "localizations" : {
         "en" : {
@@ -1111,6 +1121,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Use my current location"
+          }
+        }
+      }
+    },
+    "Vérifiez vos données mobile ou votre connexion Wi-Fi et réessayez." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please check your mobile data or your Wi-Fi connection and try again."
           }
         }
       }

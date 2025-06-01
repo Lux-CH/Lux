@@ -7,6 +7,7 @@
 
 import SwiftUI
 import LuxCom
+import Network
 import CoreLocation
 
 struct NearbyStopsView: View {
@@ -19,6 +20,7 @@ struct NearbyStopsView: View {
     @State private var lastFetchedLocation: CLLocation? = nil
     @State private var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     @State private var backgroundRefreshTask: Task<Void, Never>? = nil
+    @State private var isUserConnectedToInternet: Bool = false
     
     private let significantDistance: CLLocationDistance = 100.0
     
@@ -27,6 +29,20 @@ struct NearbyStopsView: View {
             if isWaitingForLocation {
                 ProgressView("En attente de votre position...")
                     .padding()
+            } else if !isUserConnectedToInternet {
+                Spacer()
+                VStack {
+                    Image(systemName: "wifi.slash")
+                        .font(.system(size: 64))
+                    Text("Aucune connexion à Internet.")
+                        .padding(.top)
+                    Text("Vérifiez vos données mobile ou votre connexion Wi-Fi et réessayez.")
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                        .padding(.bottom)
+                }
+                .padding(.top, -15)
+                Spacer()
             } else if isLoading {
                 ProgressView("Chargement des arrêts à proximité...")
                     .padding()
@@ -51,6 +67,7 @@ struct NearbyStopsView: View {
             }
         }
         .onAppear {
+            monitorNetwork()
             if locationManager.location == nil {
                 isWaitingForLocation = true
             } else if searchResults.isEmpty {
@@ -151,5 +168,16 @@ struct NearbyStopsView: View {
             return
         }
         loadNearbyStops(showLoading: false)
+    }
+    
+    private func monitorNetwork() {
+        let monitor = NWPathMonitor()
+        monitor.pathUpdateHandler = { path in
+            DispatchQueue.main.async {
+                isUserConnectedToInternet = path.status == .satisfied
+            }
+        }
+        let queue = DispatchQueue(label: "NetworkMonitor")
+        monitor.start(queue: queue)
     }
 }
