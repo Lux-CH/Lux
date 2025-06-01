@@ -73,9 +73,17 @@ class ShortcutManager: ObservableObject {
     }
     
     func moveShortcut(fromIndex: Int, toIndex: Int) {
+        guard fromIndex >= 0 && fromIndex < shortcuts.count,
+              toIndex >= 0 && toIndex <= shortcuts.count,
+              fromIndex != toIndex else {
+            return
+        }
+        
         var updatedShortcuts = shortcuts
         let shortcut = updatedShortcuts.remove(at: fromIndex)
-        updatedShortcuts.insert(shortcut, at: toIndex)
+        
+        let adjustedToIndex = toIndex > fromIndex ? toIndex - 1 : toIndex
+        updatedShortcuts.insert(shortcut, at: adjustedToIndex)
         
         do {
             try storage.saveShortcuts(updatedShortcuts)
