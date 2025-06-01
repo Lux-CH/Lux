@@ -246,6 +246,28 @@ struct MultipleItineraryDetailView: View {
                     }
                 }
                 .padding(.bottom, 20)
+                let itineraarySharer = ItinerarySharer()
+                if let path = itineraarySharer.getPathFromItinerary(itinerary) {
+                    ShareLink(item: path) {
+                        Label("Partager", systemImage: "square.and.arrow.up")
+                            .font(.system(size: 16, weight: .medium))
+                            .foregroundStyle(.primary)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 10)
+                            .background {
+                                RoundedRectangle(cornerRadius: 20)
+                                    .fill(.ultraThinMaterial)
+                                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                            }
+                            .overlay {
+                                RoundedRectangle(cornerRadius: 20)
+                                    .stroke(.separator.opacity(0.3), lineWidth: 0.5)
+                            }
+                    }
+                    .onDisappear {
+                        itineraarySharer.cleanUp()
+                    }
+                }
             }
         }
     }

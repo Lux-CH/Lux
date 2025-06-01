@@ -755,6 +755,16 @@
         }
       }
     },
+    "Partager" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        }
+      }
+    },
     "Personnalisez votre expérience Lux" : {
       "localizations" : {
         "en" : {
