@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		791994C72DE374CF00B2080C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 791994C62DE374CF00B2080C /* Localizable.xcstrings */; };
 		791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SymbolPicker */; };
+		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
 		799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 799D2A762D98AC420066E9F5 /* LuxCom */; };
 		79A912462DB341660032AB9D /* GPSTests.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 79A912452DB341660032AB9D /* GPSTests.gpx */; };
 		79C64D402DB930DC00C01B89 /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 79C64D3F2DB930DC00C01B89 /* Polyline */; };
@@ -46,6 +47,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */,
 				79C64D402DB930DC00C01B89 /* Polyline in Frameworks */,
 				799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */,
 				791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */,
@@ -96,6 +98,7 @@
 				799D2A762D98AC420066E9F5 /* LuxCom */,
 				79C64D3F2DB930DC00C01B89 /* Polyline */,
 				791F49B02DC58AB4006B5565 /* SymbolPicker */,
+				796BC9042DEBC6B800D0FC4A /* MessagePacker */,
 			);
 			productName = Lux;
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
@@ -130,6 +133,7 @@
 				799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */,
 				79C64D3E2DB930DC00C01B89 /* XCRemoteSwiftPackageReference "Polyline" */,
 				791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
+				796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 799D2A682D98ABF80066E9F5 /* Products */;
@@ -300,6 +304,7 @@
 				INFOPLIST_FILE = Lux/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Lux;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Lux needs access to your location to show nearby stops, enable Onboard features, and help plan your trips.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -334,6 +339,7 @@
 				INFOPLIST_FILE = Lux/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Lux;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
+				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Lux needs access to your location to show nearby stops, enable Onboard features, and help plan your trips.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -387,6 +393,14 @@
 				minimumVersion = 1.6.2;
 			};
 		};
+		796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/hirotakan/MessagePacker";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.4.7;
+			};
+		};
 		799D2A752D98AC420066E9F5 /* XCRemoteSwiftPackageReference "LuxCom" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Lux-CH/LuxCom";
@@ -410,6 +424,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
 			productName = SymbolPicker;
+		};
+		796BC9042DEBC6B800D0FC4A /* MessagePacker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */;
+			productName = MessagePacker;
 		};
 		799D2A762D98AC420066E9F5 /* LuxCom */ = {
 			isa = XCSwiftPackageProductDependency;

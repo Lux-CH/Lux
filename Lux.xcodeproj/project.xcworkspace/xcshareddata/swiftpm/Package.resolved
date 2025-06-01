@@ -1,5 +1,5 @@
 {
-  "originHash" : "b40d67625e9a99ec645e8643f04584748425642f58591bd9b55b0e3904e58718",
+  "originHash" : "0346720d9a4a349a0c92bcf84db66e4390c0acccc5ae2dec5c976924217f0a28",
   "pins" : [
     {
       "identity" : "luxcom",
@@ -7,7 +7,16 @@
       "location" : "https://github.com/Lux-CH/LuxCom",
       "state" : {
         "branch" : "main",
-        "revision" : "df958ff273e600e68a4e9ee8bcb70f4ed6266454"
+        "revision" : "8f041a11f3aebfed7bbe6019d6ed7c8d67dc81a0"
+      }
+    },
+    {
+      "identity" : "messagepacker",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/hirotakan/MessagePacker",
+      "state" : {
+        "revision" : "4d8346c6bc579347e4df0429493760691c5aeca2",
+        "version" : "0.4.7"
       }
     },
     {
