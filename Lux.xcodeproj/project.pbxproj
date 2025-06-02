@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		790749E22DEE45A50010D818 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 790749E12DEE45A50010D818 /* CodeScanner */; };
 		791994C72DE374CF00B2080C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 791994C62DE374CF00B2080C /* Localizable.xcstrings */; };
 		791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SymbolPicker */; };
 		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
@@ -51,6 +52,7 @@
 				79C64D402DB930DC00C01B89 /* Polyline in Frameworks */,
 				799D2A772D98AC420066E9F5 /* LuxCom in Frameworks */,
 				791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */,
+				790749E22DEE45A50010D818 /* CodeScanner in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +101,7 @@
 				79C64D3F2DB930DC00C01B89 /* Polyline */,
 				791F49B02DC58AB4006B5565 /* SymbolPicker */,
 				796BC9042DEBC6B800D0FC4A /* MessagePacker */,
+				790749E12DEE45A50010D818 /* CodeScanner */,
 			);
 			productName = Lux;
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
@@ -134,6 +137,7 @@
 				79C64D3E2DB930DC00C01B89 /* XCRemoteSwiftPackageReference "Polyline" */,
 				791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
 				796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */,
+				790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 799D2A682D98ABF80066E9F5 /* Products */;
@@ -305,6 +309,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Lux;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pour ajouter votre SwissPass à LuxPass, Lux a besoin d'accéder à votre caméra";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Lux needs access to your location to show nearby stops, enable Onboard features, and help plan your trips.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -340,6 +345,7 @@
 				INFOPLIST_KEY_CFBundleDisplayName = Lux;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.travel";
 				INFOPLIST_KEY_LSSupportsOpeningDocumentsInPlace = YES;
+				INFOPLIST_KEY_NSCameraUsageDescription = "Pour ajouter votre SwissPass à LuxPass, Lux a besoin d'accéder à votre caméra";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Lux needs access to your location to show nearby stops, enable Onboard features, and help plan your trips.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -385,6 +391,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/twostraws/CodeScanner";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.5.2;
+			};
+		};
 		791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/xnth97/SymbolPicker";
@@ -420,6 +434,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		790749E12DEE45A50010D818 /* CodeScanner */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */;
+			productName = CodeScanner;
+		};
 		791F49B02DC58AB4006B5565 /* SymbolPicker */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */;

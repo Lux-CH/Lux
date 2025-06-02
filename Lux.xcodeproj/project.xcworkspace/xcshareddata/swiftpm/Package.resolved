@@ -1,6 +1,15 @@
 {
-  "originHash" : "b66eda78de13e30ee7aa75706040d34a8dbf48cd87e70a5081cd1359a5012c45",
+  "originHash" : "7b3fcb8a20ea8ab4c64f78b7cd4612ed381144d1dd38ebd334072e3222fccb8c",
   "pins" : [
+    {
+      "identity" : "codescanner",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/twostraws/CodeScanner",
+      "state" : {
+        "revision" : "5e886430238944c7200fc9e10dbf2d9550dba865",
+        "version" : "2.5.2"
+      }
+    },
     {
       "identity" : "luxcom",
       "kind" : "remoteSourceControl",
