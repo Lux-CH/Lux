@@ -16,7 +16,7 @@ struct SwissPassView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                RoundedRectangle(cornerRadius: 12)
+                RoundedRectangle(cornerRadius: 16)
                     .fill(
                         LinearGradient(
                             gradient: Gradient(colors: [Color.red, Color(red: 0.8, green: 0.1, blue: 0.1)]),
@@ -24,73 +24,73 @@ struct SwissPassView: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .shadow(color: .black.opacity(0.2), radius: 8, x: 2, y: 4)
+                    .shadow(color: .black.opacity(0.3), radius: 12, x: 3, y: 6)
                 
                 VStack(spacing: 0) {
                     HStack {
                         VStack {
                             Image(systemName: "person.text.rectangle")
                                 .foregroundStyle(.white)
-
+                                .font(.system(size: 20))
                         }
                         
                         Spacer()
                         
                         Text("swisspass.ch")
-                            .font(.system(size: 12, weight: .light))
+                            .font(.system(size: 14, weight: .light))
                             .foregroundColor(.white)
                     }
-                    .padding(.horizontal, 12)
-                    .padding(.top, 12)
-                    
+                    .padding(.horizontal, 20)
+                    .padding(.top, 20)
                     
                     Spacer()
                     
-                    HStack(alignment: .bottom, spacing: 16) {
-                        VStack {
-                            if !swissQRCodePass.isEmpty {
+                    VStack(spacing: 20) {
+                        if !swissQRCodePass.isEmpty {
+                            VStack(spacing: 8) {
                                 if let qr = barcodeGenerator.generateQrCode(swissQRCodePass) {
                                     qr.resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .allowedDynamicRange(.high)
-                                        .frame(width: 80, height: 80)
+                                        .frame(width: 120, height: 120)
                                         .background(Color.white)
-                                        .cornerRadius(4)
+                                        .cornerRadius(6)
+                                        .shadow(color: .black.opacity(0.1), radius: 2, x: 1, y: 1)
                                 }
                             }
                         }
                         
-                        Spacer()
-                        
-                        VStack(alignment: .center, spacing: 8) {
-                            if !swiss128Pass.isEmpty {
+                        if !swiss128Pass.isEmpty {
+                            VStack(spacing: 8) {
                                 if let barcode = barcodeGenerator.generateBarcode(swiss128Pass) {
                                     barcode.resizable()
                                         .aspectRatio(contentMode: .fill)
                                         .allowedDynamicRange(.high)
-                                        .frame(height: 50)
-                                        .frame(maxWidth: 175)
+                                        .frame(height: 70)
+                                        .frame(maxWidth: 250)
                                         .background(Color.white)
-                                        .cornerRadius(2)
+                                        .cornerRadius(4)
+                                        .shadow(color: .black.opacity(0.1), radius: 2, x: 1, y: 1)
                                         .clipped()
                                 }
                                 
                                 Text(showIdFormatted(swiss128Pass))
-                                    .font(.system(size: 10, design: .monospaced))
+                                    .font(.system(size: 12, design: .monospaced))
                                     .foregroundColor(.white)
-                                    .padding(.horizontal, 4)
-                                    .background(Color.black.opacity(0.2))
-                                    .cornerRadius(2)
+                                    .padding(.horizontal, 8)
+                                    .padding(.vertical, 4)
+                                    .background(Color.black.opacity(0.3))
+                                    .cornerRadius(4)
                             }
                         }
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 16)
+                    .padding(.horizontal, 24)
+                    .padding(.bottom, 24)
                 }
             }
         }
-        .aspectRatio(1.6, contentMode: .fit)
-        .frame(maxWidth: 400)
+        .aspectRatio(1.4, contentMode: .fit)
+        .frame(maxWidth: 500)
         .padding()
     }
     
