@@ -39,6 +39,8 @@ struct LuxPassView: View {
                             swissQRCodePass: .constant(swissPassManager.swissQRCodePass),
                             swiss128Pass: .constant(swissPassManager.swiss128Pass)
                         )
+                        .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
+                        .padding(.horizontal, 8)
                         .padding(.top, -20)
                     }
                 } else {
@@ -67,6 +69,7 @@ struct LuxPassView: View {
                         .background(.ultraThinMaterial)
                         .foregroundStyle(.accent)
                         .clipShape(Capsule())
+                        .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)
 
                         
                         VStack(alignment: .leading, spacing: 8) {
@@ -88,6 +91,7 @@ struct LuxPassView: View {
                         .background(Color(.systemGray6))
                         .cornerRadius(12)
                         .padding(.horizontal, 32)
+                        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 3)
                     }
                 }
                 

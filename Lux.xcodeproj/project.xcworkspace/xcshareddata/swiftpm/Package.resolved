@@ -1,5 +1,5 @@
 {
-  "originHash" : "7b3fcb8a20ea8ab4c64f78b7cd4612ed381144d1dd38ebd334072e3222fccb8c",
+  "originHash" : "022b803d4415a428c516fe44e235d18753e33c6891664e65ee4073977327a3d7",
   "pins" : [
     {
       "identity" : "codescanner",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "5e886430238944c7200fc9e10dbf2d9550dba865",
         "version" : "2.5.2"
+      }
+    },
+    {
+      "identity" : "glowgetter",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Aeastr/GlowGetter",
+      "state" : {
+        "revision" : "b1e9372d49f4047ab8ff39ef6b9b8f56f47608b9",
+        "version" : "1.1.1"
       }
     },
     {

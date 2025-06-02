@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import GlowGetter
 
 struct SwissPassView: View {
     var barcodeGenerator = BarcodeGenerator()
@@ -51,7 +52,7 @@ struct SwissPassView: View {
                                 if let qr = barcodeGenerator.generateQrCode(swissQRCodePass) {
                                     qr.resizable()
                                         .aspectRatio(contentMode: .fit)
-                                        .allowedDynamicRange(.high)
+                                        .glow(1.0)
                                         .frame(width: 120, height: 120)
                                         .background(Color.white)
                                         .cornerRadius(6)
@@ -65,7 +66,7 @@ struct SwissPassView: View {
                                 if let barcode = barcodeGenerator.generateBarcode(swiss128Pass) {
                                     barcode.resizable()
                                         .aspectRatio(contentMode: .fill)
-                                        .allowedDynamicRange(.high)
+                                        .glow(1.0)
                                         .frame(height: 70)
                                         .frame(maxWidth: 250)
                                         .background(Color.white)
