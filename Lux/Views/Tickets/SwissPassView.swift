@@ -52,6 +52,7 @@ struct SwissPassView: View {
                                 if let qr = barcodeGenerator.generateQrCode(swissQRCodePass) {
                                     qr.resizable()
                                         .aspectRatio(contentMode: .fit)
+                                        .allowedDynamicRange(.high)
                                         .frame(width: 80, height: 80)
                                         .background(Color.white)
                                         .cornerRadius(4)
@@ -66,6 +67,7 @@ struct SwissPassView: View {
                                 if let barcode = barcodeGenerator.generateBarcode(swiss128Pass) {
                                     barcode.resizable()
                                         .aspectRatio(contentMode: .fill)
+                                        .allowedDynamicRange(.high)
                                         .frame(height: 50)
                                         .frame(maxWidth: 175)
                                         .background(Color.white)
