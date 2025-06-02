@@ -31,13 +31,14 @@ struct NearbyStopsView: View {
                     .padding()
             } else if !isUserConnectedToInternet {
                 Spacer()
-                VStack {
+                VStack(alignment: .center) {
                     Image(systemName: "wifi.slash")
                         .font(.system(size: 64))
                     Text("Aucune connexion à Internet.")
                         .padding(.top)
                     Text("Vérifiez vos données mobile ou votre connexion Wi-Fi et réessayez.")
                         .font(.footnote)
+                        .multilineTextAlignment(.center)
                         .foregroundColor(.gray)
                         .padding(.bottom)
                 }
