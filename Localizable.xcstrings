@@ -155,6 +155,16 @@
         }
       }
     },
+    "Accès hors ligne à votre carte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline access to your pass"
+          }
+        }
+      }
+    },
     "Adresse, lieu, arrêt..." : {
       "localizations" : {
         "en" : {
@@ -375,6 +385,16 @@
         }
       }
     },
+    "Bienvenue dans LuxPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome in LuxPass"
+          }
+        }
+      }
+    },
     "Cet itinéraire vous a été partagé. Assurez-vous qu’il provient d’une source fiable." : {
       "localizations" : {
         "en" : {
@@ -545,6 +565,16 @@
         }
       }
     },
+    "Erreur de scan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan error"
+          }
+        }
+      }
+    },
     "Essayez de modifier vos critères de recherche ou l'heure de départ." : {
       "localizations" : {
         "en" : {
@@ -561,6 +591,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Are you sure you want to open this trip ?"
+          }
+        }
+      }
+    },
+    "Êtes-vous sûr de vouloir supprimer votre SwissPass ? Cette action ne peut pas être annulée." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete your SwissPass ? This action cannot be canceled."
           }
         }
       }
@@ -711,6 +751,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lux will suggest this shortcut at this time"
+          }
+        }
+      }
+    },
+    "LuxPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LuxPass"
           }
         }
       }
@@ -895,6 +945,16 @@
         }
       }
     },
+    "Positionnez l'arrière de votre carte SwissPass dans le cadre pour l'ajouter à LuxPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Place the back of your SwissPass card in the frame to add it to LuxPass"
+          }
+        }
+      }
+    },
     "Prochain: %@" : {
       "localizations" : {
         "en" : {
@@ -1015,6 +1075,36 @@
         }
       }
     },
+    "Scanner mon SwissPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan my SwissPass"
+          }
+        }
+      }
+    },
+    "Scannez votre SwissPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan your SwissPass"
+          }
+        }
+      }
+    },
+    "Scannez votre SwissPass pour y accéder en toute sécurité depuis Lux." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan your SwissPass to access it security from Lux."
+          }
+        }
+      }
+    },
     "Score: %@" : {
       "localizations" : {
         "en" : {
@@ -1055,6 +1145,46 @@
         }
       }
     },
+    "Stockage sécurisé sur votre appareil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Secured storage on your device"
+          }
+        }
+      }
+    },
+    "Supprimer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
+          }
+        }
+      }
+    },
+    "Supprimer le SwissPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete the SwissPass"
+          }
+        }
+      }
+    },
+    "swisspass.ch" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "swisspass.ch"
+          }
+        }
+      }
+    },
     "Symbole sélectionné" : {
       "localizations" : {
         "en" : {
@@ -1081,6 +1211,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Done"
+          }
+        }
+      }
+    },
+    "Tickets" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tickets"
+          }
+        }
+      }
+    },
+    "Traitement..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Processing…"
           }
         }
       }
@@ -1131,6 +1281,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please check your mobile data or your Wi-Fi connection and try again."
+          }
+        }
+      }
+    },
+    "Votre SwissPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your SwissPass"
           }
         }
       }

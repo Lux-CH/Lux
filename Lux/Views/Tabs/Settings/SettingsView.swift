@@ -28,6 +28,19 @@ struct SettingsView: View {
                     VStack(spacing: 16) {
                         shortcutsCard
                         lineScoreCard
+                        SettingsCard {
+                            Section {
+                                NavigationLink(destination: TicketsView()) {
+                                    SettingsRow(
+                                        icon: "ticket",
+                                        title: "Tickets",
+                                        subtitle: "Achetez vos tickets ou ajoutez votre SwissPass à Lux.",
+                                        showChevron: true
+                                    )
+                                }
+                                .buttonStyle(.plain)
+                            }
+                        }
                         customizationCard
                         experimentalCard
                         aboutCard
