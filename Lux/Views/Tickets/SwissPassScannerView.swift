@@ -108,10 +108,10 @@ struct SwissPassScannerView: View {
     }
     
     private func processSwissPassCode(_ scannedString: String) -> (String, String)? {
-        if scannedString.hasPrefix(swissPassQRPrefix) {
+        if scannedString.uppercased().hasPrefix(swissPassQRPrefix) {
             let code = String(scannedString.dropFirst(swissPassQRPrefix.count))
             if isValidSwissPassCode(code) {
-                return (scannedString, code)
+                return (scannedString.uppercased(), code)
             }
         }
         else if isValidSwissPassCode(scannedString) {
