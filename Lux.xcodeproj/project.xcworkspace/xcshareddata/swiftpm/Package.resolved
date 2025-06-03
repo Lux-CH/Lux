@@ -1,5 +1,5 @@
 {
-  "originHash" : "022b803d4415a428c516fe44e235d18753e33c6891664e65ee4073977327a3d7",
+  "originHash" : "ee79048c3c1159fca1d5d323662e487b9c2188b761159373b49f1e272c2f81ec",
   "pins" : [
     {
       "identity" : "codescanner",
@@ -25,7 +25,7 @@
       "location" : "https://github.com/Lux-CH/LuxCom",
       "state" : {
         "branch" : "main",
-        "revision" : "8f041a11f3aebfed7bbe6019d6ed7c8d67dc81a0"
+        "revision" : "8a8b493246859fe270576fc2e6c91aba44b1b21d"
       }
     },
     {
@@ -44,6 +44,15 @@
       "state" : {
         "branch" : "master",
         "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23"
+      }
+    },
+    {
+      "identity" : "swiftuimessage",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/edonv/SwiftUIMessage",
+      "state" : {
+        "revision" : "17027d2151f0d6961eb48abd934341ea1794efd1",
+        "version" : "0.0.4"
       }
     },
     {
