@@ -12,6 +12,15 @@
       },
       "shouldTranslate" : false
     },
+    "/ %.2f €" : {
+      "shouldTranslate" : false
+    },
+    "/ CHF %.2f" : {
+      "shouldTranslate" : false
+    },
+    "%.2f €" : {
+      "shouldTranslate" : false
+    },
     "%@ • %@" : {
       "localizations" : {
         "en" : {
@@ -435,6 +444,9 @@
         }
       }
     },
+    "CHF %.2f" : {
+      "shouldTranslate" : false
+    },
     "Choisir un symbole" : {
       "localizations" : {
         "en" : {
@@ -611,6 +623,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E.g. Home, Work, School"
+          }
+        }
+      }
+    },
+    "Gérez vos tickets et ajoutez votre SwissPass à Lux." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage your tickets and add your SwissPass to Lux"
           }
         }
       }
@@ -1145,6 +1167,16 @@
         }
       }
     },
+    "Sélectionnez votre catégorie tarifaire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select your fare category"
+          }
+        }
+      }
+    },
     "Stockage sécurisé sur votre appareil" : {
       "localizations" : {
         "en" : {
@@ -1245,6 +1277,26 @@
         }
       }
     },
+    "Type d'utilisateur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "User type"
+          }
+        }
+      }
+    },
+    "Type de tarif" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate type"
+          }
+        }
+      }
+    },
     "Une erreur est survenue lors de son ouverture. Assurez-vous que son contenu soit valide." : {
       "localizations" : {
         "en" : {
@@ -1281,6 +1333,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please check your mobile data or your Wi-Fi connection and try again."
+          }
+        }
+      }
+    },
+    "Votre appareil n'est pas en mesure d'envoyer des SMS." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your device is not able to send SMS."
           }
         }
       }
