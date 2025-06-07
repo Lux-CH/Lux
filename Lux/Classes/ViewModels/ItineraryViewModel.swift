@@ -349,7 +349,9 @@ final class ItineraryViewModel: ObservableObject {
             )
         }
         
-        vehicleAnnotations = newVehicleAnnotations
+        withAnimation(.easeInOut(duration: 0.5)) {
+            vehicleAnnotations = newVehicleAnnotations
+        }
     }
     
     private func createAnnotationsAndOverlays(for itinerary: Itinerary) -> (annotations: [StopAnnotation], overlays: [RouteOverlay]) {
