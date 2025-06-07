@@ -215,8 +215,8 @@ enum VehicleVisualisation {
                     time += accelerationTime + cruisingTime * cruisingProgress
                 }
                 
-                // Only add keyframe if this is a significant point in the journey
-                if i == 0 || i == segmentCoordinates.count - 1 || i % max(1, segmentCoordinates.count / 10) == 0 {
+                let samplingInterval = max(1, min(segmentCoordinates.count / 20, 3))
+                if i == 0 || i == segmentCoordinates.count - 1 || i % samplingInterval == 0 {
                     let isFirstKeyFrame = i == 0
                     let isLastKeyFrame = i == segmentCoordinates.count - 1
                     
