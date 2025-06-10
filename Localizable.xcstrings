@@ -414,6 +414,16 @@
         }
       }
     },
+    "Cette application n’est ni affiliée ni approuvée par SwissPass ou les SBB CFF." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This application is neither affiliated with nor endorsed by SwissPass or SBB CFF."
+          }
+        }
+      }
+    },
     "Chargement de l'itinéraire..." : {
       "localizations" : {
         "en" : {
@@ -693,6 +703,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Days of the week"
+          }
+        }
+      }
+    },
+    "L’affichage du code SwissPass depuis cette application ne garantit pas sa reconnaissance par les contrôleurs.\n\nLux décline toute responsabilité en cas de refus, d’amende ou de tout autre problème. Veuillez toujours avoir votre SwissPass physique ou l'application officielle avec vous." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Displaying the SwissPass barcode using this application does not guarantee its acceptance by fare inspectors.\n\nLux disclaims all liability for any denial of validity, fines, or other issues arising from the use of this feature. Users are solely responsible for ensuring they carry their official SwissPass card or use an authorized application."
           }
         }
       }
@@ -1313,6 +1333,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An error occurred while loading the itinerary"
+          }
+        }
+      }
+    },
+    "Utilisation non officielle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unofficial use"
           }
         }
       }
