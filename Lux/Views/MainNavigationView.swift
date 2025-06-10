@@ -455,7 +455,7 @@ struct MainNavigationView: View {
             searchBarOffset = -20
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.025) {
             withAnimation(searchTransitionSpring) {
                 viewMode = .search
                 headerHeight = 205
@@ -464,15 +464,14 @@ struct MainNavigationView: View {
             searchText = ""
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if locationManager.authorizationStatus == .authorizedWhenInUse {
                 withAnimation(ultraSmoothSpring) {
                     searchViewModel.selectCurrentPosition()
-                    HapticFeedback.lightImpact()
                 }
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 searchViewModel.setActiveSearchField(.to)
                 isToFocused = true
                 
@@ -481,10 +480,11 @@ struct MainNavigationView: View {
                     searchBarOffset = 0
                     isSearchTransitioning = false
                 }
+                HapticFeedback.lightImpact()
             }
         }
         
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
     }
     
     private func transitionToSearchModeWithShortcut(_ shortcut: UserShortcut) {
@@ -499,14 +499,14 @@ struct MainNavigationView: View {
             searchBarOffset = -15
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.025) {
             withAnimation(searchTransitionSpring) {
                 viewMode = .search
                 headerHeight = 205
             }
         }
         
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
             if locationManager.authorizationStatus == .authorizedWhenInUse {
                 withAnimation(ultraSmoothSpring) {
                     searchViewModel.selectCurrentPosition()
@@ -514,7 +514,7 @@ struct MainNavigationView: View {
                 }
             }
             
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05 ) {
                 withAnimation(ultraSmoothSpring) {
                     searchViewModel.handleInitialSearchResult(searchResult, targetField: .to)
                     
@@ -585,7 +585,7 @@ struct MainNavigationView: View {
     func toggleViewMode(_ newMode: ViewMode) {
         if newMode == .search { return }
         
-        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
         
         if newMode == .stops {
             stopsViewModel.isLoading = true
@@ -608,6 +608,7 @@ struct MainNavigationView: View {
     }
     
     func switchToStopsMode() {
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
         stopsViewModel.isLoading = true
         
         withAnimation(ultraSmoothSpring) {
