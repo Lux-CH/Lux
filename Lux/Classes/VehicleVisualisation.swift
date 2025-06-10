@@ -9,7 +9,7 @@
 import CoreLocation
 import LuxCom
 import Polyline
-import SwiftUICore
+import SwiftUI
 
 struct VehicleAnnotation: Identifiable {
     let id: String
