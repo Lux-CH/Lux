@@ -202,12 +202,12 @@ struct SettingsView: View {
     private var experimentalCard: some View {
         SettingsCard {
             Section {
-                SettingsToggle(
-                    icon: "map.fill",
-                    title: "Tracés plus détaillées",
-                    subtitle: "Affichage plus précis du tracé des routes avec OSRM",
-                    isOn: $settings.getPolylineWithOSRM
-                )
+//                SettingsToggle(
+//                    icon: "map.fill",
+//                    title: "Tracés plus détaillées",
+//                    subtitle: "Affichage plus précis du tracé des routes avec OSRM",
+//                    isOn: $settings.getPolylineWithOSRM
+//                )
                 SettingsToggle(
                     icon: "figure.walk",
                     title: "Obtenir les instructions",
@@ -229,6 +229,12 @@ struct SettingsView: View {
     private var aboutCard: some View {
         SettingsCard {
             Section {
+                SettingsRow(
+                    icon: "antenna.radiowaves.left.and.right",
+                    title: "Origine des perturbations",
+                    subtitle: "Les perturbations sont obtenues depuis l'API de l'application TPGMax. Nous vous invitons à tester cette autre alternative !",
+                    showChevron: false
+                )
                 SettingsRow(
                     icon: "app.badge",
                     title: "Version",
