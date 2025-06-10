@@ -92,6 +92,31 @@ struct LuxPassView: View {
                         .cornerRadius(12)
                         .padding(.horizontal, 32)
                         .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 3)
+                        VStack(alignment: .center, spacing: 8) {
+                            Image(systemName: "exclamationmark.circle.fill")
+                                .foregroundColor(.yellow)
+                                .font(.system(size: 34))
+                            Text("Utilisation non officielle")
+                                .font(.title2)
+                                .fontWeight(.bold)
+                                .multilineTextAlignment(.center)
+
+                            
+                            Text("Cette application n’est ni affiliée ni approuvée par SwissPass ou les SBB CFF.")
+                                .font(.body)
+                                .multilineTextAlignment(.center)
+
+                            
+                            Text("L’affichage du code SwissPass depuis cette application ne garantit pas sa reconnaissance par les contrôleurs.\n\nLux décline toute responsabilité en cas de refus, d’amende ou de tout autre problème. Veuillez toujours avoir votre SwissPass physique ou l'application officielle avec vous.")
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                                .lineLimit(nil)
+                                .multilineTextAlignment(.center)
+
+                        }
+
+                        .padding(.horizontal, 14)
+
                     }
                 }
                 
