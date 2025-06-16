@@ -108,6 +108,8 @@ struct TripsSearchHeaderView: View {
     @FocusState.Binding var isFromFocused: Bool
     @FocusState.Binding var isToFocused: Bool
     @Environment(\.colorScheme) private var colorScheme
+    @State private var isSwapping = false
+    @State private var showTimePicker = false
     var animation: Namespace.ID
     var onBack: (() -> Void)?
     
@@ -120,12 +122,21 @@ struct TripsSearchHeaderView: View {
                     RouteIndicatorView(onBack: onBack)
                     
                     VStack(spacing: 18) {
-                        fromSearchBar
+                        HStack {
+                            fromSearchBar
+                            HStack(spacing: 8) {
+                                timeButton
+                                settingsButton
+                            }
+                            .padding(.leading, 8)
+                        }
                         
-                        toSearchBar
+                        HStack {
+                            toSearchBar
+                            swapButton
+                                .padding(.leading, 8)
+                        }
                     }
-                    
-                    TripsSearchActionButtons(viewModel: viewModel)
                 }
             }
             .padding(.top, 50)
@@ -217,6 +228,141 @@ struct TripsSearchHeaderView: View {
                 viewModel.setActiveSearchField(.to)
             }
         }
+    }
+    
+    private var swapButton: some View {
+        Button(action: {
+            withAnimation(.spring(duration: 0.5, bounce: 0.3)) {
+                isSwapping = true
+                viewModel.swapLocations()
+                
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                    isSwapping = false
+                }
+            }
+        }) {
+            Image(systemName: "arrow.up.arrow.down")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(swapButtonForegroundColor)
+                .frame(width: 42, height: 42)
+                .background(swapButtonBackground)
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .strokeBorder(swapButtonBorderColor, lineWidth: swapButtonBorderWidth)
+                )
+                .rotationEffect(isSwapping ? Angle(degrees: 180) : .zero)
+                .animation(.spring(response: 0.5, dampingFraction: 0.6), value: isSwapping)
+                .scaleEffect(isSwapping ? 0.95 : 1.0)
+        }
+        .disabled(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
+        .buttonStyle(PlainButtonStyle())
+        .sheet(isPresented: $viewModel.showSettings) {
+            RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
+                viewModel.updateRouteOptions(newOptions)
+            }
+            .presentationDetents([.medium, .large])
+        }
+    }
+    
+    private var timeButton: some View {
+        Button(action: {
+            HapticFeedback.lightImpact()
+            showTimePicker = true
+        }) {
+            Image(systemName: "clock")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.accentColor)
+                .frame(width: 42, height: 42)
+                .background(buttonBackground)
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .strokeBorder(buttonBorderColor, lineWidth: 1)
+                )
+        }
+        .buttonStyle(ScaleButtonStyle())
+        .popover(isPresented: $showTimePicker) {
+            TripsSearchTimePickerView(
+                selectedDate: $viewModel.selectedDate,
+                departureType: $viewModel.departureType,
+                showDatePicker: $showTimePicker
+            ) {
+                viewModel.changeDepartureType(viewModel.departureType)
+            }
+            .presentationCompactAdaptation(.popover)
+        }
+    }
+    
+    private var settingsButton: some View {
+        Button(action: {
+            HapticFeedback.lightImpact()
+            viewModel.showSettings = true
+        }) {
+            Image(systemName: "slider.horizontal.3")
+                .font(.system(size: 16, weight: .semibold))
+                .foregroundColor(.accentColor)
+                .frame(width: 42, height: 42)
+                .background(buttonBackground)
+                .clipShape(Circle())
+                .overlay(
+                    Circle()
+                        .strokeBorder(buttonBorderColor, lineWidth: 1)
+                )
+        }
+        .buttonStyle(ScaleButtonStyle())
+    }
+    
+    private var buttonBackground: some View {
+        Circle()
+            .fill(
+                colorScheme == .dark
+                ? Color(.tertiarySystemBackground)
+                : Color(.systemBackground)
+            )
+    }
+    
+    private var buttonBorderColor: Color {
+        colorScheme == .dark
+        ? Color(.separator).opacity(0.3)
+        : Color(.separator).opacity(0.2)
+    }
+    
+    private var swapButtonBackground: some View {
+        let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
+        
+        return Circle()
+            .fill(
+                isEnabled
+                ? (colorScheme == .dark
+                   ? Color(.tertiarySystemBackground)
+                   : Color(.systemBackground))
+                : (colorScheme == .dark
+                   ? Color(.secondarySystemBackground)
+                   : Color(.tertiarySystemBackground))
+            )
+    }
+    
+    private var swapButtonForegroundColor: Color {
+        let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
+        return isEnabled ? .accentColor : Color(.tertiaryLabel)
+    }
+    
+    private var swapButtonBorderColor: Color {
+        let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
+        
+        if isEnabled {
+            return colorScheme == .dark
+            ? Color(.separator).opacity(0.3)
+            : Color(.separator).opacity(0.2)
+        } else {
+            return Color(.separator).opacity(0.1)
+        }
+    }
+    
+    private var swapButtonBorderWidth: CGFloat {
+        let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
+        return isEnabled ? 1 : 0.5
     }
 }
 
@@ -525,8 +671,9 @@ struct RouteIndicatorView: View {
     @ViewBuilder
     private var backButton: some View {
         Button(action: { onBack?() }) {
-            Image(systemName: "chevron.left")
+            Image(systemName: "chevron.backward")
                 .font(.system(size: 16, weight: .semibold))
+                .frame(width: 12, height: 12)
                 .foregroundColor(.accentColor)
                 .padding(10)
                 .background(
@@ -540,100 +687,6 @@ struct RouteIndicatorView: View {
     
     private var backgroundColorForButton: Color {
         colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6)
-    }
-}
-
-struct TripsSearchActionButtons: View {
-    @ObservedObject var viewModel: TripsSearchViewModel
-    @Environment(\.colorScheme) private var colorScheme
-    @State private var showTimePicker = false
-    @State private var isSwapping = false
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            Button(action: {
-                withAnimation(.spring(duration: 0.5, bounce: 0.3)) {
-                    isSwapping = true
-                    viewModel.swapLocations()
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                        isSwapping = false
-                    }
-                }
-            }) {
-                Image(systemName: "arrow.up.arrow.down")
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.white)
-                    .frame(width: 42, height: 42)
-                    .background(
-                        Circle()
-                            .fill(
-                                viewModel.selectedFrom == nil && viewModel.selectedTo == nil
-                                ? Color.accentColor.opacity(0.4)
-                                : Color.accentColor
-                            )
-                    )
-                    .rotationEffect(isSwapping ? Angle(degrees: 180) : .zero)
-                    .animation(.spring(response: 0.5, dampingFraction: 0.6), value: isSwapping)
-            }
-            .disabled(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
-            .buttonStyle(SpringButtonStyle())
-            .sheet(isPresented: $viewModel.showSettings) {
-                RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
-                    viewModel.updateRouteOptions(newOptions)
-                }
-                .presentationDetents([.medium, .large])
-            }
-            HStack {
-                settingsButton
-                
-                timeButton
-            }
-        }
-    }
-    
-    private var settingsButton: some View {
-        Button(action: {
-            HapticFeedback.lightImpact()
-            viewModel.showSettings = true
-        }) {
-            Image(systemName: "slider.horizontal.3")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white)
-                .frame(width: 42, height: 42)
-                .background(
-                    Circle()
-                        .fill(Color.accentColor)
-                )
-        }
-        .buttonStyle(SpringButtonStyle())
-    }
-    
-    private var timeButton: some View {
-        Button(action: {
-            HapticFeedback.lightImpact()
-            showTimePicker = true
-        }) {
-            Image(systemName: "clock")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundColor(.white)
-                .frame(width: 42, height: 42)
-                .background(
-                    Circle()
-                        .fill(Color.accentColor)
-                )
-        }
-        .buttonStyle(SpringButtonStyle())
-        .popover(isPresented: $showTimePicker) {
-            TripsSearchTimePickerView(
-                selectedDate: $viewModel.selectedDate,
-                departureType: $viewModel.departureType,
-                showDatePicker: $showTimePicker
-            ) {
-                viewModel.changeDepartureType(viewModel.departureType)
-            }
-            .presentationCompactAdaptation(.popover)
-        }
     }
 }
 
@@ -1048,7 +1101,7 @@ struct TripsSearchTimePickerView: View {
                         HapticFeedback.lightImpact()
                     }
                 }
-                .foregroundColor(.secondary)
+                .foregroundColor(Color(.tertiaryLabel))
                 .buttonStyle(ScaleButtonStyle())
                 
                 Spacer()
@@ -1069,11 +1122,11 @@ struct TripsSearchTimePickerView: View {
             .padding(.bottom, 12)
         }
         .frame(width: 300)
-        .background(
-            colorScheme == .dark ?
-            Color(.secondarySystemBackground) :
-                Color(.systemBackground)
-        )
+//        .background(
+//            colorScheme == .dark ?
+//            Color(.secondarySystemBackground) :
+//                Color(.systemBackground)
+//        )
         .cornerRadius(16)
         .shadow(color: Color.black.opacity(0.15), radius: 10, x: 0, y: 5)
     }
