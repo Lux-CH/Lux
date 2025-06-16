@@ -60,7 +60,7 @@ struct TimelineIndicatorView: View {
                 .frame(width: 28, height: 28)
                 .overlay(
                     Circle()
-                        .stroke(legColor, lineWidth: 2)
+                        .stroke(legColor, lineWidth: 1.5)
                 )
             
             Image(systemName: symbolName)
@@ -90,7 +90,7 @@ struct TimelineIndicatorView: View {
             .frame(width: 16, height: 16)
             .overlay(
                 Circle()
-                    .stroke(Color.white, lineWidth: 1)
+                    .stroke(Color(.systemBackground), lineWidth: 2)
             )
     }
     
