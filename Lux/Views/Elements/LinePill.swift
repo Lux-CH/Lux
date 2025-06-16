@@ -36,6 +36,10 @@ struct LinePill: View {
             RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
                 .fill(settings.highContrastButAccurateLinePill ? lineColor : lineColor.opacity(0.25))
                 .frame(width: width, height: height)
+                .overlay(
+                    RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                )
             
             Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
@@ -52,6 +56,10 @@ struct MorePill: View {
             RoundedRectangle(cornerRadius: 50)
                 .fill(settings.highContrastButAccurateLinePill ? Color(.secondarySystemFill) : Color.accentColor.opacity(0.25))
                 .frame(width: 30, height: 20)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 50)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                )
             Image(systemName: "ellipsis")
                 .foregroundColor(Color.accentColor)
                 .multilineTextAlignment(.center)

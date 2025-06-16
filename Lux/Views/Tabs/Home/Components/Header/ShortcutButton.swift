@@ -32,15 +32,15 @@ struct ShortcutButton: View {
             }
             .frame(width: 134, height: 52.5)
             .background(
-                RoundedRectangle(cornerRadius: 20)
+                RoundedRectangle(cornerRadius: 35)
                     .stroke(
-                        isPlaceholder ? Color.secondary.opacity(0.3) : Color.clear,
-                        style: StrokeStyle(lineWidth: 2, dash: [6])
+                        isPlaceholder ? Color.secondary.opacity(0.3) : Color.primary.opacity(0.1),
+                        style: StrokeStyle(lineWidth: isPlaceholder ? 2 : 0.5, dash: isPlaceholder ? [6] : [])
                     )
                     .background(
                         Color(.secondarySystemFill)
                             .opacity(isPlaceholder ? 0.3 : 0.5)
-                            .cornerRadius(20)
+                            .cornerRadius(35)
                     )
             )
         }

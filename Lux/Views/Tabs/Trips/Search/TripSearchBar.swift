@@ -111,7 +111,7 @@ struct TripSearchBar: View {
         .padding(.horizontal, 14)
         .frame(height: 58)
         .background(
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 35)
                 .fill(colorScheme == .dark ?
                       Color(.systemFill).opacity(0.3) :
                       Color(.systemBackground))
@@ -123,10 +123,10 @@ struct TripSearchBar: View {
                 )
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 35)
                 .stroke(
-                    isFocused ? Color.accentColor.opacity(0.4) : Color.clear,
-                    lineWidth: 2
+                    isFocused ? Color.accentColor.opacity(0.4) : Color.primary.opacity(0.1),
+                    lineWidth: isFocused ? 2 : 0.5
                 )
                 .animation(.easeInOut(duration: 0.2), value: isFocused)
         )

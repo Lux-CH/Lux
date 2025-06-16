@@ -138,7 +138,11 @@ struct MainNavigationView: View {
                                                         .font(.system(size: 20))
                                                         .frame(width: 61, height: 52.5)
                                                         .background(Color(.secondarySystemFill).opacity(0.5))
-                                                        .cornerRadius(20)
+                                                        .cornerRadius(35)
+                                                        .overlay(
+                                                            RoundedRectangle(cornerRadius: 35)
+                                                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                                        )
                                                 }
                                                 .transition(.scale(scale: 0.8).combined(with: .opacity))
                                             }
