@@ -254,6 +254,16 @@
         }
       }
     },
+    "Aperçu de l'itinéraire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinerary Preview"
+          }
+        }
+      }
+    },
     "Appliquer" : {
       "localizations" : {
         "en" : {
@@ -463,6 +473,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose a symbol"
+          }
+        }
+      }
+    },
+    "Choisissez comment vous souhaitez partager cet itinéraire.\nLe partage de l'ensemble de l'itinéraire requiert que son receveur ait l'app." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chose how you want to share this trip.\nThe sharing of the whole trip requires the user receiving it to have the app installed on their device."
           }
         }
       }
@@ -913,6 +933,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Share"
+          }
+        }
+      }
+    },
+    "Partager l'aperçu en tant qu'image" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share preview as image"
+          }
+        }
+      }
+    },
+    "Partager l'entiereté" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share entirety"
+          }
+        }
+      }
+    },
+    "Partager l'itinéraire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share trip"
           }
         }
       }
