@@ -51,7 +51,7 @@ struct DateTimePickerView: View {
                         showDatePicker = false
                     }
                 }
-                .foregroundColor(.secondary)
+                .foregroundColor(Color(.tertiaryLabel))
                 
                 Spacer()
                 
@@ -68,7 +68,7 @@ struct DateTimePickerView: View {
             .padding(.bottom, 12)
         }
         .frame(width: 300, height: 150)
-        .background(Color(.secondarySystemBackground))
+//        .background(Color(.secondarySystemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
     }
