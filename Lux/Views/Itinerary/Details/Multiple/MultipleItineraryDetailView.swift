@@ -247,28 +247,70 @@ struct MultipleItineraryDetailView: View {
                 }
                 .padding(.bottom, 20)
                 let itineraarySharer = ItinerarySharer()
-                if let path = itineraarySharer.getPathFromItinerary(itinerary) {
-                    ShareLink(item: path) {
-                        Label("Partager", systemImage: "square.and.arrow.up")
-                            .font(.system(size: 16, weight: .medium))
-                            .foregroundStyle(.primary)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .background {
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(.ultraThinMaterial)
-                                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-                            }
-                            .overlay {
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(.separator.opacity(0.3), lineWidth: 0.5)
-                            }
-                    }
-                    .onDisappear {
-                        itineraarySharer.cleanUp()
-                    }
-                }
+                ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
             }
+        }
+    }
+}
+
+// https://www.hackingwithswift.com/quick-start/swiftui/how-to-convert-a-swiftui-view-to-an-image
+struct ShareButtonView: View {
+    let itinerary: Itinerary
+    let itineraarySharer: ItinerarySharer
+    
+    @State private var showingShareDialog = false
+    @State private var renderedImage: Image?
+    @Environment(\.displayScale) var displayScale
+    
+    var body: some View {
+        Button(action: {
+            showingShareDialog = true
+        }) {
+            Label("Partager", systemImage: "square.and.arrow.up")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundStyle(.primary)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 10)
+                .background {
+                    RoundedRectangle(cornerRadius: 35)
+                        .fill(.ultraThinMaterial)
+                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                }
+                .overlay(
+                    RoundedRectangle(cornerRadius: 35)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                )
+        }
+        .confirmationDialog("Partager l'itinéraire", isPresented: $showingShareDialog, titleVisibility: .visible) {
+            if let path = itineraarySharer.getPathFromItinerary(itinerary) {
+                ShareLink("Partager l'entiereté", item: path)
+            }
+            
+            if let image = renderedImage {
+                ShareLink("Partager l'aperçu en tant qu'image", item: image, preview: SharePreview("Aperçu de l'itinéraire", image: image))
+            }
+            
+            Button("Annuler", role: .cancel) { }
+        } message: {
+            Text("Choisissez comment vous souhaitez partager cet itinéraire.\nLe partage de l'ensemble de l'itinéraire requiert que son receveur ait l'app.")
+        }
+        .onAppear {
+            renderImage()
+        }
+        .onDisappear {
+            itineraarySharer.cleanUp()
+        }
+    }
+    
+    private func renderImage() {
+        let view = TripResultView(itinerary: itinerary, dontGoToView: true)
+            .frame(width: 425)
+            .padding(.vertical, 10)
+        let renderer = ImageRenderer(content: view)
+        renderer.scale = displayScale
+        
+        if let uiImage = renderer.uiImage {
+            renderedImage = Image(uiImage: uiImage)
         }
     }
 }
