@@ -93,7 +93,7 @@ class ItinerarySharer {
             return false
         }
         
-        guard leg.duration > 0 && leg.duration <= 86400 else {
+        guard leg.duration >= 0 && leg.duration <= 86400 else {
             return false
         }
         
