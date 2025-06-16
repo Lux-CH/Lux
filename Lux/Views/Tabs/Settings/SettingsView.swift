@@ -64,7 +64,7 @@ struct SettingsView: View {
     // MARK: - Header Card
     private var headerCard: some View {
         VStack(spacing: 12) {
-            Image(systemName: "gear")
+            Image(systemName: "gearshape")
                 .font(.system(size: 40))
                 .foregroundColor(accentColorManager.selectedAccentColor)
             
@@ -162,7 +162,7 @@ struct SettingsView: View {
             } header: {
                 SectionHeader(
                     icon: "paintbrush.fill",
-                    iconColor: .orange,
+                    iconColor: .red,
                     title: "Personnalisation",
                     subtitle: "Adaptez l'interface à vos préférences"
                 )

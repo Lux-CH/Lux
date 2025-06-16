@@ -197,7 +197,7 @@ struct LineScoreView: View {
                 
             } header: {
                 SectionHeader(
-                    icon: "gear",
+                    icon: "gearshape",
                     iconColor: .orange,
                     title: "Actions rapides",
                     subtitle: "Gestion globale des scores"
