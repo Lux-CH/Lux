@@ -418,14 +418,14 @@ struct MainNavigationView: View {
                     }
                     .frame(width: 275, height: 52)
                     .background(
-                        RoundedRectangle(cornerRadius: 20)
+                        RoundedRectangle(cornerRadius: 35)
                             .stroke(Color.secondary.opacity(0.3),
                                     style: StrokeStyle(lineWidth: 2, dash: [6])
                                    )
                             .background(
                                 Color(.secondarySystemFill)
                                     .opacity(0.3)
-                                    .cornerRadius(20)
+                                    .cornerRadius(35)
                             )
                     )
                 }
