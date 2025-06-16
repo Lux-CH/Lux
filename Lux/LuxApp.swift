@@ -36,7 +36,7 @@ struct LuxApp: App {
                 .onOpenURL { url in
                     inputedURL = url
                     if url.pathExtension == "luxtrip" {
-                        showConfirmation.toggle()
+                        showConfirmation = true
                     }
                 }
                 .fullScreenCover(isPresented: $showItinerarySheet) {
@@ -44,24 +44,20 @@ struct LuxApp: App {
                         ItineraryView(itinerary: itinerary, fromNearby: false)
                     }
                 }
-                .alert(isPresented: $showConfirmation) {
-                    Alert(
-                        title: Text("Êtes-vous sûr de vouloir ouvrir cet itinéraire ?"),
-                        message: Text("Cet itinéraire vous a été partagé. Assurez-vous qu’il provient d’une source fiable."),
-                        primaryButton: .default(Text("Ouvrir")) {
-                            if let url = inputedURL {
-                                handleItinerary(url)
-                            }
-                        },
-                        secondaryButton: .cancel(Text("Annuler"))
-                    )
+                .alert("Êtes-vous sûr de vouloir ouvrir cet itinéraire ?", isPresented: $showConfirmation) {
+                    Button("Ouvrir") {
+                        if let url = inputedURL {
+                            handleItinerary(url)
+                        }
+                    }
+                    Button("Annuler", role: .cancel) { }
+                } message: {
+                    Text("Cet itinéraire vous a été partagé. Assurez-vous qu'il provient d'une source fiable.")
                 }
-                .alert(isPresented: $showItineraryProcessingError) {
-                    Alert(
-                        title: Text("L'itinéraire n'a pas pu être ouvert."),
-                        message: Text("Une erreur est survenue lors de son ouverture. Assurez-vous que son contenu soit valide."),
-                        dismissButton: .default(Text("OK"))
-                    )
+                .alert("L'itinéraire n'a pas pu être ouvert.", isPresented: $showItineraryProcessingError) {
+                    Button("OK") { }
+                } message: {
+                    Text("Une erreur est survenue lors de son ouverture. Assurez-vous que son contenu soit valide.")
                 }
         }
     }
