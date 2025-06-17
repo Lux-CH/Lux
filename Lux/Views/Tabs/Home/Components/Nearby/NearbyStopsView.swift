@@ -21,6 +21,7 @@ struct NearbyStopsView: View {
     @State private var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     @State private var backgroundRefreshTask: Task<Void, Never>? = nil
     @State private var isUserConnectedToInternet: Bool = false
+    @State private var maintenanceStatus: MaintenanceStatus? = nil
     
     private let significantDistance: CLLocationDistance = 100.0
     
@@ -48,9 +49,68 @@ struct NearbyStopsView: View {
                 ProgressView("Chargement des arrêts à proximité...")
                     .padding()
             } else if searchResults.isEmpty {
-                Text("Aucun arrêt à proximité trouvé.")
-                    .foregroundColor(.gray)
+                if let status = maintenanceStatus, status.isMaintenance {
+                    Spacer()
+                    VStack(spacing: 16) {
+                        Image(systemName: "wrench.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 80, height: 80)
+                            .foregroundColor(.accentColor)
+
+                        Text("Maintenance en cours")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.primary)
+
+                        Text(status.message)
+                            .font(.callout)
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.secondary)
+
+                        VStack(spacing: 8) {
+                            if let eta = status.estimatedDateOfResolution {
+                                HStack {
+                                    Image(systemName: "clock")
+                                        .foregroundColor(.secondary)
+                                    Text("Résolution prévue : \(formatDate(eta))")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                            
+                            HStack {
+                                Image(systemName: "arrow.clockwise")
+                                    .foregroundColor(.secondary)
+                                Text("Dernière mise à jour : \(formatDate(status.dateOfUpdate))")
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                            }
+                            Button("Actualiser") {
+                                Task {
+                                    await checkMaintenanceStatus()
+                                }
+                            }
+                        }
+                        .padding(.top, 8)
+
+                        Spacer().frame(height: 8)
+                    }
                     .padding()
+                    .padding(.top, -15)
+                    Spacer()
+                } else {
+                    Text("Aucun arrêt à proximité trouvé.")
+                        .foregroundColor(.gray)
+                        .padding()
+                        .onAppear {
+                            Task {
+                                if maintenanceStatus == nil {
+                                    await checkMaintenanceStatus()
+                                }
+                            }
+                        }
+                }
             } else {
                 VStack(spacing: 2.5) {
                     ForEach(searchResults.prefix(2)) { result in
@@ -156,9 +216,18 @@ struct NearbyStopsView: View {
                 self.searchResults = filteredResults
                 self.lastFetchedLocation = fetchLocation
                 
+                if filteredResults.isEmpty {
+                    if maintenanceStatus == nil {
+                        await checkMaintenanceStatus()
+                    }
+                }
+                
             } catch {
                 if !(error is CancellationError) {
                     print("failed to load nerby stops!! \(error)")
+                    if maintenanceStatus == nil {
+                        await checkMaintenanceStatus()
+                    }
                 }
             }
         }
@@ -181,4 +250,43 @@ struct NearbyStopsView: View {
         let queue = DispatchQueue(label: "NetworkMonitor")
         monitor.start(queue: queue)
     }
+    
+    func checkMaintenanceStatus() async {
+        print("server seems down. checking for maintenance.")
+        let url = URL(string: "https://cclerc.ch/lux-status/status.json?t=\(Date().timeIntervalSince1970)")!
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let status = try JSONDecoder().decode(MaintenanceStatus.self, from: data)
+            
+            await MainActor.run {
+                self.maintenanceStatus = status
+            }
+        } catch {
+            print("error fetching error \(error)")
+            await MainActor.run {
+                self.maintenanceStatus = nil
+            }
+        }
+    }
+    
+    private func formatDate(_ dateString: String) -> String {
+        let formatter = ISO8601DateFormatter()
+        guard let date = formatter.date(from: dateString) else {
+            return dateString
+        }
+        
+        let displayFormatter = DateFormatter()
+        displayFormatter.dateStyle = .short
+        displayFormatter.timeStyle = .short
+        displayFormatter.locale = Locale(identifier: "fr_FR")
+        
+        return displayFormatter.string(from: date)
+    }
+}
+
+struct MaintenanceStatus: Codable {
+    let dateOfUpdate: String
+    let message: String
+    let estimatedDateOfResolution: String?
+    let isMaintenance: Bool
 }
