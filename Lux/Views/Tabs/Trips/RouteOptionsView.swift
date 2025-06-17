@@ -151,6 +151,12 @@ struct RouteOptionsView: View {
                                 RoundedRectangle(cornerRadius: 16)
                                     .fill(Color(.secondarySystemGroupedBackground))
                             )
+                            VStack(alignment: .leading) {
+                                Text("Cette fonctionnalité n'est pas compatibles avec l'itinéraire séléctionné.")
+                                    .foregroundStyle(.gray)
+                                    .font(.footnote)
+                            }
+                            .padding()
                         }
                     }
                     .padding()

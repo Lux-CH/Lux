@@ -444,6 +444,16 @@
         }
       }
     },
+    "Cette fonctionnalité n'est pas compatibles avec l'itinéraire séléctionné." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This feature isn’t compatible with selected trip."
+          }
+        }
+      }
+    },
     "Chargement de l'itinéraire..." : {
       "localizations" : {
         "en" : {
@@ -713,6 +723,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schedule"
+          }
+        }
+      }
+    },
+    "Il est possible que le serveur soit actuellement indisponible." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The server might be actually unavailable."
           }
         }
       }
