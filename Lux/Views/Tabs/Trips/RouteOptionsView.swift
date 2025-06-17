@@ -16,7 +16,7 @@ struct RouteOptionsView: View {
     @State private var pedestrianProfile: PedestrianProfile
     @State private var selectedTransportModes: Set<TransportationMode>
     
-    private let availableTransportModes: [TransportationMode] = [.bus, .tram, .subway, .rail, .ferry]
+    private let availableTransportModes: [TransportationMode] = [.bus, .tram, .rail, .ferry]
     private let onSave: (RouteOptions) -> Void
     private let routeOptions: RouteOptions
     
