@@ -229,12 +229,12 @@ struct SettingsView: View {
     private var aboutCard: some View {
         SettingsCard {
             Section {
-                SettingsRow(
-                    icon: "antenna.radiowaves.left.and.right",
-                    title: "Origine des perturbations",
-                    subtitle: "Les perturbations sont obtenues depuis l'API de l'application TPGMax. Nous vous invitons à tester cette autre alternative !",
-                    showChevron: false
-                )
+//                SettingsRow(
+//                    icon: "antenna.radiowaves.left.and.right",
+//                    title: "Origine des perturbations",
+//                    subtitle: "Les perturbations sont obtenues depuis l'API de l'application TPGMax. Nous vous invitons à tester cette autre alternative !",
+//                    showChevron: false
+//                )
                 SettingsRow(
                     icon: "app.badge",
                     title: "Version",

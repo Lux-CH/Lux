@@ -716,6 +716,8 @@ struct ErrorView: View {
     let message: String
     let retryAction: () -> Void
     @State private var isAnimatingIcon = false
+    @Environment(\.colorScheme) private var colorScheme
+    
     
     var body: some View {
         VStack(spacing: 20) {
@@ -732,12 +734,24 @@ struct ErrorView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
-                
+            
+            Text("Il est possible que le serveur soit actuellement indisponible.")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+
             Button("Réessayer") {
                 HapticFeedback.mediumImpact()
                 retryAction()
             }
-            .buttonStyle(PrimaryButtonStyle())
+            .padding()
+            .background(
+                colorScheme == .dark
+                ? Color(.tertiarySystemBackground)
+                : Color(.systemBackground)
+            )
+            .clipShape(Capsule())
             .padding(.top, 10)
         }
         .padding(.top, 40)
@@ -969,23 +983,6 @@ struct SpringButtonStyle: ButtonStyle {
         configuration.label
             .scaleEffect(configuration.isPressed ? 0.92 : 1)
             .opacity(configuration.isPressed ? 0.8 : 1)
-            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
-    }
-}
-
-struct PrimaryButtonStyle: ButtonStyle {
-    @Environment(\.isEnabled) private var isEnabled
-    
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .padding(.horizontal, 30)
-            .padding(.vertical, 14)
-            .background(isEnabled ? Color.accentColor : Color.accentColor.opacity(0.5))
-            .foregroundColor(.white)
-            .clipShape(Capsule())
-            .shadow(color: isEnabled ? Color.accentColor.opacity(0.4) : Color.clear, radius: 6, x: 0, y: 3)
-            .scaleEffect(configuration.isPressed ? 0.96 : 1)
-            .opacity(configuration.isPressed ? 0.9 : 1)
             .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
     }
 }
