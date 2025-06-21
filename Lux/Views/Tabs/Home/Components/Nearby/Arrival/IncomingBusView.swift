@@ -16,7 +16,14 @@ struct IncomingBusView: View {
     var body: some View {
         NavigationLink(destination: {
             if let tripId = group.stopTimes.first?.tripId {
-                ItineraryView(tripId: tripId, fromNearby: true)
+                let otherTripOptions = group.stopTimes.prefix(10).map { stopTime in
+                    TripOption(
+                        id: stopTime.tripId,
+                        startTime: stopTime.place.departure ?? stopTime.place.scheduledDeparture ?? Date()
+                    )
+                }
+                
+                ItineraryView(tripId: tripId, fromNearby: true, otherTripOptions: otherTripOptions)
                     .toolbarBackground(.hidden, for: .navigationBar)
                     .navigationBarBackButtonHidden(true)
                     .onAppear {

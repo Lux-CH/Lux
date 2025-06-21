@@ -18,7 +18,14 @@ struct ExpandedGroupView: View {
     var body: some View {
         NavigationLink(destination: {
             if let tripId = group.stopTimes.first?.tripId {
-                ItineraryView(tripId: tripId, fromNearby: false)
+                let otherTripOptions = group.stopTimes.prefix(10).map { stopTime in
+                    TripOption(
+                        id: stopTime.tripId,
+                        startTime: stopTime.place.departure ?? stopTime.place.scheduledDeparture ?? Date()
+                    )
+                }
+                
+                ItineraryView(tripId: tripId, fromNearby: false, otherTripOptions: otherTripOptions)
                     .toolbarBackground(.hidden, for: .navigationBar)
                     .navigationBarBackButtonHidden(true)
                     .onAppear {
@@ -40,9 +47,9 @@ struct ExpandedGroupView: View {
                             $0.place.track != nil || $0.place.scheduledTrack != nil
                         }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? "inconnu"
                         
-                            Text(getTrackType(displayTrack))
-                                .font(.caption)
-                                .foregroundStyle(Color.secondary.opacity(0.7))
+                        Text(getTrackType(displayTrack))
+                            .font(.caption)
+                            .foregroundStyle(Color.secondary.opacity(0.7))
                         Image(systemName: "chevron.right")
                             .font(.caption)
                             .foregroundStyle(Color.secondary.opacity(0.6))
