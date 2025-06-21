@@ -16,8 +16,13 @@ struct LinePill: View {
     var height: CGFloat = 20
     var fontSize: CGFloat = 11
     
+    private static let squaredModes: Set<TransportationMode> = [
+        .regionalRail, .ferry, .rail, .highSpeedRail,
+        .longDistance, .metro, .nightRail, .regionalFastRail
+    ]
+
     private var isSquared: Bool {
-        mode == .regionalRail || mode == .ferry
+        Self.squaredModes.contains(mode)
     }
     
     private var formattedLine: String {
@@ -25,7 +30,7 @@ struct LinePill: View {
     }
     
     private var lineColor: Color {
-        if mode == .regionalRail && LineColors.color(for: line) == nil {
+        if isSquared && LineColors.color(for: line) == nil {
             return Color(hex: "EA0706")
         }
         return LineColors.color(for: line) ?? .black
