@@ -60,11 +60,11 @@ final class ItineraryViewModel: ObservableObject {
         
         stopAllTasks()
         
+        self.vehicleAnnotations = []
         self.tripId = tripId
         self.itinerary = nil
         self.mapAnnotations = []
         self.routeOverlays = []
-        self.vehicleAnnotations = []
         self.walkingDirections = [:]
         self.legKeyFrames = [:]
         self.osrmPolylines = [:]
