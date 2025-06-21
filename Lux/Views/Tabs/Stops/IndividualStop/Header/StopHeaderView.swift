@@ -48,6 +48,10 @@ struct StopHeaderView: View {
                         .frame(width: 61, height: 52.5)
                         .background(Color(.secondarySystemFill).opacity(0.5))
                         .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                        )
                 }
             }
         }
