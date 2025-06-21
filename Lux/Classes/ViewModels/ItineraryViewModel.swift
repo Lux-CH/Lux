@@ -15,7 +15,7 @@ import Combine
 final class ItineraryViewModel: ObservableObject {
     // MARK: - Properties
     
-    private let tripId: String
+    private var tripId: String
     private let zoomThreshold: CLLocationDistance = 50000
     private var cancellables = Set<AnyCancellable>()
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
@@ -36,7 +36,11 @@ final class ItineraryViewModel: ObservableObject {
     @Published var error: String?
     @Published var walkingDirections: [String: [MKRoute.Step]] = [:]
     @ObservedObject var settings = Settings.shared
-
+    
+    // MARK: - Public Properties
+    var currentTripId: String {
+        return tripId
+    }
     
     // MARK: - Initialization
     
@@ -50,6 +54,25 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     // MARK: - Public Methods
+    
+    func switchToTrip(tripId: String) async {
+        guard tripId != self.tripId else { return }
+        
+        stopAllTasks()
+        
+        self.tripId = tripId
+        self.itinerary = nil
+        self.mapAnnotations = []
+        self.routeOverlays = []
+        self.vehicleAnnotations = []
+        self.walkingDirections = [:]
+        self.legKeyFrames = [:]
+        self.osrmPolylines = [:]
+        self.error = nil
+        self.shouldStop = false
+        
+        await loadItinerary()
+    }
     
     func stopAllTasks() {
         shouldStop = true

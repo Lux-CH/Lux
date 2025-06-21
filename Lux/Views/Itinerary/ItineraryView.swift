@@ -9,16 +9,27 @@ import SwiftUI
 import MapKit
 import LuxCom
 
+struct TripOption: Identifiable, Equatable {
+    let id: String
+    let startTime: Date
+    
+    static func == (lhs: TripOption, rhs: TripOption) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 struct ItineraryView: View {
     @StateObject private var viewModel: ItineraryViewModel
     @EnvironmentObject var locationManager: LocationManager
     @Environment(\.dismiss) private var dismiss
     @State private var showDetails: Bool = true
+    @State var otherItineraries: [TripOption] = []
     let fromNearby: Bool
     
-    init(tripId: String, fromNearby: Bool) {
+    init(tripId: String, fromNearby: Bool, otherTripOptions: [TripOption] = []) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
         self.fromNearby = fromNearby
+        self._otherItineraries = State(initialValue: otherTripOptions)
     }
     
     init(itinerary: Itinerary, fromNearby: Bool) {
@@ -111,6 +122,35 @@ struct ItineraryView: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 2)
                         }
+                        
+                        if otherItineraries.count > 1 {
+                            Menu {
+                                ForEach(otherItineraries) { tripOption in
+                                    if tripOption.id == viewModel.currentTripId {
+                                        Button(
+                                            getExactTime(from: tripOption.startTime),
+                                            systemImage: "checkmark"
+                                        ) {}
+                                    }
+                                    else {
+                                        Button(getExactTime(from: tripOption.startTime)) {
+                                            Task {
+                                                await viewModel.switchToTrip(tripId: tripOption.id)
+                                            }
+                                        }
+                                    }
+                                }
+                            } label: {
+                                Image(systemName: "clock")
+                                    .font(.headline)
+                                    .foregroundColor(.accentColor)
+                                    .frame(width: 45, height: 45)
+                                    .background(.ultraThickMaterial)
+                                    .clipShape(Circle())
+                                    .shadow(radius: 2)
+                            }
+                        }
+
                         Spacer()
                     }
                     .padding(.leading, 16)
@@ -139,6 +179,11 @@ struct ItineraryView: View {
         .onDisappear {
             viewModel.stopAllTasks()
         }
+    }
+    func getExactTime(from date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter.string(from: date)
     }
 }
 
