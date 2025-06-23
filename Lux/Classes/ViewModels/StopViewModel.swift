@@ -55,7 +55,7 @@ class StopViewModel: ObservableObject {
             }
         }
         
-        if !fromStops && !isCustomTimeSelected {
+        if !fromStops {
             refreshTimer = Timer.publish(every: 5, on: .main, in: .common)
                 .autoconnect()
                 .sink { [weak self] _ in
@@ -91,13 +91,8 @@ class StopViewModel: ObservableObject {
         backgroundRefreshTask?.cancel()
         
         let now = Date()
-        isCustomTimeSelected = abs(time.timeIntervalSince(now)) > 300
+        isCustomTimeSelected = abs(time.timeIntervalSince(now)) > 60
         currentTime = time
-        
-        if isCustomTimeSelected {
-            refreshTimer?.cancel()
-            departureCheckTimer?.cancel()
-        }
         
         backgroundRefreshTask = Task {
             defer {
@@ -235,7 +230,7 @@ class StopViewModel: ObservableObject {
     
     @MainActor
     func checkAndHandleDepartures() {
-        if fromStops || isCustomTimeSelected {
+        if fromStops {
             return
         }
         
