@@ -12,6 +12,9 @@
       },
       "shouldTranslate" : false
     },
+    "*" : {
+      "shouldTranslate" : false
+    },
     "/ %.2f €" : {
       "shouldTranslate" : false
     },

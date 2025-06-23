@@ -80,11 +80,16 @@ struct ItineraryStopTimelineRowView: View {
                 .padding(.vertical, 16)
                 
                 Spacer()
-                
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.secondary.opacity(0.5))
-                    .padding(.trailing, 20)
+                HStack {
+                    if let track = stop.track {
+                        Text(getTrackType(track))
+                            .font(.caption)
+                            .foregroundStyle(Color.secondary.opacity(0.7))
+                    }
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundColor(.secondary.opacity(0.5))
+                }
             }
             .frame(maxWidth: .infinity)
             .contentShape(Rectangle())
