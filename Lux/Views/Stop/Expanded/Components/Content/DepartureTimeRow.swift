@@ -19,6 +19,7 @@ struct DepartureTimeRow: View {
         TimelineView(.periodic(from: .now, by: 5)) { _ in
             HStack {
                 if let departure = stopTime.place.departure, let scheduledDeparture = stopTime.place.scheduledDeparture {
+                    let isNextDay = !calendar.isDate(departure, inSameDayAs: Date())
                     let scheduledDifference = calendar.dateComponents([.minute], from: stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival ?? Date(), to: stopTime.place.departure ?? stopTime.place.arrival ?? Date()).minute ?? 0
                     HStack(spacing:6) {
                         Text(settings.showDelayInsteadOfDirectTime ? formatTime(scheduledDeparture) : formatTime(departure))
@@ -27,6 +28,13 @@ struct DepartureTimeRow: View {
                             .fontWeight(.medium)
                             .contentTransition(.numericText())
                             .strikethrough(stopTime.cancelled, color: .red)
+                        if isNextDay {
+                            Text("*")
+                                .foregroundColor(settings.showDelayInsteadOfDirectTime ? .primary : latenessColor)
+                                .contentTransition(.numericText())
+                                .padding(.leading, -5)
+                            
+                        }
                         if settings.showDelayInsteadOfDirectTime && !stopTime.cancelled && stopTime.realTime {
                             Text("\(scheduledDifference >= 0 ? "+" : "")\(scheduledDifference)'")
                                 .font(.system(.subheadline, design: .monospaced))
