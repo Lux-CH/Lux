@@ -510,6 +510,16 @@
         }
       }
     },
+    "Choisissez le mode d'affichage de l'app" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose app’s display mode"
+          }
+        }
+      }
+    },
     "Couleur de l'app" : {
       "localizations" : {
         "en" : {
@@ -790,6 +800,16 @@
         }
       }
     },
+    "Les changements nécessitent un redémarrage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The changes require a restart"
+          }
+        }
+      }
+    },
     "Les deux premiers raccourcis seront affichés sur l'écran d'accueil." : {
       "localizations" : {
         "en" : {
@@ -920,6 +940,16 @@
         }
       }
     },
+    "Mode d'affichage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display mode"
+          }
+        }
+      }
+    },
     "Nombre maximum" : {
       "localizations" : {
         "en" : {
@@ -966,6 +996,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open"
+          }
+        }
+      }
+    },
+    "Par Défaut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Default"
           }
         }
       }
@@ -1100,6 +1140,16 @@
         }
       }
     },
+    "Pour appliquer le nouveau thème, vous devez redémarrer l'application." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To apply a new theme, you need to restart the app."
+          }
+        }
+      }
+    },
     "Prochain: %@" : {
       "localizations" : {
         "en" : {
@@ -1126,6 +1176,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mobility profile"
+          }
+        }
+      }
+    },
+    "Quitter maintenant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quit now"
           }
         }
       }
@@ -1176,6 +1236,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search a place or an address"
+          }
+        }
+      }
+    },
+    "Redémarrage requis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App restart required"
           }
         }
       }

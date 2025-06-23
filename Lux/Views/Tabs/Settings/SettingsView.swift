@@ -159,6 +159,15 @@ struct SettingsView: View {
                     )
                 }
                 .buttonStyle(.plain)
+                NavigationLink(destination: ColorSchemeSelectionView()) {
+                    SettingsRow(
+                        icon: "circle.lefthalf.filled",
+                        title: "Mode d'affichage",
+                        subtitle: "Chosissez la mode d'affichage de l'app (clair, sombre, auto..)",
+                        showChevron: true
+                    )
+                }
+                .buttonStyle(.plain)
             } header: {
                 SectionHeader(
                     icon: "paintbrush.fill",

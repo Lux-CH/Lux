@@ -27,6 +27,7 @@ struct LuxApp: App {
     var body: some Scene {
         WindowGroup {
             MainNavigationView()
+                .preferredColorScheme(getColorScheme())
                 .environmentObject(locationManager)
                 .environmentObject(shortcutManager)
                 .environmentObject(disruptionManager)
@@ -95,6 +96,35 @@ struct LuxApp: App {
         } catch {
             showItineraryProcessingError.toggle()
             print(error)
+        }
+    }
+    private func getColorScheme() -> ColorScheme {
+        if settings.autoColorScheme {
+            let calendar = Calendar.current
+            let hour = calendar.component(.hour, from: Date())
+            
+            if hour >= 20 || hour < 6 {
+                return .dark
+            }
+            else {
+                return .light
+            }
+        }
+        if settings.customScheme {
+            if settings.customSchemeSelection == "dark" {
+                return .dark
+            }
+            else {
+                return .light
+            }
+        }
+        else {
+            if UITraitCollection.current.userInterfaceStyle == .dark {
+                return .dark
+            }
+            else {
+                return .light
+            }
         }
     }
 }

@@ -9,6 +9,8 @@ import SwiftUI
 
 
 class Settings: ObservableObject, @unchecked Sendable {
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
+
     @MainActor static let shared = Settings()
     
     @AppStorage("firstLaunch") var firstLaunch: Bool = true
@@ -21,6 +23,9 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContent: Bool = false
     @AppStorage("highContrastButAccurateLinePill") var highContrastButAccurateLinePill: Bool = false
     @AppStorage("showDelayInsteadOfDirectTime") var showDelayInsteadOfDirectTime: Bool = false
+    @AppStorage("autoColorScheme") var autoColorScheme: Bool = false
+    @AppStorage("customScheme") var customScheme: Bool = false
+    @AppStorage("customSchemeSelection") var customSchemeSelection: String = ""
 
     /// Experimental
     @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false
