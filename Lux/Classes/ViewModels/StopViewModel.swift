@@ -28,6 +28,7 @@ class StopViewModel: ObservableObject {
     private var backgroundRefreshTask: Task<Void, Never>?
     private var fromStops: Bool
     private var currentTime: Date = Date()
+    private var isCustomTimeSelected: Bool = false
     
     init(stop: SearchResult, fromStops: Bool) {
         self.stop = stop
@@ -54,7 +55,7 @@ class StopViewModel: ObservableObject {
             }
         }
         
-        if !fromStops {
+        if !fromStops && !isCustomTimeSelected {
             refreshTimer = Timer.publish(every: 5, on: .main, in: .common)
                 .autoconnect()
                 .sink { [weak self] _ in
@@ -88,7 +89,15 @@ class StopViewModel: ObservableObject {
     func refreshDepartures(forTime time: Date, showLoading: Bool) async {
         if showLoading { isLoading = true }
         backgroundRefreshTask?.cancel()
+        
+        let now = Date()
+        isCustomTimeSelected = abs(time.timeIntervalSince(now)) > 300
         currentTime = time
+        
+        if isCustomTimeSelected {
+            refreshTimer?.cancel()
+            departureCheckTimer?.cancel()
+        }
         
         backgroundRefreshTask = Task {
             defer {
@@ -220,13 +229,17 @@ class StopViewModel: ObservableObject {
         }
     }
     
+    private func getReferenceTime() -> Date {
+        return isCustomTimeSelected ? currentTime : Date()
+    }
+    
     @MainActor
     func checkAndHandleDepartures() {
-        if fromStops {
+        if fromStops || isCustomTimeSelected {
             return
         }
         
-        let now = Date()
+        let referenceTime = getReferenceTime()
         var needsRefresh = false
 
         for routeName in routeNames {
@@ -239,7 +252,7 @@ class StopViewModel: ObservableObject {
                 
                 let filteredStopTimes = group.stopTimes.filter { stopTime in
                     guard let departure = stopTime.place.departure else { return true }
-                    return departure.addingTimeInterval(bufferTimeForTransport(stopTime)) > now
+                    return departure.addingTimeInterval(bufferTimeForTransport(stopTime)) > referenceTime
                 }
                 
                 if filteredStopTimes.count != group.stopTimes.count {
@@ -275,7 +288,7 @@ class StopViewModel: ObservableObject {
                 if let firstStopTime = group.stopTimes.first,
                    let departure = firstStopTime.place.departure,
                    let bufferTime = group.stopTimes.first.map(bufferTimeForTransport),
-                   departure.addingTimeInterval(bufferTime) < now {
+                   departure.addingTimeInterval(bufferTime) < referenceTime {
                     needsRefresh = true
                     break outerLoop
                 }
@@ -304,10 +317,16 @@ class StopViewModel: ObservableObject {
     
     @MainActor
     private func groupStopTimes(_ stopTimes: [StopTime]) {
-        let now = Date()
-        let filteredStopTimes = stopTimes.filter { stopTime in
-            guard let departure = stopTime.place.departure else { return true }
-            return departure.addingTimeInterval(bufferTimeForTransport(stopTime)) > now
+        let referenceTime = getReferenceTime()
+        
+        let filteredStopTimes: [StopTime]
+        if isCustomTimeSelected {
+            filteredStopTimes = stopTimes
+        } else {
+            filteredStopTimes = stopTimes.filter { stopTime in
+                guard let departure = stopTime.place.departure else { return true }
+                return departure.addingTimeInterval(bufferTimeForTransport(stopTime)) > referenceTime
+            }
         }
         
         let routeGroups = Dictionary(grouping: filteredStopTimes) { $0.routeShortName }
