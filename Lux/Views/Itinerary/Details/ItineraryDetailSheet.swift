@@ -33,8 +33,27 @@ struct LegHeaderView: View {
     let leg: Leg
     let legColor: Color
     let nextStop: Place?
+    @State private var showTripIdView: Bool = false
     
     var body: some View {
+        Group {
+            if let tripId = leg.tripId {
+                Button {
+                    showTripIdView = true
+                } label: {
+                    contentView
+                }
+                .buttonStyle(PlainButtonStyle())
+                .fullScreenCover(isPresented: $showTripIdView) {
+                    ItineraryView(tripId: tripId, fromNearby: false)
+                }
+            } else {
+                contentView
+            }
+        }
+    }
+    
+    private var contentView: some View {
         HStack(spacing: 15) {
             LinePill(line: leg.routeShortName ?? "",
                      mode: leg.mode,
