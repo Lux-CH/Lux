@@ -20,9 +20,21 @@ struct LinePill: View {
         .regionalRail, .ferry, .rail, .highSpeedRail,
         .longDistance, .metro, .nightRail, .regionalFastRail
     ]
+    
+    private var isTrainDetected: Bool {
+        line.hasPrefix("RL") || line.hasPrefix("IR") || line.hasPrefix("RE") || line.hasPrefix("IC") || line == "R"
+    }
 
     private var isSquared: Bool {
-        Self.squaredModes.contains(mode)
+        if Self.squaredModes.contains(mode) {
+            return true
+        }
+        else if isTrainDetected {
+            return true
+        }
+        else {
+            return false
+        }
     }
     
     private var formattedLine: String {
