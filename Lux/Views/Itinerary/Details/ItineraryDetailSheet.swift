@@ -37,7 +37,9 @@ struct LegHeaderView: View {
     @State private var showTripIdView: Bool = false
     @State private var lineInfo: InfoResponse?
     @State private var isLoadingInfo: Bool = false
+    @State private var showReportCard: Bool = false
     @EnvironmentObject var locationManager: LocationManager
+    @ObservedObject var settings = Settings.shared
     
     var body: some View {
         Group {
@@ -56,15 +58,14 @@ struct LegHeaderView: View {
             }
         }
         .onAppear {
-            loadLineInfo()
-        }
-        .onChange(of: leg.tripId) {
-            loadLineInfo()
+            if settings.crowdbackAllowed {
+                loadLineInfo()
+            }
         }
     }
     
     private var contentView: some View {
-        HStack(spacing: 15) {
+        HStack(alignment: .top, spacing: 10) {
             LinePill(line: leg.routeShortName ?? "",
                      mode: leg.mode,
                      width: 64,
@@ -73,13 +74,33 @@ struct LegHeaderView: View {
             .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
             
             VStack(alignment: .leading, spacing: 3) {
-                HStack {
+                HStack(spacing: 5) {
                     Image(systemName: "arrow.right")
                         .foregroundStyle(legColor.opacity(0.7))
                     Text(leg.headsign ?? "")
                         .font(.headline)
                         .foregroundColor(.primary)
                         .fontWeight(.semibold)
+                        .lineLimit(1)
+                        .frame(maxWidth: 250, alignment: .leading)
+                        .truncationMode(.head)
+                    
+                    Spacer()
+                    
+                    if settings.crowdbackAllowed {
+                        Button {
+                            showReportCard = true
+                        } label: {
+                            Image(systemName: "exclamationmark.bubble")
+                                .font(.system(size: 16))
+                        }
+                        .foregroundStyle(.gray)
+                        .sheet(isPresented: $showReportCard, onDismiss: {loadLineInfo()}) {
+                            ReportView(leg: leg)
+                                .presentationDetents([.fraction(0.6)])
+                                .presentationCornerRadius(38)
+                        }
+                    }
                 }
                 
                 if let nextStop = nextStop {
@@ -92,12 +113,14 @@ struct LegHeaderView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .lineLimit(1)
+                            .frame(maxWidth: 250, alignment: .leading)
+                            .truncationMode(.head)
                     }
                 }
-                
-                LineInfoView(info: lineInfo, isLoading: isLoadingInfo)
+                if settings.crowdbackAllowed {
+                    LineInfoView(info: lineInfo, isLoading: isLoadingInfo)
+                }
             }
-            Spacer()
         }
     }
     
