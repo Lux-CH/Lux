@@ -32,12 +32,16 @@ struct ItineraryDetailSheet: View {
 struct LegHeaderView: View {
     let leg: Leg
     let legColor: Color
+    let isSingle: Bool
     let nextStop: Place?
     @State private var showTripIdView: Bool = false
+    @State private var lineInfo: InfoResponse?
+    @State private var isLoadingInfo: Bool = false
+    @EnvironmentObject var locationManager: LocationManager
     
     var body: some View {
         Group {
-            if let tripId = leg.tripId {
+            if !isSingle, let tripId = leg.tripId {
                 Button {
                     showTripIdView = true
                 } label: {
@@ -50,6 +54,12 @@ struct LegHeaderView: View {
             } else {
                 contentView
             }
+        }
+        .onAppear {
+            loadLineInfo()
+        }
+        .onChange(of: leg.tripId) {
+            loadLineInfo()
         }
     }
     
@@ -84,8 +94,40 @@ struct LegHeaderView: View {
                             .lineLimit(1)
                     }
                 }
+                
+                LineInfoView(info: lineInfo, isLoading: isLoadingInfo)
             }
             Spacer()
+        }
+    }
+    
+    private func loadLineInfo() {
+        guard let tripId = leg.tripId,
+              let routeShortName = leg.routeShortName,
+              let location = locationManager.location else { return }
+        
+        isLoadingInfo = true
+        
+        Task {
+            do {
+                let info = try await getLCBInfo(
+                    tripId: tripId,
+                    routeShortName: routeShortName,
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude
+                )
+                
+                await MainActor.run {
+                    self.lineInfo = info
+                    self.isLoadingInfo = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.lineInfo = nil
+                    self.isLoadingInfo = false
+                }
+                print("error loading line info : \(error)")
+            }
         }
     }
 }

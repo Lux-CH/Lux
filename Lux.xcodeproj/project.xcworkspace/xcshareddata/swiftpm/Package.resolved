@@ -1,5 +1,5 @@
 {
-  "originHash" : "ee79048c3c1159fca1d5d323662e487b9c2188b761159373b49f1e272c2f81ec",
+  "originHash" : "e9f486ca7ef713558ecd1f78f23f68ff8c9278d8d7ff131f8889b2b910e20422",
   "pins" : [
     {
       "identity" : "codescanner",
@@ -17,15 +17,6 @@
       "state" : {
         "revision" : "b1e9372d49f4047ab8ff39ef6b9b8f56f47608b9",
         "version" : "1.1.1"
-      }
-    },
-    {
-      "identity" : "luxcom",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Lux-CH/LuxCom",
-      "state" : {
-        "branch" : "main",
-        "revision" : "2b0d00cb8c1642f08aea89872f1576114c927545"
       }
     },
     {
