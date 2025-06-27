@@ -211,12 +211,12 @@ struct SettingsView: View {
     private var experimentalCard: some View {
         SettingsCard {
             Section {
-//                SettingsToggle(
-//                    icon: "map.fill",
-//                    title: "Tracés plus détaillées",
-//                    subtitle: "Affichage plus précis du tracé des routes avec OSRM",
-//                    isOn: $settings.getPolylineWithOSRM
-//                )
+                SettingsToggle(
+                    icon: "exclamationmark.bubble",
+                    title: "Contribuer à CrowdBack",
+                    subtitle: "Consultez et partagez des informations en temps réel sur les transports.",
+                    isOn: $settings.crowdbackAllowed
+                )
                 SettingsToggle(
                     icon: "figure.walk",
                     title: "Obtenir les instructions",
