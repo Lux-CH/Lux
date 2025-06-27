@@ -487,6 +487,16 @@
         }
       }
     },
+    "Chargement..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading…"
+          }
+        }
+      }
+    },
     "CHF %.2f" : {
       "shouldTranslate" : false
     },
