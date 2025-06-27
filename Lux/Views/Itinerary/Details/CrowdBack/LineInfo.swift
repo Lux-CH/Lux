@@ -24,7 +24,7 @@ struct LineInfoView: View {
                 }
             } else if let info = info {
                 if info.rt != nil {
-                    Image(systemName: "dot.radiowaves.left.and.right")
+                    Image(systemName: "wave.3.forward")
                         .foregroundColor(.green)
                         .font(.caption)
                 }
@@ -56,7 +56,7 @@ struct AttributeIndicator: View {
     }
     
     var body: some View {
-        if let data = attributeData {
+        if let data = attributeData, data.trustLevel >= 2.0 {
             HStack(spacing: 2) {
                 Image(systemName: type.iconName)
                     .font(.system(size: 11))
@@ -72,21 +72,21 @@ struct AttributeIndicator: View {
                     }
                 }
                 
-                if data.trustLevel > 3 {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 8))
-                        .foregroundColor(.green)
-                } else if data.trustLevel > 1 {
-                    Image(systemName: "questionmark.circle.fill")
-                        .font(.system(size: 8))
-                        .foregroundColor(.orange)
-                }
+//                if data.trustLevel > 3 {
+//                    Image(systemName: "checkmark.circle.fill")
+//                        .font(.system(size: 8))
+//                        .foregroundColor(.green)
+//                } else if data.trustLevel > 1 {
+//                    Image(systemName: "questionmark.circle.fill")
+//                        .font(.system(size: 8))
+//                        .foregroundColor(.orange)
+//                }
                 
-                if isRealtime {
-                    Circle()
-                        .fill(Color.green)
-                        .frame(width: 4, height: 4)
-                }
+//                if isRealtime {
+//                    Circle()
+//                        .fill(Color.green)
+//                        .frame(width: 4, height: 4)
+//                }
             }
             .padding(.horizontal, 4)
             .padding(.vertical, 2)
