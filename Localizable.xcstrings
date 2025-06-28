@@ -115,6 +115,9 @@
         }
       }
     },
+    "%lld/5" : {
+
+    },
     "%lldm" : {
       "localizations" : {
         "en" : {
@@ -610,6 +613,16 @@
         }
       }
     },
+    "Élevé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "High"
+          }
+        }
+      }
+    },
     "En attente de votre position..." : {
       "localizations" : {
         "en" : {
@@ -660,6 +673,26 @@
         }
       }
     },
+    "Envoi..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending…"
+          }
+        }
+      }
+    },
+    "Envoyer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send"
+          }
+        }
+      }
+    },
     "Erreur de scan" : {
       "localizations" : {
         "en" : {
@@ -706,6 +739,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E.g. Home, Work, School"
+          }
+        }
+      }
+    },
+    "Faible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Low"
           }
         }
       }
@@ -940,6 +983,16 @@
         }
       }
     },
+    "Merci pour votre contribution" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thanks for your contribution"
+          }
+        }
+      }
+    },
     "Mettez en avant les lignes que vous fréquentez le plus." : {
       "localizations" : {
         "en" : {
@@ -956,6 +1009,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Display mode"
+          }
+        }
+      }
+    },
+    "Niveau d'intensité" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intensity level"
           }
         }
       }
@@ -1190,6 +1253,16 @@
         }
       }
     },
+    "Que souhaitez-vous signaler ?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What do you want to report ?"
+          }
+        }
+      }
+    },
     "Quitter maintenant" : {
       "localizations" : {
         "en" : {
@@ -1206,6 +1279,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Shortcuts"
+          }
+        }
+      }
+    },
+    "Rapport envoyé !" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report sent !"
           }
         }
       }
@@ -1386,6 +1469,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Select your fare category"
+          }
+        }
+      }
+    },
+    "Signaler une situation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report a situation"
           }
         }
       }
