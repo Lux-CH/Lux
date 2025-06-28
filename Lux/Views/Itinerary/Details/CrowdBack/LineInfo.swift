@@ -52,6 +52,7 @@ struct AttributeIndicator: View {
                 Image(systemName: type.iconName)
                     .font(.system(size: 11))
                     .foregroundColor(type.color(for: data.level))
+                    .frame(height: 12)
                 
                 HStack(spacing: 1) {
                     ForEach(1...5, id: \.self) { level in
@@ -110,57 +111,33 @@ enum AttributeType: String, CaseIterable {
     }
     
     func color(for level: Double) -> Color {
+        let normalizedLevel = max(0.0, min(5.0, level))
+        let progress = (normalizedLevel - 1.0) / 4.0
+        let clampedProgress = max(0.0, min(1.0, progress))
+        
         switch self {
-        case .crowd:
-            return crowdColor(for: level)
-        case .smell:
-            return negativeAttributeColor(for: level)
-        case .clean:
-            return positiveAttributeColor(for: level)
         case .heat:
-            return heatColor(for: level)
-        case .noise:
-            return negativeAttributeColor(for: level)
-        }
-    }
-    
-    private func crowdColor(for level: Double) -> Color {
-        switch level {
-        case 0...1: return .green
-        case 1...2: return .yellow
-        case 2...3: return .orange
-        case 3...4: return .red
-        default: return .purple
-        }
-    }
-    
-    private func negativeAttributeColor(for level: Double) -> Color {
-        switch level {
-        case 0...1: return .green
-        case 1...2: return .yellow
-        case 2...3: return .orange
-        case 3...4: return .red
-        default: return .purple
-        }
-    }
-    
-    private func positiveAttributeColor(for level: Double) -> Color {
-        switch level {
-        case 0...1: return .red
-        case 1...2: return .orange
-        case 2...3: return .yellow
-        case 3...4: return .green
-        default: return .blue
-        }
-    }
-    
-    private func heatColor(for level: Double) -> Color {
-        switch level {
-        case 0...1: return .blue
-        case 1...2: return .green
-        case 2...3: return .yellow
-        case 3...4: return .orange
-        default: return .red
+            return Color(
+                red: clampedProgress * 0.9,
+                green: 0.1 * (1.0 - clampedProgress),
+                blue: (1.0 - clampedProgress) * 0.9 + 0.1
+            )
+        case .clean:
+            let redComponent = (1.0 - clampedProgress) * 0.9
+            let greenComponent = clampedProgress * 0.8 + 0.1
+            return Color(
+                red: redComponent,
+                green: greenComponent,
+                blue: 0.1
+            )
+        case .crowd, .noise, .smell:
+            let redComponent = clampedProgress * 0.9
+            let greenComponent = (1.0 - clampedProgress) * 0.8 + 0.1
+            return Color(
+                red: redComponent,
+                green: greenComponent,
+                blue: 0.1
+            )
         }
     }
 }

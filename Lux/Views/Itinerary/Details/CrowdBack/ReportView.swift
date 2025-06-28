@@ -16,6 +16,7 @@ struct ReportView: View {
     @State private var selectedLevel: Int = 3
     @State private var isSubmitting: Bool = false
     @State private var showSuccess: Bool = false
+    @State private var showError: Bool = false
     
     var body: some View {
         ZStack {
@@ -72,11 +73,11 @@ struct ReportView: View {
                     
                     VStack(spacing: 8) {
                         HStack {
-                            Text("Faible")
+                            Text(lowLevelText)
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                             Spacer()
-                            Text("Élevé")
+                            Text(highLevelText)
                                 .font(.caption2)
                                 .foregroundColor(.secondary)
                         }
@@ -87,7 +88,7 @@ struct ReportView: View {
                                     selectedLevel = level
                                 } label: {
                                     RoundedRectangle(cornerRadius: 4)
-                                        .fill(level <= selectedLevel ? Color.accentColor : Color(.systemGray5))
+                                        .fill(level <= selectedLevel ? colorForLevel(level) : Color(.systemGray5))
                                         .frame(height: 6)
                                         .animation(.easeInOut(duration: 0.2), value: selectedLevel)
                                 }
@@ -95,11 +96,19 @@ struct ReportView: View {
                             }
                         }
                         
-                        Text("\(selectedLevel)/5")
-                            .font(.caption)
-                            .fontWeight(.medium)
-                            .foregroundColor(.accentColor)
-                            .frame(maxWidth: .infinity, alignment: .center)
+                        HStack {
+                            Text("\(selectedLevel)/5")
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(colorForLevel(selectedLevel))
+                            
+                            Spacer()
+                            
+                            Text(intensityDescription)
+                                .font(.caption)
+                                .fontWeight(.medium)
+                                .foregroundColor(colorForLevel(selectedLevel))
+                        }
                     }
                 }
                 
@@ -128,10 +137,10 @@ struct ReportView: View {
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 12)
-            .blur(radius: showSuccess ? 3 : 0)
+            .blur(radius: showSuccess || showError ? 3 : 0)
             .animation(.easeInOut(duration: 0.3), value: showSuccess)
+            .animation(.easeInOut(duration: 0.3), value: showError)
             
-            // Success Overlay
             if showSuccess {
                 SuccessOverlay()
                     .transition(.asymmetric(
@@ -140,6 +149,116 @@ struct ReportView: View {
                     ))
                     .animation(.spring(response: 0.5, dampingFraction: 0.8), value: showSuccess)
             }
+            
+            if showError {
+                ErrorOverlay {
+                    showError = false
+                }
+                .transition(.asymmetric(
+                    insertion: .scale.combined(with: .opacity),
+                    removal: .opacity
+                ))
+                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: showError)
+            }
+        }
+    }
+    
+    private var lowLevelText: String {
+        switch selectedAttribute {
+        case .crowd: return "Vide"
+        case .clean: return "Sale"
+        case .heat: return "Froid"
+        case .noise: return "Silencieux"
+        case .smell: return "Pas d'odeur"
+        }
+    }
+    
+    private var highLevelText: String {
+        switch selectedAttribute {
+        case .crowd: return "Bondé"
+        case .clean: return "Propre"
+        case .heat: return "Chaud"
+        case .noise: return "Bruyant"
+        case .smell: return "Forte odeur"
+        }
+    }
+    
+    private var intensityDescription: String {
+        switch selectedAttribute {
+        case .crowd:
+            switch selectedLevel {
+            case 1: return "Vide"
+            case 2: return "Peu occupé"
+            case 3: return "Modéré"
+            case 4: return "Occupé"
+            case 5: return "Bondé"
+            default: return ""
+            }
+        case .clean:
+            switch selectedLevel {
+            case 1: return "Très sale"
+            case 2: return "Sale"
+            case 3: return "Correct"
+            case 4: return "Propre"
+            case 5: return "Très propre"
+            default: return ""
+            }
+        case .heat:
+            switch selectedLevel {
+            case 1: return "Très froid"
+            case 2: return "Froid"
+            case 3: return "Tempéré"
+            case 4: return "Chaud"
+            case 5: return "Très chaud"
+            default: return ""
+            }
+        case .noise:
+            switch selectedLevel {
+            case 1: return "Silencieux"
+            case 2: return "Calme"
+            case 3: return "Modéré"
+            case 4: return "Bruyant"
+            case 5: return "Très bruyant"
+            default: return ""
+            }
+        case .smell:
+            switch selectedLevel {
+            case 1: return "Pas d'odeur"
+            case 2: return "Légère"
+            case 3: return "Perceptible"
+            case 4: return "Forte"
+            case 5: return "Très forte"
+            default: return ""
+            }
+        }
+    }
+    
+    private func colorForLevel(_ level: Int) -> Color {
+        let progress = Double(level - 1) / 4.0
+        
+        switch selectedAttribute {
+        case .heat:
+            return Color(
+                red: progress * 0.9,
+                green: 0.1 * (1.0 - progress),
+                blue: (1.0 - progress) * 0.9 + 0.1
+            )
+        case .clean:
+            let redComponent = (1.0 - progress) * 0.9
+            let greenComponent = progress * 0.8 + 0.1
+            return Color(
+                red: redComponent,
+                green: greenComponent,
+                blue: 0.1
+            )
+        case .crowd, .noise, .smell:
+            let redComponent = progress * 0.9
+            let greenComponent = (1.0 - progress) * 0.8 + 0.1
+            return Color(
+                red: redComponent,
+                green: greenComponent,
+                blue: 0.1
+            )
         }
     }
     
@@ -173,6 +292,7 @@ struct ReportView: View {
             } catch {
                 await MainActor.run {
                     isSubmitting = false
+                    showError = true
                     print("Error sending report: \(error)")
                 }
             }
@@ -180,10 +300,54 @@ struct ReportView: View {
     }
 }
 
+struct ErrorOverlay: View {
+    let onDismiss: () -> Void
+    
+    var body: some View {
+        VStack(spacing: 16) {
+            ZStack {
+                Circle()
+                    .fill(Color.red)
+                    .frame(width: 80, height: 80)
+                
+                Image(systemName: "xmark")
+                    .font(.system(size: 40, weight: .bold))
+                    .foregroundColor(.white)
+            }
+            
+            VStack(spacing: 8) {
+                Text("Erreur d'envoi")
+                    .font(.title2)
+                    .fontWeight(.semibold)
+                
+                Text("Impossible d'envoyer le rapport. Il est possible que vous en ayez récemment envoyé un.\nVeuillez réessayer plus tard.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            Button("OK") {
+                onDismiss()
+            }
+            .font(.headline)
+            .foregroundColor(.white)
+            .frame(width: 80, height: 36)
+            .background(Color.red)
+            .cornerRadius(18)
+        }
+        .padding(32)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(.regularMaterial)
+                .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
+        )
+        .padding(.horizontal, 40)
+    }
+}
+
 struct SuccessOverlay: View {
     var body: some View {
         VStack(spacing: 16) {
-            // Success Icon
             ZStack {
                 Circle()
                     .fill(Color.green)
