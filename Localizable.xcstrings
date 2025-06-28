@@ -610,16 +610,6 @@
         }
       }
     },
-    "Élevé" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "High"
-          }
-        }
-      }
-    },
     "En attente de votre position..." : {
       "localizations" : {
         "en" : {
@@ -690,6 +680,16 @@
         }
       }
     },
+    "Erreur d'envoi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sending error"
+          }
+        }
+      }
+    },
     "Erreur de scan" : {
       "localizations" : {
         "en" : {
@@ -740,16 +740,6 @@
         }
       }
     },
-    "Faible" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Low"
-          }
-        }
-      }
-    },
     "Gérez vos tickets et ajoutez votre SwissPass à Lux." : {
       "localizations" : {
         "en" : {
@@ -796,6 +786,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The server might be actually unavailable."
+          }
+        }
+      }
+    },
+    "Impossible d'envoyer le rapport. Il est possible que vous en ayez récemment envoyé un.\nVeuillez réessayer plus tard." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An error occurred while sending the report. It might be possible you sent another recently.\nPlease try again later."
           }
         }
       }
