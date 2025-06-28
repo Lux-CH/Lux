@@ -36,7 +36,6 @@ struct LegHeaderView: View {
     let nextStop: Place?
     @State private var showTripIdView: Bool = false
     @State private var lineInfo: InfoResponse?
-    @State private var isLoadingInfo: Bool = false
     @State private var showReportCard: Bool = false
     @EnvironmentObject var locationManager: LocationManager
     @ObservedObject var settings = Settings.shared
@@ -118,7 +117,7 @@ struct LegHeaderView: View {
                     }
                 }
                 if settings.crowdbackAllowed {
-                    LineInfoView(info: lineInfo, isLoading: isLoadingInfo)
+                    LineInfoView(info: lineInfo)
                 }
             }
         }
@@ -128,9 +127,7 @@ struct LegHeaderView: View {
         guard let tripId = leg.tripId,
               let routeShortName = leg.routeShortName,
               let location = locationManager.location else { return }
-        
-        isLoadingInfo = true
-        
+                
         Task {
             do {
                 let info = try await getLCBInfo(
@@ -142,12 +139,10 @@ struct LegHeaderView: View {
                 
                 await MainActor.run {
                     self.lineInfo = info
-                    self.isLoadingInfo = false
                 }
             } catch {
                 await MainActor.run {
                     self.lineInfo = nil
-                    self.isLoadingInfo = false
                 }
                 print("error loading line info : \(error)")
             }

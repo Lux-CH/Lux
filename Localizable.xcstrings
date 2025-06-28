@@ -116,7 +116,14 @@
       }
     },
     "%lld/5" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld/5"
+          }
+        }
+      }
     },
     "%lldm" : {
       "localizations" : {
@@ -486,16 +493,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading departures…"
-          }
-        }
-      }
-    },
-    "Chargement..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Loading…"
           }
         }
       }

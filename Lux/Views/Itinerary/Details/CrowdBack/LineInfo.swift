@@ -10,19 +10,10 @@ import LuxCom
 
 struct LineInfoView: View {
     let info: InfoResponse?
-    let isLoading: Bool
     
     var body: some View {
         HStack(spacing: 8) {
-            if isLoading {
-                HStack(spacing: 4) {
-                    ProgressView()
-                        .scaleEffect(0.6)
-                    Text("Chargement...")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                }
-            } else if let info = info {
+            if let info = info {
                 if info.rt != nil {
                     Image(systemName: "wave.3.forward")
                         .foregroundColor(.green)
