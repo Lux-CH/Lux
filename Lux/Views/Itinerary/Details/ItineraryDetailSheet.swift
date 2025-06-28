@@ -80,9 +80,9 @@ struct LegHeaderView: View {
                         .font(.headline)
                         .foregroundColor(.primary)
                         .fontWeight(.semibold)
-                        .lineLimit(1)
-                        .frame(maxWidth: 250, alignment: .leading)
-                        .truncationMode(.head)
+//                        .lineLimit(1)
+//                        .frame(maxWidth: 250, alignment: .leading)
+//                        .truncationMode(.head)
                     
                     Spacer()
                     
@@ -111,9 +111,9 @@ struct LegHeaderView: View {
                         Text("Prochain: \(nextStop.name)")
                             .font(.caption)
                             .foregroundColor(.secondary)
-                            .lineLimit(1)
-                            .frame(maxWidth: 250, alignment: .leading)
-                            .truncationMode(.head)
+//                            .lineLimit(1)
+//                            .frame(maxWidth: 250, alignment: .leading)
+//                            .truncationMode(.head)
                     }
                 }
                 if settings.crowdbackAllowed {
