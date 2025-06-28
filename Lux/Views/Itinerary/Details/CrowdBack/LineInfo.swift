@@ -118,25 +118,23 @@ enum AttributeType: String, CaseIterable {
         switch self {
         case .heat:
             return Color(
-                red: clampedProgress * 0.9,
-                green: 0.1 * (1.0 - clampedProgress),
-                blue: (1.0 - clampedProgress) * 0.9 + 0.1
+                red: 0.2 + clampedProgress * 0.8,
+                green: 0.3 * (1.0 - clampedProgress),
+                blue: 0.9 * (1.0 - clampedProgress)
             )
+            
         case .clean:
-            let redComponent = (1.0 - clampedProgress) * 0.9
-            let greenComponent = clampedProgress * 0.8 + 0.1
             return Color(
-                red: redComponent,
-                green: greenComponent,
-                blue: 0.1
+                red: 0.2 + (1.0 - clampedProgress) * 0.7,
+                green: 0.8 * clampedProgress + 0.1,
+                blue: 0.15
             )
+            
         case .crowd, .noise, .smell:
-            let redComponent = clampedProgress * 0.9
-            let greenComponent = (1.0 - clampedProgress) * 0.8 + 0.1
             return Color(
-                red: redComponent,
-                green: greenComponent,
-                blue: 0.1
+                red: 0.2 + clampedProgress * 0.7,
+                green: 0.8 * (1.0 - clampedProgress) + 0.1,
+                blue: 0.15
             )
         }
     }
