@@ -12,10 +12,10 @@ struct ColorSchemeSelectionView: View {
     var dimiss: () -> Void
     
     private let themeOptions = [
-        ThemeOption(id: "system", title: "Système", subtitle: "Suit les réglages système", icon: "iphone", isDefault: true),
-        ThemeOption(id: "automatic", title: "Automatique", subtitle: "Basé sur l'heure", icon: "clock.arrow.2.circlepath"),
-        ThemeOption(id: "light", title: "Clair", subtitle: "Toujours en mode clair", icon: "sun.max"),
-        ThemeOption(id: "dark", title: "Sombre", subtitle: "Toujours en mode sombre", icon: "moon")
+        ThemeOption(id: "system", title: "Système", subtitle: "Suit les réglages système", icon: "iphone", color: .accent, isDefault: true),
+        ThemeOption(id: "automatic", title: "Automatique", subtitle: "Basé sur l'heure", icon: "clock.arrow.2.circlepath", color: .purple),
+        ThemeOption(id: "light", title: "Clair", subtitle: "Toujours en mode clair", icon: "sun.max", color: .yellow),
+        ThemeOption(id: "dark", title: "Sombre", subtitle: "Toujours en mode sombre", icon: "moon", color: .indigo)
     ]
     
     var body: some View {
@@ -118,13 +118,15 @@ struct ThemeOption {
     let title: String
     let subtitle: String
     let icon: String
+    let color: Color
     let isDefault: Bool
     
-    init(id: String, title: String, subtitle: String, icon: String, isDefault: Bool = false) {
+    init(id: String, title: String, subtitle: String, icon: String, color: Color, isDefault: Bool = false) {
         self.id = id
         self.title = title
         self.subtitle = subtitle
         self.icon = icon
+        self.color = color
         self.isDefault = isDefault
     }
 }
@@ -137,18 +139,28 @@ struct ThemeSelectionCard: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 16) {
-                // Icon
                 ZStack {
                     Circle()
-                        .fill(isSelected ? Color.accentColor : Color(.tertiarySystemFill))
+                        .fill(isSelected ?
+                              LinearGradient(
+                                colors: [option.color, option.color.opacity(0.7)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                              ) :
+                              LinearGradient(
+                                colors: [option.color.opacity(0.3), option.color.opacity(0.1)],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                              )
+                        )
                         .frame(width: 50, height: 50)
                     
                     Image(systemName: option.icon)
                         .font(.system(size: 20, weight: .medium))
-                        .foregroundColor(isSelected ? .white : .primary)
+                        .foregroundColor(isSelected ? .white : option.color)
+                        .symbolRenderingMode(.hierarchical)
                 }
                 
-                // Content
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
                         Text(option.title)
@@ -173,16 +185,22 @@ struct ThemeSelectionCard: View {
                 }
                 
                 if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .font(.title3)
-                        .foregroundColor(.accentColor)
+                    ZStack {
+                        Circle()
+                            .fill(option.color)
+                            .frame(width: 24, height: 24)
+                        
+                        Image(systemName: "checkmark")
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.white)
+                    }
                 }
             }
             .padding()
             .background(
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(.secondarySystemGroupedBackground))
-                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
+                    .stroke(isSelected ? option.color : Color.clear, lineWidth: 2)
                     .overlay(
                         RoundedRectangle(cornerRadius: 16)
                             .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
