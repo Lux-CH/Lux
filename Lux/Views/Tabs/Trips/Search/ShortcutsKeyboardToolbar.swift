@@ -40,6 +40,10 @@ struct ShortcutsKeyboardToolbar: View {
                         RoundedRectangle(cornerRadius: 10)
                             .fill(Color.accentColor.opacity(0.15))
                     )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                    )
                 }
                 .buttonStyle(ScaleButtonStyle())
                 
@@ -73,6 +77,10 @@ struct ShortcutsKeyboardToolbar: View {
                                     .fill(colorScheme == .dark ?
                                           Color(.systemFill).opacity(0.8) :
                                           Color(.secondarySystemBackground))
+                            )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 10)
+                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                             )
                         }
                         .buttonStyle(ScaleButtonStyle())
