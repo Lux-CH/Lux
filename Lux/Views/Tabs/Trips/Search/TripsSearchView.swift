@@ -690,6 +690,10 @@ struct RouteIndicatorView: View {
                     Circle()
                         .fill(backgroundColorForButton)
                 )
+                .overlay(
+                    Circle()
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                )
         }
         .padding(.leading, 2)
         .transition(.opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.9)))
