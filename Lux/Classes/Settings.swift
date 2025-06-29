@@ -30,6 +30,6 @@ class Settings: ObservableObject, @unchecked Sendable {
     /// Experimental
     @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false
     @AppStorage("fetchWalkingDirectionsUsingMKDirections") var fetchWalkingDirectionsUsingMKDirections: Bool = true
-    @AppStorage("crowdbackAllowed") var crowdbackAllowed: Bool = false
+    @AppStorage("crowdbackAllowed") var crowdbackAllowed: Bool = true
 
 }
