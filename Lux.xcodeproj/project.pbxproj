@@ -15,16 +15,48 @@
 		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
 		79A2CC3A2E0EDCF80071DD44 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79A2CC392E0EDCF80071DD44 /* LuxCom */; };
 		79A912462DB341660032AB9D /* GPSTests.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 79A912452DB341660032AB9D /* GPSTests.gpx */; };
+		79ABCC9C2E11AACC00A85D71 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ABCC9B2E11AACC00A85D71 /* WidgetKit.framework */; };
+		79ABCC9E2E11AACC00A85D71 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ABCC9D2E11AACC00A85D71 /* SwiftUI.framework */; };
+		79ABCCA92E11AACD00A85D71 /* StopWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 79ABCC992E11AACC00A85D71 /* StopWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		79ABCCB52E11ABB400A85D71 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79ABCCB42E11ABB400A85D71 /* LuxCom */; };
 		79C64D402DB930DC00C01B89 /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 79C64D3F2DB930DC00C01B89 /* Polyline */; };
 		79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806F52E10CA8E004CA0A0 /* LuxCom */; };
 		79E806F92E10CAAB004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806F82E10CAAB004CA0A0 /* LuxCom */; };
 		79E806FC2E10CAFF004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806FB2E10CAFF004CA0A0 /* LuxCom */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		79ABCCA72E11AACD00A85D71 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 799D2A5F2D98ABF80066E9F5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 79ABCC982E11AACC00A85D71;
+			remoteInfo = StopWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		79ABCCAE2E11AACD00A85D71 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				79ABCCA92E11AACD00A85D71 /* StopWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		791994C62DE374CF00B2080C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		799D2A672D98ABF80066E9F5 /* Lux.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lux.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A912452DB341660032AB9D /* GPSTests.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GPSTests.gpx; sourceTree = "<group>"; };
+		79ABCC992E11AACC00A85D71 /* StopWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = StopWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		79ABCC9B2E11AACC00A85D71 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		79ABCC9D2E11AACC00A85D71 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		79ABCCAF2E11AAD300A85D71 /* StopWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = StopWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -35,6 +67,22 @@
 			);
 			target = 799D2A662D98ABF80066E9F5 /* Lux */;
 		};
+		79ABCCAD2E11AACD00A85D71 /* Exceptions for "StopWidget" folder in "StopWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 79ABCC982E11AACC00A85D71 /* StopWidgetExtension */;
+		};
+		79ABCCC22E11B0E600A85D71 /* Exceptions for "Lux" folder in "StopWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Classes/BlinkManager.swift,
+				"Views/Elements/Font/tpg-font.otf",
+				Views/Tabs/Home/Components/Nearby/Arrival/ArrivalMinuteView.swift,
+			);
+			target = 79ABCC982E11AACC00A85D71 /* StopWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -42,8 +90,17 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				79A4C21F2DB2853A000FF271 /* Exceptions for "Lux" folder in "Lux" target */,
+				79ABCCC22E11B0E600A85D71 /* Exceptions for "Lux" folder in "StopWidgetExtension" target */,
 			);
 			path = Lux;
+			sourceTree = "<group>";
+		};
+		79ABCC9F2E11AACC00A85D71 /* StopWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				79ABCCAD2E11AACD00A85D71 /* Exceptions for "StopWidget" folder in "StopWidgetExtension" target */,
+			);
+			path = StopWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -66,15 +123,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		79ABCC962E11AACC00A85D71 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				79ABCC9E2E11AACC00A85D71 /* SwiftUI.framework in Frameworks */,
+				79ABCC9C2E11AACC00A85D71 /* WidgetKit.framework in Frameworks */,
+				79ABCCB52E11ABB400A85D71 /* LuxCom in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		799D2A5E2D98ABF80066E9F5 = {
 			isa = PBXGroup;
 			children = (
+				79ABCCAF2E11AAD300A85D71 /* StopWidgetExtension.entitlements */,
 				791994C62DE374CF00B2080C /* Localizable.xcstrings */,
 				79A912452DB341660032AB9D /* GPSTests.gpx */,
 				799D2A692D98ABF80066E9F5 /* Lux */,
+				79ABCC9F2E11AACC00A85D71 /* StopWidget */,
+				79ABCC9A2E11AACC00A85D71 /* Frameworks */,
 				799D2A682D98ABF80066E9F5 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -83,8 +153,18 @@
 			isa = PBXGroup;
 			children = (
 				799D2A672D98ABF80066E9F5 /* Lux.app */,
+				79ABCC992E11AACC00A85D71 /* StopWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		79ABCC9A2E11AACC00A85D71 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				79ABCC9B2E11AACC00A85D71 /* WidgetKit.framework */,
+				79ABCC9D2E11AACC00A85D71 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -97,10 +177,12 @@
 				799D2A632D98ABF80066E9F5 /* Sources */,
 				799D2A642D98ABF80066E9F5 /* Frameworks */,
 				799D2A652D98ABF80066E9F5 /* Resources */,
+				79ABCCAE2E11AACD00A85D71 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				79ABCCA82E11AACD00A85D71 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				799D2A692D98ABF80066E9F5 /* Lux */,
@@ -122,6 +204,29 @@
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
 			productType = "com.apple.product-type.application";
 		};
+		79ABCC982E11AACC00A85D71 /* StopWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 79ABCCAA2E11AACD00A85D71 /* Build configuration list for PBXNativeTarget "StopWidgetExtension" */;
+			buildPhases = (
+				79ABCC952E11AACC00A85D71 /* Sources */,
+				79ABCC962E11AACC00A85D71 /* Frameworks */,
+				79ABCC972E11AACC00A85D71 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				79ABCC9F2E11AACC00A85D71 /* StopWidget */,
+			);
+			name = StopWidgetExtension;
+			packageProductDependencies = (
+				79ABCCB42E11ABB400A85D71 /* LuxCom */,
+			);
+			productName = StopWidgetExtension;
+			productReference = 79ABCC992E11AACC00A85D71 /* StopWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -129,11 +234,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1630;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1630;
 				TargetAttributes = {
 					799D2A662D98ABF80066E9F5 = {
 						CreatedOnToolsVersion = 16.3;
+					};
+					79ABCC982E11AACC00A85D71 = {
+						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
@@ -162,6 +270,7 @@
 			projectRoot = "";
 			targets = (
 				799D2A662D98ABF80066E9F5 /* Lux */,
+				79ABCC982E11AACC00A85D71 /* StopWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -176,6 +285,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		79ABCC972E11AACC00A85D71 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -186,7 +302,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		79ABCC952E11AACC00A85D71 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		79ABCCA82E11AACD00A85D71 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 79ABCC982E11AACC00A85D71 /* StopWidgetExtension */;
+			targetProxy = 79ABCCA72E11AACD00A85D71 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		799D2A702D98ABF90066E9F5 /* Debug */ = {
@@ -321,6 +452,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Lux/Lux.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7G89J82G2A;
@@ -357,6 +489,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Lux/Lux.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7G89J82G2A;
@@ -388,6 +521,64 @@
 			};
 			name = Release;
 		};
+		79ABCCAB2E11AACD00A85D71 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = StopWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7G89J82G2A;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StopWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = StopWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.cclerc.Lux.StopWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		79ABCCAC2E11AACD00A85D71 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = StopWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 7G89J82G2A;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = StopWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = StopWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 0.1;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.cclerc.Lux.StopWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -405,6 +596,15 @@
 			buildConfigurations = (
 				799D2A732D98ABF90066E9F5 /* Debug */,
 				799D2A742D98ABF90066E9F5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		79ABCCAA2E11AACD00A85D71 /* Build configuration list for PBXNativeTarget "StopWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				79ABCCAB2E11AACD00A85D71 /* Debug */,
+				79ABCCAC2E11AACD00A85D71 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
@@ -498,6 +698,11 @@
 		};
 		79A2CC392E0EDCF80071DD44 /* LuxCom */ = {
 			isa = XCSwiftPackageProductDependency;
+			productName = LuxCom;
+		};
+		79ABCCB42E11ABB400A85D71 /* LuxCom */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79E806FA2E10CAFF004CA0A0 /* XCRemoteSwiftPackageReference "LuxCom" */;
 			productName = LuxCom;
 		};
 		79C64D3F2DB930DC00C01B89 /* Polyline */ = {
