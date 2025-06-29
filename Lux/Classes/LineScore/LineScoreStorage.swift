@@ -39,6 +39,10 @@ class LineScoreStorage: LineScoreStorageProtocol {
         return luxDirectory.appendingPathComponent("lineScores.data")
     }
     
+    private var sharedDefaults: UserDefaults? {
+        UserDefaults(suiteName: "group.ch.cclerc.lux.shareddata")
+    }
+    
     init() {
         lineScoresSubject.send(loadLineScoresFromDisk())
     }
@@ -63,6 +67,24 @@ class LineScoreStorage: LineScoreStorageProtocol {
         encoder.outputFormat = .binary
         let data = try encoder.encode(scores)
         try data.write(to: lineScoresURL, options: .atomic)
+        
+        syncToSharedDefaults(scores)
+    }
+    
+    private func syncToSharedDefaults(_ scores: [LineScore]) {
+        guard let sharedDefaults = sharedDefaults else {
+            print("warning!! : cld not access shared stuff for widget sync")
+            return
+        }
+        
+        do {
+            let encoder = PropertyListEncoder()
+            let data = try encoder.encode(scores)
+            sharedDefaults.set(data, forKey: "lineScores")
+            sharedDefaults.synchronize()
+        } catch {
+            print("error \(error.localizedDescription)")
+        }
     }
     
     func saveLineScores(_ scores: [LineScore]) throws {
