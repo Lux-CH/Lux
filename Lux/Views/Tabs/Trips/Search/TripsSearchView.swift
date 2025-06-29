@@ -550,8 +550,9 @@ struct EmptyStateContent: View {
                 .font(.headline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
-                .padding(.horizontal)
                 .transition(.scale.combined(with: .opacity))
+                .lineLimit(nil)
+                .fixedSize(horizontal: false, vertical: true)
             
             VStack(spacing: 12) {
                 if viewModel.isCurrentPositionAvailable() {
@@ -571,8 +572,12 @@ struct EmptyStateContent: View {
                         .padding(.horizontal, 10)
                         .padding(.vertical, 12)
                         .background(
-                            Capsule()
+                            RoundedRectangle(cornerRadius: 16)
                                 .fill(Color.accentColor.opacity(0.15))
+                        )
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 16)
+                                .stroke(Color.accentColor.opacity(0.1), lineWidth: 0.5)
                         )
                         .foregroundColor(.accentColor)
                     }
@@ -617,9 +622,14 @@ struct EmptyStateContent: View {
                             .padding(.horizontal, 16)
                             .padding(.vertical, 10)
                             .background(
-                                RoundedRectangle(cornerRadius: 12)
+                                RoundedRectangle(cornerRadius: 16)
                                     .fill(Color.secondary.opacity(0.1))
                             )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            )
+                            
                         }
                         .buttonStyle(ScaleButtonStyle())
                     }
