@@ -47,7 +47,7 @@ struct AttributeIndicator: View {
     }
     
     var body: some View {
-        if let data = attributeData, data.trustLevel >= 2.0 {
+        if let data = attributeData, data.trustLevel >= 3.0 {
             HStack(spacing: 2) {
                 Image(systemName: type.iconName)
                     .font(.system(size: 11))
