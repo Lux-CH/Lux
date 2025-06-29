@@ -120,24 +120,6 @@ struct LegHeaderView: View {
                     LineInfoView(info: lineInfo)
                 }
             }
-            
-            Spacer()
-        }
-        .overlay(alignment: .topTrailing) {
-            if settings.crowdbackAllowed {
-                Button {
-                    showReportCard = true
-                } label: {
-                    Image(systemName: "exclamationmark.bubble")
-                        .font(.system(size: 16))
-                }
-                .foregroundStyle(.gray)
-                .sheet(isPresented: $showReportCard, onDismiss: {loadLineInfo()}) {
-                    ReportView(leg: leg)
-                        .presentationDetents([.fraction(0.6)])
-                        .presentationCornerRadius(38)
-                }
-            }
         }
     }
     
