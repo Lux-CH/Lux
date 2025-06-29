@@ -17,10 +17,12 @@ struct LuxApp: App {
     @StateObject private var accentColorManager = AccentColorManager.shared
     
     @State private var showItinerarySheet: Bool = false
+    @State private var showStopSheet: Bool = false
     @State private var showConfirmation: Bool = false
     @State private var showItineraryProcessingError: Bool = false
     @State private var inputedURL: URL?
     @State private var sharedItinerary: Itinerary?
+    @State private var sharedStopDetail: (String, String)?
     
     @ObservedObject var settings = Settings.shared
     
@@ -40,12 +42,25 @@ struct LuxApp: App {
                     inputedURL = url
                     if url.pathExtension == "luxtrip" {
                         showConfirmation = true
+                    } else if let urlStr = inputedURL?.absoluteString, urlStr.contains("//") {
+                        let components = urlStr.components(separatedBy: "//")
+                        if components.count == 2 {
+                            let stopId = components[0]
+                            let encodedName = components[1]
+                            if let name = encodedName.removingPercentEncoding {
+                                self.sharedStopDetail = (stopId, name)
+                                self.showStopSheet = true
+                            }
+                        }
                     }
                 }
                 .fullScreenCover(isPresented: $showItinerarySheet) {
                     if let itinerary = sharedItinerary {
                         ItineraryView(itinerary: itinerary, fromNearby: false)
                     }
+                }
+                .fullScreenCover(isPresented: $showStopSheet) {
+                    stopView
                 }
                 .alert("Êtes-vous sûr de vouloir ouvrir cet itinéraire ?", isPresented: $showConfirmation) {
                     Button("Ouvrir") {
@@ -122,6 +137,45 @@ struct LuxApp: App {
         }
         else {
             return nil
+        }
+    }
+    
+    @ViewBuilder
+    private var stopView: some View {
+        if let (stopId, name) = sharedStopDetail {
+            NavigationStack {
+                createExpandedStopView(stop: Place(
+                    name: name,
+                    stopId: stopId,
+                    lat: 0.0,
+                    lon: 0.0,
+                    level: 0,
+                    arrival: nil,
+                    departure: nil,
+                    scheduledArrival: nil,
+                    scheduledDeparture: nil,
+                    scheduledTrack: nil,
+                    _track: nil,
+                    vertexType: .transit))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Text(name)
+                            .font(.headline)
+                            .lineLimit(1)
+                    }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            showStopSheet = false
+                        } label: {
+                            Image(systemName: "xmark.circle.fill")
+                                .symbolRenderingMode(.hierarchical)
+                                .font(.body)
+                        }
+                        .tint(.secondary)
+                    }
+                }
+            }
         }
     }
 }

@@ -220,6 +220,7 @@ struct StopWidgetEntryView: View {
         }
         .padding(.horizontal, 8)
         .padding(.vertical, 6)
+        .widgetURL(URL(string: "\(entry.stopId)//\(entry.departures.first?.place.name ?? "Inconnu")"))
     }
     
     private func formatLastUpdate(_ date: Date) -> String {
