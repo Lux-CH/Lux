@@ -850,16 +850,6 @@
         }
       }
     },
-    "Les changements nécessitent un redémarrage" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The changes require a restart"
-          }
-        }
-      }
-    },
     "Les deux premiers raccourcis seront affichés sur l'écran d'accueil." : {
       "localizations" : {
         "en" : {
@@ -1210,16 +1200,6 @@
         }
       }
     },
-    "Pour appliquer le nouveau thème, vous devez redémarrer l'application." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To apply a new theme, you need to restart the app."
-          }
-        }
-      }
-    },
     "Prochain: %@" : {
       "localizations" : {
         "en" : {
@@ -1256,16 +1236,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "What do you want to report ?"
-          }
-        }
-      }
-    },
-    "Quitter maintenant" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Quit now"
           }
         }
       }
@@ -1326,16 +1296,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search a place or an address"
-          }
-        }
-      }
-    },
-    "Redémarrage requis" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "App restart required"
           }
         }
       }
