@@ -77,13 +77,15 @@ struct Provider: TimelineProvider {
                 let stopTimes = try await getDeparturesForStop(
                     stopId: stopId,
                     time: Date(),
-                    numberOfEvents: numberOfEvents
+                    numberOfEvents: numberOfEvents * 3
                 )
+                
+                let prioritizedDepartures = prioritizeDeparturesByLineScore(stopTimes.stopTimes)
                 
                 let entry = DepartureEntry(
                     date: Date(),
                     stopId: stopId,
-                    departures: Array(stopTimes.stopTimes.prefix(numberOfEvents)),
+                    departures: Array(prioritizedDepartures.prefix(numberOfEvents)),
                     lastUpdate: Date(),
                     error: nil,
                     isPreview: false
@@ -115,6 +117,45 @@ struct Provider: TimelineProvider {
             return sharedDefaults.string(forKey: "selectedStopId") ?? "ch_Parent8587057"
         }
         return "ch_Parent8587057"
+    }
+    
+    private func prioritizeDeparturesByLineScore(_ departures: [StopTime]) -> [StopTime] {
+        let lineScores = loadLineScoresFromSharedStorage()
+        
+        return departures.sorted { departure1, departure2 in
+            let score1 = getLineScore(for: departure1.routeShortName, from: lineScores)
+            let score2 = getLineScore(for: departure2.routeShortName, from: lineScores)
+            
+            if score1 != score2 {
+                return score1 > score2
+            }
+            
+            guard let dep1Time = departure1.place.departure,
+                  let dep2Time = departure2.place.departure else {
+                return false
+            }
+            
+            return dep1Time < dep2Time
+        }
+    }
+    
+    private func loadLineScoresFromSharedStorage() -> [LineScore] {
+        guard let sharedDefaults = UserDefaults(suiteName: "group.ch.cclerc.lux.shareddata"),
+              let data = sharedDefaults.data(forKey: "lineScores") else {
+            return []
+        }
+        
+        do {
+            let decoder = PropertyListDecoder()
+            return try decoder.decode([LineScore].self, from: data)
+        } catch {
+            print("error loading line scores in widget!!  \(error.localizedDescription)")
+            return []
+        }
+    }
+    
+    private func getLineScore(for routeShortName: String, from lineScores: [LineScore]) -> Double {
+        return lineScores.first { $0.routeShortName == routeShortName }?.totalScore ?? 0.0
     }
 }
 
