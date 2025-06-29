@@ -40,7 +40,7 @@ struct CustomTabBar: View {
                 )
                 .shadow(
                     color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
-                    radius: 10,
+                    radius: 7.5,
                     x: 0,
                     y: 5
                 )
@@ -48,9 +48,9 @@ struct CustomTabBar: View {
                     Capsule()
                         .stroke(
                             colorScheme == .dark
-                            ? Color.white.opacity(0.1)
+                            ? Color.primary.opacity(0.1)
                             : Color.gray.opacity(0.1),
-                            lineWidth: 1
+                            lineWidth: 0.75
                         )
                 )
         )
@@ -81,7 +81,7 @@ struct TabButton: View {
                     .font(.system(size: 16, weight: selectedTab == tab ? .semibold : .regular))
                     .foregroundStyle(selectedTab == tab ? Color.accentColor : Color.primary.opacity(0.6))
                     .frame(width: 30, height: 30)
-            
+                
                 if selectedTab == tab {
                     Text(tab.title)
                         .font(.system(size: 16, weight: .medium))
@@ -102,6 +102,12 @@ struct TabButton: View {
                             : Color.accentColor.opacity(0.1)
                         )
                         .matchedGeometryEffect(id: "TAB", in: namespace)
+                }
+            }
+            .overlay {
+                if selectedTab == tab {
+                    Capsule()
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.25)
                 }
             }
         }
