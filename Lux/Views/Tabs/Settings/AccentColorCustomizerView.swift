@@ -131,6 +131,12 @@ struct ModernColorOptionView: View {
 //                            x: 0,
 //                            y: isSelected ? 8 : 4
 //                        )
+                        .overlay {
+                            if !isSelected {
+                                Circle()
+                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            }
+                        }
                     
                     if isSelected {
                         Circle()
