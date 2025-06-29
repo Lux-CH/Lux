@@ -16,6 +16,9 @@
 		79A2CC3A2E0EDCF80071DD44 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79A2CC392E0EDCF80071DD44 /* LuxCom */; };
 		79A912462DB341660032AB9D /* GPSTests.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 79A912452DB341660032AB9D /* GPSTests.gpx */; };
 		79C64D402DB930DC00C01B89 /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 79C64D3F2DB930DC00C01B89 /* Polyline */; };
+		79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806F52E10CA8E004CA0A0 /* LuxCom */; };
+		79E806F92E10CAAB004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806F82E10CAAB004CA0A0 /* LuxCom */; };
+		79E806FC2E10CAFF004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806FB2E10CAFF004CA0A0 /* LuxCom */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -50,6 +53,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				79E806FC2E10CAFF004CA0A0 /* LuxCom in Frameworks */,
+				79E806F92E10CAAB004CA0A0 /* LuxCom in Frameworks */,
 				790749EC2DEE598E0010D818 /* GlowGetter in Frameworks */,
 				796432242DEED1A1004498A7 /* SwiftUIMessage in Frameworks */,
 				79A2CC3A2E0EDCF80071DD44 /* LuxCom in Frameworks */,
@@ -57,6 +62,7 @@
 				79C64D402DB930DC00C01B89 /* Polyline in Frameworks */,
 				791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */,
 				790749E22DEE45A50010D818 /* CodeScanner in Frameworks */,
+				79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -108,6 +114,9 @@
 				790749EB2DEE598E0010D818 /* GlowGetter */,
 				796432232DEED1A1004498A7 /* SwiftUIMessage */,
 				79A2CC392E0EDCF80071DD44 /* LuxCom */,
+				79E806F52E10CA8E004CA0A0 /* LuxCom */,
+				79E806F82E10CAAB004CA0A0 /* LuxCom */,
+				79E806FB2E10CAFF004CA0A0 /* LuxCom */,
 			);
 			productName = Lux;
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
@@ -145,7 +154,7 @@
 				790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */,
 				796432222DEED1A1004498A7 /* XCRemoteSwiftPackageReference "SwiftUIMessage" */,
-				79A2CC382E0EDCF80071DD44 /* XCLocalSwiftPackageReference "../LuxCom" */,
+				79E806FA2E10CAFF004CA0A0 /* XCRemoteSwiftPackageReference "LuxCom" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 799D2A682D98ABF80066E9F5 /* Products */;
@@ -402,13 +411,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		79A2CC382E0EDCF80071DD44 /* XCLocalSwiftPackageReference "../LuxCom" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../LuxCom;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -458,6 +460,14 @@
 				kind = branch;
 			};
 		};
+		79E806FA2E10CAFF004CA0A0 /* XCRemoteSwiftPackageReference "LuxCom" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lux-CH/LuxCom";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -494,6 +504,19 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 79C64D3E2DB930DC00C01B89 /* XCRemoteSwiftPackageReference "Polyline" */;
 			productName = Polyline;
+		};
+		79E806F52E10CA8E004CA0A0 /* LuxCom */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LuxCom;
+		};
+		79E806F82E10CAAB004CA0A0 /* LuxCom */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LuxCom;
+		};
+		79E806FB2E10CAFF004CA0A0 /* LuxCom */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 79E806FA2E10CAFF004CA0A0 /* XCRemoteSwiftPackageReference "LuxCom" */;
+			productName = LuxCom;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
