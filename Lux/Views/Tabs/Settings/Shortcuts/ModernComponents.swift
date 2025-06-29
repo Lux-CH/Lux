@@ -28,11 +28,11 @@ struct ModernCard<Content: View>: View {
             .background {
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(backgroundColor)
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 16, style: .continuous)
-                            .stroke(strokeColor, lineWidth: strokeWidth)
-                    }
             }
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+            )
     }
     
     private var backgroundColor: Color {
@@ -74,13 +74,13 @@ struct ModernTextFieldStyle: TextFieldStyle {
         configuration
             .padding(16)
             .background {
-                RoundedRectangle(cornerRadius: 12, style: .continuous)
+                RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(Color(.secondarySystemGroupedBackground))
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .stroke(Color(.separator).opacity(0.3), lineWidth: 0.5)
-                    }
             }
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+            )
             .font(.body)
     }
 }

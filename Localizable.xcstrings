@@ -620,6 +620,16 @@
         }
       }
     },
+    "En définissant une programmation, Lux vous suggérera le raccourci sur l'écran d'accueil, en fonction du moment de la journée.\nPar exemple, si vous utilisez un raccourci tous les jours à 8h, Lux le mettra en avant autour de cette heure." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "By setting up a programmation, Lux will suggest the shortcut on the home screen based on the time of day.\nFor example, if you use a shortcut every day at 8 AM, Lux will highlight it around that time."
+          }
+        }
+      }
+    },
     "Enregistrer" : {
       "localizations" : {
         "en" : {

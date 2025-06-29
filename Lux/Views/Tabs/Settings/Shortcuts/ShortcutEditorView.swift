@@ -372,7 +372,6 @@ struct ShortcutEditorView: View {
             if hasTimeSchedule {
                 ModernCard {
                     VStack(spacing: 16) {
-                        // Days of the week picker
                         VStack(spacing: 12) {
                             Text("Jours de la semaine")
                                 .font(.subheadline.weight(.medium))
@@ -432,6 +431,15 @@ struct ShortcutEditorView: View {
                     insertion: .scale(scale: 0.95).combined(with: .opacity).combined(with: .offset(y: -20)),
                     removal: .scale(scale: 0.95).combined(with: .opacity).combined(with: .offset(y: -20))
                 ))
+            }
+            else {
+                VStack(alignment: .leading) {
+                    Text("En définissant une programmation, Lux vous suggérera le raccourci sur l'écran d'accueil, en fonction du moment de la journée.\nPar exemple, si vous utilisez un raccourci tous les jours à 8h, Lux le mettra en avant autour de cette heure.")
+                        .multilineTextAlignment(.leading)
+                        .foregroundStyle(.secondary)
+                        .font(.footnote)
+                }
+                
             }
         }
         .opacity(showContent ? 1 : 0)

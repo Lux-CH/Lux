@@ -15,7 +15,6 @@ struct DayPickerButton: View {
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 6) {
-                // Day circle
                 ZStack {
                     Circle()
                         .fill(isSelected ? Color.accentColor : Color(.quaternarySystemFill))
@@ -38,6 +37,10 @@ struct DayPickerButton: View {
                     radius: isSelected ? 1 : 0,
                     x: 0,
                     y: 0.5
+                )
+                .overlay(
+                    Circle()
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                 )
                 Text(day.displayName)
                     .font(.system(size: 10, weight: .medium))
