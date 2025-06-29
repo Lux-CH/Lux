@@ -39,7 +39,6 @@ struct LineScoreView: View {
         }
     }
     
-    // MARK: - Computed Properties for Filtering
     private var highScoreLines: [LineScore] {
         lineScoreManager.lineScores.filter { $0.totalScore >= 2.0 }.sorted { $0.totalScore > $1.totalScore }
     }
@@ -48,7 +47,6 @@ struct LineScoreView: View {
         lineScoreManager.lineScores.filter { $0.totalScore < 2.0 && $0.totalScore != 0.0 }.sorted { $0.totalScore > $1.totalScore }
     }
     
-    // MARK: - Header Card
     private var headerCard: some View {
         VStack(spacing: 12) {
             Image(systemName: "chart.bar.fill")
@@ -73,7 +71,6 @@ struct LineScoreView: View {
         .padding(.horizontal)
     }
     
-    // MARK: - Lines Card
     private var linesCard: some View {
         SettingsCard {
             Section {
@@ -178,7 +175,6 @@ struct LineScoreView: View {
         }
     }
     
-    // MARK: - Quick Actions Card
     private var quickActionsCard: some View {
         SettingsCard {
             Section {
@@ -212,8 +208,6 @@ struct LineScoreView: View {
         }
     }
 }
-
-// MARK: - Supporting Views
 
 struct LineScoreRow: View {
     @ObservedObject var lineScoreManager = LineScoreManager.shared
@@ -281,15 +275,31 @@ struct LineScoreRow: View {
     }
 }
 
-// MARK: - New Editable Line Pill Component
 struct EditableLinePill: View {
     @ObservedObject var settings = Settings.shared
     @Binding var lineNumber: String
     let mode: TransportationMode
     @FocusState private var isFocused: Bool
     
+    private static let squaredModes: Set<TransportationMode> = [
+        .regionalRail, .ferry, .rail, .highSpeedRail,
+        .longDistance, .metro, .nightRail, .regionalFastRail
+    ]
+    
+    private var isTrainDetected: Bool {
+        lineNumber.hasPrefix("RL") || lineNumber.hasPrefix("IR") || lineNumber.hasPrefix("RE") || lineNumber.hasPrefix("IC") || lineNumber == "R"
+    }
+
     private var isSquared: Bool {
-        mode == .regionalRail || mode == .ferry
+        if Self.squaredModes.contains(mode) {
+            return true
+        }
+        else if isTrainDetected {
+            return true
+        }
+        else {
+            return false
+        }
     }
     
     private var formattedLine: String {
@@ -297,7 +307,7 @@ struct EditableLinePill: View {
     }
     
     private var lineColor: Color {
-        if mode == .regionalRail && LineColors.color(for: lineNumber) == nil {
+        if isSquared && LineColors.color(for: lineNumber) == nil {
             return Color(hex: "EA0706")
         }
         return LineColors.color(for: lineNumber) ?? .gray
@@ -312,13 +322,18 @@ struct EditableLinePill: View {
             RoundedRectangle(cornerRadius: isSquared ? 4 : 50)
                 .fill(settings.highContrastButAccurateLinePill ? lineColor : lineColor.opacity(0.25))
                 .frame(width: 80, height: 50)
+                .overlay(
+                    RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                )
             
             TextField("XX", text: $lineNumber)
                 .font(.custom("NimbusSansBeckerPBla", size: 18))
                 .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: lineNumber) : (lineColor == .gray ? .primary : lineColor))
                 .multilineTextAlignment(.center)
                 .textCase(.uppercase)
-                .autocorrectionDisabled()
+                .keyboardType(.alphabet)
+                .disableAutocorrection(true)
                 .focused($isFocused)
                 .frame(width: 70)
                 .background(Color.clear)
@@ -345,7 +360,6 @@ struct AddLineScoreView: View {
             VStack(spacing: 30) {
                 Spacer()
                 
-                // Header
                 VStack(spacing: 16) {
                     Image(systemName: "plus.circle.fill")
                         .font(.system(size: 50))
@@ -361,7 +375,6 @@ struct AddLineScoreView: View {
                         .multilineTextAlignment(.center)
                 }
                 
-                // Large Editable Pill
                 VStack(spacing: 12) {
                     Text("Numéro de ligne")
                         .font(.headline)
