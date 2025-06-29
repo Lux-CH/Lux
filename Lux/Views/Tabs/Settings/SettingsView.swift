@@ -159,7 +159,7 @@ struct SettingsView: View {
                     )
                 }
                 .buttonStyle(.plain)
-                NavigationLink(destination: ColorSchemeSelectionView()) {
+                NavigationLink(destination: ColorSchemeSelectionView(dimiss: {dismiss()})) {
                     SettingsRow(
                         icon: "circle.lefthalf.filled",
                         title: "Mode d'affichage",

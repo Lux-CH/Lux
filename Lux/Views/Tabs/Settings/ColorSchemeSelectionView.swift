@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ColorSchemeSelectionView: View {
     @ObservedObject var settings = Settings.shared
-    @State private var showingRestartAlert = false
+    var dimiss: () -> Void
     
     private let themeOptions = [
         ThemeOption(id: "system", title: "Système", subtitle: "Suit les réglages système", icon: "iphone", isDefault: true),
@@ -26,19 +26,11 @@ struct ColorSchemeSelectionView: View {
                     VStack {
                         themeSelectionCards
                             .padding(.bottom)
-                        restartNoticeCard
                     }
                     .padding(.horizontal)
                 }
             }
             .background(Color(.systemGroupedBackground))
-            .alert("Redémarrage requis", isPresented: $showingRestartAlert) {
-                Button("Quitter maintenant") {
-                    exitGracefully()
-                }
-            } message: {
-                Text("Pour appliquer le nouveau thème, vous devez redémarrer l'application.")
-            }
         }
     }
     
@@ -76,32 +68,6 @@ struct ColorSchemeSelectionView: View {
                 )
             }
         }
-    }
-    
-    private var restartNoticeCard: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "info.circle.fill")
-                .foregroundColor(.orange)
-                .font(.title3)
-            
-            VStack(alignment: .leading, spacing: 2) {
-                Text("Redémarrage requis")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                
-                Text("Les changements nécessitent un redémarrage")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            
-            Spacer()
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color.orange.opacity(0.1))
-                .stroke(Color.orange.opacity(0.3), lineWidth: 1)
-        )
     }
     
     private func isSelected(_ option: ThemeOption) -> Bool {
@@ -143,14 +109,7 @@ struct ColorSchemeSelectionView: View {
             }
         }
         
-        // Show restart alert immediately
-        showingRestartAlert = true
-    }
-    func exitGracefully() {
-        UIControl().sendAction(#selector(URLSessionTask.suspend), to: UIApplication.shared, for: nil)
-        Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
-            exit(0)
-        }
+        dimiss()
     }
 }
 
@@ -213,7 +172,6 @@ struct ThemeSelectionCard: View {
                         .foregroundColor(.secondary)
                 }
                 
-                // Selection indicator
                 if isSelected {
                     Image(systemName: "checkmark.circle.fill")
                         .font(.title3)
@@ -238,5 +196,5 @@ struct ThemeSelectionCard: View {
 }
 
 #Preview {
-    ColorSchemeSelectionView()
+    ColorSchemeSelectionView(dimiss: {print("dismissing parent settignsview")})
 }
