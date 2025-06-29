@@ -89,7 +89,7 @@ struct Provider: TimelineProvider {
                     isPreview: false
                 )
                 
-                let nextUpdate = Calendar.current.date(byAdding: .minute, value: 1, to: Date())!
+                let nextUpdate = Calendar.current.date(byAdding: .minute, value: 2, to: Date())!
                 let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
                 completion(timeline)
                 
@@ -103,7 +103,7 @@ struct Provider: TimelineProvider {
                     isPreview: false
                 )
                 
-                let nextUpdate = Calendar.current.date(byAdding: .minute, value: 2, to: Date())!
+                let nextUpdate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
                 let timeline = Timeline(entries: [errorEntry], policy: .after(nextUpdate))
                 completion(timeline)
             }

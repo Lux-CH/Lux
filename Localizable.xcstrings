@@ -1300,6 +1300,16 @@
         }
       }
     },
+    "Rechercher un arrêt..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search a stop…"
+          }
+        }
+      }
+    },
     "Recherchez un lieu ou une adresse" : {
       "localizations" : {
         "en" : {
@@ -1406,6 +1416,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Select"
+          }
+        }
+      }
+    },
+    "Sélectionner un arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select a stop"
           }
         }
       }

@@ -142,7 +142,7 @@ struct SettingsView: View {
                     subtitle: "Réduire l'espacement dans l'onglet des arrêts",
                     isOn: $settings.reduceSpacerBtwnStopContent
                 )
-    
+                
                 SettingsToggle(
                     icon: "lightspectrum.horizontal",
                     title: "Contraste plus important",
@@ -164,6 +164,15 @@ struct SettingsView: View {
                         icon: "circle.lefthalf.filled",
                         title: "Mode d'affichage",
                         subtitle: "Chosissez la mode d'affichage de l'app (clair, sombre, auto..)",
+                        showChevron: true
+                    )
+                }
+                .buttonStyle(.plain)
+                NavigationLink(destination: WidgetStopSelectorView()) {
+                    SettingsRow(
+                        icon: { if #available(iOS 18, *) { "widget.small" } else { "eye" } }(),
+                        title: "Widget",
+                        subtitle: "Personnalisez le Widget de l'app en sélectionnant un arrêt à afficher",
                         showChevron: true
                     )
                 }
