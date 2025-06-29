@@ -64,6 +64,10 @@ struct RouteOptionsView: View {
                                                                   Color.accentColor :
                                                                   Color(.tertiarySystemFill))
                                                     )
+                                                    .overlay(
+                                                        Circle()
+                                                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                                    )
                                                     .foregroundColor(maxTransfers == number ? .white : .primary)
                                             }
                                             .buttonStyle(ScaleButtonStyle())
@@ -254,6 +258,10 @@ struct AccessibilityProfileButton: View {
                     Circle()
                         .fill(isSelected ? Color.accentColor : Color(.tertiarySystemFill))
                         .frame(width: 60, height: 60)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                        )
                     
                     Image(systemName: iconName)
                         .font(.system(size: 28))
@@ -360,6 +368,10 @@ struct TransferTimeSelector: View {
                     .background(
                         RoundedRectangle(cornerRadius: 12)
                             .fill(selectedTime == seconds ? Color.accentColor : Color(.tertiarySystemFill))
+                    )
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                     )
                 }
                 .buttonStyle(ScaleButtonStyle())
