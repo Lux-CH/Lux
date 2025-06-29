@@ -1090,6 +1090,7 @@ struct TripsSearchTimePickerView: View {
             }
             Divider()
                 .padding(.horizontal)
+                .overlay(Color(.tertiaryLabel))
             
             HStack {
                 Button("Annuler") {

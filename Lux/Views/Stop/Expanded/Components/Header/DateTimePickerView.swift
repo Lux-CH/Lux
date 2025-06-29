@@ -44,7 +44,8 @@ struct DateTimePickerView: View {
             
             Divider()
                 .padding(.horizontal)
-            
+                .overlay(Color(.tertiaryLabel))
+
             HStack {
                 Button("Annuler") {
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
