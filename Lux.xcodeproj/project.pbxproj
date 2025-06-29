@@ -78,6 +78,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Classes/BlinkManager.swift,
+				Models/LineScore.swift,
 				"Views/Elements/Font/tpg-font.otf",
 				Views/Tabs/Home/Components/Nearby/Arrival/ArrivalMinuteView.swift,
 			);
