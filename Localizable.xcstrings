@@ -530,6 +530,16 @@
         }
       }
     },
+    "Ci-dessus une liste des crédits de l'application, notamment des différents autres modules utilisés par Lux." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Above is a list of the different credits of the application, precisely the various modules and packages used by Lux"
+          }
+        }
+      }
+    },
     "Couleur de l'app" : {
       "localizations" : {
         "en" : {
@@ -546,6 +556,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Available colors"
+          }
+        }
+      }
+    },
+    "Crédits" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Credits"
           }
         }
       }

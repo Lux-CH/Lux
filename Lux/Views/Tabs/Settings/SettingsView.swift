@@ -247,6 +247,15 @@ struct SettingsView: View {
     private var aboutCard: some View {
         SettingsCard {
             Section {
+                NavigationLink(destination: CreditsView()) {
+                    SettingsRow(
+                        icon: "heart.fill",
+                        title: "Crédits",
+                        subtitle: "Liste des modules utilisés dans l'application",
+                        showChevron: true
+                    )
+                }
+                .buttonStyle(.plain)
 //                SettingsRow(
 //                    icon: "antenna.radiowaves.left.and.right",
 //                    title: "Origine des perturbations",
