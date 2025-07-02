@@ -186,7 +186,7 @@ struct TripsSearchHeaderView: View {
                 }
             },
             topPadding: 0,
-            iconName: "location.circle.fill"
+            iconName: "location"
         )
         .onTapGesture {
             if viewModel.selectedFrom == nil {
@@ -215,7 +215,7 @@ struct TripsSearchHeaderView: View {
                 }
             },
             topPadding: 0,
-            iconName: "mappin.circle.fill"
+            iconName: "mappin"
         )
         .onTapGesture {
             if viewModel.selectedTo == nil {
@@ -245,11 +245,11 @@ struct TripsSearchHeaderView: View {
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(swapButtonForegroundColor)
                 .frame(width: 42, height: 42)
-                .background(swapButtonBackground)
+                .background(buttonBackground)
                 .clipShape(Circle())
                 .overlay(
                     Circle()
-                        .strokeBorder(swapButtonBorderColor, lineWidth: swapButtonBorderWidth)
+                        .strokeBorder(buttonBorderColor, lineWidth: 0.5)
                 )
                 .rotationEffect(isSwapping ? Angle(degrees: 180) : .zero)
                 .animation(.spring(response: 0.5, dampingFraction: 0.6), value: isSwapping)
@@ -278,7 +278,7 @@ struct TripsSearchHeaderView: View {
                 .clipShape(Circle())
                 .overlay(
                     Circle()
-                        .strokeBorder(buttonBorderColor, lineWidth: 1)
+                        .strokeBorder(buttonBorderColor, lineWidth: 0.5)
                 )
         }
         .buttonStyle(ScaleButtonStyle())
@@ -307,7 +307,7 @@ struct TripsSearchHeaderView: View {
                 .clipShape(Circle())
                 .overlay(
                     Circle()
-                        .strokeBorder(buttonBorderColor, lineWidth: 1)
+                        .strokeBorder(buttonBorderColor, lineWidth: 0.5)
                 )
         }
         .buttonStyle(ScaleButtonStyle())
@@ -315,54 +315,16 @@ struct TripsSearchHeaderView: View {
     
     private var buttonBackground: some View {
         Circle()
-            .fill(
-                colorScheme == .dark
-                ? Color(.tertiarySystemBackground)
-                : Color(.systemBackground)
-            )
+            .fill(Color(.secondarySystemFill).opacity(0.5))
     }
     
     private var buttonBorderColor: Color {
-        colorScheme == .dark
-        ? Color(.separator).opacity(0.3)
-        : Color(.separator).opacity(0.2)
-    }
-    
-    private var swapButtonBackground: some View {
-        let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
-        
-        return Circle()
-            .fill(
-                isEnabled
-                ? (colorScheme == .dark
-                   ? Color(.tertiarySystemBackground)
-                   : Color(.systemBackground))
-                : (colorScheme == .dark
-                   ? Color(.secondarySystemBackground)
-                   : Color(.tertiarySystemBackground))
-            )
+        Color.primary.opacity(0.1)
     }
     
     private var swapButtonForegroundColor: Color {
         let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
         return isEnabled ? .accentColor : Color(.tertiaryLabel)
-    }
-    
-    private var swapButtonBorderColor: Color {
-        let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
-        
-        if isEnabled {
-            return colorScheme == .dark
-            ? Color(.separator).opacity(0.3)
-            : Color(.separator).opacity(0.2)
-        } else {
-            return Color(.separator).opacity(0.1)
-        }
-    }
-    
-    private var swapButtonBorderWidth: CGFloat {
-        let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
-        return isEnabled ? 1 : 0.5
     }
 }
 
@@ -688,7 +650,7 @@ struct RouteIndicatorView: View {
                 .padding(10)
                 .background(
                     Circle()
-                        .fill(backgroundColorForButton)
+                        .fill(Color(.secondarySystemFill).opacity(0.5))
                 )
                 .overlay(
                     Circle()

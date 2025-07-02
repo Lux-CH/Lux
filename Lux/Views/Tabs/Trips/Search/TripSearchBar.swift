@@ -112,9 +112,7 @@ struct TripSearchBar: View {
         .frame(height: 58)
         .background(
             RoundedRectangle(cornerRadius: 35)
-                .fill(colorScheme == .dark ?
-                      Color(.systemFill).opacity(0.3) :
-                      Color(.systemBackground))
+                .fill(Color(.secondarySystemFill).opacity(0.5))
                 .shadow(
                     color: Color.black.opacity(isFocused ? 0.08 : 0.05),
                     radius: isFocused ? 6 : 4,

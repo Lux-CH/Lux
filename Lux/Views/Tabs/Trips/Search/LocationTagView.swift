@@ -40,11 +40,14 @@ struct LocationTagView: View {
         .padding(.vertical, 6)
         .padding(.horizontal, 10)
         .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(colorScheme == .dark ? 
-                      Color(.systemFill).opacity(0.4) : 
-                      Color(.secondarySystemBackground))
+            RoundedRectangle(cornerRadius: 75)
+                .fill(
+                      Color(.systemFill).opacity(0.2))
                 .shadow(color: Color.black.opacity(0.03), radius: 2, x: 0, y: 1)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 75)
+                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
         )
         .animation(.spring(response: 0.3), value: location)
     }
