@@ -106,6 +106,8 @@ struct IndividualItineraryDetailView: View {
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
+                            let itineraarySharer = ItinerarySharer()
+                            ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
                         }
                     }
                 }
