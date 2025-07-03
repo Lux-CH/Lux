@@ -95,13 +95,13 @@ struct ItineraryStopTimelineRowView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
-        .background(
-            RoundedRectangle(cornerRadius: 12)
-                .fill(stopStatus.isCurrentStop ?
-                      (colorScheme == .dark ? Color(.systemGray6) : Color(.systemGray5).opacity(0.5)) :
-                        Color.clear)
-                .padding(.horizontal, 8)
-        )
+//        .background(
+//            RoundedRectangle(cornerRadius: 12)
+//                .fill(stopStatus.isCurrentStop ?
+//                      (colorScheme == .dark ? Color(.systemGray6) : Color(.systemGray5).opacity(0.5)) :
+//                        Color.clear)
+//                .padding(.horizontal, 8)
+//        )
         .fullScreenCover(isPresented: $showingStopDetail) {
             ItineraryStopDetailView(stop: stop)
         }
