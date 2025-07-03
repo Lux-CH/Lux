@@ -57,7 +57,8 @@ struct ExpandedStopView: View {
                             viewModel: viewModel,
                             animateIn: $animateIn,
                             maxGroupsToShow: maxGroupsToShow,
-                            animation: animation
+                            animation: animation,
+                            selectedDate: $selectedDate
                         )
                         .transition(.asymmetric(
                             insertion: .move(edge: .bottom).combined(with: .opacity),
