@@ -18,6 +18,12 @@ struct TripOption: Identifiable, Equatable {
     }
 }
 
+enum MapTrackingMode {
+    case none
+    case follow
+    case followWithHeading
+}
+
 struct ItineraryView: View {
     @StateObject private var viewModel: ItineraryViewModel
     @EnvironmentObject var locationManager: LocationManager
@@ -26,6 +32,9 @@ struct ItineraryView: View {
     @State var otherItineraries: [TripOption] = []
     let fromNearby: Bool
     
+    @State private var trackingMode: MapTrackingMode = .none
+    @State private var isUserDragging: Bool = false
+
     init(tripId: String, fromNearby: Bool, otherTripOptions: [TripOption] = []) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
         self.fromNearby = fromNearby
@@ -35,6 +44,17 @@ struct ItineraryView: View {
     init(itinerary: Itinerary, fromNearby: Bool) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary))
         self.fromNearby = fromNearby
+    }
+    
+    var locationButtonIcon: String {
+        switch trackingMode {
+        case .none:
+            return "location"
+        case .follow:
+            return "location.fill"
+        case .followWithHeading:
+            return "location.north.line.fill"
+        }
     }
     
     var body: some View {
@@ -83,7 +103,8 @@ struct ItineraryView: View {
                 }
                 .mapStyle(.standard)
                 .mapControls {
-                    MapScaleView()
+//                    MapScaleView()
+                    MapCompass()
                     
                 }
                 .safeAreaInset(edge: .bottom) {
@@ -92,6 +113,18 @@ struct ItineraryView: View {
                 .onMapCameraChange { context in
                     viewModel.updateZoomLevel(distance: context.camera.distance)
                 }
+                .simultaneousGesture(
+                    DragGesture()
+                        .onChanged { _ in
+                            disableTrackingIfNeeded()
+                        }
+                        .simultaneously(with:
+                            MagnificationGesture()
+                            .onChanged { _ in
+                                disableTrackingIfNeeded()
+                            }
+                        )
+                )
                 .overlay(alignment: .leading) {
                     VStack(spacing: 12) {
                         Button(action: {
@@ -108,13 +141,11 @@ struct ItineraryView: View {
                         }
                         
                         Button(action: {
-                            if let userLocation = locationManager.location?.coordinate {
-                                withAnimation(.easeInOut(duration: 1.0)) {
-                                    viewModel.position = .camera(MapCamera(centerCoordinate: userLocation, distance: 10000))
-                                }
+                            withAnimation {
+                                cycleTrackingMode()
                             }
                         }) {
-                            Image(systemName: "location.fill")
+                            Image(systemName: locationButtonIcon)
                                 .font(.headline)
                                 .foregroundColor(.accentColor)
                                 .frame(width: 45, height: 45)
@@ -180,6 +211,31 @@ struct ItineraryView: View {
             viewModel.stopAllTasks()
         }
     }
+
+    private func disableTrackingIfNeeded() {
+        if trackingMode != .none {
+            withAnimation {
+                trackingMode = .none
+            }
+        }
+    }
+    
+    private func cycleTrackingMode() {
+        switch trackingMode {
+        case .none:
+            trackingMode = .follow
+            viewModel.position = .userLocation(followsHeading: false, fallback: .automatic)
+        case .follow:
+            trackingMode = .followWithHeading
+            viewModel.position = .userLocation(followsHeading: true, fallback: .automatic)
+        case .followWithHeading:
+            trackingMode = .none
+            if let userLocation = locationManager.location?.coordinate {
+                viewModel.position = .camera(.init(centerCoordinate: userLocation, distance: viewModel.position.camera?.distance ?? 10000))
+            }
+        }
+    }
+    
     func getExactTime(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
