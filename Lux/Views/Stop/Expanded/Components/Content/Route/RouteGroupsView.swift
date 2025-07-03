@@ -12,6 +12,7 @@ struct RouteGroupsView: View {
     @Binding var animateIn: Bool
     let maxGroupsToShow: Int
     var animation: Namespace.ID
+    @Binding var selectedDate: Date
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
@@ -35,7 +36,9 @@ struct RouteGroupsView: View {
             .padding(.bottom, 10)
         }
         .refreshable {
-            await viewModel.refreshDepartures(showLoading: false)
+            let now = Date()
+            await viewModel.refreshDepartures(forTime: now, showLoading: false)
+            selectedDate = now
         }
     }
 }
