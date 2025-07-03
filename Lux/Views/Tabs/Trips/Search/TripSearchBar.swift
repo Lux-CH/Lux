@@ -32,8 +32,7 @@ struct TripSearchBar: View {
                     .frame(width: 36, height: 36)
                     .animation(.spring(response: 0.3), value: selectedLocation)
                 
-                Image(systemName: selectedLocation != nil ?
-                      (selectedLocation == .currentPosition ? "location.fill" : iconName) :
+                Image(systemName: selectedLocation != nil && iconName == "location" ? "location.fill" :
                       iconName)
                     .font(.system(size: 16, weight: selectedLocation != nil ? .medium : .regular))
                     .foregroundColor(selectedLocation != nil ? .accentColor : .secondary)
