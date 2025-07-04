@@ -15,7 +15,6 @@ struct IndividualItineraryDetailView: View {
     @State private var isExpanded: Bool = false
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject var disruptionManager: DisruptionManager
-    @ObservedObject var settings = Settings.shared
     
     private let upcomingStops: [Place]
     private let nextStop: Place?
