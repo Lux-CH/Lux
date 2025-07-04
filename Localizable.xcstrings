@@ -317,6 +317,22 @@
         }
       }
     },
+    "Attention : le temps entre le %@ et le %@ est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d’attente minimum dans les options d’itinéraire (page précédente)." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warning : the time between the%1$@ and the %2$@ is short. You might miss your connection.\nTo avoid this, increase minimum waiting time at stop in itinerary options (precedent page)."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Attention : le temps entre le %1$@ et le %2$@ est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d’attente minimum dans les options d’itinéraire (page précédente)."
+          }
+        }
+      }
+    },
     "Aucun arrêt à proximité trouvé." : {
       "localizations" : {
         "en" : {
@@ -536,6 +552,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Above is a list of the different credits of the application, precisely the various modules and packages used by Lux"
+          }
+        }
+      }
+    },
+    "Correspondance risquée" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risky connection"
           }
         }
       }
