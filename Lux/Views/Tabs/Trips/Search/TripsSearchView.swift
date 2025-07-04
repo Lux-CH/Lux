@@ -1001,19 +1001,19 @@ struct HapticFeedback {
 }
 
 struct TripsSearchTimePickerView: View {
-    @Binding var selectedDate: Date
+    @Binding var selectedDate: Date?
     @Binding var departureType: DepartureType
     @Binding var showDatePicker: Bool
     var onApply: () -> Void
     @Environment(\.colorScheme) private var colorScheme
     @State private var localDate: Date
     
-    init(selectedDate: Binding<Date>, departureType: Binding<DepartureType>, showDatePicker: Binding<Bool>, onApply: @escaping () -> Void) {
+    init(selectedDate: Binding<Date?>, departureType: Binding<DepartureType>, showDatePicker: Binding<Bool>, onApply: @escaping () -> Void) {
         self._selectedDate = selectedDate
         self._departureType = departureType
         self._showDatePicker = showDatePicker
         self.onApply = onApply
-        self._localDate = State(initialValue: selectedDate.wrappedValue)
+        self._localDate = State(initialValue: selectedDate.wrappedValue ?? Date())
     }
     
     var body: some View {
@@ -1046,8 +1046,10 @@ struct TripsSearchTimePickerView: View {
             if departureType == .leaveAt {
                 Button {
                     withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                        localDate = Date()
+                        selectedDate = nil
+                        showDatePicker = false
                         HapticFeedback.lightImpact()
+                        onApply()
                     }
                 } label: {
                     Label("Maintenant", systemImage: "clock.arrow.circlepath")
