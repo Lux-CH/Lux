@@ -12,6 +12,8 @@ import MapKit
 struct MultipleItineraryDetailView: View {
     @State var itinerary: Itinerary
     @State private var expandedLegIds: Set<String> = []
+    @State private var showingTightConnectionAlert = false
+    @State private var selectedTightConnection: (from: String, to: String)?
     let viewModel: ItineraryViewModel
     
     private func calculateUpcomingStops(leg: Leg) -> [Place] {
@@ -51,6 +53,31 @@ struct MultipleItineraryDetailView: View {
     
     private func getLegId(_ leg: Leg) -> String {
         return "\(leg.startTime.timeIntervalSince1970)-\(leg.from.name)-\(leg.to.name)"
+    }
+    
+    private func isTightConnection(walkingLeg: Leg, legIndex: Int) -> (from: Leg, to: Leg)? {
+        guard walkingLeg.mode == .walk,
+              walkingLeg.duration <= 60,
+              legIndex > 0,
+              legIndex < itinerary.legs.count - 1 else {
+            return nil
+        }
+        
+        let previousLeg = itinerary.legs[legIndex - 1]
+        let nextLeg = itinerary.legs[legIndex + 1]
+        
+        if previousLeg.mode != .walk && nextLeg.mode != .walk {
+            return (from: previousLeg, to: nextLeg)
+        }
+        
+        return nil
+    }
+    
+    private func getLegConnectionInfo(from fromLeg: Leg, to toLeg: Leg) -> (from: String, to: String) {
+        let fromTransport = fromLeg.routeShortName ?? fromLeg.headsign ?? "le transport précédent"
+        let toTransport = toLeg.routeShortName ?? toLeg.headsign ?? "le transport suivant"
+        
+        return (from: fromTransport, to: toTransport)
     }
     
     private func getDirectionIcon(for step: MKRoute.Step, index: Int, totalSteps: Int) -> String {
@@ -106,7 +133,7 @@ struct MultipleItineraryDetailView: View {
             
             ScrollView {
                 VStack(spacing: 0) {
-                    ForEach(itinerary.legs, id: \.legGeometry.points) { leg in
+                    ForEach(Array(itinerary.legs.enumerated()), id: \.element.legGeometry.points) { legIndex, leg in
                         if leg.mode != .walk {
                             // Transit leg
                             LegHeaderView(leg: leg, legColor: getLegColor(leg), isSingle: false, nextStop: calculateNextStop(leg: leg))
@@ -131,6 +158,7 @@ struct MultipleItineraryDetailView: View {
                             let legId = getLegId(leg)
                             let isExpanded = expandedLegIds.contains(legId)
                             let walkingSteps = viewModel.walkingDirections[viewModel.getLegIdentifier(leg)] ?? []
+                            let tightConnectionLegs = isTightConnection(walkingLeg: leg, legIndex: legIndex)
                             
                             VStack(spacing: 0) {
                                 HStack {
@@ -140,8 +168,22 @@ struct MultipleItineraryDetailView: View {
                                         .frame(width: 30)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
-                                        Text("Marche")
-                                            .font(.headline)
+                                        HStack(spacing: 8) {
+                                            Text("Marche")
+                                                .font(.headline)
+                                            
+                                            if let legs = tightConnectionLegs {
+                                                Button(action: {
+                                                    selectedTightConnection = getLegConnectionInfo(from: legs.from, to: legs.to)
+                                                    showingTightConnectionAlert = true
+                                                }) {
+                                                    Image(systemName: "exclamationmark.triangle.fill")
+                                                        .foregroundColor(.red)
+                                                        .font(.system(size: 16))
+                                                }
+                                                .buttonStyle(PlainButtonStyle())
+                                            }
+                                        }
                                         
                                         HStack(spacing: 4) {
                                             Text(formatDistance(leg.distance ?? 0))
@@ -149,8 +191,17 @@ struct MultipleItineraryDetailView: View {
                                             Text("•")
                                                 .font(.caption)
                                                 .foregroundColor(.gray)
-                                            Text("\(leg.duration / 60) min")
-                                                .font(.subheadline)
+                                            Button(action: {
+                                                if let legs = tightConnectionLegs {
+                                                    selectedTightConnection = getLegConnectionInfo(from: legs.from, to: legs.to)
+                                                    showingTightConnectionAlert = true
+                                                }
+                                            }) {
+                                                Text("\(leg.duration / 60) min")
+                                                    .font(.subheadline)
+                                                    .foregroundColor(tightConnectionLegs != nil ? .red : .secondary)
+                                            }
+                                            .buttonStyle(PlainButtonStyle())
                                         }
                                         .foregroundColor(.secondary)
                                     }
@@ -248,6 +299,13 @@ struct MultipleItineraryDetailView: View {
                 .padding(.bottom, 20)
                 let itineraarySharer = ItinerarySharer()
                 ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
+            }
+        }
+        .alert("Correspondance risquée", isPresented: $showingTightConnectionAlert) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            if let connection = selectedTightConnection {
+                Text("Attention : le temps entre le \(connection.from) et le \(connection.to) est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d’attente minimum dans les options d’itinéraire (page précédente).")
             }
         }
     }
