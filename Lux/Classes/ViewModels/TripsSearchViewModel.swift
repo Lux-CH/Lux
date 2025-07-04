@@ -114,7 +114,7 @@ class TripsSearchViewModel: ObservableObject {
     
     // Departure settings
     @Published var departureType: DepartureType = .leaveAt
-    @Published var selectedDate = Date()
+    @Published var selectedDate: Date? = nil
     
     enum SearchField {
         case from, to, none
@@ -324,13 +324,14 @@ class TripsSearchViewModel: ObservableObject {
         
         showTripResults = true
         
-        // Configure route options
+        let timeForRequest = selectedDate ?? Date()
+        
         let options = RouteOptions(
             from: fromCoordinates,
             to: toCoordinates,
             via: routeOptions.via,
             viaMinimumStay: routeOptions.viaMinimumStay,
-            time: getSearchTime(),
+            time: timeForRequest,
             arriveBy: departureType == .arriveBy,
             maxTransfers: routeOptions.maxTransfers,
             minTransferTime: routeOptions.minTransferTime,
@@ -460,13 +461,6 @@ class TripsSearchViewModel: ObservableObject {
                 return (coords.latitude, coords.longitude)
             }
             return nil
-        }
-    }
-    
-    private func getSearchTime() -> Date? {
-        switch departureType {
-        case .leaveAt, .arriveBy:
-            return selectedDate
         }
     }
     
