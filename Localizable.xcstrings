@@ -322,7 +322,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Warning : the time between the%1$@ and the %2$@ is short. You might miss your connection.\nTo avoid this, increase minimum waiting time at stop in itinerary options (precedent page)."
+            "value" : "Warning : the time between the %1$@ and the %2$@ is short. You might miss your connection.\nTo avoid this, increase minimum waiting time at stop in itinerary options (precedent page)."
           }
         },
         "fr" : {
