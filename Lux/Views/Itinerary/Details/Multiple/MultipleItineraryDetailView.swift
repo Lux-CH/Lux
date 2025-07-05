@@ -273,7 +273,7 @@ struct MultipleItineraryDetailView: View {
                                                     .padding(.leading, 58)
                                                     .padding(.trailing, 20)
                                             }
-                                            if let track = leg.to.track, track != leg.from.track {
+                                            if leg.to.track != leg.from.track {
                                                 HStack(alignment: .top, spacing: 10) {
                                                     Image(systemName: "signpost.right")
                                                         .foregroundColor(.blue)
@@ -282,7 +282,7 @@ struct MultipleItineraryDetailView: View {
                                                         .clipShape(Circle())
                                                     
                                                     VStack(alignment: .leading, spacing: 4) {
-                                                        Text("Arrivez à \(leg.to.name) - \(getTrackType(track))")
+                                                        Text("Arrivez à \(leg.to.name)\(leg.to.track.map { " - \(getTrackType($0))" } ?? "")")
                                                             .font(.subheadline)
                                                             .multilineTextAlignment(.leading)
                                                     }
