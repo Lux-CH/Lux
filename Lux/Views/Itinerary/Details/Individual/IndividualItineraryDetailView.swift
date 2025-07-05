@@ -106,6 +106,10 @@ struct IndividualItineraryDetailView: View {
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
+                            Divider()
+                                .padding(.horizontal, 20)
+                                .padding(.bottom, 10)
+                                .frame(minHeight: 1)
                             let itineraarySharer = ItinerarySharer()
                             ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
                         }
