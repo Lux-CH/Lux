@@ -86,6 +86,7 @@ struct IndividualItineraryDetailView: View {
                         .padding(.bottom, 17.5)
                     Divider()
                         .padding(.horizontal, 20)
+                        .frame(minHeight: 1)
                     ScrollViewReader { proxy in
                         ScrollView {
                             if let actualName = leg.routeShortName {
