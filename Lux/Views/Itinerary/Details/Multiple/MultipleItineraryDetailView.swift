@@ -57,7 +57,6 @@ struct MultipleItineraryDetailView: View {
     
     private func isTightConnection(walkingLeg: Leg, legIndex: Int) -> (from: Leg, to: Leg)? {
         guard walkingLeg.mode == .walk,
-              walkingLeg.duration <= 60,
               legIndex > 0,
               legIndex < itinerary.legs.count - 1 else {
             return nil
@@ -66,7 +65,20 @@ struct MultipleItineraryDetailView: View {
         let previousLeg = itinerary.legs[legIndex - 1]
         let nextLeg = itinerary.legs[legIndex + 1]
         
-        if previousLeg.mode != .walk && nextLeg.mode != .walk {
+        guard previousLeg.mode != .walk && nextLeg.mode != .walk else {
+            return nil
+        }
+        
+        let previousArrival = previousLeg.to.arrival ?? previousLeg.to.scheduledArrival ?? previousLeg.endTime
+        let nextDeparture = nextLeg.from.departure ?? previousLeg.from.scheduledDeparture ?? nextLeg.startTime
+        
+        let totalConnectionTime = nextDeparture.timeIntervalSince(previousArrival)
+        
+        let walkingTime = Double(walkingLeg.duration)
+        
+        let bufferTime = totalConnectionTime - walkingTime
+                
+        if bufferTime < TimeInterval(80) {
             return (from: previousLeg, to: nextLeg)
         }
         
