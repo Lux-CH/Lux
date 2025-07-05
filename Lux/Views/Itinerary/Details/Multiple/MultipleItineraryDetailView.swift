@@ -257,11 +257,28 @@ struct MultipleItineraryDetailView: View {
                                                 .padding(.vertical, 10)
                                                 .padding(.horizontal, 20)
                                                 
-                                                if index < walkingSteps.count - 1 {
-                                                    Divider()
-                                                        .padding(.leading, 58)
-                                                        .padding(.trailing, 20)
+                                                Divider()
+                                                    .padding(.leading, 58)
+                                                    .padding(.trailing, 20)
+                                            }
+                                            if let track = leg.to.track, track != leg.from.track {
+                                                HStack(alignment: .top, spacing: 10) {
+                                                    Image(systemName: "signpost.right")
+                                                        .foregroundColor(.blue)
+                                                        .frame(width: 28, height: 28)
+                                                        .background(Color.blue.opacity(0.1))
+                                                        .clipShape(Circle())
+                                                    
+                                                    VStack(alignment: .leading, spacing: 4) {
+                                                        Text("Arrivez à \(leg.to.name) - \(getTrackType(track))")
+                                                            .font(.subheadline)
+                                                            .multilineTextAlignment(.leading)
+                                                    }
+                                                    
+                                                    Spacer()
                                                 }
+                                                .padding(.vertical, 10)
+                                                .padding(.horizontal, 20)
                                             }
                                         } else {
                                             HStack(alignment: .top, spacing: 10) {

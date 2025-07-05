@@ -317,6 +317,22 @@
         }
       }
     },
+    "Arrivez à %@ - %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrive at %1$@ - %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Arrivez à %1$@ - %2$@"
+          }
+        }
+      }
+    },
     "Attention : le temps entre le %@ et le %@ est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d’attente minimum dans les options d’itinéraire (page précédente)." : {
       "localizations" : {
         "en" : {
