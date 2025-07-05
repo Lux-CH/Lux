@@ -317,18 +317,12 @@
         }
       }
     },
-    "Arrivez à %@ - %@" : {
+    "Arrivez à %@%@" : {
       "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arrive at %1$@ - %2$@"
-          }
-        },
         "fr" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Arrivez à %1$@ - %2$@"
+            "value" : "Arrivez à %1$@%2$@"
           }
         }
       }
