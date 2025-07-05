@@ -554,47 +554,59 @@ struct EmptyStateContent: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 8)
                         .padding(.top, 8)
-                    
-                    ForEach(shortcutManager.shortcuts) { shortcut in
-                        Button(action: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                                viewModel.handleInitialSearchResult(shortcut.toSearchResult(), targetField: viewModel.activeSearchField)
-                                HapticFeedback.lightImpact()
-                            }
-                        }) {
-                            HStack(spacing: 12) {
-                                Image(systemName: shortcut.symbol)
-                                    .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.accentColor)
-                                    .frame(width: 24, height: 24)
-                                
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(shortcut.name)
-                                        .fontWeight(.medium)
-                                        .foregroundColor(.primary)
-                                    
-                                    Text(shortcut.coordinates.locationName)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
+                    ScrollView {
+                        ForEach(shortcutManager.shortcuts) { shortcut in
+                            Button(action: {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                    viewModel.handleInitialSearchResult(shortcut.toSearchResult(), targetField: viewModel.activeSearchField)
+                                    HapticFeedback.lightImpact()
                                 }
+                            }) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: shortcut.symbol)
+                                        .font(.system(size: 16, weight: .medium))
+                                        .foregroundColor(.accentColor)
+                                        .frame(width: 24, height: 24)
+                                    
+                                    VStack(alignment: .leading, spacing: 2) {
+                                        Text(shortcut.name)
+                                            .fontWeight(.medium)
+                                            .foregroundColor(.primary)
+                                        
+                                        Text(shortcut.coordinates.locationName)
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                    }
+                                    
+                                    Spacer()
+                                }
+                                .frame(maxWidth: .infinity)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 10)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .fill(Color.secondary.opacity(0.1))
+                                )
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 16)
+                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                )
                                 
-                                Spacer()
                             }
-                            .frame(maxWidth: .infinity)
-                            .padding(.horizontal, 16)
-                            .padding(.vertical, 10)
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color.secondary.opacity(0.1))
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                            )
-                            
+                            .buttonStyle(ScaleButtonStyle())
                         }
-                        .buttonStyle(ScaleButtonStyle())
                     }
+                    .mask(
+                        VStack(spacing: 0) {
+                            Rectangle()
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.black, Color.clear]),
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(height: 20)
+                        }
+                    )
                 }
             }
             .padding(.top, 16)
