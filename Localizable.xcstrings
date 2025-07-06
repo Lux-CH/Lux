@@ -319,6 +319,12 @@
     },
     "Arrivez à %@%@" : {
       "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrive at %1$@%2$@"
+          }
+        },
         "fr" : {
           "stringUnit" : {
             "state" : "new",
@@ -1582,16 +1588,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Minimum time between transfers"
-          }
-        }
-      }
-    },
-    "Terminer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Done"
           }
         }
       }
