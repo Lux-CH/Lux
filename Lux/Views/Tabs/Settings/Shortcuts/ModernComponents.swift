@@ -45,28 +45,6 @@ struct ModernCard<Content: View>: View {
             return Color(.tertiarySystemGroupedBackground)
         }
     }
-    
-    private var strokeColor: Color {
-        switch style {
-        case .normal:
-            return Color(.separator).opacity(0.3)
-        case .accent:
-            return Color.accentColor.opacity(0.2)
-        case .subtle:
-            return Color(.separator).opacity(0.2)
-        }
-    }
-    
-    private var strokeWidth: CGFloat {
-        switch style {
-        case .normal:
-            return 0.5
-        case .accent:
-            return 1
-        case .subtle:
-            return 0.5
-        }
-    }
 }
 
 struct ModernTextFieldStyle: TextFieldStyle {

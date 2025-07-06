@@ -10,7 +10,6 @@ import LuxCom
 
 struct SearchResultRow: View {
     let result: SearchResult
-    @Environment(\.colorScheme) private var colorScheme
     
     private func getIconForType(_ type: LocationType)-> (String, Color) {
         switch type{

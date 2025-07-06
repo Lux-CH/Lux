@@ -38,21 +38,6 @@ class StopsViewModel: ObservableObject {
         loadNearbyStops(showLoading: false)
     }
     
-    func onChange(of newSearchQuery: String) {
-        if newSearchQuery.isEmpty {
-            resetSearch()
-        }
-        else if newSearchQuery.count < 3 {
-            isSearchMode = true
-            showMinCharactersMessage = true
-            searchResults = []
-        }
-        else {
-            showMinCharactersMessage = false
-            performSearch()
-        }
-    }
-    
     func performSearch() {
         isSearchMode = !searchQuery.isEmpty
         

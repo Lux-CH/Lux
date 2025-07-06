@@ -11,7 +11,6 @@ import SwiftUI
 struct TripSearchBar: View {
     @Binding var searchText: String
     @FocusState.Binding var isFocused: Bool
-    @Environment(\.colorScheme) private var colorScheme
     @Namespace private var animation
     
     var placeholderText: String
@@ -19,7 +18,6 @@ struct TripSearchBar: View {
     var onSearch: () -> Void
     var onClear: () -> Void
     var onRemoveTag: (() -> Void)?
-    var topPadding: CGFloat
     var iconName: String
     
     var body: some View {

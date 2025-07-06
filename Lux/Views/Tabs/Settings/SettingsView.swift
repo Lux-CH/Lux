@@ -10,14 +10,12 @@ import SwiftUI
 struct SettingsView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var lineScoreManager = LineScoreManager.shared
-    @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject private var shortcutManager: ShortcutManager
     @ObservedObject var settings = Settings.shared
     @ObservedObject var accentColorManager = AccentColorManager.shared
     
     @State private var showAddShortcutSheet = false
     @State private var editingShortcut: UserShortcut? = nil
-    @State private var isReordering = false
     
     var body: some View {
         NavigationStack {

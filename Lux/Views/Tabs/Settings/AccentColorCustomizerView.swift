@@ -11,7 +11,6 @@ struct AccentColorCustomizerView: View {
     @ObservedObject var accentColorManager = AccentColorManager.shared
     @Environment(\.colorScheme) var colorScheme
     @State private var selectedColorScale: CGFloat = 1.0
-    @State private var showingColorDetails = false
     @State private var selectedColorName = ""
         
     var body: some View {

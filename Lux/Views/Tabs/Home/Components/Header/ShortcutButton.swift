@@ -10,7 +10,6 @@ import SwiftUI
 struct ShortcutButton: View {
     @ObservedObject var settings = Settings.shared
     var symbol: String
-    var coords: (Double, Double)?
     var name: String?
     var isPlaceholder: Bool = false
     var action: () -> Void

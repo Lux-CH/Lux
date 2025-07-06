@@ -11,7 +11,6 @@ import LuxCom
 struct LineScoreView: View {
     @ObservedObject var lineScoreManager = LineScoreManager.shared
     @ObservedObject var settings = Settings.shared
-    @Environment(\.colorScheme) private var colorScheme
     
     @State private var showAddLineSheet = false
     @State private var showLowScoreLines = false
@@ -212,7 +211,6 @@ struct LineScoreView: View {
 struct LineScoreRow: View {
     @ObservedObject var lineScoreManager = LineScoreManager.shared
     let lineScore: LineScore
-    @State private var showingDeleteAlert = false
     
     var body: some View {
         HStack(spacing: 12) {
@@ -302,19 +300,11 @@ struct EditableLinePill: View {
         }
     }
     
-    private var formattedLine: String {
-        lineNumber.hasPrefix("RL") ? String(lineNumber.dropFirst(1)) : lineNumber
-    }
-    
     private var lineColor: Color {
         if isSquared && LineColors.color(for: lineNumber) == nil {
             return Color(hex: "EA0706")
         }
         return LineColors.color(for: lineNumber) ?? .gray
-    }
-    
-    private var displayText: String {
-        formattedLine.isEmpty ? "XX" : formattedLine
     }
     
     var body: some View {

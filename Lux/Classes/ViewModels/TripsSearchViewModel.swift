@@ -33,15 +33,6 @@ enum SelectedLocation: Equatable {
         }
     }
     
-    var coordinates: (Double, Double)? {
-        switch self {
-        case .searchResult(let result):
-            return (result.lat, result.lon)
-        case .currentPosition:
-            return nil
-        }
-    }
-    
     static func == (lhs: SelectedLocation, rhs: SelectedLocation) -> Bool {
         return lhs.id == rhs.id
     }
@@ -52,13 +43,6 @@ enum DepartureType: String, CaseIterable, Identifiable {
     case arriveBy = "Arriver à"
     
     var id: String { self.rawValue }
-    
-    var systemImage: String {
-        switch self {
-        case .leaveAt: return "clock.fill"
-        case .arriveBy: return "flag.fill"
-        }
-    }
 }
 
 class TripsSearchViewModel: ObservableObject {

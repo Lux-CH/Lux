@@ -7,15 +7,12 @@
 
 import Foundation
 import CoreLocation
-import Combine
 import LuxCom
 
 class ShortcutEditorViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String? = nil
-    
-    private var cancellables = Set<AnyCancellable>()
-    
+        
     func useCurrentLocation(locationManager: LocationManager, completion: @escaping (SearchResult?) -> Void) {
         guard let location = locationManager.location else {
             errorMessage = "Impossible d'accéder à votre position"
@@ -90,46 +87,5 @@ class ShortcutEditorViewModel: ObservableObject {
         )
         
         completion(result)
-    }
-    
-    func formatCoordinates(latitude: Double, longitude: Double) -> String {
-        return String(format: "%.6f, %.6f", latitude, longitude)
-    }
-    
-    func getLocationDescription(for searchResult: SearchResult) -> String {
-        if !searchResult.areas.isEmpty {
-            if let matchedArea = searchResult.areas.first(where: { $0.matched }) {
-                return matchedArea.name
-            } else if let defaultArea = searchResult.areas.first(where: { $0.default == true }) {
-                return defaultArea.name
-            } else {
-                return searchResult.areas.sorted(by: { $0.adminLevel < $1.adminLevel }).first?.name ?? ""
-            }
-        }
-        
-        var addressComponents: [String] = []
-        
-        if let street = searchResult.street {
-            var streetPart = street
-            if let number = searchResult.houseNumber {
-                streetPart += " " + number
-            }
-            addressComponents.append(streetPart)
-        }
-        
-        if let zip = searchResult.zip {
-            addressComponents.append(zip)
-        }
-        
-        if !addressComponents.isEmpty {
-            return addressComponents.joined(separator: ", ")
-        }
-        
-        return formatCoordinates(latitude: searchResult.lat, longitude: searchResult.lon)
-    }
-    
-    /// Clears any error messages
-    func clearErrorMessage() {
-        errorMessage = nil
     }
 }

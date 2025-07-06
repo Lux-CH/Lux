@@ -16,7 +16,6 @@ struct TripsSearchView: View {
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) var dismiss
     @State private var dragOffset: CGFloat = 0
-    @Namespace private var animation
 
     var initialSearchResult: SearchResult? = nil
     var initialTargetField: TripsSearchViewModel.SearchField = .to
@@ -40,16 +39,12 @@ struct TripsSearchView: View {
                             viewModel: viewModel,
                             isFromFocused: $isFromFocused,
                             isToFocused: $isToFocused,
-                            animation: animation,
                             onBack: { dismiss() }
                         )
                         .gesture(dragGesture)
                         .ignoresSafeArea(.keyboard)
                         
-                        TripsSearchContentView(
-                            viewModel: viewModel,
-                            animation: animation
-                        )
+                        TripsSearchContentView(viewModel: viewModel)
                         .offset(y: max(0, dragOffset))
                         .animation(.interactiveSpring(), value: dragOffset)
                         .gesture(dragGesture)
@@ -110,7 +105,6 @@ struct TripsSearchHeaderView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var isSwapping = false
     @State private var showTimePicker = false
-    var animation: Namespace.ID
     var onBack: (() -> Void)?
     
     var body: some View {
@@ -185,7 +179,6 @@ struct TripsSearchHeaderView: View {
                     viewModel.removeFromLocation()
                 }
             },
-            topPadding: 0,
             iconName: "location"
         )
         .onTapGesture {
@@ -214,7 +207,6 @@ struct TripsSearchHeaderView: View {
                     viewModel.removeToLocation()
                 }
             },
-            topPadding: 0,
             iconName: "mappin"
         )
         .onTapGesture {
@@ -332,7 +324,6 @@ struct TripsSearchHeaderView: View {
 struct TripsSearchContentView: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
-    var animation: Namespace.ID
     
     var body: some View {
         ZStack {
@@ -343,7 +334,7 @@ struct TripsSearchContentView: View {
                     if viewModel.showTripResults {
                         TripResultsContent(viewModel: viewModel)
                     } else if viewModel.isSearchActive {
-                        SearchResultsContent(viewModel: viewModel, animation: animation)
+                        SearchResultsContent(viewModel: viewModel)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     } else {
                         EmptyStateContent(viewModel: viewModel)
@@ -477,7 +468,6 @@ struct TripResultsContent: View {
 // MARK: - Search Results Content
 struct SearchResultsContent: View {
     @ObservedObject var viewModel: TripsSearchViewModel
-    var animation: Namespace.ID
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -486,7 +476,7 @@ struct SearchResultsContent: View {
             } else if viewModel.showMinCharactersMessage {
                 MinCharactersView()
             } else if !viewModel.searchResults.isEmpty {
-                SearchResultsList(viewModel: viewModel, animation: animation)
+                SearchResultsList(viewModel: viewModel)
             } else {
                 EmptySearchView()
             }
@@ -626,7 +616,6 @@ struct EmptyStateContent: View {
 // MARK: - Helper Views
 struct RouteIndicatorView: View {
     var onBack: (() -> Void)?
-    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         VStack(spacing: 22) {
@@ -671,10 +660,6 @@ struct RouteIndicatorView: View {
         }
         .padding(.leading, 2)
         .transition(.opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.9)))
-    }
-    
-    private var backgroundColorForButton: Color {
-        colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6)
     }
 }
 
@@ -876,7 +861,6 @@ struct MinCharactersView: View {
 struct SearchResultsList: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
-    var animation: Namespace.ID
     @State private var appearAnimation = false
     
     var body: some View {
@@ -965,15 +949,6 @@ struct EmptySearchView: View {
     }
 }
 
-// MARK: - Button Styles
-struct SpringButtonStyle: ButtonStyle {
-    func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.92 : 1)
-            .opacity(configuration.isPressed ? 0.8 : 1)
-            .animation(.spring(response: 0.3, dampingFraction: 0.6), value: configuration.isPressed)
-    }
-}
 
 struct ScaleButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
@@ -996,11 +971,6 @@ struct HapticFeedback {
         generator.impactOccurred()
     }
     
-    static func heavyImpact() {
-        let generator = UIImpactFeedbackGenerator(style: .heavy)
-        generator.impactOccurred()
-    }
-    
     static func selectionChanged() {
         let generator = UISelectionFeedbackGenerator()
         generator.selectionChanged()
@@ -1017,7 +987,6 @@ struct TripsSearchTimePickerView: View {
     @Binding var departureType: DepartureType
     @Binding var showDatePicker: Bool
     var onApply: () -> Void
-    @Environment(\.colorScheme) private var colorScheme
     @State private var localDate: Date
     
     init(selectedDate: Binding<Date?>, departureType: Binding<DepartureType>, showDatePicker: Binding<Bool>, onApply: @escaping () -> Void) {

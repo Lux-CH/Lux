@@ -64,23 +64,3 @@ struct LinePill: View {
         }
     }
 }
-
-struct MorePill: View {
-    var body: some View {
-        ZStack {
-            RoundedRectangle(cornerRadius: 50)
-                .fill(Color.accentColor.opacity(0.25))
-                .frame(width: 30, height: 20)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 50)
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                )
-            Image(systemName: "ellipsis")
-                .foregroundColor(Color.accentColor)
-                .multilineTextAlignment(.center)
-                .font(.system(size: 11))
-        }
-    }
-}
-
-

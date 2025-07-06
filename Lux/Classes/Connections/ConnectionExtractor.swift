@@ -20,19 +20,12 @@ class ConnectionExtractor: ObservableObject {
         try mapFile()
     }
     
-    init(url: URL) throws {
-        self.url = url
-        try mapFile()
-    }
-    
     // mem-maps the file for efficient acccess
     private func mapFile() throws {
         mappedData = try Data(contentsOf: url, options: .mappedIfSafe)
     }
     
-    /// Extracts a specific key from the plist
-    /// - Parameter key: The exact key to extract
-    /// - Returns: The value associated with the key if found
+
     func extractSpecificKey(_ key: String) throws -> [String]? {
         guard let data = mappedData else {
             throw BinaryPlistError.dataNotLoaded
@@ -60,6 +53,5 @@ class ConnectionExtractor: ObservableObject {
         case fileNotFound(filename: String)
         case dataNotLoaded
         case invalidPlistFormat
-        case keyNotFound(key: String)
     }
 }

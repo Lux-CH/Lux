@@ -43,7 +43,6 @@ struct MainNavigationView: View {
     @EnvironmentObject var shortcutManager: ShortcutManager
     @State private var selectedShortcut: UserShortcut? = nil
     @State private var showTripSearch: Bool = false
-    @Namespace private var animation
     @Environment(\.colorScheme) private var colorScheme
         
     @GestureState private var dragTranslation: CGSize = .zero
@@ -58,7 +57,6 @@ struct MainNavigationView: View {
     private let ultraSmoothSpring = Animation.interactiveSpring(response: 0.4, dampingFraction: 0.85, blendDuration: 0.1)
     private let contentSpring = Animation.interactiveSpring(response: 0.5, dampingFraction: 0.85, blendDuration: 0.15)
     private let searchTransitionSpring = Animation.spring(response: 0.45, dampingFraction: 0.82, blendDuration: 0.1)
-    private let smoothSpring = Animation.spring(response: 0.55, dampingFraction: 0.75, blendDuration: 0.3)
     
     // Enhanced transitions
     private let searchModeTransition: AnyTransition = .asymmetric(
@@ -71,8 +69,6 @@ struct MainNavigationView: View {
         removal: .opacity.combined(with: .move(edge: .bottom)).combined(with: .scale(scale: 0.97, anchor: .top))
     )
     
-    @State private var activeSearchField: TripsSearchViewModel.SearchField = .to
-    @State private var fromQuery: String = ""
     @State private var toQuery: String = ""
     @State private var isSearchTransitioning: Bool = false
     @State private var searchViewModel = TripsSearchViewModel()
@@ -180,8 +176,7 @@ struct MainNavigationView: View {
                                                 } else {
                                                     searchText = ""
                                                 }
-                                            },
-                                            topPadding: viewMode == .home ? 0 : 55
+                                            }
                                         )
                                         .focused($isSearchBarFocused)
                                         .padding(.top, viewMode == .home ? 0 : 55)
@@ -197,7 +192,6 @@ struct MainNavigationView: View {
                                         viewModel: searchViewModel,
                                         isFromFocused: $isFromFocused,
                                         isToFocused: $isToFocused,
-                                        animation: animation,
                                         onBack: {exitSearchMode()}
                                     )
                                     .transition(searchModeTransition)
@@ -234,7 +228,7 @@ struct MainNavigationView: View {
                             ZStack {
                                 if viewMode == .home {
                                     VStack(alignment: .center) {
-                                        NearbyStopsView(onStopTap: switchToStopsMode)
+                                        NearbyStopsView()
                                             .transition(.scale(scale: 0.97).combined(with: .opacity))
                                         Spacer()
                                     }
@@ -277,10 +271,7 @@ struct MainNavigationView: View {
                                     }
                                     .transition(contentTransition)
                                 } else if viewMode == .search {
-                                    TripsSearchContentView(
-                                        viewModel: searchViewModel,
-                                        animation: animation
-                                    )
+                                    TripsSearchContentView(viewModel: searchViewModel)
                                     .transition(searchModeTransition)
                                 }
                             }
@@ -394,7 +385,6 @@ struct MainNavigationView: View {
             ForEach(Array(shortcutManager.visibleShortcuts.enumerated()), id: \.element.id) { index, shortcut in
                 ShortcutButton(
                     symbol: shortcut.symbol,
-                    coords: (shortcut.coordinates.latitude, shortcut.coordinates.longitude),
                     name: shortcut.name
                 ) {
                     selectedShortcut = shortcut

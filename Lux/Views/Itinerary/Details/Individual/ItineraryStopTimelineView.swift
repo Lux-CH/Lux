@@ -42,7 +42,6 @@ struct ItineraryStopTimelineRowView: View {
     let isDepartureStop: Bool
     let isArrivalStop: Bool
     let currentDate: Date
-    @Environment(\.colorScheme) private var colorScheme
     @State private var showingStopDetail = false
     
     private var stopStatus: StopStatus {

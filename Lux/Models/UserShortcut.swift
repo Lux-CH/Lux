@@ -14,7 +14,6 @@ struct UserShortcut: Identifiable, Codable, Equatable {
     var name: String
     var symbol: String
     var coordinates: Coordinates
-    var createdAt: Date
     var timeSchedule: TimeSchedule?
     
     struct Coordinates: Codable, Equatable {
@@ -53,18 +52,6 @@ struct UserShortcut: Identifiable, Codable, Equatable {
                 case .sunday: return "D"
                 }
             }
-            
-            var fullName: String {
-                switch self {
-                case .monday: return "Lundi"
-                case .tuesday: return "Mardi"
-                case .wednesday: return "Mercredi"
-                case .thursday: return "Jeudi"
-                case .friday: return "Vendredi"
-                case .saturday: return "Samedi"
-                case .sunday: return "Dimanche"
-                }
-            }
         }
         
         struct TimeComponents: Codable, Equatable {
@@ -74,12 +61,6 @@ struct UserShortcut: Identifiable, Codable, Equatable {
             var displayString: String {
                 return String(format: "%02d:%02d", hour, minute)
             }
-            
-            func toDate() -> Date {
-                let calendar = Calendar.current
-                let components = DateComponents(hour: hour, minute: minute)
-                return calendar.date(from: components) ?? Date()
-            }
         }
     }
     
@@ -88,7 +69,6 @@ struct UserShortcut: Identifiable, Codable, Equatable {
         self.name = name
         self.symbol = symbol
         self.coordinates = coordinates
-        self.createdAt = Date()
         self.timeSchedule = timeSchedule
     }
     

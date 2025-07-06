@@ -128,46 +128,6 @@ class StopViewModel: ObservableObject {
         await backgroundRefreshTask?.value
     }
     
-    @MainActor
-    func loadPaginatedDepartures(cursor: String) async {
-        isLoading = true
-        backgroundRefreshTask?.cancel()
-        
-        backgroundRefreshTask = Task {
-            defer {
-                self.isLoading = false
-            }
-            
-            do {
-                let freshStopTimes = try await getDeparturesForStop(
-                    stopId: stop.id,
-                    time: currentTime,
-                    numberOfEvents: fromStops ? 100 : 50,
-                    pageCursor: cursor
-                )
-                if Task.isCancelled { return }
-                
-                self.stopTimes = freshStopTimes
-                let times = freshStopTimes.stopTimes
-                if !times.isEmpty {
-                    self.groupStopTimes(times)
-                } else {
-                    if self.routeGroups.isEmpty {
-                        self.routeGroups = [:]
-                        self.routeNames = []
-                        self.currentPages = [:]
-                    }
-                }
-            } catch {
-                if !(error is CancellationError) {
-                    print("Failed to load paginated departures: \(error)")
-                    self.errorMessage = error.localizedDescription
-                }
-            }
-        }
-        await backgroundRefreshTask?.value
-    }
-    
     private func refreshDeparturesInBackground() async {
         backgroundRefreshTask?.cancel()
         

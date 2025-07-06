@@ -13,7 +13,6 @@ struct CompactStopView: View {
     @Environment(\.colorScheme) var colorScheme
     @StateObject private var viewModel: StopViewModel
     @ObservedObject var settings = Settings.shared
-    @State private var animateIn = false
 
     let maxGroupsToShow: Int
     
