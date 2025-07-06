@@ -326,11 +326,7 @@ struct MultipleItineraryDetailView: View {
                     }
                 }
                 .padding(.bottom, 20)
-                Divider()
-                    .padding(.horizontal, 20)
-                    .padding(.bottom, 10)
-                    .frame(minHeight: 1)
-
+                
                 let itineraarySharer = ItinerarySharer()
                 ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
             }
