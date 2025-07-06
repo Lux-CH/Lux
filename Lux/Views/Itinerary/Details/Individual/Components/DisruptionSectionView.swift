@@ -9,7 +9,6 @@ import SwiftUI
 import LuxCom
 
 struct DisruptionSectionView: View {
-    let leg: Leg
     let disruptions: [Disruption]
     @State private var isExpanded: Bool = false
     @Environment(\.colorScheme) private var colorScheme

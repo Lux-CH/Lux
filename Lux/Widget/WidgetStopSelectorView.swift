@@ -10,7 +10,6 @@ import SwiftUI
 import LuxCom
 
 struct WidgetStopSelectorView: View {
-    @Environment(\.dismiss) private var dismiss
     @StateObject private var viewModel = WidgetStopSearchViewModel()
     @State private var searchQuery = ""
     @State private var selectedStopId: String?
@@ -168,7 +167,6 @@ struct WidgetStopSelectorView: View {
 struct WidgetStopRow: View {
     let result: SearchResult
     let isSelected: Bool
-    @Environment(\.colorScheme) private var colorScheme
     
     private func relevantArea() -> String? {
         if let matchedArea = result.areas.first(where: { $0.matched }) {

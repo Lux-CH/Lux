@@ -9,7 +9,6 @@ import SwiftUI
 import MapKit
 import LuxCom
 import Polyline
-import Combine
 
 @MainActor
 final class ItineraryViewModel: ObservableObject {
@@ -17,7 +16,6 @@ final class ItineraryViewModel: ObservableObject {
     
     private var tripId: String
     private let zoomThreshold: CLLocationDistance = 50000
-    private var cancellables = Set<AnyCancellable>()
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
     private var vehicleUpdateTask: Task<Void, Never>?
     private var itineraryRefreshTask: Task<Void, Never>?
@@ -192,13 +190,6 @@ final class ItineraryViewModel: ObservableObject {
         showingIntermediateStops = distance < zoomThreshold
     }
     
-    func departureTime(for annotation: StopAnnotation) -> Date? {
-        annotation.place.departure ??
-        annotation.place.scheduledDeparture ??
-        annotation.place.arrival ??
-        annotation.place.scheduledArrival
-    }
-    
     // MARK: - Private Methods
     private func processItinerary(shouldCalculateMapPosition: Bool = true) async {
         guard let itinerary = itinerary, !shouldStop else {
@@ -366,7 +357,6 @@ final class ItineraryViewModel: ObservableObject {
             return VehicleAnnotation(
                 id: legId,
                 coordinate: position,
-                mode: leg.mode,
                 routeShortName: leg.routeShortName,
                 color: getLegColor(leg)
             )

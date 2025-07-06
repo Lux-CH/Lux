@@ -10,7 +10,6 @@ import SwiftUI
 struct StopTypeLabel: View {
     let isDepartureStop: Bool
     let isArrivalStop: Bool
-    let legColor: Color
     
     var body: some View {
         Group {

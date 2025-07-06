@@ -12,7 +12,6 @@ struct IndividualItineraryDetailView: View {
     let itinerary: Itinerary
     private let mainLeg: Leg?
     private let legColor: Color
-    @State private var isExpanded: Bool = false
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject var disruptionManager: DisruptionManager
     
@@ -35,10 +34,6 @@ struct IndividualItineraryDetailView: View {
     
     private var backgroundColor: Color {
         colorScheme == .dark ? Color(.systemBackground) : Color.white
-    }
-    
-    private var secondaryBackground: Color {
-        colorScheme == .dark ? Color(.secondarySystemBackground) : Color(.systemGray6)
     }
     
     private static func calculateUpcomingStops(leg: Leg) -> [Place] {
@@ -90,10 +85,7 @@ struct IndividualItineraryDetailView: View {
                     ScrollViewReader { proxy in
                         ScrollView {
                             if let actualName = leg.routeShortName {
-                                DisruptionSectionView(
-                                    leg: leg,
-                                    disruptions: disruptionManager.disruptions(for: actualName)
-                                )
+                                DisruptionSectionView(disruptions: disruptionManager.disruptions(for: actualName))
                                 .padding(.horizontal, 20)
                                 .padding(.top, 15)
                                 .padding(.bottom, -10)

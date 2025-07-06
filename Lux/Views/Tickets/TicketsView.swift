@@ -145,8 +145,7 @@ struct TicketCategorySection: View {
                     CategoryHeader(
                         icon: categoryIcon,
                         color: categoryColor,
-                        title: category.rawValue,
-                        count: filteredTickets.count
+                        title: category.rawValue
                     )
                     
                     Divider()
@@ -172,7 +171,6 @@ struct CategoryHeader: View {
     let icon: String
     let color: Color
     let title: String
-    let count: Int
     
     var body: some View {
         HStack(spacing: 12) {

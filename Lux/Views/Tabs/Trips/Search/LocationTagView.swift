@@ -10,7 +10,6 @@ import SwiftUI
 struct LocationTagView: View {
     let location: SelectedLocation
     let onRemove: () -> Void
-    @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
         HStack(spacing: 6) {

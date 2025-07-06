@@ -36,7 +36,6 @@ struct ItineraryStopTimeView: View {
             StopTypeLabel(
                 isDepartureStop: isDepartureStop,
                 isArrivalStop: isArrivalStop,
-                legColor: legColor
             )
         }
     }

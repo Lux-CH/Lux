@@ -10,7 +10,6 @@ import LuxCom
 
 struct ShortcutsKeyboardToolbar: View {
     @EnvironmentObject var shortcutManager: ShortcutManager
-    @EnvironmentObject var locationManager: LocationManager
     @Environment(\.colorScheme) var colorScheme
     var onShortcutSelected: (SearchResult) -> Void
     var onCurrentPositionSelected: () -> Void

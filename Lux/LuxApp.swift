@@ -10,7 +10,6 @@ import LuxCom
 
 @main
 struct LuxApp: App {
-    @StateObject private var connectionService = ConnectionService.shared
     @StateObject private var locationManager = LocationManager()
     @StateObject private var shortcutManager = ShortcutManager()
     @StateObject private var disruptionManager = DisruptionManager()

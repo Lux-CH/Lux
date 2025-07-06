@@ -9,7 +9,6 @@ import Foundation
 import Combine
 
 protocol LineScoreStorageProtocol {
-    func saveLineScores(_ scores: [LineScore]) throws
     func loadLineScores() -> [LineScore]
     func addLineScore(_ score: LineScore) throws
     func updateLineScore(_ score: LineScore) throws

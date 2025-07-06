@@ -53,18 +53,4 @@ extension View {
     func keyboardToolbar<V: View>(view: @escaping () -> V) -> some View {
         modifier(KeyboardToolbar(toolbar: view))
     }
-
-    func keyboardDoneButton() -> some View {
-        modifier(KeyboardToolbar {
-            HStack {
-                Spacer()
-                Button("Terminer") {
-                    UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-                }
-                .padding(.horizontal)
-            }
-            .frame(height: 49)
-            .background(.bar)
-        })
-    }
 }

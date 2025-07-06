@@ -14,7 +14,6 @@ import SwiftUI
 struct VehicleAnnotation: Identifiable {
     let id: String
     var coordinate: CLLocationCoordinate2D
-    let mode: TransportationMode
     let routeShortName: String?
     let color: Color
 }
@@ -42,10 +41,6 @@ enum VehicleVisualisation {
     }
     
     // MARK: - KeyFrame Calculation
-    static func calculateKeyFrames(for leg: Leg) -> [KeyFrame] {
-        return calculateKeyFrames(for: leg, polylineString: leg.legGeometry.points, precision: 1e6)
-    }
-    
     static func calculateKeyFrames(for leg: Leg, polylineString: String, precision: Double) -> [KeyFrame] {
         let polyline = Polyline(encodedPolyline: polylineString, precision: precision)
         guard let coordinates = polyline.coordinates, coordinates.count >= 2 else { return [] }

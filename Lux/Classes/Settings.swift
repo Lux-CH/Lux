@@ -9,8 +9,6 @@ import SwiftUI
 
 
 class Settings: ObservableObject, @unchecked Sendable {
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
-
     @MainActor static let shared = Settings()
     
     @AppStorage("firstLaunch") var firstLaunch: Bool = true

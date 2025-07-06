@@ -65,18 +65,6 @@ class LineScoreManager: ObservableObject {
         }
     }
     
-    func resetScore(for routeShortName: String) {
-        if let existingIndex = lineScores.firstIndex(where: { $0.routeShortName == routeShortName }) {
-            var updatedScore = lineScores[existingIndex]
-            updatedScore.resetScore()
-            do {
-                try storage.updateLineScore(updatedScore)
-            } catch {
-                print("error resetting line score \(error.localizedDescription)")
-            }
-        }
-    }
-    
     func deleteScore(for routeShortName: String) {
         do {
             try storage.deleteLineScore(for: routeShortName)

@@ -10,7 +10,6 @@ import LuxCom
 
 struct RouteOptionsView: View {
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.colorScheme) private var colorScheme
     @State private var maxTransfers: Int
     @State private var minTransferTime: Int
     @State private var pedestrianProfile: PedestrianProfile

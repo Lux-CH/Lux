@@ -33,7 +33,6 @@ struct ItineraryView: View {
     let fromNearby: Bool
     
     @State private var trackingMode: MapTrackingMode = .none
-    @State private var isUserDragging: Bool = false
 
     init(tripId: String, fromNearby: Bool, otherTripOptions: [TripOption] = []) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))

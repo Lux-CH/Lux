@@ -92,7 +92,7 @@ struct MultipleItineraryDetailView: View {
         return (from: fromTransport, to: toTransport)
     }
     
-    private func getDirectionIcon(for step: MKRoute.Step, index: Int, totalSteps: Int) -> String {
+    private func getDirectionIcon(for step: MKRoute.Step) -> String {
         let instructions = step.instructions.lowercased()
         
         if instructions.contains("left") || instructions.contains("gauche") {
@@ -246,7 +246,7 @@ struct MultipleItineraryDetailView: View {
                                         if !walkingSteps.isEmpty {
                                             ForEach(Array(walkingSteps.enumerated()), id: \.offset) { index, step in
                                                 HStack(alignment: .top, spacing: 10) {
-                                                    Image(systemName: getDirectionIcon(for: step, index: index, totalSteps: walkingSteps.count))
+                                                    Image(systemName: getDirectionIcon(for: step))
                                                         .foregroundColor(.blue)
                                                         .frame(width: 28, height: 28)
                                                         .background(Color.blue.opacity(0.1))
