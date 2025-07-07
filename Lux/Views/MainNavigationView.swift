@@ -78,6 +78,8 @@ struct MainNavigationView: View {
     @State private var isAnimatingToSearch: Bool = false
     @State private var searchBarOffset: CGFloat = 0
     
+    @State private var searchDragOffset: CGFloat = 0
+    
     var body: some View {
         NavigationStack {
             GeometryReader { geometry in
@@ -92,6 +94,7 @@ struct MainNavigationView: View {
                     )
                     .ignoresSafeArea()
                     .animation(ultraSmoothSpring, value: colorScheme)
+                    .gesture(viewMode == .search ? searchModeDragGesture : nil)
                     
                     VStack(spacing: compactSize()) {
                         ZStack(alignment: .top) {
@@ -195,6 +198,7 @@ struct MainNavigationView: View {
                                         onBack: {exitSearchMode()}
                                     )
                                     .transition(searchModeTransition)
+                                    .gesture(searchModeDragGesture)
                                     .zIndex(1)
                                 }
                             }
@@ -204,9 +208,9 @@ struct MainNavigationView: View {
                         
                         ZStack {
                             Rectangle()
-                                .fill(colorScheme == .dark
+                                .fill(viewMode == .search ? Color.clear : (colorScheme == .dark
                                       ? Color(.secondarySystemBackground).opacity(0.7)
-                                      : Color.white)
+                                      : Color.white))
                                 .frame(maxHeight: .infinity)
                                 .clipShape(
                                     .rect(
@@ -218,10 +222,10 @@ struct MainNavigationView: View {
                                     )
                                 )
                                 .shadow(
-                                    color: Color.black.opacity(viewMode == .stops ? 0.0 : 0.05),
-                                    radius: viewMode == .stops ? 0 : 8,
+                                    color: viewMode == .search ? Color.clear.opacity(0) : Color.black.opacity(viewMode == .stops ? 0.0 : 0.05),
+                                    radius: viewMode == .search ? 0 : (viewMode == .stops ? 0 : 8),
                                     x: 0,
-                                    y: viewMode == .stops ? 0 : -4
+                                    y: viewMode == .search ? 0 : (viewMode == .stops ? 0 : -4)
                                 )
                                 .animation(ultraSmoothSpring, value: viewMode)
                             
@@ -272,13 +276,17 @@ struct MainNavigationView: View {
                                     .transition(contentTransition)
                                 } else if viewMode == .search {
                                     TripsSearchContentView(viewModel: searchViewModel)
-                                    .transition(searchModeTransition)
+                                        .offset(y: max(0, searchDragOffset))
+                                        .animation(.interactiveSpring(), value: searchDragOffset)
+                                        .gesture(searchModeDragGesture)
+                                        .transition(searchModeTransition)
                                 }
                             }
                             .animation(contentSpring, value: viewMode)
                         }
                         .ignoresSafeArea(edges: .bottom)
                         .simultaneousGesture(
+                            viewMode != .search ?
                             DragGesture(minimumDistance: 5, coordinateSpace: .local)
                                 .updating($dragTranslation) { value, state, _ in
                                     state = value.translation
@@ -297,6 +305,7 @@ struct MainNavigationView: View {
                                         }
                                     }
                                 }
+                            : nil
                         )
                     }
                     
@@ -378,6 +387,21 @@ struct MainNavigationView: View {
                 TripsSearchView()
             }
         }
+    }
+    
+    // MARK: - Search Mode Drag Gestures
+    private var searchModeDragGesture: some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                searchDragOffset = max(0, value.translation.height)
+            }
+            .onEnded { value in
+                if value.translation.height > 200 {
+                    exitSearchMode()
+                } else {
+                    searchDragOffset = 0
+                }
+            }
     }
     
     private var shortcutsRow: some View {
@@ -537,6 +561,7 @@ struct MainNavigationView: View {
         
         isFromFocused = false
         isToFocused = false
+        searchDragOffset = 0
         
         withAnimation(searchTransitionSpring) {
             isAnimatingToSearch = true
