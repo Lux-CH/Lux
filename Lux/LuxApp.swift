@@ -56,6 +56,14 @@ struct LuxApp: App {
                 .fullScreenCover(isPresented: $showItinerarySheet) {
                     if let itinerary = sharedItinerary {
                         ItineraryView(itinerary: itinerary, fromNearby: false)
+                            .preferredColorScheme(
+                                    getColorScheme() ?? nil
+                            )
+                            .environmentObject(locationManager)
+                            .environmentObject(shortcutManager)
+                            .environmentObject(disruptionManager)
+                            .tint(accentColorManager.selectedAccentColor)
+                            .accentColor(accentColorManager.selectedAccentColor)
                     }
                 }
                 .fullScreenCover(isPresented: $showStopSheet) {
