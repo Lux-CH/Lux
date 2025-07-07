@@ -561,7 +561,6 @@ struct MainNavigationView: View {
         
         isFromFocused = false
         isToFocused = false
-        searchDragOffset = 0
         
         withAnimation(searchTransitionSpring) {
             isAnimatingToSearch = true
@@ -580,6 +579,7 @@ struct MainNavigationView: View {
             withAnimation(ultraSmoothSpring) {
                 isAnimatingToSearch = false
                 searchBarOffset = 0
+                searchDragOffset = 0
                 isSearchTransitioning = false
             }
         }
