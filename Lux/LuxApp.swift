@@ -68,6 +68,11 @@ struct LuxApp: App {
                 }
                 .fullScreenCover(isPresented: $showStopSheet) {
                     stopView
+                        .environmentObject(locationManager)
+                        .environmentObject(shortcutManager)
+                        .environmentObject(disruptionManager)
+                        .tint(accentColorManager.selectedAccentColor)
+                        .accentColor(accentColorManager.selectedAccentColor)
                 }
                 .alert("Êtes-vous sûr de vouloir ouvrir cet itinéraire ?", isPresented: $showConfirmation) {
                     Button("Ouvrir") {
