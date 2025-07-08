@@ -95,7 +95,12 @@ struct ShortcutsKeyboardToolbar: View {
             .padding(.vertical, 10)
         }
         .frame(height: 56)
-        .background(.ultraThinMaterial)
-        .shadow(color: Color.black.opacity(0.07), radius: 4, x: 0, y: -2)
+        .background(colorScheme == .dark ? Color(red: 0.184, green: 0.184, blue: 0.188) : Color(red: 0.812, green: 0.827, blue: 0.851))
+        .overlay(
+            Rectangle()
+                .fill(Color.gray.opacity(0.3))
+                .frame(height: 0.5)
+                .offset(y: -28)
+        )
     }
 }
