@@ -369,6 +369,16 @@
         }
       }
     },
+    "Aucun arrêt sélectionné" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No stop selected"
+          }
+        }
+      }
+    },
     "Aucun départ à venir." : {
       "localizations" : {
         "en" : {
@@ -568,6 +578,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Above is a list of the different credits of the application, precisely the various modules and packages used by Lux"
+          }
+        }
+      }
+    },
+    "Commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start typing to search for a stop.\nA minimum of 3 characters is required."
           }
         }
       }

@@ -122,15 +122,20 @@ struct WidgetStopSelectorView: View {
     }
     
     private var minCharactersMessage: some View {
-        VStack(spacing: 12) {
-            Image(systemName: "character.cursor.ibeam")
-                .font(.system(size: 30))
+        VStack(spacing: 16) {
+            Image(systemName: "signpost.right")
+                .font(.system(size: 40))
                 .foregroundColor(.secondary)
             
-            Text("Saisissez au moins 3 caractères pour rechercher")
-                .multilineTextAlignment(.center)
+            Text("Aucun arrêt sélectionné")
+                .font(.headline)
+                .foregroundColor(.primary)
+            
+            Text("Commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis")
+                .font(.subheadline)
                 .foregroundColor(.secondary)
-                .padding()
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
         }
         .padding(.top, 60)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -139,7 +144,7 @@ struct WidgetStopSelectorView: View {
     
     private var noResultsMessage: some View {
         VStack(spacing: 12) {
-            Image(systemName: "signpost.right")
+            Image(systemName: "questionmark")
                 .font(.system(size: 30))
                 .foregroundColor(.secondary)
             
