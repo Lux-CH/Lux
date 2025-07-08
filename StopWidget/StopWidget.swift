@@ -44,7 +44,7 @@ struct Provider: TimelineProvider {
                     scheduledArrival: nil,
                     scheduledDeparture: lastDeparture,
                     scheduledTrack: "1",
-                    _track: "1",
+                    track: "1",
                     vertexType: .transit
                 ),
                 mode: .bus,

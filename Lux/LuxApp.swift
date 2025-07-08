@@ -167,7 +167,7 @@ struct LuxApp: App {
                     scheduledArrival: nil,
                     scheduledDeparture: nil,
                     scheduledTrack: nil,
-                    _track: nil,
+                    track: nil,
                     vertexType: .transit))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
