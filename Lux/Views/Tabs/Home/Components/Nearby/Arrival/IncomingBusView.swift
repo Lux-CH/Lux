@@ -19,7 +19,7 @@ struct IncomingBusView: View {
                 let otherTripOptions = group.stopTimes.prefix(10).map { stopTime in
                     TripOption(
                         id: stopTime.tripId,
-                        startTime: stopTime.place.departure ?? stopTime.place.scheduledDeparture ?? Date()
+                        startTime: stopTime.place.departure ?? stopTime.place.scheduledDeparture ?? stopTime.place.arrival ?? stopTime.place.scheduledArrival ?? Date()
                     )
                 }
                 
