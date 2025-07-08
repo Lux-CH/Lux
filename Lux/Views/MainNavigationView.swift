@@ -167,8 +167,6 @@ struct MainNavigationView: View {
                                                     withAnimation(ultraSmoothSpring) {
                                                         stopsViewModel.performSearch()
                                                     }
-                                                } else if viewMode == .home {
-                                                    transitionToSearchMode()
                                                 }
                                             },
                                             onClear: {
@@ -182,6 +180,12 @@ struct MainNavigationView: View {
                                             }
                                         )
                                         .focused($isSearchBarFocused)
+                                        .disabled(viewMode == .home)
+                                        .onTapGesture {
+                                            if viewMode == .home {
+                                                transitionToSearchMode()
+                                            }
+                                        }
                                         .padding(.top, viewMode == .home ? 0 : 55)
                                         .offset(y: searchBarOffset)
                                         .animation(searchTransitionSpring, value: viewMode)
