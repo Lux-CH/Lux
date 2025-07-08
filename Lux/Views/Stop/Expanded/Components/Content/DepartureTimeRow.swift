@@ -18,7 +18,7 @@ struct DepartureTimeRow: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: 5)) { _ in
             HStack {
-                if let departure = stopTime.place.departure, let scheduledDeparture = stopTime.place.scheduledDeparture {
+                if let departure = stopTime.place.departure ?? stopTime.place.arrival, let scheduledDeparture = stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival {
                     let isNextDay = !calendar.isDate(departure, inSameDayAs: Date())
                     let scheduledDifference = calendar.dateComponents([.minute], from: stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival ?? Date(), to: stopTime.place.departure ?? stopTime.place.arrival ?? Date()).minute ?? 0
                     HStack(spacing:6) {
@@ -47,7 +47,7 @@ struct DepartureTimeRow: View {
                 
                 Spacer()
                 
-                Text(relativeTime(for: stopTime.place.departure))
+                Text(relativeTime(for: stopTime.place.departure ?? stopTime.place.arrival))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .contentTransition(.numericText())
