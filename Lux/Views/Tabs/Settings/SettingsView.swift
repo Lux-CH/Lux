@@ -14,9 +14,6 @@ struct SettingsView: View {
     @ObservedObject var settings = Settings.shared
     @ObservedObject var accentColorManager = AccentColorManager.shared
     
-    @State private var showAddShortcutSheet = false
-    @State private var editingShortcut: UserShortcut? = nil
-    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -50,12 +47,6 @@ struct SettingsView: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Paramètres")
             .navigationBarTitleDisplayMode(.large)
-            .sheet(item: $editingShortcut) { shortcut in
-                ShortcutEditorView(shortcutToEdit: shortcut)
-            }
-            .sheet(isPresented: $showAddShortcutSheet) {
-                ShortcutEditorView(shortcutToEdit: nil)
-            }
         }
     }
     
