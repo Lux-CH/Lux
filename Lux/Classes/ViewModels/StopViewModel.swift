@@ -102,12 +102,27 @@ class StopViewModel: ObservableObject {
             }
             
             do {
-                let freshStopTimes = try await getDeparturesForStop(
+                let (departuresData, arrivalsData) = try await fetchDeparturesAndArrivals(for: time)
+                
+                if Task.isCancelled { return }
+                
+                let upcomingArrivalsData = try await getDeparturesForStop(
                     stopId: stop.id,
                     time: time,
-                    numberOfEvents: fromStops ? 100 : 50
+                    arriveBy: true,
+                    numberOfEvents: fromStops ? 100 : 50,
+                    pageCursor: arrivalsData.nextPageCursor
                 )
                 if Task.isCancelled { return }
+
+                let allStopTimes = departuresData.stopTimes + upcomingArrivalsData.stopTimes
+                let combinedStopTimes = Array(Set(allStopTimes))
+                
+                let freshStopTimes = StopTimes(
+                    stopTimes: combinedStopTimes,
+                    previousPageCursor: departuresData.previousPageCursor,
+                    nextPageCursor: departuresData.nextPageCursor
+                )
                 
                 self.stopTimes = freshStopTimes
                 let times = freshStopTimes.stopTimes
@@ -128,24 +143,57 @@ class StopViewModel: ObservableObject {
         await backgroundRefreshTask?.value
     }
     
+    private func fetchDeparturesAndArrivals(for time: Date) async throws -> (departures: StopTimes, arrivals: StopTimes) {
+        async let departuresTask = getDeparturesForStop(
+            stopId: stop.id,
+            time: time,
+            arriveBy: false,
+            numberOfEvents: fromStops ? 100 : 50
+        )
+        
+        async let arrivalsTask = getDeparturesForStop(
+            stopId: stop.id,
+            time: time,
+            arriveBy: true,
+            numberOfEvents: 1 // 1 is sufficient; we only need nextPageCursor
+        )
+        
+        return try await (departuresTask, arrivalsTask)
+    }
+
     private func refreshDeparturesInBackground() async {
         backgroundRefreshTask?.cancel()
         
         backgroundRefreshTask = Task {
             do {
-                let freshStopTimes = try await getDeparturesForStop(
-                    stopId: stop.id,
-                    time: currentTime,
-                    numberOfEvents: fromStops ? 100 : 50
-                )
+                let (departuresData, arrivalsData) = try await fetchDeparturesAndArrivals(for: currentTime)
                 if Task.isCancelled {
                     backgroundRefreshTask = nil
                     return
                 }
                 
+                let upcomingArrivalsData = try await getDeparturesForStop(
+                    stopId: stop.id,
+                    time: currentTime,
+                    arriveBy: true,
+                    numberOfEvents: fromStops ? 100 : 50,
+                    pageCursor: arrivalsData.nextPageCursor
+                )
+                if Task.isCancelled {
+                    backgroundRefreshTask = nil
+                    return
+                }
+
+                let allStopTimes = departuresData.stopTimes + upcomingArrivalsData.stopTimes
+                let combinedStopTimes = Array(Set(allStopTimes))
+
                 await MainActor.run {
-                    self.stopTimes = freshStopTimes
-                    let times = freshStopTimes.stopTimes
+                    self.stopTimes = StopTimes(
+                        stopTimes: combinedStopTimes,
+                        previousPageCursor: departuresData.previousPageCursor,
+                        nextPageCursor: departuresData.nextPageCursor
+                    )
+                    let times = self.stopTimes?.stopTimes ?? []
                     if !times.isEmpty {
                         self.groupStopTimes(times)
                         self.checkAndHandleDepartures()
@@ -206,8 +254,9 @@ class StopViewModel: ObservableObject {
                 let group = groups[groupIndex]
                 
                 let filteredStopTimes = group.stopTimes.filter { stopTime in
-                    guard let departure = stopTime.place.departure else { return true }
-                    return departure.addingTimeInterval(bufferTimeForTransport(stopTime)) > referenceTime
+                    let eventTime = stopTime.place.departure ?? stopTime.place.arrival
+                    guard let eventTime = eventTime else { return true }
+                    return eventTime.addingTimeInterval(bufferTimeForTransport(stopTime)) > referenceTime
                 }
                 
                 if filteredStopTimes.count != group.stopTimes.count {
@@ -241,9 +290,9 @@ class StopViewModel: ObservableObject {
             
             for group in groups {
                 if let firstStopTime = group.stopTimes.first,
-                   let departure = firstStopTime.place.departure,
+                   let eventTime = firstStopTime.place.departure ?? firstStopTime.place.arrival,
                    let bufferTime = group.stopTimes.first.map(bufferTimeForTransport),
-                   departure.addingTimeInterval(bufferTime) < referenceTime {
+                   eventTime.addingTimeInterval(bufferTime) < referenceTime {
                     needsRefresh = true
                     break outerLoop
                 }
@@ -279,8 +328,9 @@ class StopViewModel: ObservableObject {
             filteredStopTimes = stopTimes
         } else {
             filteredStopTimes = stopTimes.filter { stopTime in
-                guard let departure = stopTime.place.departure else { return true }
-                return departure.addingTimeInterval(bufferTimeForTransport(stopTime)) > referenceTime
+                let eventTime = stopTime.place.departure ?? stopTime.place.arrival
+                guard let eventTime = eventTime else { return true }
+                return eventTime.addingTimeInterval(bufferTimeForTransport(stopTime)) > referenceTime
             }
         }
         
@@ -295,7 +345,9 @@ class StopViewModel: ObservableObject {
             let groupsByHeadsign = Dictionary(grouping: routeStopTimes) { $0.headsign ?? "" }
                 .map { (headsign, times) -> GroupedStopTime in
                     let sortedTimes = times.sorted {
-                        ($0.place.departure ?? Date.distantFuture) < ($1.place.departure ?? Date.distantFuture)
+                        let timeA = $0.place.departure ?? $0.place.arrival ?? Date.distantFuture
+                        let timeB = $1.place.departure ?? $1.place.arrival ?? Date.distantFuture
+                        return timeA < timeB
                     }
                     return GroupedStopTime(
                         routeShortName: routeName,
@@ -309,8 +361,8 @@ class StopViewModel: ObservableObject {
             
             newCurrentPages[routeName] = min(currentPages[routeName] ?? 0, groupsByHeadsign.count - 1)
             
-            if let firstDeparture = groupsByHeadsign.first?.stopTimes.first?.place.departure {
-                routeTiming[routeName] = firstDeparture
+            if let firstEventTime = groupsByHeadsign.first?.stopTimes.first.map({ $0.place.departure ?? $0.place.arrival }) {
+                routeTiming[routeName] = firstEventTime
             }
         }
         
