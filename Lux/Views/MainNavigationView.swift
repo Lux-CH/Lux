@@ -177,10 +177,10 @@ struct MainNavigationView: View {
                                                 } else {
                                                     searchText = ""
                                                 }
-                                            }
+                                            },
+                                            isTextFieldDisabled: viewMode == .home
                                         )
                                         .focused($isSearchBarFocused)
-                                        .disabled(viewMode == .home)
                                         .onTapGesture {
                                             if viewMode == .home {
                                                 transitionToSearchMode()

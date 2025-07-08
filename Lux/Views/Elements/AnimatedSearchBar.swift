@@ -12,6 +12,7 @@ struct AnimatedSearchBar: View {
     var placeholderText: String
     var onSearch: () -> Void
     var onClear: () -> Void
+    var isTextFieldDisabled: Bool
     
     var body: some View {
         HStack {
@@ -19,13 +20,14 @@ struct AnimatedSearchBar: View {
                 .padding(.vertical, 20)
                 .padding(.horizontal, 20)
                 .font(.system(size: 16, weight: .medium))
+                .disabled(isTextFieldDisabled)
                 .overlay(
                     HStack {
                         Spacer()
                         if !searchText.isEmpty {
                             Button(action: onClear) {
                                 Image(systemName: "xmark.circle.fill")
-                                    .foregroundColor(.gray)
+                                    .foregroundStyle(.gray)
                                     .font(.system(size: 16))
                             }
                             .padding(.trailing, 8)
@@ -49,8 +51,10 @@ struct AnimatedSearchBar: View {
             Button(action: onSearch) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 20))
-                    .foregroundColor(Color.accentColor)
+                    .foregroundStyle(Color.accentColor)
             }
+            .buttonStyle(PlainButtonStyle())
+            .allowsHitTesting(!isTextFieldDisabled)
             .padding(.trailing, 18)
         }
         .frame(width: 350, height: 60)
