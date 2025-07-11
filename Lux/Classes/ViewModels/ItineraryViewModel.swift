@@ -389,7 +389,7 @@ final class ItineraryViewModel: ObservableObject {
             let isTransferPoint = !isLastLeg && itinerary.legs[index + 1].mode != leg.mode
             
             annotations.append(StopAnnotation(
-                place: leg.to,
+                place: !isLastLeg ? itinerary.legs[index + 1].from : leg.to,
                 color: legColor,
                 isTerminal: isLastLeg || isTransferPoint,
                 isIntermediate: !isLastLeg && !isTransferPoint
