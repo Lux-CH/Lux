@@ -131,6 +131,7 @@ struct MainNavigationView: View {
                                                 
                                                 Button {
                                                     showSettings.toggle()
+                                                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                                                 } label: {
                                                     Image(systemName: "gearshape")
                                                         .foregroundColor(Color.primary.opacity(0.6))
