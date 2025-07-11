@@ -19,7 +19,6 @@ final class ItineraryViewModel: ObservableObject {
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
     private var vehicleUpdateTask: Task<Void, Never>?
     private var itineraryRefreshTask: Task<Void, Never>?
-    private var osrmPolylines: [String: String] = [:]
     
     private var shouldStop = false
     // MARK: - Published Properties
@@ -65,7 +64,6 @@ final class ItineraryViewModel: ObservableObject {
         self.routeOverlays = []
         self.walkingDirections = [:]
         self.legKeyFrames = [:]
-        self.osrmPolylines = [:]
         self.error = nil
         self.shouldStop = false
         
@@ -198,8 +196,6 @@ final class ItineraryViewModel: ObservableObject {
         }
                 
         if shouldCalculateMapPosition {
-            await fetchOSRMPolylines(for: itinerary.legs)
-
             let (annotations, overlays) = createAnnotationsAndOverlays(for: itinerary)
             mapAnnotations = annotations
             routeOverlays = overlays
@@ -225,72 +221,6 @@ final class ItineraryViewModel: ObservableObject {
         }
     }
     
-    private func fetchOSRMPolylines(for legs: [Leg]) async {
-        for leg in legs {
-            guard !shouldStop else { break }
-            
-            if settings.getPolylineWithOSRM && (leg.mode == .bus || leg.mode == .tram) {
-                let legId = getLegIdentifier(leg)
-                if osrmPolylines[legId] == nil {
-                    await fetchOSRMPolyline(for: leg, legId: legId)
-                }
-            }
-        }
-    }
-    
-    private func fetchOSRMPolyline(for leg: Leg, legId: String) async {
-        guard !shouldStop else { return }
-        
-        let stops = extractStopPoints(from: leg)
-        guard stops.count >= 2 else { return }
-        
-        let coordinates = stops.map { "\($0.longitude),\($0.latitude)" }.joined(separator: ";")
-        let urlString = "https://router.project-osrm.org/route/v1/driving/\(coordinates)?overview=full&geometries=polyline"
-        
-        guard let url = URL(string: urlString) else { return }
-        
-        do {
-            let (data, _) = try await URLSession.shared.data(from: url)
-            let response = try JSONDecoder().decode(OSRMResponse.self, from: data)
-            
-            if let route = response.routes.first,
-               let geometry = route.geometry {
-                osrmPolylines[legId] = geometry
-            }
-        } catch {
-            print("Failed to fetch OSRM polyline for leg \(legId): \(error)")
-        }
-    }
-    
-    private func extractStopPoints(from leg: Leg) -> [CLLocationCoordinate2D] {
-        var points: [CLLocationCoordinate2D] = []
-        
-        // Add start point
-        points.append(CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon))
-        
-        // Add intermediate stops
-        if let intermediateStops = leg.intermediateStops {
-            for stop in intermediateStops {
-                points.append(CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon))
-            }
-        }
-        
-        // Add end point
-        points.append(CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon))
-        
-        return points
-    }
-    
-    private func getEffectivePolyline(for leg: Leg) -> String {
-        let legId = getLegIdentifier(leg)
-        return osrmPolylines[legId] ?? leg.legGeometry.points
-    }
-    
-    private func getEffectivePolylinePrecision(for leg: Leg) -> Double {
-        let legId = getLegIdentifier(leg)
-        return osrmPolylines[legId] != nil ? 1e5 : 1e6
-    }
-    
     private func prepareVehicleKeyframes(for legs: [Leg]) {
         guard !shouldStop else { return }
         
@@ -298,9 +228,7 @@ final class ItineraryViewModel: ObservableObject {
         
         for leg in legs where leg.mode != .walk && leg.mode != .bike {
             let legId = getLegIdentifier(leg)
-            let polylineString = getEffectivePolyline(for: leg)
-            let precision = getEffectivePolylinePrecision(for: leg)
-            let keyFrames = VehicleVisualisation.calculateKeyFrames(for: leg, polylineString: polylineString, precision: precision)
+            let keyFrames = VehicleVisualisation.calculateKeyFrames(for: leg, polylineString: leg.legGeometry.points, precision: 1e6)
             legKeyFrames[legId] = keyFrames
         }
     }
@@ -425,9 +353,7 @@ final class ItineraryViewModel: ObservableObject {
 
     
     private func createRouteOverlay(for leg: Leg, withColor color: Color) -> RouteOverlay? {
-        let polylineString = getEffectivePolyline(for: leg)
-        let precision = getEffectivePolylinePrecision(for: leg)
-        let polyline = Polyline(encodedPolyline: polylineString, precision: precision)
+        let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e6)
         
         guard let coordinates = polyline.coordinates, !coordinates.isEmpty else { return nil }
         
@@ -454,15 +380,6 @@ final class ItineraryViewModel: ObservableObject {
         let padding = 0.2
         position = .rect(mapRect.insetBy(dx: -mapRect.width * padding/2, dy: -mapRect.height * padding/2))
     }
-}
-
-// MARK: - OSRM Response Models
-struct OSRMResponse: Codable {
-    let routes: [OSRMRoute]
-}
-
-struct OSRMRoute: Codable {
-    let geometry: String?
 }
 
 func getLegColor(_ leg: Leg) -> Color {
