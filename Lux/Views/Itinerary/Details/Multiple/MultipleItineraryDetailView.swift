@@ -160,7 +160,8 @@ struct MultipleItineraryDetailView: View {
                                 stops: calculateUpcomingStops(leg: leg),
                                 legColor: getLegColor(leg),
                                 fromStop: leg.from,
-                                toStop: leg.to
+                                toStop: leg.to,
+                                isMultipleLeg: true
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
@@ -273,7 +274,7 @@ struct MultipleItineraryDetailView: View {
                                                     .padding(.leading, 58)
                                                     .padding(.trailing, 20)
                                             }
-                                            if leg.to.track != leg.from.track {
+                                            if leg.to.track != leg.from.track && leg.to.name != "END" {
                                                 HStack(alignment: .top, spacing: 10) {
                                                     Image(systemName: "signpost.right")
                                                         .foregroundColor(.blue)
