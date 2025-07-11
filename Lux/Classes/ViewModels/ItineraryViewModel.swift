@@ -389,13 +389,32 @@ func getLegColor(_ leg: Leg) -> Color {
     case .bike, .car:
         return .gray
     default:
-        if let routeName = leg.routeShortName,
-           let color = LineColors.color(for: routeName) {
-            return color
-        } else if leg.mode == .rail || leg.mode == .highSpeedRail || leg.mode == .regionalRail || leg.mode == .regionalFastRail {
-            return .red
+        if let routeName = leg.routeShortName {
+            if let color = LineColors.color(for: routeName) {
+                return color
+            } else {
+                let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR") ||
+                                    routeName.hasPrefix("RE") || routeName.hasPrefix("IC") || routeName == "R"
+                
+                let squaredModes: Set<TransportationMode> = [
+                    .regionalRail, .ferry, .rail, .highSpeedRail,
+                    .longDistance, .metro, .nightRail, .regionalFastRail
+                ]
+                
+                let isSquared = squaredModes.contains(leg.mode) || isTrainDetected
+                if isSquared {
+                    return Color(hex: "EA0706")
+                } else {
+                    return Color.accentColor
+                }
+            }
         } else {
-            return .accentColor
+            if leg.mode == .rail || leg.mode == .highSpeedRail ||
+               leg.mode == .regionalRail || leg.mode == .regionalFastRail {
+                return Color(hex: "EA0706")
+            } else {
+                return .accentColor
+            }
         }
     }
 }
