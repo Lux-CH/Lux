@@ -18,7 +18,19 @@ struct StopAnnotation: Identifiable {
     let isIntermediate: Bool
     
     init(place: Place, color: Color, isTerminal: Bool = false, isIntermediate: Bool = false) {
-        self.place = place
+        var modifiedPlace = place
+        if Locale.current.language.languageCode?.identifier != "en" {
+            switch place.name {
+            case "START":
+                modifiedPlace.name = "Début"
+            case "END":
+                modifiedPlace.name = "Fin"
+            default:
+                break
+            }
+        }
+        
+        self.place = modifiedPlace
         self.coordinate = CLLocationCoordinate2D(latitude: place.lat, longitude: place.lon)
         self.color = color
         self.isTerminal = isTerminal
