@@ -13,6 +13,7 @@ struct ItinerarySheetDetailStopsContentView: View {
     let legColor: Color
     let fromStop: Place
     let toStop: Place
+    let isMultipleLeg: Bool
     
     var body: some View {
         VStack(spacing: 0) {
@@ -39,7 +40,8 @@ struct ItinerarySheetDetailStopsContentView: View {
                     stops: stops,
                     legColor: legColor,
                     fromStop: fromStop,
-                    toStop: toStop
+                    toStop: toStop,
+                    isMultipleLeg: isMultipleLeg
                 )
                 .padding(.top, 4)
             }
