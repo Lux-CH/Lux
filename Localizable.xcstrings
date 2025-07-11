@@ -63,6 +63,22 @@
       },
       "shouldTranslate" : false
     },
+    "%lld arrêt%@ intermédiaire%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld intermediary stop%2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$lld arrêt%2$@ intermédiaire%3$@"
+          }
+        }
+      }
+    },
     "%lld arrêts" : {
       "localizations" : {
         "en" : {

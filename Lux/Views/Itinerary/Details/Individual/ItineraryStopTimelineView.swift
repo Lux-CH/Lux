@@ -13,24 +13,105 @@ struct ItineraryStopTimelineView: View {
     let legColor: Color
     let fromStop: Place
     let toStop: Place
+    let isMultipleLeg: Bool
+    
+    @State private var showAllStops = false
+    
+    private var displayedStops: [Place] {
+        if !isMultipleLeg || showAllStops || stops.count <= 2 {
+            return stops
+        }
+        
+        return [stops.first!, stops.last!]
+    }
+    
+    private var intermediateStopsCount: Int {
+        max(0, stops.count - 2)
+    }
     
     var body: some View {
         TimelineView(.periodic(from: .now, by: 10)) { timeline in
             LazyVStack(spacing: 0) {
-                ForEach(Array(stops.enumerated()), id: \.element.stopId) { index, stop in
+                ForEach(Array(displayedStops.enumerated()), id: \.element.stopId) { index, stop in
+                    let actualIndex = getActualIndex(displayIndex: index, stop: stop)
+                    
                     ItineraryStopTimelineRowView(
                         stop: stop,
                         legColor: legColor,
-                        isFirstStop: index == 0,
-                        isLastStop: index == stops.count - 1,
+                        isFirstStop: actualIndex == 0,
+                        isLastStop: actualIndex == stops.count - 1,
                         isDepartureStop: stop.name == fromStop.name,
                         isArrivalStop: stop.name == toStop.name,
                         currentDate: timeline.date
                     )
                     .id(stop.stopId)
+                    
+                    if index == 0 && isMultipleLeg && stops.count > 2 {
+                        IntermediateStopsButton(
+                            count: intermediateStopsCount,
+                            legColor: legColor,
+                            isExpanded: showAllStops
+                        ) {
+                            withAnimation(.easeInOut(duration: 0.3)) {
+                                showAllStops.toggle()
+                            }
+                        }
+                    }
                 }
             }
         }
+    }
+    
+    private func getActualIndex(displayIndex: Int, stop: Place) -> Int {
+        if showAllStops || !isMultipleLeg {
+            return displayIndex
+        }
+        
+        if displayIndex == 0 {
+            return 0
+        } else {
+            return stops.count - 1
+        }
+    }
+}
+
+struct IntermediateStopsButton: View {
+    let count: Int
+    let legColor: Color
+    let isExpanded: Bool
+    let action: () -> Void
+    
+    var body: some View {
+        Button(action: action) {
+            HStack(alignment: .center, spacing: 0) {
+                VStack(spacing: 0) {
+                    Rectangle()
+                        .fill(legColor)
+                        .frame(width: 3, height: 20)
+                    
+                    Rectangle()
+                        .fill(legColor)
+                        .frame(width: 3, height: 20)
+                }
+                .frame(width: 60)
+                
+                HStack(spacing: 8) {
+                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(legColor)
+                    let plural = count == 1 ? "" : "s"
+                    Text("\(count) arrêt\(plural) intermédiaire\(plural)")
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(legColor)
+                }
+                .padding(.vertical, 12)
+                
+                Spacer()
+            }
+            .frame(maxWidth: .infinity)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
     }
 }
 

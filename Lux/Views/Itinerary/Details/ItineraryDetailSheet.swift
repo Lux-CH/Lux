@@ -15,7 +15,7 @@ struct ItineraryDetailSheet: View {
     var body: some View {
         if let itinerary = viewModel.itinerary {
             if itinerary.legs.count == 1 && itinerary.legs.first?.mode != .walk {
-                IndividualItineraryDetailView(itinerary: itinerary)
+                IndividualItineraryDetailView(itinerary: itinerary, isMultipleLeg: false)
             } else {
                 MultipleItineraryDetailView(itinerary: itinerary, viewModel: viewModel)
             }

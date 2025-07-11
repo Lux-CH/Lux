@@ -10,6 +10,7 @@ import LuxCom
 
 struct IndividualItineraryDetailView: View {
     let itinerary: Itinerary
+    let isMultipleLeg: Bool
     private let mainLeg: Leg?
     private let legColor: Color
     @Environment(\.colorScheme) private var colorScheme
@@ -18,7 +19,7 @@ struct IndividualItineraryDetailView: View {
     private let upcomingStops: [Place]
     private let nextStop: Place?
     
-    init(itinerary: Itinerary) {
+    init(itinerary: Itinerary, isMultipleLeg: Bool) {
         self.itinerary = itinerary
         self.mainLeg = itinerary.legs.first
         self.legColor = mainLeg.flatMap(getLegColor) ?? .black
@@ -30,6 +31,7 @@ struct IndividualItineraryDetailView: View {
             self.upcomingStops = []
             self.nextStop = nil
         }
+        self.isMultipleLeg = isMultipleLeg
     }
     
     private var backgroundColor: Color {
@@ -94,7 +96,8 @@ struct IndividualItineraryDetailView: View {
                                 stops: upcomingStops,
                                 legColor: legColor,
                                 fromStop: leg.from,
-                                toStop: leg.to
+                                toStop: leg.to,
+                                isMultipleLeg: isMultipleLeg
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
