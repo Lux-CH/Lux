@@ -456,7 +456,7 @@
 				CODE_SIGN_ENTITLEMENTS = Lux/Lux.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7G89J82G2A;
+				DEVELOPMENT_TEAM = 3MJSY877W8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Lux/Info.plist;
@@ -478,7 +478,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.cclerc.Lux;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.lmetral.Lux;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -494,7 +494,7 @@
 				CODE_SIGN_ENTITLEMENTS = Lux/Lux.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7G89J82G2A;
+				DEVELOPMENT_TEAM = 3MJSY877W8;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Lux/Info.plist;
@@ -516,7 +516,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.cclerc.Lux;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.lmetral.Lux;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -532,7 +532,7 @@
 				CODE_SIGN_ENTITLEMENTS = StopWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7G89J82G2A;
+				DEVELOPMENT_TEAM = 3MJSY877W8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StopWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StopWidget;
@@ -544,7 +544,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.cclerc.Lux.StopWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.lmetral.Lux.StopWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -561,7 +561,7 @@
 				CODE_SIGN_ENTITLEMENTS = StopWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 7G89J82G2A;
+				DEVELOPMENT_TEAM = 3MJSY877W8;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = StopWidget/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = StopWidget;
@@ -573,7 +573,7 @@
 					"@executable_path/../../Frameworks",
 				);
 				MARKETING_VERSION = 0.1;
-				PRODUCT_BUNDLE_IDENTIFIER = ch.cclerc.Lux.StopWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = ch.lmetral.Lux.StopWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
