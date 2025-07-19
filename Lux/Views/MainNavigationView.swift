@@ -648,16 +648,40 @@ struct MainNavigationView: View {
     // doing cas par cas is a really ugly solution
     private func compactSize() -> CGFloat {
         if viewMode == .stops && settings.reduceSpacerBtwnStopContent {
+            /*
+             from 30min of simulator testing:
+             model, height, padding
+             16 pm ; 860: -62
+             16 plus, 15pm, 15 plus, 14 pro max; 839: -59
+             16 pro, 14 pro ; 778: -62
+             16, 15 pro, 15; 759: -59
+             13, 16e, 14, 13 pro, 12, 12 pro; 763: -47
+             14 plus, 13 pm, 12pm; 845: -47
+             13mini, 12mini; 728: -50
+             Se (2/3); 647: -20
+
+             11, XR; 814: -48
+             11 pm, XSMax; 818: -44
+             11 pro, XS; 734: -44
+             */
             let height = initialScreenSize.height
-            if height >= 840 {
+            switch height {
+            case 860, 778:
                 return -62
-            }
-            else if height <= 728 {
+            case 839, 759:
+                return -59
+            case 728:
                 return -50
-            } else if height == 778 {
-                return -62
-            } else {
+            case 814:
+                return -48
+            case 763, 845:
                 return -47
+            case 818, 734:
+                return -44
+            case 647:
+                return -20
+            default:
+                return -50
             }
         }
         return 0
