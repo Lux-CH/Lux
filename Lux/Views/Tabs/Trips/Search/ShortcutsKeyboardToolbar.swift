@@ -84,11 +84,6 @@ struct ShortcutsKeyboardToolbar: View {
                         }
                         .buttonStyle(ScaleButtonStyle())
                     }
-                } else {
-                    Text("Aucun raccourci disponible")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
-                        .padding(.horizontal)
                 }
             }
             .padding(.horizontal, 12)
