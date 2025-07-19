@@ -18,7 +18,7 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("useTimeBasedRelevance") var useTimeBasedRelevance: Bool = true
 
     /// Customisation
-    @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContent: Bool = false
+    @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContent: Bool = UIDevice.current.userInterfaceIdiom == .phone
     @AppStorage("highContrastButAccurateLinePill") var highContrastButAccurateLinePill: Bool = false
     @AppStorage("showDelayInsteadOfDirectTime") var showDelayInsteadOfDirectTime: Bool = false
     @AppStorage("autoColorScheme") var autoColorScheme: Bool = false
