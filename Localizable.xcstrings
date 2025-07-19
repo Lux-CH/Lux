@@ -415,16 +415,6 @@
         }
       }
     },
-    "Aucun raccourci disponible" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No shortcut available"
-          }
-        }
-      }
-    },
     "Aucun résultat trouvé pour %@" : {
       "localizations" : {
         "en" : {
