@@ -113,7 +113,7 @@ struct Provider: TimelineProvider {
     }
     
     private func getStoredStopId() -> String {
-        if let sharedDefaults = UserDefaults(suiteName: "group.ch.cclerc.lux.shareddata") {
+        if let sharedDefaults = UserDefaults(suiteName: "group.ch.lmetral.lux.shareddata") {
             return sharedDefaults.string(forKey: "selectedStopId") ?? "ch_Parent8587057"
         }
         return "ch_Parent8587057"
@@ -140,7 +140,7 @@ struct Provider: TimelineProvider {
     }
     
     private func loadLineScoresFromSharedStorage() -> [LineScore] {
-        guard let sharedDefaults = UserDefaults(suiteName: "group.ch.cclerc.lux.shareddata"),
+        guard let sharedDefaults = UserDefaults(suiteName: "group.ch.lmetral.lux.shareddata"),
               let data = sharedDefaults.data(forKey: "lineScores") else {
             return []
         }

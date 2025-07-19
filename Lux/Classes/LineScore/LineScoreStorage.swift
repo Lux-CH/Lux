@@ -39,7 +39,7 @@ class LineScoreStorage: LineScoreStorageProtocol {
     }
     
     private var sharedDefaults: UserDefaults? {
-        UserDefaults(suiteName: "group.ch.cclerc.lux.shareddata")
+        UserDefaults(suiteName: "group.ch.lmetral.lux.shareddata")
     }
     
     init() {
