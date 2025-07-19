@@ -102,13 +102,6 @@ struct NearbyStopsView: View {
                     Text("Aucun arrêt à proximité trouvé.")
                         .foregroundColor(.gray)
                         .padding()
-                        .onAppear {
-                            Task {
-                                if maintenanceStatus == nil {
-                                    await checkMaintenanceStatus()
-                                }
-                            }
-                        }
                 }
             } else {
                 VStack(spacing: 2.5) {
