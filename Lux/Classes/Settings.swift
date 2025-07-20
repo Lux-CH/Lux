@@ -24,7 +24,6 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("autoColorScheme") var autoColorScheme: Bool = false
     @AppStorage("customScheme") var customScheme: Bool = false
     @AppStorage("customSchemeSelection") var customSchemeSelection: String = ""
-    @AppStorage("allowStopViewModeSelection") var allowStopViewModeSelection: Bool = false
 
     /// Experimental
     @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false

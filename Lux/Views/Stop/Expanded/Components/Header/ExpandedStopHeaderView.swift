@@ -12,7 +12,6 @@ struct ExpandedStopHeaderView: View {
     @Binding var animateIn: Bool
     @Binding var selectedDate: Date
     @Binding var viewType: String
-    @ObservedObject var settings = Settings.shared
     var onDateSelected: () -> Void
     
     var body: some View {
@@ -33,12 +32,10 @@ struct ExpandedStopHeaderView: View {
                     .animation(.easeOut(duration: 0.4).delay(0.3), value: animateIn)
             }
             
-            if settings.allowStopViewModeSelection {
-                CustomSegmentedPicker(selection: $viewType)
-                    .offset(y: animateIn ? 0 : 10)
-                    .opacity(animateIn ? 1 : 0)
-                    .animation(.easeOut(duration: 0.4).delay(0.35), value: animateIn)
-            }
+            CustomSegmentedPicker(selection: $viewType)
+                .offset(y: animateIn ? 0 : 10)
+                .opacity(animateIn ? 1 : 0)
+                .animation(.easeOut(duration: 0.4).delay(0.35), value: animateIn)
             
             Divider()
                 .padding(.bottom, 0)
