@@ -23,18 +23,19 @@ struct StopHeaderView: View {
                         .font(.title3)
                         .fontWeight(.bold)
                 }
-                
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(connections, id: \.self) { connection in
-                            LinePill(line: connection, mode: .bus)
+                if connections.count > 1 {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack(spacing: 6) {
+                            ForEach(connections, id: \.self) { connection in
+                                LinePill(line: connection, mode: .bus)
+                            }
                         }
                     }
                 }
-                .onAppear {
-                    ConnectionService.shared.getConnections(for: stop.id) { results in
-                        connections = results
-                    }
+            }
+            .onAppear {
+                ConnectionService.shared.getConnections(for: stop.id) { results in
+                    connections = results
                 }
             }
             Spacer()
