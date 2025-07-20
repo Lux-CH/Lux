@@ -78,7 +78,7 @@ struct ExpandedStopHeaderView: View {
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
             .background(
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: 35)
                     .fill(Color.accentColor.opacity(0.1))
             )
         }
@@ -120,7 +120,7 @@ struct CustomSegmentedPicker: View {
                 .background(
                     ZStack {
                         if selection == option {
-                            RoundedRectangle(cornerRadius: 6)
+                            RoundedRectangle(cornerRadius: 35)
                                 .fill(Color.accentColor.opacity(0.1))
                                 .matchedGeometryEffect(id: "selection", in: animation)
                         }
@@ -129,9 +129,9 @@ struct CustomSegmentedPicker: View {
             }
         }
         .padding(2)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(Color(UIColor.systemGray6))
+        .overlay(
+            RoundedRectangle(cornerRadius: 35)
+                .stroke(Color.accentColor.opacity(0.85), lineWidth: 0.1)
         )
         .frame(height: 28)
     }
