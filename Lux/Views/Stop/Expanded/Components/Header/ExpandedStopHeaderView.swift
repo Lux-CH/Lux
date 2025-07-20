@@ -27,20 +27,18 @@ struct ExpandedStopHeaderView: View {
                     .opacity(animateIn ? 1 : 0)
                     .animation(.easeOut(duration: 0.4).delay(0.2), value: animateIn)
                 Spacer()
+                
+                if settings.allowStopViewModeSelection {
+                    viewTypePickerButton
+                        .offset(x: animateIn ? 0 : 20)
+                        .opacity(animateIn ? 1 : 0)
+                        .animation(.easeOut(duration: 0.4).delay(0.25), value: animateIn)
+                }
+                
                 datePickerButton
                     .offset(x: animateIn ? 0 : 20)
                     .opacity(animateIn ? 1 : 0)
                     .animation(.easeOut(duration: 0.4).delay(0.3), value: animateIn)
-            }
-            if settings.allowStopViewModeSelection {
-                Picker("", selection: $viewType) {
-                    ForEach(["Groupé", "Chronologique"], id: \.self) { option in
-                        Text(option)
-                            .font(.caption)
-                    }
-                }
-                .pickerStyle(SegmentedPickerStyle())
-                .frame(height: 24)
             }
             Divider()
                 .padding(.bottom, 0)
@@ -65,6 +63,56 @@ struct ExpandedStopHeaderView: View {
             formatter.setLocalizedDateFormatFromTemplate("dd/MM HH:mm")
             return formatter.string(from: selectedDate)
         }
+    }
+    
+    private var viewTypePickerButton: some View {
+        Menu {
+            Section("Mode d'Affichage") {
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        viewType = "Groupé"
+                    }
+                }) {
+                    HStack {
+                        Text("Groupé")
+                        Spacer()
+                        if viewType == "Groupé" {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+                Button(action: {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        viewType = "Temps"
+                    }
+                }) {
+                    HStack {
+                        Text("Temps")
+                        Spacer()
+                        if viewType == "Temps" {
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                }
+            }
+        } label: {
+            HStack(spacing: 4) {
+                Text(viewType)
+                    .font(.footnote)
+                
+                Image(systemName: "chevron.up.chevron.down")
+                    .font(.caption2)
+            }
+            .padding(.vertical, 4)
+            .padding(.horizontal, 8)
+            .background(
+                RoundedRectangle(cornerRadius: 6)
+                    .fill(Color.accentColor.opacity(0.1))
+            )
+        }
+        .buttonStyle(.borderless)
     }
     
     private var datePickerButton: some View {
