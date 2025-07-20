@@ -37,7 +37,7 @@ struct ExpandedDepartureRowView: View {
                     .fontWeight(.medium)
                 
                 Spacer()
-                ArrivalMinuteView(incomingStop: stopTime)
+                ArrivalMinuteView(incomingStop: stopTime, shouldAutoRefresh: true)
             }
             .padding(.vertical, 4)
         }
