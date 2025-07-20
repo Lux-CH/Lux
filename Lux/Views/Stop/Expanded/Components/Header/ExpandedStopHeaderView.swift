@@ -16,7 +16,7 @@ struct ExpandedStopHeaderView: View {
     var onDateSelected: () -> Void
     
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "clock")
                     .rotationEffect(Angle(degrees: animateIn ? 0 : -45))
@@ -27,19 +27,19 @@ struct ExpandedStopHeaderView: View {
                     .opacity(animateIn ? 1 : 0)
                     .animation(.easeOut(duration: 0.4).delay(0.2), value: animateIn)
                 Spacer()
-                
-                if settings.allowStopViewModeSelection {
-                    viewTypePickerButton
-                        .offset(x: animateIn ? 0 : 20)
-                        .opacity(animateIn ? 1 : 0)
-                        .animation(.easeOut(duration: 0.4).delay(0.25), value: animateIn)
-                }
-                
                 datePickerButton
                     .offset(x: animateIn ? 0 : 20)
                     .opacity(animateIn ? 1 : 0)
                     .animation(.easeOut(duration: 0.4).delay(0.3), value: animateIn)
             }
+            
+            if settings.allowStopViewModeSelection {
+                CustomSegmentedPicker(selection: $viewType)
+                    .offset(y: animateIn ? 0 : 10)
+                    .opacity(animateIn ? 1 : 0)
+                    .animation(.easeOut(duration: 0.4).delay(0.35), value: animateIn)
+            }
+            
             Divider()
                 .padding(.bottom, 0)
                 .scaleEffect(x: animateIn ? 1 : 0, anchor: .leading)
@@ -63,56 +63,6 @@ struct ExpandedStopHeaderView: View {
             formatter.setLocalizedDateFormatFromTemplate("dd/MM HH:mm")
             return formatter.string(from: selectedDate)
         }
-    }
-    
-    private var viewTypePickerButton: some View {
-        Menu {
-            Section("Mode d'Affichage") {
-                Button(action: {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        viewType = "Groupé"
-                    }
-                }) {
-                    HStack {
-                        Text("Groupé")
-                        Spacer()
-                        if viewType == "Groupé" {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
-                        }
-                    }
-                }
-                Button(action: {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        viewType = "Temps"
-                    }
-                }) {
-                    HStack {
-                        Text("Temps")
-                        Spacer()
-                        if viewType == "Temps" {
-                            Image(systemName: "checkmark")
-                                .foregroundColor(.accentColor)
-                        }
-                    }
-                }
-            }
-        } label: {
-            HStack(spacing: 4) {
-                Text(viewType)
-                    .font(.footnote)
-                
-                Image(systemName: "chevron.up.chevron.down")
-                    .font(.caption2)
-            }
-            .padding(.vertical, 4)
-            .padding(.horizontal, 8)
-            .background(
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(Color.accentColor.opacity(0.1))
-            )
-        }
-        .buttonStyle(.borderless)
     }
     
     private var datePickerButton: some View {
@@ -144,5 +94,47 @@ struct ExpandedStopHeaderView: View {
             )
             .presentationCompactAdaptation(.popover)
         }
+    }
+}
+
+struct CustomSegmentedPicker: View {
+    @Binding var selection: String
+    private let options = ["Groupé", "Chronologique"]
+    @Namespace private var animation
+    
+    var body: some View {
+        HStack(spacing: 0) {
+            ForEach(options, id: \.self) { option in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        selection = option
+                    }
+                } label: {
+                    Text(option)
+                        .font(.footnote)
+                        .fontWeight(selection == option ? .medium : .regular)
+                        .foregroundColor(selection == option ? .accentColor : .secondary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                }
+                .buttonStyle(.borderless)
+                .background(
+                    ZStack {
+                        if selection == option {
+                            RoundedRectangle(cornerRadius: 6)
+                                .fill(Color.accentColor.opacity(0.1))
+                                .matchedGeometryEffect(id: "selection", in: animation)
+                        }
+                    }
+                )
+            }
+        }
+        .padding(2)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(UIColor.systemGray6))
+        )
+        .frame(height: 28)
     }
 }
