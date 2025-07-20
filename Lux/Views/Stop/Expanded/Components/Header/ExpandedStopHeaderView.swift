@@ -34,7 +34,7 @@ struct ExpandedStopHeaderView: View {
             }
             if settings.allowStopViewModeSelection {
                 Picker("", selection: $viewType) {
-                    ForEach(["Normal", "Liste"], id: \.self) { option in
+                    ForEach(["Groupé", "Chronologique"], id: \.self) { option in
                         Text(option)
                             .font(.caption)
                     }
