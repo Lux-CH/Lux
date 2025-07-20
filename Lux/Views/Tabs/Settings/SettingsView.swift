@@ -223,12 +223,6 @@ struct SettingsView: View {
                     subtitle: "Calculer les instructions de marche via MKDirection",
                     isOn: $settings.fetchWalkingDirectionsUsingMKDirections
                 )
-                SettingsToggle(
-                    icon: "list.dash",
-                    title: "Choisir l’affichage des départs",
-                    subtitle: "Permet de basculer entre une vue groupée ou une liste complète des prochains départs",
-                    isOn: $settings.allowStopViewModeSelection
-                )
             } header: {
                 SectionHeader(
                     icon: "flask.fill",
