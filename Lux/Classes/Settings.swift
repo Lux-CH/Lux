@@ -18,12 +18,13 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("useTimeBasedRelevance") var useTimeBasedRelevance: Bool = true
 
     /// Customisation
-    @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContent: Bool = UIDevice.current.userInterfaceIdiom == .phone
+    @AppStorage("reduceSpacerBtwnStopContent") var reduceSpacerBtwnStopContentView: Bool = UIDevice.current.userInterfaceIdiom == .phone
     @AppStorage("highContrastButAccurateLinePill") var highContrastButAccurateLinePill: Bool = false
     @AppStorage("showDelayInsteadOfDirectTime") var showDelayInsteadOfDirectTime: Bool = false
     @AppStorage("autoColorScheme") var autoColorScheme: Bool = false
     @AppStorage("customScheme") var customScheme: Bool = false
     @AppStorage("customSchemeSelection") var customSchemeSelection: String = ""
+    @AppStorage("allowStopViewModeSelection") var allowStopViewModeSelection: Bool = false
 
     /// Experimental
     @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false

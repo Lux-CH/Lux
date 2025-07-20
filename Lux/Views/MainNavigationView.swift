@@ -106,15 +106,15 @@ struct MainNavigationView: View {
                                 .clipShape(
                                     .rect(
                                         topLeadingRadius: 0,
-                                        bottomLeadingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 40,
-                                        bottomTrailingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 40,
+                                        bottomLeadingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContentView ? 0 : 40,
+                                        bottomTrailingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContentView ? 0 : 40,
                                         topTrailingRadius: 0,
                                         style: .continuous
                                     )
                                 )
                                 .shadow(
-                                    color: Color.black.opacity(viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0.0 : 0.05),
-                                    radius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 10,
+                                    color: Color.black.opacity(viewMode == .stops && settings.reduceSpacerBtwnStopContentView ? 0.0 : 0.05),
+                                    radius: viewMode == .stops && settings.reduceSpacerBtwnStopContentView ? 0 : 10,
                                     x: 0,
                                     y: viewMode == .stops ? 0 : 5
                                 )
@@ -209,7 +209,7 @@ struct MainNavigationView: View {
                             }
                         }
                         .ignoresSafeArea(edges: .top)
-                        .zIndex(viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 1 : 0)
+                        .zIndex(viewMode == .stops && settings.reduceSpacerBtwnStopContentView ? 1 : 0)
                         
                         ZStack {
                             Rectangle()
@@ -219,10 +219,10 @@ struct MainNavigationView: View {
                                 .frame(maxHeight: .infinity)
                                 .clipShape(
                                     .rect(
-                                        topLeadingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 38,
+                                        topLeadingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContentView ? 0 : 38,
                                         bottomLeadingRadius: 0,
                                         bottomTrailingRadius: 0,
-                                        topTrailingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContent ? 0 : 38,
+                                        topTrailingRadius: viewMode == .stops && settings.reduceSpacerBtwnStopContentView ? 0 : 38,
                                         style: .continuous
                                     )
                                 )
@@ -647,7 +647,7 @@ struct MainNavigationView: View {
     
     // doing cas par cas is a really ugly solution
     private func compactSize() -> CGFloat {
-        if viewMode == .stops && settings.reduceSpacerBtwnStopContent {
+        if viewMode == .stops && settings.reduceSpacerBtwnStopContentView {
             /*
              from 30min of simulator testing:
              model, height, padding
