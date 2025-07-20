@@ -11,6 +11,7 @@ import LuxCom
 struct ArrivalMinuteView: View {
     let incomingStop: StopTime
     @Environment(\.calendar) private var calendar
+    @State var shouldAutoRefresh: Bool = false
     @StateObject private var blinkManager = BlinkManager.shared
     @State private var now = Date()
     @State private var bufferTime: TimeInterval = 40.0
@@ -33,6 +34,14 @@ struct ArrivalMinuteView: View {
         }
         .onAppear {
             bufferTime = bufferTimeForTransport()
+        }
+        .task(id: shouldAutoRefresh) {
+            guard shouldAutoRefresh else { return }
+            
+            while !Task.isCancelled && shouldAutoRefresh {
+                now = Date()
+                try? await Task.sleep(for: .seconds(5))
+            }
         }
     }
     
