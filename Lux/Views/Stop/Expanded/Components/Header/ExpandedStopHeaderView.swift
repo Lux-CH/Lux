@@ -106,6 +106,7 @@ struct CustomSegmentedPicker: View {
         HStack(spacing: 0) {
             ForEach(options, id: \.self) { option in
                 Button {
+                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     withAnimation(.easeInOut(duration: 0.2)) {
                         selection = option
                     }
