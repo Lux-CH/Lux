@@ -17,7 +17,7 @@ struct ExpandedStopView: View {
     @State private var animateIn = false
     @State private var isChangingContent = false
     @State private var showContent = true
-    @State private var viewType = "Normal"
+    @State private var viewType = "Groupé"
     @Namespace private var animation
     let maxGroupsToShow: Int
     

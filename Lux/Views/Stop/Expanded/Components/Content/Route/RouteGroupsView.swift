@@ -18,7 +18,7 @@ struct RouteGroupsView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            if viewType == "Normal" {
+            if viewType == "Groupé" {
                 ScrollView(.vertical, showsIndicators: true) {
                     ForEach(Array(viewModel.routeNames.prefix(maxGroupsToShow).enumerated()), id: \.element) { index, routeName in
                         if let groups = viewModel.routeGroups[routeName], !groups.isEmpty {
