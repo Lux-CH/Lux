@@ -125,12 +125,14 @@ struct SettingsView: View {
                     isOn: $settings.showDelayInsteadOfDirectTime
                 )
                 
-                SettingsToggle(
-                    icon: "rectangle.compress.vertical",
-                    title: "Interface compacte",
-                    subtitle: "Réduire l'espacement dans l'onglet des arrêts",
-                    isOn: $settings.reduceSpacerBtwnStopContent
-                )
+                if UIDevice.current.userInterfaceIdiom == .phone {
+                    SettingsToggle(
+                        icon: "rectangle.compress.vertical",
+                        title: "Interface compacte",
+                        subtitle: "Réduire l'espacement dans l'onglet des arrêts",
+                        isOn: $settings.reduceSpacerBtwnStopContentView
+                    )
+                }
                 
                 SettingsToggle(
                     icon: "lightspectrum.horizontal",
