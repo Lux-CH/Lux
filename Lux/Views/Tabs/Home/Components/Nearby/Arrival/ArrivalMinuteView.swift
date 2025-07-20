@@ -50,11 +50,18 @@ struct ArrivalMinuteView: View {
     
     private var displayText: String {
         let secondsDifference = timeDifferenceInSeconds
-        let arrival = incomingStop.place.departure ?? incomingStop.place.arrival ?? now
-        
-        let isNextDay = !calendar.isDate(arrival, inSameDayAs: now)
-        
-        if secondsDifference <= 60 {
+                
+        if secondsDifference < 0 {
+            let minutesAgo = Int(ceil(Double(abs(secondsDifference)) / 60.0))
+            if minutesAgo <= 1 {
+                return "-1'"
+            } else {
+                let arrival = incomingStop.place.departure ?? incomingStop.place.arrival ?? now
+                let isNextDay = !calendar.isDate(arrival, inSameDayAs: now)
+                return "\(Self.hourFormatter.string(from: arrival))\(isNextDay ? "*" : "")"
+            }
+        }
+        else if secondsDifference <= 60 {
             if secondsDifference <= 30 {
                 return "0'"
             } else {
@@ -65,6 +72,8 @@ struct ArrivalMinuteView: View {
             if minutes < 100 {
                 return "\(minutes)'"
             } else {
+                let arrival = incomingStop.place.departure ?? incomingStop.place.arrival ?? now
+                let isNextDay = !calendar.isDate(arrival, inSameDayAs: now)
                 return "\(Self.hourFormatter.string(from: arrival))\(isNextDay ? "*" : "")"
             }
         }
