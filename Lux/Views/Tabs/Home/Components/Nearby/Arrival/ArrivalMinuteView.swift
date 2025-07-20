@@ -57,8 +57,10 @@ struct ArrivalMinuteView: View {
         else if secondsDifference <= 60 {
             if secondsDifference <= 30 {
                 return "0'"
-            } else {
+            } else if secondsDifference <= 45 {
                 return "<1'"
+            } else {
+                return "1'"
             }
         } else {
             let minutes = Int(ceil(Double(secondsDifference) / 60.0))
