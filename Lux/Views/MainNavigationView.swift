@@ -58,7 +58,6 @@ struct MainNavigationView: View {
     private let contentSpring = Animation.interactiveSpring(response: 0.5, dampingFraction: 0.85, blendDuration: 0.15)
     private let searchTransitionSpring = Animation.spring(response: 0.45, dampingFraction: 0.82, blendDuration: 0.1)
     
-    // Enhanced transitions
     private let searchModeTransition: AnyTransition = .asymmetric(
         insertion: .opacity.combined(with: .scale(scale: 0.98, anchor: .top)).combined(with: .offset(y: -10)),
         removal: .opacity.combined(with: .scale(scale: 0.96, anchor: .top)).combined(with: .offset(y: 10))
