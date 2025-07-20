@@ -320,33 +320,46 @@ class StopViewModel: ObservableObject {
     }
     
     @MainActor
-    private func groupStopTimes(_ stopTimes: [StopTime]) {
+    func sortStopTimes(_ stopTimes: [StopTime]) -> [StopTime] {
         let referenceTime = getReferenceTime()
         
-        let filteredStopTimes: [StopTime]
-        if isCustomTimeSelected {
-            filteredStopTimes = stopTimes
-        } else {
-            filteredStopTimes = stopTimes.filter { stopTime in
+        return stopTimes
+            .filter { stopTime in
+                guard !isCustomTimeSelected else { return true }
+                
                 let eventTime = stopTime.place.departure ?? stopTime.place.arrival
                 guard let eventTime = eventTime else { return true }
+                
                 return eventTime.addingTimeInterval(bufferTimeForTransport(stopTime)) > referenceTime
             }
+            .sorted { lhs, rhs in
+                let timeA = lhs.place.departure ?? lhs.place.arrival ?? Date.distantFuture
+                let timeB = rhs.place.departure ?? rhs.place.arrival ?? Date.distantFuture
+                return timeA < timeB
+            }
+    }
+
+    @MainActor
+    private func groupStopTimes(_ stopTimes: [StopTime]) {
+        let filteredStopTimes = isCustomTimeSelected ?
+        stopTimes :
+        stopTimes.filter { stopTime in
+            let eventTime = stopTime.place.departure ?? stopTime.place.arrival
+            guard let eventTime = eventTime else { return true }
+            return eventTime.addingTimeInterval(bufferTimeForTransport(stopTime)) > getReferenceTime()
         }
         
         let routeGroups = Dictionary(grouping: filteredStopTimes) { $0.routeShortName }
         
         var result: [String: [GroupedStopTime]] = [:]
         var newCurrentPages: [String: Int] = [:]
-        
-        var routeTiming: [String: Date] = [:]
-        
+                
         for (routeName, routeStopTimes) in routeGroups {
             let groupsByHeadsign = Dictionary(grouping: routeStopTimes) { $0.headsign ?? "" }
                 .map { (headsign, times) -> GroupedStopTime in
-                    let sortedTimes = times.sorted {
-                        let timeA = $0.place.departure ?? $0.place.arrival ?? Date.distantFuture
-                        let timeB = $1.place.departure ?? $1.place.arrival ?? Date.distantFuture
+                    let sortedTimes = times.sorted { lhs, rhs in
+                        let timeA = lhs.place.departure ?? lhs.place.arrival ?? Date.distantFuture
+                        let timeB = rhs.place.departure ?? rhs.place.arrival ?? Date.distantFuture
                         return timeA < timeB
                     }
                     return GroupedStopTime(
@@ -358,23 +371,16 @@ class StopViewModel: ObservableObject {
                 .sorted { $0.headsign < $1.headsign }
             
             result[routeName] = groupsByHeadsign
-            
-            newCurrentPages[routeName] = min(currentPages[routeName] ?? 0, groupsByHeadsign.count - 1)
-            
-            if let firstEventTime = groupsByHeadsign.first?.stopTimes.first.map({ $0.place.departure ?? $0.place.arrival }) {
-                routeTiming[routeName] = firstEventTime
-            }
+            newCurrentPages[routeName] = min(currentPages[routeName] ?? 0, max(0, groupsByHeadsign.count - 1))
         }
         
         let sortedRouteNames = lineScoreManager.getSortedRouteNames(Array(routeGroups.keys))
-        
-        for (index, name) in sortedRouteNames.enumerated() {
-            routeOrder[name] = index
-        }
+        let newRouteOrder = Dictionary(uniqueKeysWithValues: sortedRouteNames.enumerated().map { ($1, $0) })
         
         self.routeNames = sortedRouteNames
         self.routeGroups = result
         self.currentPages = newCurrentPages
+        self.routeOrder = newRouteOrder
     }
     
     
