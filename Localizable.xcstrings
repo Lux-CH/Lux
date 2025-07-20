@@ -848,6 +848,16 @@
         }
       }
     },
+    "Groupé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grouped"
+          }
+        }
+      }
+    },
     "Hello, World!" : {
       "localizations" : {
         "en" : {
@@ -1094,6 +1104,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Display mode"
+          }
+        }
+      }
+    },
+    "Mode d'Affichage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display Mode"
           }
         }
       }
@@ -1604,6 +1624,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selected symbol"
+          }
+        }
+      }
+    },
+    "Temps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time"
           }
         }
       }
