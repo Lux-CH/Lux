@@ -79,28 +79,29 @@ struct ArrivalMinuteView: View {
         }
     }
     
-    private var shouldBlink: Bool {
-        switch incomingStop.mode {
+    private func bufferTimeForTransport(_ stopTime: StopTime) -> TimeInterval {
+        switch stopTime.mode {
         case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .ferry:
-            let arrival = incomingStop.place.arrival ?? incomingStop.place.scheduledArrival
-            let departure = incomingStop.place.departure ?? incomingStop.place.scheduledDeparture
-            
-            if arrival != departure {
-                if let arrival = arrival, let departure = departure {
-                    let now = Date()
-                    return now >= arrival && now <= departure
-                } else {
-                    return false
+            if let arrival = stopTime.place.arrival,
+                  let departure = stopTime.place.departure,
+               arrival != departure {
+                let timeDifference = departure.timeIntervalSince(arrival)
+                if timeDifference > 0 {
+                    return timeDifference
                 }
-            } else {
-                let secondsDiff = timeDifferenceInSeconds
-                return secondsDiff <= 50 && secondsDiff >= -50
             }
-            
+            return 60.0
         default:
-            let secondsDiff = timeDifferenceInSeconds
-            return secondsDiff <= 20 && secondsDiff >= -20
+            return 40.0
         }
+    }
+    
+    private var shouldBlink: Bool {
+        let eventTime = incomingStop.place.departure ?? incomingStop.place.arrival ?? now
+        let bufferTime = bufferTimeForTransport(incomingStop)
+        let secondsUntilCleanup = Int(eventTime.addingTimeInterval(bufferTime).timeIntervalSince(now))
+        
+        return secondsUntilCleanup <= Int(bufferTime) && secondsUntilCleanup >= Int(-bufferTime)
     }
     
     private var latenessColor: Color {
