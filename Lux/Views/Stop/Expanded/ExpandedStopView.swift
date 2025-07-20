@@ -17,6 +17,7 @@ struct ExpandedStopView: View {
     @State private var animateIn = false
     @State private var isChangingContent = false
     @State private var showContent = true
+    @State private var viewType = "Normal"
     @Namespace private var animation
     let maxGroupsToShow: Int
     
@@ -28,6 +29,7 @@ struct ExpandedStopView: View {
                     showDatePicker: $showDatePicker,
                     animateIn: $animateIn,
                     selectedDate: $selectedDate,
+                    viewType: $viewType,
                     onDateSelected: {
                         contentTransition {
                             await loadDeparturesForSelectedTime()
@@ -58,6 +60,7 @@ struct ExpandedStopView: View {
                             animateIn: $animateIn,
                             maxGroupsToShow: maxGroupsToShow,
                             animation: animation,
+                            viewType: $viewType,
                             selectedDate: $selectedDate
                         )
                         .transition(.asymmetric(
