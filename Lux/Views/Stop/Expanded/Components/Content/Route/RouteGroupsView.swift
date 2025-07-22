@@ -17,10 +17,11 @@ struct RouteGroupsView: View {
     @Binding var selectedDate: Date
     
     var body: some View {
-        VStack(spacing: 0) {
-            if viewType == "Groupé" {
-                ScrollView(.vertical, showsIndicators: true) {
-                    ForEach(Array(viewModel.routeNames.prefix(maxGroupsToShow).enumerated()), id: \.element) { index, routeName in
+        if viewType == "Groupé" {
+            ScrollView(.vertical, showsIndicators: true) {
+                VStack(spacing: 0) {
+                    let shownRoutes = Array(viewModel.routeNames.prefix(maxGroupsToShow))
+                    ForEach(Array(shownRoutes.enumerated()), id: \.element) { index, routeName in
                         if let groups = viewModel.routeGroups[routeName], !groups.isEmpty {
                             RouteGroupView(
                                 routeName: routeName,
@@ -28,7 +29,7 @@ struct RouteGroupsView: View {
                                 viewModel: viewModel,
                                 animateIn: $animateIn,
                                 animation: animation,
-                                isLastRoute: routeName == viewModel.routeNames.prefix(maxGroupsToShow).last
+                                isLastRoute: routeName == shownRoutes.last
                             )
                             .opacity(animateIn ? 1 : 0)
                             .offset(y: animateIn ? 0 : 20)
@@ -36,24 +37,24 @@ struct RouteGroupsView: View {
                         }
                     }
                 }
-                .refreshable {
-                    await refresh()
+                .padding(.bottom, 10)
+            }
+            .refreshable {
+                await refresh()
+            }
+        } else if let stopTimes = viewModel.stopTimes?.stopTimes {
+            List(viewModel.sortStopTimes(stopTimes)) { stopTime in
+                ExpandedDepartureRowView(stopTime: stopTime) { routeShortName in
+                    viewModel.userSelectedLine(routeShortName)
                 }
-            } else if let stopTimes = viewModel.stopTimes?.stopTimes {
-                List(viewModel.sortStopTimes(stopTimes)) { stopTime in
-                    ExpandedDepartureRowView(stopTime: stopTime) { routeShortName in
-                        viewModel.userSelectedLine(routeShortName)
-                    }
-                    .listRowBackground(Color(.secondarySystemBackground).opacity(0.1)) // experimental for a reason ig :) how tf is this even valid like what
-                    // listRowBg is screwing up bgs
-                }
-                .listStyle(.plain)
-                .refreshable {
-                    await refresh()
-                }
+                .listRowBackground(Color(.secondarySystemBackground).opacity(0.1))
+            }
+            .listStyle(.plain)
+            .padding(.bottom, 10)
+            .refreshable {
+                await refresh()
             }
         }
-        .padding(.bottom, 10)
     }
     private func refresh() async {
         let now = Date()
