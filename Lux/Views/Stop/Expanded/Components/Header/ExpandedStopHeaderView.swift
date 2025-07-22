@@ -98,6 +98,7 @@ struct CustomSegmentedPicker: View {
     @Binding var selection: String
     private let options = ["Groupé", "Chronologique"]
     @Namespace private var animation
+    @Environment(\.colorScheme) var colorScheme
     
     var body: some View {
         HStack(spacing: 0) {
@@ -131,7 +132,7 @@ struct CustomSegmentedPicker: View {
         .padding(2)
         .overlay(
             RoundedRectangle(cornerRadius: 35)
-                .stroke(Color.accentColor.opacity(0.85), lineWidth: 0.1)
+                .stroke(Color.accentColor.opacity(0.85), lineWidth: colorScheme == .dark ? 0.1 : 0.5)
         )
         .frame(height: 28)
     }
