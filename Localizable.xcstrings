@@ -12,6 +12,9 @@
       },
       "shouldTranslate" : false
     },
+    "-" : {
+
+    },
     "*" : {
       "shouldTranslate" : false
     },
@@ -1438,6 +1441,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search results"
+          }
+        }
+      }
+    },
+    "Risqué" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risky"
           }
         }
       }

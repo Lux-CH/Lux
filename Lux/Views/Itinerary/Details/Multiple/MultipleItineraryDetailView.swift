@@ -85,7 +85,7 @@ struct MultipleItineraryDetailView: View {
             
             if fromName == toName {
                 if let fromTrack = fromTrack, let toTrack = toTrack, fromTrack != toTrack {
-                    return "Changez de quai : \(getTrackType(fromTrack)) → \(getTrackType(toTrack))"
+                    return "Passez \(Int(fromTrack) != nil ? "de la voie" : "du quai") \(fromTrack) \(Int(toTrack) != nil ? "à la voie" : "au quai") \(toTrack)"
                 } else {
                     return "Correspondance à \(fromName)"
                 }
@@ -233,6 +233,13 @@ struct MultipleItineraryDetailView: View {
                                                     .font(.caption)
                                                     .foregroundColor(.secondary)
                                                 
+                                            } else if tightConnectionLegs != nil {
+                                                Text("-")
+                                                    .font(.caption)
+                                                    .foregroundColor(.red)
+                                                Text("Risqué")
+                                                    .font(.caption)
+                                                    .foregroundColor(.red)
                                             }
                                         }
                                     }
