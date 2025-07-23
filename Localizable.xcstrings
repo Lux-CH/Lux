@@ -323,6 +323,16 @@
         }
       }
     },
+    "Arrivée à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrive at %@"
+          }
+        }
+      }
+    },
     "Arrivée prévue : %@" : {
       "localizations" : {
         "en" : {
@@ -333,23 +343,7 @@
         }
       }
     },
-    "Arrivez à %@%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arrive at %1$@%2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "Arrivez à %1$@%2$@"
-          }
-        }
-      }
-    },
-    "Attention : le temps entre le %@ et le %@ est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d’attente minimum dans les options d’itinéraire (page précédente)." : {
+    "Attention : le temps entre le %@ et le %@ est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d'attente minimum dans les options d'itinéraire (page précédente)." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -360,7 +354,7 @@
         "fr" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "Attention : le temps entre le %1$@ et le %2$@ est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d’attente minimum dans les options d’itinéraire (page précédente)."
+            "value" : "Attention : le temps entre le %1$@ et le %2$@ est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d'attente minimum dans les options d'itinéraire (page précédente)."
           }
         }
       }
@@ -441,16 +435,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No Internet connection."
-          }
-        }
-      }
-    },
-    "Aucune instruction disponible" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No instructions available"
           }
         }
       }
@@ -688,6 +672,16 @@
         }
       }
     },
+    "Détails" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details"
+          }
+        }
+      }
+    },
     "Direct" : {
       "localizations" : {
         "en" : {
@@ -898,16 +892,6 @@
         }
       }
     },
-    "Itinéraire" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Route"
-          }
-        }
-      }
-    },
     "Itinéraire indisponible" : {
       "localizations" : {
         "en" : {
@@ -1044,16 +1028,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Now"
-          }
-        }
-      }
-    },
-    "Marche" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Walk"
           }
         }
       }
@@ -1444,6 +1418,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search results"
+          }
+        }
+      }
+    },
+    "Risqué" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risqued"
           }
         }
       }
