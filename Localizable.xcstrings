@@ -313,6 +313,16 @@
         }
       }
     },
+    "Arrêts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stops"
+          }
+        }
+      }
+    },
     "Arrivée" : {
       "localizations" : {
         "en" : {

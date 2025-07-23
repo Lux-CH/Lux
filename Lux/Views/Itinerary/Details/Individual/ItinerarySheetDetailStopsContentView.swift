@@ -18,7 +18,7 @@ struct ItinerarySheetDetailStopsContentView: View {
     var body: some View {
         VStack(spacing: 0) {
             HStack {
-                Text("Prochains arrêts")
+                Text(isMultipleLeg ? "Arrêts" : "Prochains arrêts")
                     .font(.headline)
                     .foregroundColor(.primary)
                 Spacer()
