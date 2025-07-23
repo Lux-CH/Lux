@@ -96,13 +96,14 @@ struct IntermediateStopsButton: View {
                 .frame(width: 60)
                 
                 HStack(spacing: 8) {
-                    Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                        .font(.system(size: 12, weight: .medium))
-                        .foregroundColor(legColor)
                     let plural = count == 1 ? "" : "s"
                     Text("\(count) arrêt\(plural) intermédiaire\(plural)")
                         .font(.system(size: 15, weight: .medium))
                         .foregroundColor(legColor)
+                    Image(systemName: "chevron.right")
+                        .font(.system(size: 12, weight: .medium))
+                        .foregroundColor(legColor)
+                        .rotationEffect(.degrees(isExpanded ? 90 : 0))
                 }
                 .padding(.vertical, 12)
                 
