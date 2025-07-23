@@ -30,27 +30,6 @@ struct MultipleItineraryDetailView: View {
         }
     }
     
-    private func calculateNextStop(leg: Leg) -> Place? {
-        let now = Date()
-        
-        if let departureTime = leg.from.departure {
-            if departureTime > now {
-                return leg.from
-            }
-        }
-        
-        if let intermediateStops = leg.intermediateStops {
-            for stop in intermediateStops {
-                let relevantTime = stop.departure ?? stop.arrival
-                if let time = relevantTime, time > now {
-                    return stop
-                }
-            }
-        }
-        
-        return leg.to
-    }
-    
     private func getLegId(_ leg: Leg) -> String {
         return "\(leg.startTime.timeIntervalSince1970)-\(leg.from.name)-\(leg.to.name)"
     }
@@ -90,6 +69,30 @@ struct MultipleItineraryDetailView: View {
         let toTransport = toLeg.routeShortName ?? toLeg.headsign ?? "le transport suivant"
         
         return (from: fromTransport, to: toTransport)
+    }
+    
+    private func getWalkingDescription(leg: Leg, legIndex: Int) -> String {
+        let fromName = leg.from.name
+        let toName = leg.to.name
+        
+        if legIndex == 0 {
+            return "Marchez vers \(toName)"
+        } else if legIndex == itinerary.legs.count - 1 {
+            return "Marchez vers votre destination"
+        } else {
+            let fromTrack = leg.from.track
+            let toTrack = leg.to.track
+            
+            if fromName == toName {
+                if let fromTrack = fromTrack, let toTrack = toTrack, fromTrack != toTrack {
+                    return "Changez de quai : \(getTrackType(fromTrack)) → \(getTrackType(toTrack))"
+                } else {
+                    return "Correspondance à \(fromName)"
+                }
+            } else {
+                return "Marchez de \(fromName) à \(toName)"
+            }
+        }
     }
     
     private func getDirectionIcon(for step: MKRoute.Step) -> String {
@@ -148,7 +151,7 @@ struct MultipleItineraryDetailView: View {
                     ForEach(Array(itinerary.legs.enumerated()), id: \.element.legGeometry.points) { legIndex, leg in
                         if leg.mode != .walk {
                             // Transit leg
-                            LegHeaderView(leg: leg, legColor: getLegColor(leg), isSingle: false, nextStop: calculateNextStop(leg: leg))
+                            LegHeaderView(leg: leg, legColor: getLegColor(leg), isSingle: false, nextStop: nil)
                                 .padding(.horizontal, 20)
                                 .padding(.top, 25)
                                 .padding(.bottom, 15)
@@ -172,18 +175,26 @@ struct MultipleItineraryDetailView: View {
                             let isExpanded = expandedLegIds.contains(legId)
                             let walkingSteps = viewModel.walkingDirections[viewModel.getLegIdentifier(leg)] ?? []
                             let tightConnectionLegs = isTightConnection(walkingLeg: leg, legIndex: legIndex)
+                            let walkingDescription = getWalkingDescription(leg: leg, legIndex: legIndex)
                             
                             VStack(spacing: 0) {
-                                HStack {
-                                    Image(systemName: "figure.walk")
-                                        .font(.system(size: 18, weight: .medium))
-                                        .foregroundStyle(.blue)
-                                        .frame(width: 30)
+                                HStack(alignment: .center, spacing: 12) {
+                                    ZStack {
+                                        Circle()
+                                            .fill(Color.blue.opacity(0.1))
+                                            .frame(width: 36, height: 36)
+                                        
+                                        Image(systemName: legIndex == 0 || legIndex == itinerary.legs.count - 1 ? "figure.walk" : "arrow.left.arrow.right")
+                                            .font(.system(size: 16, weight: .medium))
+                                            .foregroundStyle(.blue)
+                                    }
                                     
-                                    VStack(alignment: .leading, spacing: 2) {
+                                    VStack(alignment: .leading, spacing: 4) {
                                         HStack(spacing: 8) {
-                                            Text("Marche")
-                                                .font(.headline)
+                                            Text(walkingDescription)
+                                                .font(.system(size: 15, weight: .medium))
+                                                .foregroundColor(.primary)
+                                                .lineLimit(2)
                                             
                                             if let legs = tightConnectionLegs {
                                                 Button(action: {
@@ -192,132 +203,145 @@ struct MultipleItineraryDetailView: View {
                                                 }) {
                                                     Image(systemName: "exclamationmark.triangle.fill")
                                                         .foregroundColor(.red)
-                                                        .font(.system(size: 16))
+                                                        .font(.system(size: 14))
                                                 }
                                                 .buttonStyle(PlainButtonStyle())
                                             }
                                         }
                                         
                                         HStack(spacing: 4) {
-                                            Text(formatDistance(leg.distance ?? 0))
-                                                .font(.subheadline)
+                                            Label(formatDistance(leg.distance ?? 0), systemImage: "location")
+                                                .labelStyle(CustomLabel(spacing: 4))
+                                                .font(.caption)
+                                                .foregroundColor(.secondary)
+                                            
                                             Text("•")
                                                 .font(.caption)
                                                 .foregroundColor(.gray)
-                                            Button(action: {
-                                                if let legs = tightConnectionLegs {
-                                                    selectedTightConnection = getLegConnectionInfo(from: legs.from, to: legs.to)
-                                                    showingTightConnectionAlert = true
-                                                }
-                                            }) {
-                                                Text("\(leg.duration / 60) min")
-                                                    .font(.subheadline)
-                                                    .foregroundColor(tightConnectionLegs != nil ? .red : .secondary)
+                                            
+                                            Label("\(leg.duration / 60) min", systemImage: "clock")
+                                                .labelStyle(CustomLabel(spacing: 4))
+                                                .font(.caption)
+                                                .foregroundColor(tightConnectionLegs != nil ? .red : .secondary)
+                                            
+                                            if let track = leg.to.track, leg.from.name != leg.to.name {
+                                                Text("•")
+                                                    .font(.caption)
+                                                    .foregroundColor(.gray)
+                                                Label(getTrackType(track), systemImage: "train.side.front.car")
+                                                    .labelStyle(CustomLabel(spacing: 4))
+                                                    .font(.caption)
+                                                    .foregroundColor(.secondary)
+                                                
+                                            } else if tightConnectionLegs != nil {
+                                                Text("•")
+                                                    .font(.caption)
+                                                    .foregroundColor(.gray)
+                                                Text("Risqué")
+                                                    .font(.caption)
+                                                    .foregroundColor(.red)
                                             }
-                                            .buttonStyle(PlainButtonStyle())
                                         }
-                                        .foregroundColor(.secondary)
                                     }
                                     
                                     Spacer()
                                     
-                                    Button(action: {
-                                        withAnimation(.spring(response: 0.3)) {
-                                            if isExpanded {
-                                                expandedLegIds.remove(legId)
-                                            } else {
-                                                expandedLegIds.insert(legId)
+                                    if !walkingSteps.isEmpty {
+                                        Button(action: {
+                                            withAnimation(.spring(response: 0.3)) {
+                                                if isExpanded {
+                                                    expandedLegIds.remove(legId)
+                                                } else {
+                                                    expandedLegIds.insert(legId)
+                                                }
+                                            }
+                                        }) {
+                                            VStack(spacing: 2) {
+                                                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
+                                                    .font(.system(size: 12, weight: .medium))
+                                                    .foregroundColor(.blue)
+                                                
+                                                Text(isExpanded ? "Masquer" : "Détails")
+                                                    .font(.caption2)
+                                                    .foregroundColor(.blue)
                                             }
                                         }
-                                    }) {
-                                        Text(isExpanded ? "Masquer" : "Itinéraire")
-                                            .font(.subheadline)
-                                            .foregroundColor(.blue)
-                                        
-                                        Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                                            .font(.caption)
-                                            .foregroundColor(.blue)
+                                        .buttonStyle(PlainButtonStyle())
                                     }
                                 }
                                 .padding(.horizontal, 20)
-                                .padding(.vertical, 15)
+                                .padding(.vertical, 16)
                                 
-                                if isExpanded {
+                                if isExpanded && !walkingSteps.isEmpty {
                                     VStack(spacing: 0) {
-                                        if !walkingSteps.isEmpty {
-                                            ForEach(Array(walkingSteps.enumerated()), id: \.offset) { index, step in
-                                                HStack(alignment: .top, spacing: 10) {
-                                                    Image(systemName: getDirectionIcon(for: step))
-                                                        .foregroundColor(.blue)
-                                                        .frame(width: 28, height: 28)
-                                                        .background(Color.blue.opacity(0.1))
-                                                        .clipShape(Circle())
-                                                    
-                                                    VStack(alignment: .leading, spacing: 4) {
-                                                        Text(getInstructionText(for: step))
-                                                            .font(.subheadline)
-                                                            .multilineTextAlignment(.leading)
-                                                        
-                                                        if step.distance > 0 {
-                                                            Text(formatDistance(step.distance))
-                                                                .font(.caption)
-                                                                .foregroundColor(.secondary)
-                                                        }
-                                                    }
-                                                    
-                                                    Spacer()
-                                                }
-                                                .padding(.vertical, 10)
-                                                .padding(.horizontal, 20)
-                                                
-                                                Divider()
-                                                    .padding(.leading, 58)
-                                                    .padding(.trailing, 20)
-                                            }
-                                            if leg.to.track != leg.from.track && leg.to.name != "END" {
-                                                HStack(alignment: .top, spacing: 10) {
-                                                    Image(systemName: "signpost.right")
-                                                        .foregroundColor(.blue)
-                                                        .frame(width: 28, height: 28)
-                                                        .background(Color.blue.opacity(0.1))
-                                                        .clipShape(Circle())
-                                                    
-                                                    VStack(alignment: .leading, spacing: 4) {
-                                                        Text("Arrivez à \(leg.to.name)\(leg.to.track.map { " - \(getTrackType($0))" } ?? "")")
-                                                            .font(.subheadline)
-                                                            .multilineTextAlignment(.leading)
-                                                    }
-                                                    
-                                                    Spacer()
-                                                }
-                                                .padding(.vertical, 10)
-                                                .padding(.horizontal, 20)
-                                            }
-                                        } else {
-                                            HStack(alignment: .top, spacing: 10) {
-                                                Image(systemName: "figure.walk")
-                                                    .foregroundColor(.blue)
-                                                    .frame(width: 28, height: 28)
-                                                    .background(Color.blue.opacity(0.1))
+                                        ForEach(Array(walkingSteps.enumerated()), id: \.offset) { index, step in
+                                            HStack(alignment: .top, spacing: 12) {
+                                                Image(systemName: getDirectionIcon(for: step))
+                                                    .foregroundColor(.white)
+                                                    .font(.system(size: 12, weight: .medium))
+                                                    .frame(width: 24, height: 24)
+                                                    .background(Color.blue)
                                                     .clipShape(Circle())
                                                 
                                                 VStack(alignment: .leading, spacing: 4) {
-                                                    Text("Aucune instruction disponible")
+                                                    Text(getInstructionText(for: step))
                                                         .font(.subheadline)
                                                         .multilineTextAlignment(.leading)
-                                                        .foregroundColor(.secondary)
+                                                    
+                                                    if step.distance > 0 {
+                                                        Text(formatDistance(step.distance))
+                                                            .font(.caption)
+                                                            .foregroundColor(.secondary)
+                                                    }
                                                 }
                                                 
                                                 Spacer()
                                             }
-                                            .padding(.vertical, 10)
+                                            .padding(.vertical, 8)
+                                            .padding(.horizontal, 20)
+                                            
+                                            if index < walkingSteps.count - 1 {
+                                                Divider()
+                                                    .padding(.leading, 56)
+                                                    .padding(.trailing, 20)
+                                            }
+                                        }
+                                        
+                                        if leg.to.track != leg.from.track && leg.to.name != "FIN" {
+                                            Divider()
+                                                .padding(.leading, 56)
+                                                .padding(.trailing, 20)
+                                            
+                                            HStack(alignment: .top, spacing: 12) {
+                                                Image(systemName: "checkmark.circle.fill")
+                                                    .foregroundColor(.white)
+                                                    .font(.system(size: 12, weight: .medium))
+                                                    .frame(width: 24, height: 24)
+                                                    .background(Color.green)
+                                                    .clipShape(Circle())
+                                                
+                                                VStack(alignment: .leading, spacing: 4) {
+                                                    Text("Arrivée à \(leg.to.name)")
+                                                        .font(.subheadline)
+                                                        .fontWeight(.medium)
+                                                    
+                                                    if let track = leg.to.track, !track.isEmpty && track != "inconnu" {
+                                                        Text(getTrackType(track))
+                                                            .font(.caption)
+                                                            .foregroundColor(.secondary)
+                                                    }
+                                                }
+                                                
+                                                Spacer()
+                                            }
+                                            .padding(.vertical, 8)
                                             .padding(.horizontal, 20)
                                         }
                                     }
-                                    .background(Color.blue.opacity(0.05))
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                    .background(Color(.systemGray6))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
                                     .padding(.horizontal, 20)
-                                    .padding(.bottom, 15)
+                                    .padding(.bottom, 12)
                                 }
                                 
                                 Divider()
@@ -336,7 +360,7 @@ struct MultipleItineraryDetailView: View {
             Button("OK", role: .cancel) { }
         } message: {
             if let connection = selectedTightConnection {
-                Text("Attention : le temps entre le \(connection.from) et le \(connection.to) est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d’attente minimum dans les options d’itinéraire (page précédente).")
+                Text("Attention : le temps entre le \(connection.from) et le \(connection.to) est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d'attente minimum dans les options d'itinéraire (page précédente).")
             }
         }
     }
