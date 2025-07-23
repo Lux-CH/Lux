@@ -701,6 +701,16 @@
         }
       }
     },
+    "Détails" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Details"
+          }
+        }
+      }
+    },
     "Direct" : {
       "localizations" : {
         "en" : {

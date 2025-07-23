@@ -255,11 +255,15 @@ struct MultipleItineraryDetailView: View {
                                         Spacer()
                                         
                                         if !walkingSteps.isEmpty {
-                                            Image(systemName: "chevron.right")
-                                                .font(.system(size: 16, weight: .regular))
-                                                .foregroundColor(.blue)
-                                                .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                                                .animation(.easeInOut(duration: 0.3), value: isExpanded)
+                                            HStack(spacing: 4) {
+                                                Text("Détails")
+                                                    .font(.caption)
+                                                    .foregroundColor(.blue)
+                                                Image(systemName: "chevron.right")
+                                                    .font(.system(size: 12, weight: .regular))
+                                                    .foregroundColor(.blue)
+                                                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                                            }
                                         }
                                     }
                                     .padding(.horizontal, 20)
