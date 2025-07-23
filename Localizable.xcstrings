@@ -1072,6 +1072,16 @@
         }
       }
     },
+    "Montez à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Board at %@"
+          }
+        }
+      }
+    },
     "Niveau d'intensité" : {
       "localizations" : {
         "en" : {

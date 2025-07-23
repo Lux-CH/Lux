@@ -80,9 +80,6 @@ struct LegHeaderView: View {
                         .font(.headline)
                         .foregroundColor(.primary)
                         .fontWeight(.semibold)
-//                        .lineLimit(1)
-//                        .frame(maxWidth: 250, alignment: .leading)
-//                        .truncationMode(.head)
                     
                     Spacer()
                     
@@ -101,9 +98,8 @@ struct LegHeaderView: View {
                         }
                     }
                 }
-                
-                if let nextStop = nextStop {
-                    HStack(spacing: 4) {
+                HStack(spacing: 4) {
+                    if let nextStop = nextStop {
                         Image(systemName: "arrow.down")
                             .font(.system(size: 10))
                             .foregroundColor(.secondary.opacity(0.6))
@@ -114,6 +110,23 @@ struct LegHeaderView: View {
 //                            .lineLimit(1)
 //                            .frame(maxWidth: 250, alignment: .leading)
 //                            .truncationMode(.head)
+                    }
+                    else {
+                        let systemName: String = {
+                            switch leg.mode {
+                            case .tram: return "tram"
+                            case .ferry: return "ferry"
+                            case .bus: return "bus"
+                            case .rail, .highSpeedRail, .regionalFastRail, .regionalRail: return "tram.tunnel.fill"
+                            default: return "bus"
+                            }
+                        }()
+                        Image(systemName: systemName)
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary.opacity(0.6))
+                        Text("Montez à \(formatTime(leg.startTime))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
                     }
                 }
                 if settings.crowdbackAllowed {
