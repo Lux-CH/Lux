@@ -196,6 +196,16 @@
         }
       }
     },
+    "Accès à la localisation refusé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location Access Denied"
+          }
+        }
+      }
+    },
     "Accès hors ligne à votre carte" : {
       "localizations" : {
         "en" : {
@@ -1213,6 +1223,16 @@
         }
       }
     },
+    "Ouvrir les Réglages" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
     "Par Défaut" : {
       "localizations" : {
         "en" : {
@@ -1365,6 +1385,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Place the back of your SwissPass card in the frame to add it to LuxPass"
+          }
+        }
+      }
+    },
+    "Pour afficher les arrêts à proximité, veuillez autoriser l'accès à votre position dans les réglages." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To display nearby stops, please allow location access in Settings."
           }
         }
       }
