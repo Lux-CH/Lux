@@ -178,97 +178,96 @@ struct MultipleItineraryDetailView: View {
                             let walkingDescription = getWalkingDescriptionText(leg: leg, legIndex: legIndex)
                             
                             VStack(spacing: 0) {
-                                HStack(alignment: .center, spacing: 12) {
-                                    ZStack {
-                                        Circle()
-                                            .fill(Color.blue.opacity(0.1))
-                                            .frame(width: 36, height: 36)
-                                        
-                                        Image(systemName: leg.from.name != leg.to.name ? "figure.walk" : "arrow.left.arrow.right")
-                                            .font(.system(size: 16, weight: .medium))
-                                            .foregroundStyle(.blue)
-                                    }
-                                    
-                                    VStack(alignment: .leading, spacing: 4) {
-                                        HStack(spacing: 8) {
-                                            walkingDescription
-                                                .font(.system(size: 15, weight: .medium))
-                                                .foregroundColor(.primary)
-                                                .lineLimit(2)
-                                            
-                                            if let legs = tightConnectionLegs {
-                                                Button(action: {
-                                                    selectedTightConnection = getLegConnectionInfo(from: legs.from, to: legs.to)
-                                                    showingTightConnectionAlert = true
-                                                }) {
-                                                    Image(systemName: "exclamationmark.triangle.fill")
-                                                        .foregroundColor(.red)
-                                                        .font(.system(size: 14))
-                                                }
-                                                .buttonStyle(PlainButtonStyle())
+                                Button(action: {
+                                    if !walkingSteps.isEmpty {
+                                        withAnimation(.easeInOut(duration: 0.3)) {
+                                            if isExpanded {
+                                                expandedLegIds.remove(legId)
+                                            } else {
+                                                expandedLegIds.insert(legId)
                                             }
                                         }
+                                    }
+                                }) {
+                                    HStack(alignment: .center, spacing: 12) {
+                                        ZStack {
+                                            Circle()
+                                                .fill(Color.blue.opacity(0.1))
+                                                .frame(width: 36, height: 36)
+                                            
+                                            Image(systemName: leg.from.name != leg.to.name ? "figure.walk" : "arrow.left.arrow.right")
+                                                .font(.system(size: 16, weight: .medium))
+                                                .foregroundStyle(.blue)
+                                        }
                                         
-                                        HStack(spacing: 4) {
-                                            Text(formatDistance(leg.distance ?? 0))
-                                                .font(.caption)
-                                                .foregroundColor(.secondary)
+                                        VStack(alignment: .leading, spacing: 4) {
+                                            HStack(spacing: 8) {
+                                                walkingDescription
+                                                    .font(.system(size: 15, weight: .medium))
+                                                    .foregroundColor(.primary)
+                                                    .lineLimit(2)
+                                                
+                                                if let legs = tightConnectionLegs {
+                                                    Button(action: {
+                                                        selectedTightConnection = getLegConnectionInfo(from: legs.from, to: legs.to)
+                                                        showingTightConnectionAlert = true
+                                                    }) {
+                                                        Image(systemName: "exclamationmark.triangle.fill")
+                                                            .foregroundColor(.red)
+                                                            .font(.system(size: 14))
+                                                    }
+                                                    .buttonStyle(PlainButtonStyle())
+                                                }
+                                            }
                                             
-                                            Text("•")
-                                                .font(.caption)
-                                                .foregroundColor(.gray)
-                                            
-                                            Text("\(leg.duration / 60) min")
-                                                .font(.caption)
-                                                .foregroundColor(tightConnectionLegs != nil ? .red : .secondary)
-                                            
-                                            if let track = leg.to.track, leg.from.name != leg.to.name {
-                                                Text("•")
-                                                    .font(.caption)
-                                                    .foregroundColor(.gray)
-                                                Text(getTrackType(track))
+                                            HStack(spacing: 4) {
+                                                Text(formatDistance(leg.distance ?? 0))
                                                     .font(.caption)
                                                     .foregroundColor(.secondary)
                                                 
-                                            } else if tightConnectionLegs != nil {
-                                                Text("-")
+                                                Text("•")
                                                     .font(.caption)
-                                                    .foregroundColor(.red)
-                                                Text("Risqué")
+                                                    .foregroundColor(.gray)
+                                                
+                                                Text("\(leg.duration / 60) min")
                                                     .font(.caption)
-                                                    .foregroundColor(.red)
-                                            }
-                                        }
-                                    }
-                                    
-                                    Spacer()
-                                    
-                                    if !walkingSteps.isEmpty {
-                                        Button(action: {
-                                            withAnimation(.easeInOut(duration: 0.3)) {
-                                                if isExpanded {
-                                                    expandedLegIds.remove(legId)
-                                                } else {
-                                                    expandedLegIds.insert(legId)
+                                                    .foregroundColor(tightConnectionLegs != nil ? .red : .secondary)
+                                                
+                                                if let track = leg.to.track, leg.from.name != leg.to.name {
+                                                    Text("•")
+                                                        .font(.caption)
+                                                        .foregroundColor(.gray)
+                                                    Text(getTrackType(track))
+                                                        .font(.caption)
+                                                        .foregroundColor(.secondary)
+                                                    
+                                                } else if tightConnectionLegs != nil {
+                                                    Text("-")
+                                                        .font(.caption)
+                                                        .foregroundColor(.red)
+                                                    Text("Risqué")
+                                                        .font(.caption)
+                                                        .foregroundColor(.red)
                                                 }
                                             }
-                                        }) {
-                                            HStack {
-                                                Spacer()
-                                                Image(systemName: "chevron.right")
-                                                    .font(.system(size: 16, weight: .regular))
-                                                    .foregroundColor(.blue)
-                                                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                                                    .animation(.easeInOut(duration: 0.3), value: isExpanded)
-                                            }
-                                            .frame(width: 12.5)
                                         }
-                                        .buttonStyle(PlainButtonStyle())
+                                        
+                                        Spacer()
+                                        
+                                        if !walkingSteps.isEmpty {
+                                            Image(systemName: "chevron.right")
+                                                .font(.system(size: 16, weight: .regular))
+                                                .foregroundColor(.blue)
+                                                .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                                                .animation(.easeInOut(duration: 0.3), value: isExpanded)
+                                        }
                                     }
+                                    .padding(.horizontal, 20)
+                                    .padding(.vertical, 16)
                                 }
-                                .padding(.horizontal, 20)
-                                .padding(.vertical, 16)
-                                
+                                .buttonStyle(PlainButtonStyle())
+                                .allowsHitTesting(!walkingSteps.isEmpty)
+
                                 if isExpanded && !walkingSteps.isEmpty {
                                     VStack(spacing: 0) {
                                         ForEach(Array(walkingSteps.enumerated()), id: \.offset) { stepIndex, step in
