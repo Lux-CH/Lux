@@ -90,6 +90,8 @@ struct NearbyStopsView: View {
                                     await checkMaintenanceStatus()
                                 }
                             }
+                            Link("État des serveurs", destination: URL(string: "https://lux.cronitorstatus.com")!)
+                                .foregroundColor(.accentColor)
                         }
                         .padding(.top, 8)
 
@@ -102,6 +104,8 @@ struct NearbyStopsView: View {
                     Text("Aucun arrêt à proximité trouvé.")
                         .foregroundColor(.gray)
                         .padding()
+                    Link("État des serveurs", destination: URL(string: "https://lux.cronitorstatus.com")!)
+                        .foregroundColor(.accentColor)
                 }
             } else {
                 VStack(spacing: 2.5) {
