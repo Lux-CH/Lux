@@ -13,7 +13,7 @@
       "shouldTranslate" : false
     },
     "-" : {
-
+      "shouldTranslate" : false
     },
     "*" : {
       "shouldTranslate" : false
@@ -336,12 +336,18 @@
         }
       }
     },
-    "Arrivée à %@" : {
+    "Arrivée à %@ %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Arrive at %@"
+            "value" : "Arrive at %1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Arrivée à %1$@ %2$@"
           }
         }
       }
@@ -591,6 +597,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start typing to search for a stop.\nA minimum of 3 characters is required."
+          }
+        }
+      }
+    },
+    "Correspondance à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transfer at %@"
           }
         }
       }
@@ -1045,6 +1061,48 @@
         }
       }
     },
+    "Marchez de %@ à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk from %1$@ to %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Marchez de %1$@ à %2$@"
+          }
+        }
+      }
+    },
+    "Marchez jusqu'à %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk to %1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Marchez jusqu'à %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "Marchez vers votre destination" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk towards your destination"
+          }
+        }
+      }
+    },
     "Masquer" : {
       "localizations" : {
         "en" : {
@@ -1211,6 +1269,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Share trip"
+          }
+        }
+      }
+    },
+    "Passez %@ %@ %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go %1$@ %2$@ %3$@ %4$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Passez %1$@ %2$@ %3$@ %4$@"
           }
         }
       }

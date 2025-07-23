@@ -71,26 +71,26 @@ struct MultipleItineraryDetailView: View {
         return (from: fromTransport, to: toTransport)
     }
     
-    private func getWalkingDescription(leg: Leg, legIndex: Int) -> String {
+    private func getWalkingDescriptionText(leg: Leg, legIndex: Int) -> Text {
         let fromName = leg.from.name
         let toName = leg.to.name
         
         if legIndex == 0 {
-            return "Marchez vers \(toName)"
+            return Text("Marchez jusqu'à \(Image(systemName: "signpost.right")) \(toName)")
         } else if legIndex == itinerary.legs.count - 1 {
-            return "Marchez vers votre destination"
+            return Text("Marchez vers votre destination")
         } else {
             let fromTrack = leg.from.track
             let toTrack = leg.to.track
             
             if fromName == toName {
                 if let fromTrack = fromTrack, let toTrack = toTrack, fromTrack != toTrack {
-                    return "Passez \(Int(fromTrack) != nil ? "de la voie" : "du quai") \(fromTrack) \(Int(toTrack) != nil ? "à la voie" : "au quai") \(toTrack)"
+                    return Text("Passez \(Int(fromTrack) != nil ? "de la voie" : "du quai") \(fromTrack) \(Int(toTrack) != nil ? "à la voie" : "au quai") \(toTrack)")
                 } else {
-                    return "Correspondance à \(fromName)"
+                    return Text("Correspondance à \(fromName)")
                 }
             } else {
-                return "Marchez de \(fromName) à \(toName)"
+                return Text("Marchez de \(fromName) à \(toName)")
             }
         }
     }
@@ -175,7 +175,7 @@ struct MultipleItineraryDetailView: View {
                             let isExpanded = expandedLegIds.contains(legId)
                             let walkingSteps = viewModel.walkingDirections[viewModel.getLegIdentifier(leg)] ?? []
                             let tightConnectionLegs = isTightConnection(walkingLeg: leg, legIndex: legIndex)
-                            let walkingDescription = getWalkingDescription(leg: leg, legIndex: legIndex)
+                            let walkingDescription = getWalkingDescriptionText(leg: leg, legIndex: legIndex)
                             
                             VStack(spacing: 0) {
                                 HStack(alignment: .center, spacing: 12) {
@@ -191,7 +191,7 @@ struct MultipleItineraryDetailView: View {
                                     
                                     VStack(alignment: .leading, spacing: 4) {
                                         HStack(spacing: 8) {
-                                            Text(walkingDescription)
+                                            walkingDescription
                                                 .font(.system(size: 15, weight: .medium))
                                                 .foregroundColor(.primary)
                                                 .lineLimit(2)
@@ -324,7 +324,7 @@ struct MultipleItineraryDetailView: View {
                                                     .clipShape(Circle())
                                                 
                                                 VStack(alignment: .leading, spacing: 4) {
-                                                    Text(leg.to.name == "END" ? "Vous êtes arrivé à destination" : "Arrivée à \(leg.to.name)")
+                                                    Text(leg.to.name == "END" ? "Vous êtes arrivé à destination" : "Arrivée à \(Image(systemName: "signpost.right")) \(leg.to.name)")
                                                         .font(.subheadline)
                                                         .fontWeight(.medium)
                                                     
