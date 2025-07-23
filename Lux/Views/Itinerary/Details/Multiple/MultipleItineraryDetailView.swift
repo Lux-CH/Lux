@@ -19,15 +19,17 @@ struct MultipleItineraryDetailView: View {
     private func calculateUpcomingStops(leg: Leg) -> [Place] {
         guard let intermediateStops = leg.intermediateStops else { return [] }
         
-        let now = Date()
+        let cutoffTime = Date().addingTimeInterval(-25)
         var allStops = [leg.from]
         allStops.append(contentsOf: intermediateStops)
         allStops.append(leg.to)
         
-        return allStops.filter { stop in
-            let relevantTime = stop.departure ?? stop.arrival
-            return relevantTime == nil || relevantTime! >= now.addingTimeInterval(-60)
+        let upcomingStops = allStops.filter { stop in
+            guard let relevantTime = stop.departure ?? stop.arrival else { return true }
+            return relevantTime >= cutoffTime
         }
+        
+        return upcomingStops.isEmpty ? allStops : upcomingStops
     }
     
     private func getLegId(_ leg: Leg) -> String {
