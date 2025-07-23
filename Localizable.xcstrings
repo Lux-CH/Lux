@@ -1732,6 +1732,16 @@
         }
       }
     },
+    "Vous êtes arrivé à destination" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You arrived at destination"
+          }
+        }
+      }
+    },
     "XX" : {
       "localizations" : {
         "en" : {
