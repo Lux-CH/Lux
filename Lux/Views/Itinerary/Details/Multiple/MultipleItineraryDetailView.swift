@@ -300,7 +300,7 @@ struct MultipleItineraryDetailView: View {
                                             }
                                         }
                                         
-                                        if leg.to.track != leg.from.track && leg.to.name != "FIN" {
+                                        if leg.to.track != leg.from.track {
                                             Divider()
                                                 .padding(.leading, 56)
                                                 .padding(.trailing, 20)
@@ -314,7 +314,7 @@ struct MultipleItineraryDetailView: View {
                                                     .clipShape(Circle())
                                                 
                                                 VStack(alignment: .leading, spacing: 4) {
-                                                    Text("Arrivée à \(leg.to.name)")
+                                                    Text(leg.to.name == "END" ? "Vous êtes arrivé à destination" : "Arrivée à \(leg.to.name)")
                                                         .font(.subheadline)
                                                         .fontWeight(.medium)
                                                     
@@ -331,7 +331,7 @@ struct MultipleItineraryDetailView: View {
                                             .padding(.horizontal, 20)
                                         }
                                     }
-                                    .background(Color(.systemGray6))
+                                    .background(Color.blue.opacity(0.1))
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                                     .padding(.horizontal, 20)
                                     .padding(.bottom, 12)
