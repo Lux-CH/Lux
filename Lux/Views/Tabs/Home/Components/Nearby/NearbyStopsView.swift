@@ -26,7 +26,44 @@ struct NearbyStopsView: View {
     
     var body: some View {
         VStack {
-            if isWaitingForLocation {
+            if locationManager.permissionDenied {
+                Spacer()
+                VStack(alignment: .center) {
+                    Image(systemName: "location.slash")
+                        .font(.system(size: 64))
+                    
+                    Text("Accès à la localisation refusé")
+                        .padding(.top)
+                    
+                    Text("Pour afficher les arrêts à proximité, veuillez autoriser l'accès à votre position dans les réglages.")
+                        .font(.footnote)
+                        .multilineTextAlignment(.center)
+                        .foregroundColor(.gray)
+                        .padding([.bottom, .horizontal]) // wow ! tried this and it work, will def use this in future
+                        .padding(.top, 5)
+                    
+                    Button("Ouvrir les Réglages") {
+                        if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(settingsUrl)
+                        }
+                    }
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(Color.accentColor)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background {
+                        RoundedRectangle(cornerRadius: 35)
+                            .fill(.ultraThinMaterial)
+                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    }
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 35)
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                    )
+                }
+                .padding(.top, -15)
+                Spacer()
+            } else if isWaitingForLocation {
                 ProgressView("En attente de votre position...")
                     .padding()
             } else if !isUserConnectedToInternet {
@@ -36,6 +73,7 @@ struct NearbyStopsView: View {
                         .font(.system(size: 64))
                     Text("Aucune connexion à Internet.")
                         .padding(.top)
+                        .padding(.horizontal)
                     Text("Vérifiez vos données mobile ou votre connexion Wi-Fi et réessayez.")
                         .font(.footnote)
                         .multilineTextAlignment(.center)
@@ -125,11 +163,11 @@ struct NearbyStopsView: View {
         }
         .onAppear {
             monitorNetwork()
-            if locationManager.location == nil {
+            if locationManager.location == nil && !locationManager.permissionDenied {
                 isWaitingForLocation = true
-            } else if searchResults.isEmpty {
+            } else if searchResults.isEmpty && !locationManager.permissionDenied {
                 loadNearbyStops(showLoading: true)
-            } else {
+            } else if !locationManager.permissionDenied {
                 checkLocationAndRefresh()
             }
         }
@@ -137,11 +175,20 @@ struct NearbyStopsView: View {
             if isWaitingForLocation && newValue != nil {
                 isWaitingForLocation = false
                 loadNearbyStops(showLoading: true)
-            } else {
+            } else if !locationManager.permissionDenied {
                 checkLocationAndRefresh()
             }
         }
+        .onChange(of: locationManager.permissionDenied) {
+            if !locationManager.permissionDenied {
+                locationManager.requestLoc()
+                if locationManager.location != nil {
+                    loadNearbyStops(showLoading: true)
+                }
+            }
+        }
         .onReceive(refreshTimer) { _ in
+            guard !locationManager.permissionDenied else { return }
             guard let currentLoc = locationManager.location, let lastLoc = lastFetchedLocation else {
                 if locationManager.location != nil {
                     refreshNearbyStopsInBackground()
@@ -159,6 +206,7 @@ struct NearbyStopsView: View {
     }
     
     private func checkLocationAndRefresh() {
+        guard !locationManager.permissionDenied else { return }
         guard let currentLoc = locationManager.location else {
             isWaitingForLocation = true
             return
@@ -177,13 +225,17 @@ struct NearbyStopsView: View {
     }
     
     private func loadNearbyStops(showLoading: Bool) {
+        guard !locationManager.permissionDenied else { return }
+        
         if showLoading { isLoading = true }
         backgroundRefreshTask?.cancel()
         
         backgroundRefreshTask = Task {
             guard let loc = locationManager.location?.coordinate else {
                 if showLoading { isLoading = false }
-                isWaitingForLocation = true
+                if !locationManager.permissionDenied {
+                    isWaitingForLocation = true
+                }
                 print("loc not available for loading stops..:(")
                 return
             }
@@ -230,6 +282,7 @@ struct NearbyStopsView: View {
     }
     
     private func refreshNearbyStopsInBackground() {
+        guard !locationManager.permissionDenied else { return }
         guard backgroundRefreshTask == nil || backgroundRefreshTask?.isCancelled == true else {
             return
         }
