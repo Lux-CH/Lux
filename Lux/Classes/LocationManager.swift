@@ -73,6 +73,10 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         }
     }
     
+    func requestLoc() {
+        locationManager.requestWhenInUseAuthorization()
+    }
+    
     func stopLocationUpdates() {
         locationManager.stopUpdatingLocation()
     }
