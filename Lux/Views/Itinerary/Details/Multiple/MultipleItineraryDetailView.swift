@@ -267,6 +267,7 @@ struct MultipleItineraryDetailView: View {
                                                     .rotationEffect(.degrees(isExpanded ? 90 : 0))
                                                     .animation(.easeInOut(duration: 0.3), value: isExpanded)
                                             }
+                                            .frame(width: 75)
                                         }
                                         .buttonStyle(PlainButtonStyle())
                                     }
