@@ -1432,16 +1432,6 @@
         }
       }
     },
-    "Risqué" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Risqued"
-          }
-        }
-      }
-    },
     "Saisissez au moins 3 caractères pour rechercher" : {
       "localizations" : {
         "en" : {
