@@ -701,16 +701,6 @@
         }
       }
     },
-    "Détails" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Details"
-          }
-        }
-      }
-    },
     "Direct" : {
       "localizations" : {
         "en" : {
@@ -1099,16 +1089,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Walk towards your destination"
-          }
-        }
-      }
-    },
-    "Masquer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hide"
           }
         }
       }

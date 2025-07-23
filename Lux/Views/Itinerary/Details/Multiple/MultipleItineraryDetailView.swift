@@ -210,8 +210,7 @@ struct MultipleItineraryDetailView: View {
                                         }
                                         
                                         HStack(spacing: 4) {
-                                            Label(formatDistance(leg.distance ?? 0), systemImage: "location")
-                                                .labelStyle(CustomLabel(spacing: 4))
+                                            Text(formatDistance(leg.distance ?? 0))
                                                 .font(.caption)
                                                 .foregroundColor(.secondary)
                                             
@@ -219,8 +218,7 @@ struct MultipleItineraryDetailView: View {
                                                 .font(.caption)
                                                 .foregroundColor(.gray)
                                             
-                                            Label("\(leg.duration / 60) min", systemImage: "clock")
-                                                .labelStyle(CustomLabel(spacing: 4))
+                                            Text("\(leg.duration / 60) min")
                                                 .font(.caption)
                                                 .foregroundColor(tightConnectionLegs != nil ? .red : .secondary)
                                             
@@ -228,8 +226,7 @@ struct MultipleItineraryDetailView: View {
                                                 Text("•")
                                                     .font(.caption)
                                                     .foregroundColor(.gray)
-                                                Label(getTrackType(track), systemImage: "train.side.front.car")
-                                                    .labelStyle(CustomLabel(spacing: 4))
+                                                Text(getTrackType(track))
                                                     .font(.caption)
                                                     .foregroundColor(.secondary)
                                                 
@@ -256,18 +253,15 @@ struct MultipleItineraryDetailView: View {
                                                 }
                                             }
                                         }) {
-                                            HStack(spacing: 2) {
-                                                Text(isExpanded ? "Masquer" : "Détails")
-                                                    .font(.caption)
-                                                    .foregroundColor(.blue)
-                                                    .padding(.trailing, 2.5)
+                                            HStack {
+                                                Spacer()
                                                 Image(systemName: "chevron.right")
-                                                    .font(.system(size: 10, weight: .regular))
+                                                    .font(.system(size: 16, weight: .regular))
                                                     .foregroundColor(.blue)
                                                     .rotationEffect(.degrees(isExpanded ? 90 : 0))
                                                     .animation(.easeInOut(duration: 0.3), value: isExpanded)
                                             }
-                                            .frame(width: 75)
+                                            .frame(width: 12.5)
                                         }
                                         .buttonStyle(PlainButtonStyle())
                                     }
@@ -341,7 +335,7 @@ struct MultipleItineraryDetailView: View {
                                             .padding(.horizontal, 20)
                                         }
                                     }
-                                    .background(Color.blue.opacity(0.1))
+                                    .background(Color.blue.opacity(0.05))
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                                     .padding(.horizontal, 20)
                                     .padding(.bottom, 12)
