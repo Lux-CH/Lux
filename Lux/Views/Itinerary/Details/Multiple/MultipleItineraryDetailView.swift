@@ -184,7 +184,7 @@ struct MultipleItineraryDetailView: View {
                                             .fill(Color.blue.opacity(0.1))
                                             .frame(width: 36, height: 36)
                                         
-                                        Image(systemName: legIndex == 0 || legIndex == itinerary.legs.count - 1 ? "figure.walk" : "arrow.left.arrow.right")
+                                        Image(systemName: leg.from.name != leg.to.name ? "figure.walk" : "arrow.left.arrow.right")
                                             .font(.system(size: 16, weight: .medium))
                                             .foregroundStyle(.blue)
                                     }
@@ -233,13 +233,6 @@ struct MultipleItineraryDetailView: View {
                                                     .font(.caption)
                                                     .foregroundColor(.secondary)
                                                 
-                                            } else if tightConnectionLegs != nil {
-                                                Text("•")
-                                                    .font(.caption)
-                                                    .foregroundColor(.gray)
-                                                Text("Risqué")
-                                                    .font(.caption)
-                                                    .foregroundColor(.red)
                                             }
                                         }
                                     }
