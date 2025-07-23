@@ -831,6 +831,16 @@
         }
       }
     },
+    "État des serveurs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Server status"
+          }
+        }
+      }
+    },
     "Êtes-vous sûr de vouloir ouvrir cet itinéraire ?" : {
       "localizations" : {
         "en" : {
