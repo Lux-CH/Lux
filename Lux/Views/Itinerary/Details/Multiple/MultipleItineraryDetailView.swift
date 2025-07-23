@@ -248,7 +248,7 @@ struct MultipleItineraryDetailView: View {
                                     
                                     if !walkingSteps.isEmpty {
                                         Button(action: {
-                                            withAnimation(.spring(response: 0.3)) {
+                                            withAnimation(.easeInOut(duration: 0.3)) {
                                                 if isExpanded {
                                                     expandedLegIds.remove(legId)
                                                 } else {
@@ -256,14 +256,16 @@ struct MultipleItineraryDetailView: View {
                                                 }
                                             }
                                         }) {
-                                            VStack(spacing: 2) {
-                                                Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                                                    .font(.system(size: 12, weight: .medium))
-                                                    .foregroundColor(.blue)
-                                                
+                                            HStack(spacing: 2) {
                                                 Text(isExpanded ? "Masquer" : "Détails")
-                                                    .font(.caption2)
+                                                    .font(.caption)
                                                     .foregroundColor(.blue)
+                                                    .padding(.trailing, 2.5)
+                                                Image(systemName: "chevron.right")
+                                                    .font(.system(size: 10, weight: .regular))
+                                                    .foregroundColor(.blue)
+                                                    .rotationEffect(.degrees(isExpanded ? 90 : 0))
+                                                    .animation(.easeInOut(duration: 0.3), value: isExpanded)
                                             }
                                         }
                                         .buttonStyle(PlainButtonStyle())
@@ -274,7 +276,7 @@ struct MultipleItineraryDetailView: View {
                                 
                                 if isExpanded && !walkingSteps.isEmpty {
                                     VStack(spacing: 0) {
-                                        ForEach(Array(walkingSteps.enumerated()), id: \.offset) { index, step in
+                                        ForEach(Array(walkingSteps.enumerated()), id: \.offset) { stepIndex, step in
                                             HStack(alignment: .top, spacing: 12) {
                                                 Image(systemName: getDirectionIcon(for: step))
                                                     .foregroundColor(.white)
@@ -300,7 +302,7 @@ struct MultipleItineraryDetailView: View {
                                             .padding(.vertical, 8)
                                             .padding(.horizontal, 20)
                                             
-                                            if index < walkingSteps.count - 1 {
+                                            if stepIndex < walkingSteps.count - 1 {
                                                 Divider()
                                                     .padding(.leading, 56)
                                                     .padding(.trailing, 20)
@@ -342,6 +344,10 @@ struct MultipleItineraryDetailView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: 12))
                                     .padding(.horizontal, 20)
                                     .padding(.bottom, 12)
+                                    .transition(.asymmetric(
+                                        insertion: .scale(scale: 0.95).combined(with: .opacity),
+                                        removal: .scale(scale: 0.95).combined(with: .opacity)
+                                    ))
                                 }
                                 
                                 Divider()
