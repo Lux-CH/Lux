@@ -137,7 +137,12 @@ struct LegHeaderView: View {
                 await MainActor.run {
                     self.lineInfo = nil
                 }
-                print("error loading line info : \(error)")
+                if case APIError.requestFailed(404, _) = error {
+                    return
+                }
+                else {
+                    print("error loading line info : \(error)")
+                }
             }
         }
     }
