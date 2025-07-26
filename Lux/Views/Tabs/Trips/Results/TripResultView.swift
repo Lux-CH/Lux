@@ -12,6 +12,7 @@ struct TripResultView: View {
     let itinerary: Itinerary
     @State var dontGoToView: Bool = false
     @Environment(\.colorScheme) private var colorScheme
+    @State private var isPressed = false
     
     private var dateFormatter: DateFormatter {
         let formatter = DateFormatter()
@@ -39,7 +40,7 @@ struct TripResultView: View {
             ) {
                 buttonContent
             }
-            .buttonStyle(TripsResultBttnStyle())
+            .buttonStyle(TripsResultBttnStyle(isPressed: $isPressed))
             .padding(.horizontal, 16)
         }
         else {
@@ -125,29 +126,32 @@ struct TripResultView: View {
                 .padding(.top, 2)
         }
         .padding(18)
+        .background(
+            RoundedRectangle(cornerRadius: 20)
+                .fill(colorScheme == .dark ?
+                      Color(.systemFill).opacity(0.3) :
+                        Color(.systemBackground))
+                .shadow(
+                    color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1),
+                    radius: isPressed ? 4 : 10,
+                    x: 0,
+                    y: isPressed ? 2 : 4
+                )
+        )
+        .scaleEffect(isPressed ? 0.98 : 1)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
         .contentShape(RoundedRectangle(cornerRadius: 20))
     }
 }
 
 struct TripsResultBttnStyle: ButtonStyle {
-    @Environment(\.colorScheme) private var colorScheme
+    @Binding var isPressed: Bool
     
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .background(
-                RoundedRectangle(cornerRadius: 20)
-                    .fill(colorScheme == .dark ?
-                          Color(.systemFill).opacity(0.3) :
-                          Color(.systemBackground))
-                    .shadow(
-                        color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1),
-                        radius: configuration.isPressed ? 4 : 10,
-                        x: 0,
-                        y: configuration.isPressed ? 2 : 4
-                    )
-            )
-            .scaleEffect(configuration.isPressed ? 0.98 : 1)
-            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isPressed)
+            .onChange(of: configuration.isPressed) { _, newValue in
+                isPressed = newValue
+            }
     }
 }
 
