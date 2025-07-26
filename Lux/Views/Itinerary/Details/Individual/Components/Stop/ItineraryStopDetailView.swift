@@ -15,7 +15,7 @@ struct ItineraryStopDetailView: View {
 
     var body: some View {
         NavigationStack {
-            createExpandedStopView(stop: stop)
+            createExpandedStopView(from: stop)
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -50,20 +50,7 @@ struct ItineraryStopDetailView: View {
                 }
                 .navigationDestination(isPresented: $showTripSearch) {
                     TripsSearchView(
-                        initialSearchResult: SearchResult(
-                            type: .stop,
-                            tokens: [[]],
-                            name: stop.name,
-                            id: stop.stopId ?? "",
-                            lat: stop.lat,
-                            lon: stop.lon,
-                            level: Double(stop.level),
-                            street: nil,
-                            houseNumber: nil,
-                            zip: nil,
-                            areas: [],
-                            score: 1.0
-                        ),
+                        initialSearchResult: generateSearchResult(from: stop),
                         initialTargetField: .to
                     )
                     .toolbarBackground(.hidden, for: .navigationBar)
@@ -71,24 +58,24 @@ struct ItineraryStopDetailView: View {
                 }
         }
     }
-}
-
-func createExpandedStopView(stop: Place) -> some View {
-    let searchResult = SearchResult(
-        type: .stop,
-        tokens: [[]],
-        name: stop.name,
-        id: stop.stopId ?? "",
-        lat: stop.lat,
-        lon: stop.lon,
-        level: Double(stop.level),
-        street: nil,
-        houseNumber: nil,
-        zip: nil,
-        areas: [],
-        score: 1.0
-    )
-    
-    return ExpandedStopView(viewModel: StopViewModel(stop: searchResult, fromStops: true), maxGroupsToShow: 50)
-        .background(Color(.secondarySystemBackground))
+    private func generateSearchResult(from: Place) -> SearchResult {
+        return SearchResult(
+            type: .stop,
+            tokens: [[]],
+            name: stop.name,
+            id: stop.stopId ?? "",
+            lat: stop.lat,
+            lon: stop.lon,
+            level: Double(stop.level),
+            street: nil,
+            houseNumber: nil,
+            zip: nil,
+            areas: [],
+            score: 1.0
+        )
+    }
+    private func createExpandedStopView(from: Place) -> some View {
+        return ExpandedStopView(viewModel: StopViewModel(stop: generateSearchResult(from: stop), fromStops: true), maxGroupsToShow: 50)
+            .background(Color(.secondarySystemBackground))
+    }
 }
