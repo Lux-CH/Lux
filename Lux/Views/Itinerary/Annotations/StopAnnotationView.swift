@@ -95,7 +95,7 @@ struct StopAnnotationView: View {
             })
             .presentationCompactAdaptation(.popover)
         }
-        .navigationDestination(isPresented: $showExpandedStop) {
+        .fullScreenCover(isPresented: $showExpandedStop) {
             ItineraryStopDetailView(stop: annotation.place)
                 .toolbarBackground(.hidden, for: .navigationBar)
                 .navigationBarBackButtonHidden(true)
