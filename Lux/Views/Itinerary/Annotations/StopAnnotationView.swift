@@ -96,27 +96,7 @@ struct StopAnnotationView: View {
             .presentationCompactAdaptation(.popover)
         }
         .fullScreenCover(isPresented: $showExpandedStop) {
-            NavigationStack {
-                createExpandedStopView(stop: annotation.place)
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Text(annotation.place.name)
-                                .font(.headline)
-                                .lineLimit(1)
-                        }
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button {
-                                showExpandedStop = false
-                            } label: {
-                                Image(systemName: "xmark.circle.fill")
-                                    .symbolRenderingMode(.hierarchical)
-                                    .font(.body)
-                            }
-                            .tint(.secondary)
-                        }
-                    }
-            }
+            ItineraryStopDetailView(stop: annotation.place)
         }
         .onChange(of: showPopover) {
             if !showPopover && !showExpandedStop {
