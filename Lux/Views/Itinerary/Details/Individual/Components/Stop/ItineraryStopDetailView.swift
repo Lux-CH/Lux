@@ -11,7 +11,8 @@ import LuxCom
 struct ItineraryStopDetailView: View {
     let stop: Place
     @Environment(\.dismiss) private var dismiss
-    
+    @State private var showTripSearch: Bool = false
+
     var body: some View {
         NavigationStack {
             createExpandedStopView(stop: stop)
@@ -23,18 +24,50 @@ struct ItineraryStopDetailView: View {
                             .lineLimit(1)
                     }
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            dismiss()
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .symbolRenderingMode(.hierarchical)
-                                .font(.body)
+                        HStack(spacing: 8) {
+                            Button {
+                                showTripSearch = true
+                            } label: {
+                                Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
+                                    .symbolRenderingMode(.hierarchical)
+                                    .font(.body)
+                            }
+                            .tint(.secondary)
+                            
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .symbolRenderingMode(.hierarchical)
+                                    .font(.body)
+                            }
+                            .tint(.secondary)
                         }
-                        .tint(.secondary)
                     }
                 }
                 .transaction { transaction in
                     transaction.disablesAnimations = true
+                }
+                .navigationDestination(isPresented: $showTripSearch) {
+                    TripsSearchView(
+                        initialSearchResult: SearchResult(
+                            type: .stop,
+                            tokens: [[]],
+                            name: stop.name,
+                            id: stop.stopId ?? "",
+                            lat: stop.lat,
+                            lon: stop.lon,
+                            level: Double(stop.level),
+                            street: nil,
+                            houseNumber: nil,
+                            zip: nil,
+                            areas: [],
+                            score: 1.0
+                        ),
+                        initialTargetField: .to
+                    )
+                    .toolbarBackground(.hidden, for: .navigationBar)
+                    .navigationBarBackButtonHidden(true)
                 }
         }
     }
