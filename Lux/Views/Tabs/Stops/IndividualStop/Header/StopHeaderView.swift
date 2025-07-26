@@ -56,11 +56,13 @@ struct StopHeaderView: View {
                 }
             }
         }
-        .fullScreenCover(isPresented: $showTripSearch) {
+        .navigationDestination(isPresented: $showTripSearch) {
             TripsSearchView(
                 initialSearchResult: stop,
                 initialTargetField: .to
             )
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .navigationBarBackButtonHidden(true)
         }
     }
 }
