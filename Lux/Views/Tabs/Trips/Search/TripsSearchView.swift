@@ -403,64 +403,58 @@ struct TripResultsContent: View {
     }
     
     private var resultsList: some View {
-        ZStack {
-            ScrollViewReader { proxy in
-                ScrollView {
-                    VStack(spacing: 16) {
-                        if !viewModel.directs.isEmpty {
-                            ForEach(viewModel.directs.indices, id: \.self) { index in
-                                let itinerary = viewModel.directs[index]
-                                TripResultView(itinerary: itinerary)
-                                    .id("direct-\(index)")
-                                    .opacity(appearAnimation ? 1 : 0)
-                                    .animation(.easeOut(duration: 0.3).delay(Double(viewModel.trips.count + index) * 0.05), value: appearAnimation)
-                            }
-                            
-                            if !viewModel.trips.isEmpty {
-                                Divider()
-                                    .padding(.vertical, 8)
-                                    .padding(.horizontal, 32)
-                            }
-                        }
-                        ForEach(viewModel.trips.indices, id: \.self) { index in
-                            let itinerary = viewModel.trips[index]
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(spacing: 16) {
+                    if !viewModel.directs.isEmpty {
+                        ForEach(viewModel.directs.indices, id: \.self) { index in
+                            let itinerary = viewModel.directs[index]
                             TripResultView(itinerary: itinerary)
-                                .id("trip-\(index)")
+                                .id("direct-\(index)")
                                 .opacity(appearAnimation ? 1 : 0)
-                                .animation(.easeOut(duration: 0.3).delay(Double(index) * 0.05), value: appearAnimation)
+                                .animation(.easeOut(duration: 0.3).delay(Double(viewModel.trips.count + index) * 0.05), value: appearAnimation)
+                        }
+                        
+                        if !viewModel.trips.isEmpty {
+                            Divider()
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 32)
                         }
                     }
-                    .padding(.vertical, 20)
+                    ForEach(viewModel.trips.indices, id: \.self) { index in
+                        let itinerary = viewModel.trips[index]
+                        TripResultView(itinerary: itinerary)
+                            .id("trip-\(index)")
+                            .opacity(appearAnimation ? 1 : 0)
+                            .animation(.easeOut(duration: 0.3).delay(Double(index) * 0.05), value: appearAnimation)
+                    }
                 }
-                .safeAreaInset(edge: .bottom) {
-                    Spacer().frame(height: 80)
-                }
-                .refreshable {
-                    viewModel.searchTrips()
-                }
-                .onChange(of: viewModel.trips) {
-                    if !viewModel.trips.isEmpty && viewModel.animateIn {
-                        withAnimation {
-                            proxy.scrollTo("trip-0", anchor: .top)
-                        }
+                .padding(.vertical, 20)
+            }
+            .safeAreaInset(edge: .bottom) {
+                Spacer().frame(height: 80)
+            }
+            .refreshable {
+                viewModel.searchTrips()
+            }
+            .onChange(of: viewModel.trips) {
+                if !viewModel.trips.isEmpty && viewModel.animateIn {
+                    withAnimation {
+                        proxy.scrollTo("trip-0", anchor: .top)
                     }
                 }
             }
-            
-            if !viewModel.trips.isEmpty {
-                VStack {
-                    Spacer()
-                    PaginationControlsView(
-                        isLoadingEarlier: $viewModel.isLoadingEarlier,
-                        isLoadingLater: $viewModel.isLoadingLater,
-                        isChangingContent: $viewModel.isChangingContent,
-                        isLoading: viewModel.isLoadingTrips,
-                        animateIn: $viewModel.animateIn,
-                        loadEarlier: { viewModel.loadEarlier() },
-                        loadLater: { viewModel.loadLater() }
-                    )
-                }
-            }
+        }
+        .overlay(alignment: .bottom) {
+            PaginationControlsView(
+                isLoadingEarlier: $viewModel.isLoadingEarlier,
+                isLoadingLater: $viewModel.isLoadingLater,
+                isChangingContent: $viewModel.isChangingContent,
+                isLoading: viewModel.isLoadingTrips,
+                animateIn: $viewModel.animateIn,
+                loadEarlier: { viewModel.loadEarlier() },
+                loadLater: { viewModel.loadLater() }
+            )
         }
     }
 }
