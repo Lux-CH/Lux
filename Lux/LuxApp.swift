@@ -155,39 +155,19 @@ struct LuxApp: App {
     @ViewBuilder
     private var stopView: some View {
         if let (stopId, name) = sharedStopDetail {
-            NavigationStack {
-                createExpandedStopView(stop: Place(
-                    name: name,
-                    stopId: stopId,
-                    lat: 0.0,
-                    lon: 0.0,
-                    level: 0,
-                    arrival: nil,
-                    departure: nil,
-                    scheduledArrival: nil,
-                    scheduledDeparture: nil,
-                    scheduledTrack: nil,
-                    track: nil,
-                    vertexType: .transit))
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Text(name)
-                            .font(.headline)
-                            .lineLimit(1)
-                    }
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            showStopSheet = false
-                        } label: {
-                            Image(systemName: "xmark.circle.fill")
-                                .symbolRenderingMode(.hierarchical)
-                                .font(.body)
-                        }
-                        .tint(.secondary)
-                    }
-                }
-            }
+            ItineraryStopDetailView(stop: Place(
+                name: name,
+                stopId: stopId,
+                lat: 0.0,
+                lon: 0.0,
+                level: 0,
+                arrival: nil,
+                departure: nil,
+                scheduledArrival: nil,
+                scheduledDeparture: nil,
+                scheduledTrack: nil,
+                track: nil,
+                vertexType: .transit))
         }
     }
 }
