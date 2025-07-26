@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import LuxCom
 
 struct RouteVisualizationView: View {
     let legs: [Leg]
