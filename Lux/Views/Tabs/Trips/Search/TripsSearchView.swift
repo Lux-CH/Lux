@@ -434,9 +434,9 @@ struct TripResultsContent: View {
             .safeAreaInset(edge: .bottom) {
                 Spacer().frame(height: 80)
             }
-            .refreshable {
-                viewModel.searchTrips()
-            }
+//            .refreshable {
+//                viewModel.searchTrips()
+//            }
             .onChange(of: viewModel.trips) {
                 if !viewModel.trips.isEmpty && viewModel.animateIn {
                     withAnimation {
