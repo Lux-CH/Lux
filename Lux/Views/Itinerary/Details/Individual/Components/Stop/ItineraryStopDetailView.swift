@@ -13,9 +13,15 @@ struct ItineraryStopDetailView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showTripSearch: Bool = false
 
+    private var transformedStopId: String {
+        guard let stopId = stop.stopId else { return "" }
+        return stopId.replacingOccurrences(of: "ch_", with: "ch_Parent")
+            .components(separatedBy: ":").first ?? stopId
+    }
+    
     var body: some View {
         NavigationStack {
-            createExpandedStopView(from: stop)
+            createExpandedStopView()
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -50,7 +56,7 @@ struct ItineraryStopDetailView: View {
                 }
                 .navigationDestination(isPresented: $showTripSearch) {
                     TripsSearchView(
-                        initialSearchResult: generateSearchResult(from: stop),
+                        initialSearchResult: generateSearchResult(),
                         initialTargetField: .to
                     )
                     .toolbarBackground(.hidden, for: .navigationBar)
@@ -58,12 +64,13 @@ struct ItineraryStopDetailView: View {
                 }
         }
     }
-    private func generateSearchResult(from: Place) -> SearchResult {
+    
+    private func generateSearchResult() -> SearchResult {
         return SearchResult(
             type: .stop,
             tokens: [[]],
             name: stop.name,
-            id: stop.stopId ?? "",
+            id: transformedStopId,
             lat: stop.lat,
             lon: stop.lon,
             level: Double(stop.level),
@@ -74,8 +81,8 @@ struct ItineraryStopDetailView: View {
             score: 1.0
         )
     }
-    private func createExpandedStopView(from: Place) -> some View {
-        return ExpandedStopView(viewModel: StopViewModel(stop: generateSearchResult(from: stop), fromStops: true), maxGroupsToShow: 50)
+    private func createExpandedStopView() -> some View {
+        return ExpandedStopView(viewModel: StopViewModel(stop: generateSearchResult(), fromStops: true), maxGroupsToShow: 50)
             .background(Color(.secondarySystemBackground))
     }
 }
