@@ -14,53 +14,94 @@ class LuxPassManager: ObservableObject {
     @Published var hasSwissPass: Bool = false
     @Published var swissQRCodePass: String = ""
     @Published var swiss128Pass: String = ""
+    @Published var isLoading: Bool = true
     
     private let keychainService = "ch.cclerc.lux.luxpass"
-    private let qrCodeKey = "swisspass_qr"
-    private let barcodeKey = "swisspass_barcode"
+    private let combinedKey = "swisspass"
+    private let separator = ":::"
+    private let keychainQueue = DispatchQueue(label: "ch.cclerc.lux.keychain", qos: .userInitiated)
     
     private init() {
         loadSwissPassFromKeychain()
     }
     
-    // MARK: - Public Methods
     func saveSwissPass(qrCode: String, barcode: String) {
-        guard saveToKeychain(value: qrCode, key: qrCodeKey),
-              saveToKeychain(value: barcode, key: barcodeKey) else {
-            print("failed to save SwissPass to keychain")
-            return
-        }
-        
-        DispatchQueue.main.async {
-            self.swissQRCodePass = qrCode
-            self.swiss128Pass = barcode
-            self.hasSwissPass = true
+        keychainQueue.async {
+            let combinedValue = qrCode + self.separator + barcode
+            
+            guard self.saveToKeychain(value: combinedValue, key: self.combinedKey) else {
+                print("failed to save SwissPass to keychain")
+                return
+            }
+            
+            DispatchQueue.main.async {
+                self.swissQRCodePass = qrCode
+                self.swiss128Pass = barcode
+                self.hasSwissPass = true
+            }
         }
     }
     
     func deleteSwissPass() {
-        deleteFromKeychain(key: qrCodeKey)
-        deleteFromKeychain(key: barcodeKey)
-        
-        DispatchQueue.main.async {
-            self.swissQRCodePass = ""
-            self.swiss128Pass = ""
-            self.hasSwissPass = false
+        keychainQueue.async {
+            self.deleteFromKeychain(key: self.combinedKey)
+            
+            DispatchQueue.main.async {
+                self.swissQRCodePass = ""
+                self.swiss128Pass = ""
+                self.hasSwissPass = false
+            }
         }
     }
     
     func loadSwissPassFromKeychain() {
-        let qrCode = loadFromKeychain(key: qrCodeKey) ?? ""
-        let barcode = loadFromKeychain(key: barcodeKey) ?? ""
-        
-        DispatchQueue.main.async {
-            self.swissQRCodePass = qrCode
-            self.swiss128Pass = barcode
-            self.hasSwissPass = !qrCode.isEmpty && !barcode.isEmpty
+        keychainQueue.async {
+            guard let combinedValue = self.loadFromKeychain(key: self.combinedKey) else {
+                DispatchQueue.main.async {
+                    self.swissQRCodePass = ""
+                    self.swiss128Pass = ""
+                    self.hasSwissPass = false
+                }
+                self.migrateFromOldFormat()
+                return
+            }
+            
+            let components = combinedValue.components(separatedBy: self.separator)
+            let qrCode = components.first ?? ""
+            let barcode = components.count > 1 ? components[1] : ""
+            
+            DispatchQueue.main.async {
+                self.swissQRCodePass = qrCode
+                self.swiss128Pass = barcode
+                self.hasSwissPass = !qrCode.isEmpty && !barcode.isEmpty
+                self.isLoading = false
+            }
         }
     }
     
-    // MARK: - Private Keychain Methods
+    private func migrateFromOldFormat() {
+        let qrCodeKey = "swisspass_qr"
+        let barcodeKey = "swisspass_barcode"
+        
+        if let qrCode = loadFromKeychain(key: qrCodeKey),
+           let barcode = loadFromKeychain(key: barcodeKey) {
+            
+            let combinedValue = qrCode + separator + barcode
+            saveToKeychain(value: combinedValue, key: combinedKey)
+            
+            deleteFromKeychain(key: qrCodeKey)
+            deleteFromKeychain(key: barcodeKey)
+            DispatchQueue.main.async {
+                self.loadSwissPassFromKeychain()
+            }
+        } else {
+            DispatchQueue.main.async {
+                self.isLoading = false
+            }
+        }
+    }
+    
+    @discardableResult
     private func saveToKeychain(value: String, key: String) -> Bool {
         let data = Data(value.utf8)
         
@@ -72,7 +113,6 @@ class LuxPassManager: ObservableObject {
             kSecAttrAccessible as String: kSecAttrAccessibleWhenUnlockedThisDeviceOnly
         ]
         
-        // Delete existing item first
         SecItemDelete(query as CFDictionary)
         
         let status = SecItemAdd(query as CFDictionary, nil)
