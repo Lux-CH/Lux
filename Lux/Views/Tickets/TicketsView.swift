@@ -34,6 +34,8 @@ struct TicketsView: View {
                         .buttonStyle(.plain)
                         
                         if luxPassManager.hasSwissPass {
+                            Divider()
+                                .padding(.horizontal, 20)
                             SettingsToggle(icon: "house", title: "Afficher LuxPass sur l'écran d'accueil", subtitle: "Ajouter un accès rapide à votre SwissPass en remplacant un raccourcis", isOn: $settings.swisspassOnHome)
                         }
                     }
