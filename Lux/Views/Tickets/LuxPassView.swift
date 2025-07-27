@@ -11,29 +11,32 @@ struct LuxPassView: View {
     @StateObject private var swissPassManager = LuxPassManager.shared
     @State private var scanSwissPass: Bool = false
     @State private var showingDeleteAlert: Bool = false
+    let isFromHome: Bool
     
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
                 if swissPassManager.hasSwissPass {
                     VStack(spacing: 16) {
-                        HStack {
-                            Text("Votre SwissPass")
-                                .font(.title2)
-                                .fontWeight(.bold)
-                            
-                            Spacer()
-                            
-                            Button(action: {
-                                showingDeleteAlert = true
-                            }) {
-                                Image(systemName: "trash")
-                                    .foregroundColor(.red)
-                                    .font(.title3)
+                        if !isFromHome {
+                            HStack {
+                                Text("Votre SwissPass")
+                                    .font(.title2)
+                                    .fontWeight(.bold)
+                                
+                                Spacer()
+                                
+                                Button(action: {
+                                    showingDeleteAlert = true
+                                }) {
+                                    Image(systemName: "trash")
+                                        .foregroundColor(.red)
+                                        .font(.title3)
+                                }
                             }
+                            .padding(.horizontal)
+                            .padding(.top, 15)
                         }
-                        .padding(.horizontal)
-                        .padding(.top, 15)
                         
                         SwissPassView(
                             swissQRCodePass: .constant(swissPassManager.swissQRCodePass),
@@ -146,5 +149,5 @@ struct LuxPassView: View {
 }
 
 #Preview {
-    LuxPassView()
+    LuxPassView(isFromHome: false)
 }

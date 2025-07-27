@@ -38,6 +38,7 @@ struct MainNavigationView: View {
 
     @State private var showSettings: Bool = false
     @State private var showShortcutsSettings: Bool = false
+    @State private var showLuxPass: Bool = false
     @StateObject private var stopsViewModel = StopsViewModel()
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var shortcutManager: ShortcutManager
@@ -153,6 +154,11 @@ struct MainNavigationView: View {
                                                     ShortcutsListView()
                                                         .navigationTitle("Raccourcis")
                                                 }
+                                            }
+                                            .sheet(isPresented: $showLuxPass) {
+                                                LuxPassView(isFromHome: true)
+                                                    .presentationDetents([.medium])
+                                                    .presentationCornerRadius(36)
                                             }
                                             .padding(.top, 65)
                                             .padding(.bottom, 5)
@@ -410,18 +416,7 @@ struct MainNavigationView: View {
     
     private var shortcutsRow: some View {
         HStack {
-            ForEach(Array(shortcutManager.visibleShortcuts.enumerated()), id: \.element.id) { index, shortcut in
-                ShortcutButton(
-                    symbol: shortcut.symbol,
-                    name: shortcut.name
-                ) {
-                    selectedShortcut = shortcut
-                    transitionToSearchModeWithShortcut(shortcut)
-                }
-                .transition(.scale(scale: 0.8).combined(with: .opacity))
-            }
-            
-            if shortcutManager.visibleShortcuts.isEmpty {
+            if shortcutManager.visibleShortcuts.isEmpty && !settings.swisspassOnHome {
                 Button {
                     showShortcutsSettings = true
                 } label: {
@@ -448,9 +443,69 @@ struct MainNavigationView: View {
                     )
                 }
                 .transition(.scale(scale: 0.8).combined(with: .opacity))
-            }
-            else if shortcutManager.visibleShortcuts.count < 2 {
-                ForEach(0..<(2 - shortcutManager.visibleShortcuts.count), id: \.self) { _ in
+            } else {
+                if let firstShortcut = shortcutManager.visibleShortcuts.first {
+                    ShortcutButton(
+                        symbol: firstShortcut.symbol,
+                        name: firstShortcut.name
+                    ) {
+                        selectedShortcut = firstShortcut
+                        transitionToSearchModeWithShortcut(firstShortcut)
+                    }
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                } else {
+                    ShortcutButton(
+                        symbol: "plus",
+                        name: "Ajouter",
+                        isPlaceholder: true
+                    ) {
+                        showShortcutsSettings = true
+                    }
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                }
+                
+                if settings.swisspassOnHome {
+                    Button {
+                        showLuxPass = true
+                    } label: {
+                        VStack(spacing: 4) {
+                            HStack {
+                                Image(systemName: "person.text.rectangle.fill")
+                                    .foregroundColor(.red)
+                                    .font(.system(size: 20))
+                                if settings.showShortcutLabel {
+                                    Text("LuxPass")
+                                        .foregroundColor(.red)
+                                        .font(.system(size: 15))
+                                }
+                            }
+                        }
+                        .frame(width: 134, height: 52.5)
+                        .background(
+                            RoundedRectangle(cornerRadius: 35)
+                                .stroke(
+                                    Color.primary.opacity(0.1),
+                                    style: StrokeStyle(lineWidth: 0.5)
+                                )
+                                .background(
+                                    Color(.secondarySystemFill)
+                                        .opacity(0.5)
+                                        .cornerRadius(35)
+                                )
+                        )
+                    }
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                } else if shortcutManager.visibleShortcuts.count >= 2 {
+                    let secondShortcut = shortcutManager.visibleShortcuts[1]
+                    ShortcutButton(
+                        symbol: secondShortcut.symbol,
+                        name: secondShortcut.name
+                    ) {
+                        selectedShortcut = secondShortcut
+                        transitionToSearchModeWithShortcut(secondShortcut)
+                    }
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                } else {
                     ShortcutButton(
                         symbol: "plus",
                         name: "Ajouter",
