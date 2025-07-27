@@ -12,6 +12,7 @@ struct LuxPassView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var scanSwissPass: Bool = false
     @State private var showingDeleteAlert: Bool = false
+    @Binding var showSwisspassOnHome: Bool
     let isFromHome: Bool
     
     var body: some View {
@@ -166,6 +167,7 @@ struct LuxPassView: View {
         }
         .alert("Supprimer le SwissPass", isPresented: $showingDeleteAlert) {
             Button("Supprimer", role: .destructive) {
+                showSwisspassOnHome = false
                 swissPassManager.deleteSwissPass()
             }
             Button("Annuler", role: .cancel) { }
@@ -173,8 +175,4 @@ struct LuxPassView: View {
             Text("Êtes-vous sûr de vouloir supprimer votre SwissPass ? Cette action ne peut pas être annulée.")
         }
     }
-}
-
-#Preview {
-    LuxPassView(isFromHome: false)
 }

@@ -156,7 +156,7 @@ struct MainNavigationView: View {
                                                 }
                                             }
                                             .sheet(isPresented: $showLuxPass) {
-                                                LuxPassView(isFromHome: true)
+                                                LuxPassView(showSwisspassOnHome: $settings.swisspassOnHome, isFromHome: true)
                                                     .presentationDetents([.medium])
                                                     .presentationCornerRadius(36)
                                             }
