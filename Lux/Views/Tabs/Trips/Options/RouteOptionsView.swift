@@ -148,7 +148,7 @@ struct RouteOptionsView: View {
                             .foregroundStyle(.primary)
                         
                         HStack(spacing: 8) {
-                            ForEach(1...6, id: \.self) { number in
+                            ForEach(0...5, id: \.self) { number in
                                 TransferCountButton(
                                     number: number,
                                     isSelected: maxTransfers == number,
