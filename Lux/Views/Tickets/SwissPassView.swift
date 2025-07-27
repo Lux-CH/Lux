@@ -9,10 +9,13 @@ import SwiftUI
 import GlowGetter
 
 struct SwissPassView: View {
-    var barcodeGenerator = BarcodeGenerator()
-    
+    private let barcodeGenerator = BarcodeGenerator()
     @Binding var swissQRCodePass: String
     @Binding var swiss128Pass: String
+    
+    @State private var qrCodeImage: Image?
+    @State private var barcodeImage: Image?
+    @State private var isGeneratingImages = false
     
     var body: some View {
         GeometryReader { geometry in
@@ -49,8 +52,17 @@ struct SwissPassView: View {
                     VStack(spacing: 20) {
                         if !swissQRCodePass.isEmpty {
                             VStack(spacing: 8) {
-                                if let qr = barcodeGenerator.generateQrCode(swissQRCodePass) {
-                                    qr.resizable()
+                                if isGeneratingImages {
+                                    RoundedRectangle(cornerRadius: 6)
+                                        .fill(Color.white)
+                                        .frame(width: 120, height: 120)
+                                        .overlay {
+                                            ProgressView()
+                                                .scaleEffect(0.8)
+                                        }
+                                } else if let qrImage = qrCodeImage {
+                                    qrImage
+                                        .resizable()
                                         .aspectRatio(contentMode: .fit)
                                         .glow(1.0)
                                         .frame(width: 120, height: 120)
@@ -63,8 +75,18 @@ struct SwissPassView: View {
                         
                         if !swiss128Pass.isEmpty {
                             VStack(spacing: 8) {
-                                if let barcode = barcodeGenerator.generateBarcode(swiss128Pass) {
-                                    barcode.resizable()
+                                if isGeneratingImages {
+                                    RoundedRectangle(cornerRadius: 4)
+                                        .fill(Color.white)
+                                        .frame(height: 70)
+                                        .frame(maxWidth: 250)
+                                        .overlay {
+                                            ProgressView()
+                                                .scaleEffect(0.6)
+                                        }
+                                } else if let barcodeImg = barcodeImage {
+                                    barcodeImg
+                                        .resizable()
                                         .aspectRatio(contentMode: .fill)
                                         .glow(1.0)
                                         .frame(height: 70)
@@ -93,6 +115,39 @@ struct SwissPassView: View {
         .aspectRatio(1.4, contentMode: .fit)
         .frame(maxWidth: 500)
         .padding()
+        .onChange(of: swissQRCodePass) {
+            generateImages()
+        }
+        .onChange(of: swiss128Pass) {
+            generateImages()
+        }
+        .onAppear {
+            generateImages()
+        }
+    }
+    
+    private func generateImages() {
+        guard !swissQRCodePass.isEmpty || !swiss128Pass.isEmpty else { return }
+        
+        isGeneratingImages = true
+        
+        Task {
+            async let qrTask: Image? = Task.detached(priority: .userInitiated) {
+                return await barcodeGenerator.generateQrCode(swissQRCodePass)
+            }.value
+            
+            async let barcodeTask: Image? = Task.detached(priority: .userInitiated) {
+                return await barcodeGenerator.generateBarcode(swiss128Pass)
+            }.value
+            
+            let (qrResult, barcodeResult) = await (qrTask, barcodeTask)
+            
+            await MainActor.run {
+                self.qrCodeImage = qrResult
+                self.barcodeImage = barcodeResult
+                self.isGeneratingImages = false
+            }
+        }
     }
     
     private func showIdFormatted(_ input: String) -> String {
