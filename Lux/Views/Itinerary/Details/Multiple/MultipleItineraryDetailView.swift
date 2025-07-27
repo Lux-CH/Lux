@@ -361,6 +361,7 @@ struct MultipleItineraryDetailView: View {
                 let itineraarySharer = ItinerarySharer()
                 ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
             }
+            .offset(y: 7.5)
         }
         .alert("Correspondance risquée", isPresented: $showingTightConnectionAlert) {
             Button("OK", role: .cancel) { }
