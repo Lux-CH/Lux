@@ -508,6 +508,16 @@
         }
       }
     },
+    "Cette action rétablira toutes les options aux valeurs par défaut. Cette action ne peut pas être annulée." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This action will reset all options to their default values. This action cannot be undone."
+          }
+        }
+      }
+    },
     "Cette application n’est ni affiliée ni approuvée par SwissPass ou les SBB CFF." : {
       "localizations" : {
         "en" : {
@@ -1545,6 +1555,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search results"
+          }
+        }
+      }
+    },
+    "Rétablir" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
+          }
+        }
+      }
+    },
+    "Rétablir les valeurs par défaut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore default settings"
           }
         }
       }
