@@ -40,7 +40,7 @@ struct SwissPassView: View {
                         
                         Spacer()
                         
-                        Text("swisspass.ch")
+                        Text("cclerc.ch")
                             .font(.system(size: 14, weight: .light))
                             .foregroundColor(.white)
                     }
