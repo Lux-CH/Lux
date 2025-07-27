@@ -13,6 +13,9 @@ struct TicketsView: View {
     @State private var ticketsInfo = TicketsInfo()
     @State private var selectedUserType: UserType = .adulte
     
+    @ObservedObject private var luxPassManager = LuxPassManager.shared
+    @ObservedObject var settings = Settings.shared
+    
     private var filteredTickets: [TicketCategory: [TicketInfo]] {
         let grouped = Dictionary(grouping: ticketsInfo.tickets) { $0.category }
         return grouped.mapValues { tickets in
@@ -25,10 +28,14 @@ struct TicketsView: View {
             ScrollView {
                 LazyVStack(spacing: 24) {
                     TicketCard {
-                        NavigationLink(destination: LuxPassView()) {
+                        NavigationLink(destination: LuxPassView(isFromHome: false)) {
                             LuxPassRow()
                         }
                         .buttonStyle(.plain)
+                        
+                        if luxPassManager.hasSwissPass {
+                            SettingsToggle(icon: "house", title: "Afficher LuxPass sur l'écran d'accueil", subtitle: "Ajouter un accès rapide à votre SwissPass en remplacant un raccourcis", isOn: $settings.swisspassOnHome)
+                        }
                     }
                     
                     UserTypeSelector(selectedUserType: $selectedUserType)
