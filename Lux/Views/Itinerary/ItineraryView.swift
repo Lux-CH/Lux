@@ -30,6 +30,7 @@ struct ItineraryView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var showDetails: Bool = true
     @State var otherItineraries: [TripOption] = []
+    @State private var isSingle: Bool
     let fromNearby: Bool
     
     @State private var trackingMode: MapTrackingMode = .none
@@ -38,11 +39,13 @@ struct ItineraryView: View {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
         self.fromNearby = fromNearby
         self._otherItineraries = State(initialValue: otherTripOptions)
+        self.isSingle = true
     }
     
     init(itinerary: Itinerary, fromNearby: Bool) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary))
         self.fromNearby = fromNearby
+        self.isSingle = false // so basically, it's a bit sketchy, but we never load trips if it's a processed route (using trip search) ; so it's never single if itinerary is passed directly
     }
     
     var locationButtonIcon: String {
@@ -54,11 +57,6 @@ struct ItineraryView: View {
         case .followWithHeading:
             return "location.north.line.fill"
         }
-    }
-    
-    private var isSingle: Bool {
-        guard let itinerary = viewModel.itinerary else { return false }
-        return itinerary.legs.count == 1 && itinerary.legs.first?.mode != .walk
     }
     
     var body: some View {
@@ -191,7 +189,7 @@ struct ItineraryView: View {
                     .padding(.leading, 16)
                     // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
                     .sheet(isPresented: $showDetails) {
-                        ItineraryDetailSheet(viewModel: viewModel)
+                        ItineraryDetailSheet(viewModel: viewModel, isSingle: isSingle)
                             .presentationDetents([isSingle ? .fraction(0.1) : .fraction(0.225), .medium, .large])
                             .presentationDragIndicator(.visible)
                             .presentationCornerRadius(38)
