@@ -285,11 +285,14 @@ struct SettingsCard<Content: View>: View {
         VStack(alignment: .leading, spacing: 0) {
             content
         }
-        .background(
-            RoundedRectangle(cornerRadius: 16)
+        .background {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemGroupedBackground))
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
         )
-        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 
