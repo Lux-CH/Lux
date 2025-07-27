@@ -80,7 +80,7 @@
 				Classes/BlinkManager.swift,
 				Models/LineScore.swift,
 				"Views/Elements/Font/tpg-font.otf",
-				Views/Tabs/Home/Components/Nearby/Arrival/ArrivalMinuteView.swift,
+				Views/Tabs/Home/Nearby/Arrival/ArrivalMinuteView.swift,
 			);
 			target = 79ABCC982E11AACC00A85D71 /* StopWidgetExtension */;
 		};
