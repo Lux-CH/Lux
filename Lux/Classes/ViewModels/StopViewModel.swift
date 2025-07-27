@@ -106,16 +106,7 @@ class StopViewModel: ObservableObject {
                 
                 if Task.isCancelled { return }
                 
-                let upcomingArrivalsData = try await getDeparturesForStop(
-                    stopId: stop.id,
-                    time: time,
-                    arriveBy: true,
-                    numberOfEvents: fromStops ? 100 : 50,
-                    pageCursor: arrivalsData.nextPageCursor
-                )
-                if Task.isCancelled { return }
-
-                let allStopTimes = departuresData.stopTimes + upcomingArrivalsData.stopTimes
+                let allStopTimes = departuresData.stopTimes + arrivalsData.stopTimes
                 let combinedStopTimes = Array(Set(allStopTimes))
                 
                 let freshStopTimes = StopTimes(
@@ -155,7 +146,8 @@ class StopViewModel: ObservableObject {
             stopId: stop.id,
             time: time,
             arriveBy: true,
-            numberOfEvents: 1 // 1 is sufficient; we only need nextPageCursor
+            direction: "LATER",
+            numberOfEvents: fromStops ? 100 : 50
         )
         
         return try await (departuresTask, arrivalsTask)
@@ -172,21 +164,9 @@ class StopViewModel: ObservableObject {
                     return
                 }
                 
-                let upcomingArrivalsData = try await getDeparturesForStop(
-                    stopId: stop.id,
-                    time: currentTime,
-                    arriveBy: true,
-                    numberOfEvents: fromStops ? 100 : 50,
-                    pageCursor: arrivalsData.nextPageCursor
-                )
-                if Task.isCancelled {
-                    backgroundRefreshTask = nil
-                    return
-                }
-
-                let allStopTimes = departuresData.stopTimes + upcomingArrivalsData.stopTimes
+                let allStopTimes = departuresData.stopTimes + arrivalsData.stopTimes
                 let combinedStopTimes = Array(Set(allStopTimes))
-
+                
                 await MainActor.run {
                     self.stopTimes = StopTimes(
                         stopTimes: combinedStopTimes,
