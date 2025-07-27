@@ -28,7 +28,7 @@ struct TicketsView: View {
             ScrollView {
                 LazyVStack(spacing: 24) {
                     TicketCard {
-                        NavigationLink(destination: LuxPassView(isFromHome: false)) {
+                        NavigationLink(destination: LuxPassView(showSwisspassOnHome: $settings.swisspassOnHome, isFromHome: false)) {
                             LuxPassRow()
                         }
                         .buttonStyle(.plain)
