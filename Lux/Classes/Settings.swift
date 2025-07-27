@@ -26,8 +26,7 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("customSchemeSelection") var customSchemeSelection: String = ""
 
     /// Experimental
-    @AppStorage("getPolylineWithOSRM") var getPolylineWithOSRM: Bool = false
     @AppStorage("fetchWalkingDirectionsUsingMKDirections") var fetchWalkingDirectionsUsingMKDirections: Bool = true
     @AppStorage("crowdbackAllowed") var crowdbackAllowed: Bool = true
-
+    @AppStorage("swisspassOnHome") var swisspassOnHome: Bool = false
 }
