@@ -558,6 +558,16 @@
         }
       }
     },
+    "Chargement de votre SwissPass..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading your SwissPass…"
+          }
+        }
+      }
+    },
     "Chargement des arrêts à proximité..." : {
       "localizations" : {
         "en" : {

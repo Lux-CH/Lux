@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LuxPassView: View {
-    @StateObject private var swissPassManager = LuxPassManager.shared
+    @ObservedObject private var swissPassManager = LuxPassManager.shared
     @State private var scanSwissPass: Bool = false
     @State private var showingDeleteAlert: Bool = false
     let isFromHome: Bool
@@ -16,7 +16,17 @@ struct LuxPassView: View {
     var body: some View {
         NavigationStack {
             VStack(spacing: 20) {
-                if swissPassManager.hasSwissPass {
+                if swissPassManager.isLoading {
+                    Spacer()
+                    VStack(spacing: 16) {
+                        ProgressView()
+                            .scaleEffect(1.2)
+                        Text("Chargement de votre SwissPass...")
+                            .font(.body)
+                            .foregroundColor(.secondary)
+                    }
+                    Spacer()
+                } else if swissPassManager.hasSwissPass {
                     VStack(spacing: 16) {
                         if !isFromHome {
                             HStack {
