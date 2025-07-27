@@ -24,17 +24,22 @@ class ShortcutEditorViewModel: ObservableObject {
         
         Task {
             do {
-                let results = try await geocode(
-                    text: "",
-                    place: (location.coordinate.latitude, location.coordinate.longitude),
-                    placeBias: 5
-                )
+                let results = try await reverseGeocode(place: (location.coordinate.latitude, location.coordinate.longitude))
                 
                 await MainActor.run {
                     isLoading = false
                     
                     if let firstResult = results.first {
-                        completion(firstResult)
+                        completion(SearchResult(
+                            type: .place,
+                            tokens: [],
+                            name: firstResult.name,
+                            id: firstResult.id,
+                            lat: location.coordinate.latitude,
+                            lon: location.coordinate.longitude,
+                            areas: firstResult.areas,
+                            score: 1.0,
+                        ))
                     } else {
                         let fallbackResult = SearchResult(
                             type: .place,
