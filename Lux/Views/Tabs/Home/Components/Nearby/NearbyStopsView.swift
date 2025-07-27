@@ -24,9 +24,15 @@ struct NearbyStopsView: View {
     
     private let significantDistance: CLLocationDistance = 100.0
     
+    var isAuthorizationNotAllowed: Bool {
+        return locationManager.authorizationStatus == .denied ||
+        locationManager.authorizationStatus == .notDetermined ||
+        locationManager.authorizationStatus == .restricted
+    }
+    
     var body: some View {
         VStack {
-            if locationManager.permissionDenied {
+            if isAuthorizationNotAllowed{
                 Spacer()
                 VStack(alignment: .center) {
                     Image(systemName: "location.slash")
@@ -163,11 +169,11 @@ struct NearbyStopsView: View {
         }
         .onAppear {
             monitorNetwork()
-            if locationManager.location == nil && !locationManager.permissionDenied {
+            if locationManager.location == nil && !isAuthorizationNotAllowed {
                 isWaitingForLocation = true
-            } else if searchResults.isEmpty && !locationManager.permissionDenied {
+            } else if searchResults.isEmpty && !isAuthorizationNotAllowed {
                 loadNearbyStops(showLoading: true)
-            } else if !locationManager.permissionDenied {
+            } else if !isAuthorizationNotAllowed {
                 checkLocationAndRefresh()
             }
         }
@@ -175,12 +181,12 @@ struct NearbyStopsView: View {
             if isWaitingForLocation && newValue != nil {
                 isWaitingForLocation = false
                 loadNearbyStops(showLoading: true)
-            } else if !locationManager.permissionDenied {
+            } else if !isAuthorizationNotAllowed {
                 checkLocationAndRefresh()
             }
         }
-        .onChange(of: locationManager.permissionDenied) {
-            if !locationManager.permissionDenied {
+        .onChange(of: locationManager.authorizationStatus) {
+            if !isAuthorizationNotAllowed {
                 locationManager.requestLoc()
                 if locationManager.location != nil {
                     loadNearbyStops(showLoading: true)
@@ -188,7 +194,7 @@ struct NearbyStopsView: View {
             }
         }
         .onReceive(refreshTimer) { _ in
-            guard !locationManager.permissionDenied else { return }
+            guard !isAuthorizationNotAllowed else { return }
             guard let currentLoc = locationManager.location, let lastLoc = lastFetchedLocation else {
                 if locationManager.location != nil {
                     refreshNearbyStopsInBackground()
@@ -206,7 +212,7 @@ struct NearbyStopsView: View {
     }
     
     private func checkLocationAndRefresh() {
-        guard !locationManager.permissionDenied else { return }
+        guard !isAuthorizationNotAllowed else { return }
         guard let currentLoc = locationManager.location else {
             isWaitingForLocation = true
             return
@@ -225,7 +231,7 @@ struct NearbyStopsView: View {
     }
     
     private func loadNearbyStops(showLoading: Bool) {
-        guard !locationManager.permissionDenied else { return }
+        guard !isAuthorizationNotAllowed else { return }
         
         if showLoading { isLoading = true }
         backgroundRefreshTask?.cancel()
@@ -233,7 +239,7 @@ struct NearbyStopsView: View {
         backgroundRefreshTask = Task {
             guard let loc = locationManager.location?.coordinate else {
                 if showLoading { isLoading = false }
-                if !locationManager.permissionDenied {
+                if !isAuthorizationNotAllowed {
                     isWaitingForLocation = true
                 }
                 print("loc not available for loading stops..:(")
@@ -282,7 +288,7 @@ struct NearbyStopsView: View {
     }
     
     private func refreshNearbyStopsInBackground() {
-        guard !locationManager.permissionDenied else { return }
+        guard !isAuthorizationNotAllowed else { return }
         guard backgroundRefreshTask == nil || backgroundRefreshTask?.isCancelled == true else {
             return
         }
