@@ -405,7 +405,7 @@ func getLegColor(_ leg: Leg) -> Color {
                 if isSquared {
                     return Color(hex: "EA0706")
                 } else {
-                    return Color.accentColor
+                    return Color.accent
                 }
             }
         } else {
@@ -413,7 +413,7 @@ func getLegColor(_ leg: Leg) -> Color {
                leg.mode == .regionalRail || leg.mode == .regionalFastRail {
                 return Color(hex: "EA0706")
             } else {
-                return .accentColor
+                return .accent
             }
         }
     }
