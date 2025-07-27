@@ -32,6 +32,15 @@ struct TripsSearchContentView: View {
                 .animation(.easeInOut(duration: 0.3), value: viewModel.showTripResults)
                 .animation(.easeInOut(duration: 0.3), value: viewModel.trips.isEmpty)
             }
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 38,
+                    bottomLeadingRadius: 0,
+                    bottomTrailingRadius: 0,
+                    topTrailingRadius: 38,
+                    style: .continuous
+                )
+            )
         }
         .ignoresSafeArea(edges: .bottom)
     }
@@ -117,15 +126,6 @@ struct TripResultsContent: View {
                 }
                 .padding(.vertical, 20)
             }
-            .clipShape(
-                .rect(
-                    topLeadingRadius: 38,
-                    bottomLeadingRadius: 0,
-                    bottomTrailingRadius: 0,
-                    topTrailingRadius: 38,
-                    style: .continuous
-                )
-            )
             .safeAreaInset(edge: .bottom) {
                 Spacer().frame(height: 80)
             }
