@@ -164,6 +164,8 @@ struct ShortcutEditorView: View {
             )
         }
         
+        let stopId: String? = location.type == .stop ? location.id : nil
+        
         let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
         impactFeedback.impactOccurred()
         
@@ -173,7 +175,8 @@ struct ShortcutEditorView: View {
                 name: name,
                 symbol: selectedSymbol,
                 coordinates: coordinates,
-                timeSchedule: timeSchedule
+                timeSchedule: timeSchedule,
+                stopId: stopId
             )
             shortcutManager.updateShortcut(updatedShortcut)
         } else {
@@ -181,7 +184,8 @@ struct ShortcutEditorView: View {
                 name: name,
                 symbol: selectedSymbol,
                 coordinates: coordinates,
-                timeSchedule: timeSchedule
+                timeSchedule: timeSchedule,
+                stopId: stopId
             )
             shortcutManager.addShortcut(newShortcut)
         }

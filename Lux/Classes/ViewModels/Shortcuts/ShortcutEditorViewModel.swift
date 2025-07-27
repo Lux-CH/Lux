@@ -75,17 +75,7 @@ class ShortcutEditorViewModel: ObservableObject {
     }
     
     func convertToSearchResult(shortcut: UserShortcut, completion: @escaping (SearchResult?) -> Void) {
-        let result = SearchResult(
-            type: .place,
-            tokens: [[0, shortcut.name.count]],
-            name: shortcut.coordinates.locationName,
-            id: shortcut.id.uuidString,
-            lat: shortcut.coordinates.latitude,
-            lon: shortcut.coordinates.longitude,
-            areas: [],
-            score: 1.0
-        )
-        
+        let result = shortcut.toSearchResult()
         completion(result)
     }
 }
