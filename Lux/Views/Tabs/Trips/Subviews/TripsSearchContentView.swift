@@ -117,6 +117,15 @@ struct TripResultsContent: View {
                 }
                 .padding(.vertical, 20)
             }
+            .clipShape(
+                .rect(
+                    topLeadingRadius: 38,
+                    bottomLeadingRadius: 0,
+                    bottomTrailingRadius: 0,
+                    topTrailingRadius: 38,
+                    style: .continuous
+                )
+            )
             .safeAreaInset(edge: .bottom) {
                 Spacer().frame(height: 80)
             }
