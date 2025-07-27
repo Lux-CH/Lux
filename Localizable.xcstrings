@@ -508,6 +508,9 @@
         }
       }
     },
+    "cclerc.ch" : {
+      "shouldTranslate" : false
+    },
     "Cet itinéraire vous a été partagé. Assurez-vous qu'il provient d'une source fiable." : {
       "localizations" : {
         "en" : {
@@ -1745,16 +1748,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete the SwissPass"
-          }
-        }
-      }
-    },
-    "swisspass.ch" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "swisspass.ch"
           }
         }
       }
