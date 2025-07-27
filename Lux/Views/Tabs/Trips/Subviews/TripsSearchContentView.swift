@@ -243,6 +243,9 @@ struct EmptyStateContent: View {
                             .buttonStyle(ScaleButtonStyle())
                         }
                     }
+                    .safeAreaInset(edge: .bottom) {
+                        Spacer().frame(height: 15)
+                    }
                     .mask(
                         VStack(spacing: 0) {
                             Rectangle()
