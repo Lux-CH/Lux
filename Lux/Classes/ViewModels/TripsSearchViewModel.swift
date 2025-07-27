@@ -79,8 +79,8 @@ class TripsSearchViewModel: ObservableObject {
     
     // Route options
     @Published var routeOptions = RouteOptions(
-        from: (0, 0),
-        to: (0, 0),
+        from: RouteOptions.RouteLocation(coordinates: (0, 0)),
+        to: RouteOptions.RouteLocation(coordinates: (0, 0)),
         via: nil,
         viaMinimumStay: [],
         time: nil,
@@ -292,8 +292,8 @@ class TripsSearchViewModel: ObservableObject {
     // MARK: - Trip Search Functions
     
     func searchTrips(pageCursor: String? = nil) {
-        guard let fromCoordinates = getCoordinates(for: selectedFrom),
-              let toCoordinates = getCoordinates(for: selectedTo) else {
+        guard let fromLocation = getRouteLocation(for: selectedFrom),
+              let toLocation = getRouteLocation(for: selectedTo) else {
             errorMessage = "Impossible d'obtenir les coordonnées"
             return
         }
@@ -311,8 +311,8 @@ class TripsSearchViewModel: ObservableObject {
         let timeForRequest = selectedDate ?? Date()
         
         let options = RouteOptions(
-            from: fromCoordinates,
-            to: toCoordinates,
+            from: fromLocation,
+            to: toLocation,
             via: routeOptions.via,
             viaMinimumStay: routeOptions.viaMinimumStay,
             time: timeForRequest,
@@ -434,15 +434,19 @@ class TripsSearchViewModel: ObservableObject {
         }
     }
     
-    private func getCoordinates(for location: SelectedLocation?) -> (Double, Double)? {
+    private func getRouteLocation(for location: SelectedLocation?) -> RouteOptions.RouteLocation? {
         guard let location = location else { return nil }
         
         switch location {
         case .searchResult(let result):
-            return (result.lat, result.lon)
+            if result.type == .stop {
+                return RouteOptions.RouteLocation(stopId: result.id)
+            } else {
+                return RouteOptions.RouteLocation(coordinates: (result.lat, result.lon))
+            }
         case .currentPosition:
             if let coords = locationManager?.location?.coordinate {
-                return (coords.latitude, coords.longitude)
+                return RouteOptions.RouteLocation(coordinates: (coords.latitude, coords.longitude))
             }
             return nil
         }
