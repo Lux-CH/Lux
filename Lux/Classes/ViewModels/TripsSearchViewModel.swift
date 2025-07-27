@@ -244,7 +244,7 @@ class TripsSearchViewModel: ObservableObject {
                     let results = try await geocode(text: query, place: (coords.latitude, coords.longitude), placeBias: 2)
                     if !Task.isCancelled {
                         await MainActor.run {
-                            self.searchResults = self.filterResultsForUniqueId(results)
+                            self.searchResults = self.filterResults(results)
                             self.isLoading = false
                             self.backgroundRefreshTask = nil
                         }
@@ -262,18 +262,25 @@ class TripsSearchViewModel: ObservableObject {
         }
     }
     
-    private func filterResultsForUniqueId(_ results: [SearchResult]) -> [SearchResult] {
-        var uniqueResults = [SearchResult]()
+    private func filterResults(_ results: [SearchResult]) -> [SearchResult] {
         var seenIDs = Set<String>()
+        
+        var stopResults: [SearchResult] = []
+        var nonStopResults: [SearchResult] = []
         
         for result in results {
             if !seenIDs.contains(result.id) {
                 seenIDs.insert(result.id)
-                uniqueResults.append(result)
+                
+                if result.type == .stop {
+                    stopResults.append(result)
+                } else {
+                    nonStopResults.append(result)
+                }
             }
         }
         
-        return uniqueResults
+        return stopResults + nonStopResults
     }
     
     func cancelBackgroundTasks() {
