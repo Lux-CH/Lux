@@ -15,6 +15,7 @@ struct UserShortcut: Identifiable, Codable, Equatable {
     var symbol: String
     var coordinates: Coordinates
     var timeSchedule: TimeSchedule?
+    var stopId: String?
     
     struct Coordinates: Codable, Equatable {
         var latitude: Double
@@ -64,20 +65,21 @@ struct UserShortcut: Identifiable, Codable, Equatable {
         }
     }
     
-    init(id: UUID = UUID(), name: String, symbol: String, coordinates: Coordinates, timeSchedule: TimeSchedule? = nil) {
+    init(id: UUID = UUID(), name: String, symbol: String, coordinates: Coordinates, timeSchedule: TimeSchedule? = nil, stopId: String? = nil) {
         self.id = id
         self.name = name
         self.symbol = symbol
         self.coordinates = coordinates
         self.timeSchedule = timeSchedule
+        self.stopId = stopId
     }
     
     func toSearchResult() -> SearchResult {
         return SearchResult(
-            type: .place,
+            type: stopId != nil ? .stop : .place,
             tokens: [[0, name.count]],
             name: name,
-            id: id.uuidString,
+            id: stopId ?? id.uuidString,
             lat: coordinates.latitude,
             lon: coordinates.longitude,
             areas: [],
