@@ -47,7 +47,7 @@ struct RouteOptionsView: View {
                                         .foregroundColor(.secondary)
                                     
                                     HStack {
-                                        ForEach(0...5, id: \.self) { number in
+                                        ForEach(1...6, id: \.self) { number in
                                             Button(action: {
                                                 withAnimation(.spring(response: 0.3)) {
                                                     maxTransfers = number
