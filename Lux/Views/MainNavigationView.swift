@@ -159,7 +159,6 @@ struct MainNavigationView: View {
                                                 LuxPassView(isFromHome: true)
                                                     .presentationDetents([.medium])
                                                     .presentationCornerRadius(36)
-                                                    .presentationDragIndicator(.visible)
                                             }
                                             .padding(.top, 65)
                                             .padding(.bottom, 5)
