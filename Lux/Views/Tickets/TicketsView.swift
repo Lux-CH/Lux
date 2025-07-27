@@ -27,7 +27,7 @@ struct TicketsView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 24) {
-                    TicketCard {
+                    SettingsCard {
                         NavigationLink(destination: LuxPassView(showSwisspassOnHome: $settings.swisspassOnHome, isFromHome: false)) {
                             LuxPassRow()
                         }
@@ -66,7 +66,7 @@ struct UserTypeSelector: View {
     @Binding var selectedUserType: UserType
     
     var body: some View {
-        TicketCard {
+        SettingsCard {
             VStack(alignment: .leading, spacing: 16) {
                 HStack(spacing: 12) {
                     ZStack {
@@ -149,7 +149,7 @@ struct TicketCategorySection: View {
     
     var body: some View {
         if !filteredTickets.isEmpty {
-            TicketCard {
+            SettingsCard {
                 VStack(spacing: 0) {
                     CategoryHeader(
                         icon: categoryIcon,
@@ -285,26 +285,6 @@ struct TicketRow: View {
                     .presentationDetents([.medium])
             }
         }
-    }
-}
-
-struct TicketCard<Content: View>: View {
-    let content: Content
-    
-    init(@ViewBuilder content: () -> Content) {
-        self.content = content()
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            content
-        }
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(Color(.secondarySystemGroupedBackground))
-                .shadow(color: .black.opacity(0.05), radius: 8, x: 0, y: 2)
-        )
-        .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
 

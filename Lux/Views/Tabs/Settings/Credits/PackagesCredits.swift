@@ -34,6 +34,7 @@ struct CreditsView: View {
                 },
                 footer: {Text("Ci-dessus une liste des crédits de l'application, notamment des différents autres modules utilisés par Lux.")})
         }
+        .padding(.top, -25)
         .navigationTitle("Crédits")
         .navigationBarTitleDisplayMode(.inline)
         //        .listStyle(GroupedListStyle())
