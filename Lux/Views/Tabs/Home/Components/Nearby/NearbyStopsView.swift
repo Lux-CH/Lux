@@ -25,9 +25,7 @@ struct NearbyStopsView: View {
     private let significantDistance: CLLocationDistance = 100.0
     
     var isAuthorizationNotAllowed: Bool {
-        return locationManager.authorizationStatus == .denied ||
-        locationManager.authorizationStatus == .notDetermined ||
-        locationManager.authorizationStatus == .restricted
+        return locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted
     }
     
     var body: some View {
