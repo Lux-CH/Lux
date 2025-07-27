@@ -51,7 +51,7 @@ class LocationSearchViewModel: ObservableObject {
                 
                 if !Task.isCancelled {
                     await MainActor.run {
-                        self.searchResults = self.filterUniqueResults(results)
+                        self.searchResults = self.filterResults(results)
                         self.isLoading = false
                     }
                 }
@@ -109,17 +109,24 @@ class LocationSearchViewModel: ObservableObject {
         }
     }
     
-    private func filterUniqueResults(_ results: [SearchResult]) -> [SearchResult] {
-        var uniqueResults = [SearchResult]()
+    private func filterResults(_ results: [SearchResult]) -> [SearchResult] {
         var seenIDs = Set<String>()
+        
+        var stopResults: [SearchResult] = []
+        var nonStopResults: [SearchResult] = []
         
         for result in results {
             if !seenIDs.contains(result.id) {
                 seenIDs.insert(result.id)
-                uniqueResults.append(result)
+                
+                if result.type == .stop {
+                    stopResults.append(result)
+                } else {
+                    nonStopResults.append(result)
+                }
             }
         }
         
-        return uniqueResults
+        return stopResults + nonStopResults
     }
 }
