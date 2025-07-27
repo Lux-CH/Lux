@@ -9,6 +9,7 @@ import SwiftUI
 
 struct LuxPassView: View {
     @ObservedObject private var swissPassManager = LuxPassManager.shared
+    @Environment(\.dismiss) private var dismiss
     @State private var scanSwissPass: Bool = false
     @State private var showingDeleteAlert: Bool = false
     let isFromHome: Bool
@@ -140,6 +141,22 @@ struct LuxPassView: View {
                 Spacer()
             }
             .navigationTitle("LuxPass")
+            .toolbar {
+                if isFromHome {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        HStack(spacing: 8) {
+                            Button {
+                                dismiss()
+                            } label: {
+                                Image(systemName: "xmark.circle.fill")
+                                    .symbolRenderingMode(.hierarchical)
+                                    .font(.body)
+                            }
+                            .tint(.secondary)
+                        }
+                    }
+                }
+            }
             .navigationBarTitleDisplayMode(.inline)
         }
         .sheet(isPresented: $scanSwissPass) {
