@@ -99,12 +99,12 @@ struct TripResultView: View {
                             .foregroundColor(.green)
                     }
                 }
-                Image(systemName: "circle.fill")
-                    .font(.system(size: 5))
-                    .foregroundColor(.secondary)
                 
                 let walkingLegs = itinerary.legs.filter { $0.mode == .walk }
                 if !walkingLegs.isEmpty {
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 5))
+                        .foregroundColor(.secondary)
                     HStack(spacing: 6) {
                         Image(systemName: "figure.walk")
                             .font(.system(size: 13))
