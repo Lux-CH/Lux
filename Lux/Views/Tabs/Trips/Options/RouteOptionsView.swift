@@ -10,14 +10,25 @@ import LuxCom
 
 struct RouteOptionsView: View {
     @Environment(\.dismiss) private var dismiss
+    @AppStorage("routeOptionsMaxTransfers") private var storedMaxTransfers: Int = 3
+    @AppStorage("routeOptionsMinTransferTime") private var storedMinTransferTime: Int = 0
+    @AppStorage("routeOptionsPedestrianProfile") private var storedPedestrianProfile: String = PedestrianProfile.foot.rawValue
+    @AppStorage("routeOptionsTransportModes") private var storedTransportModes: Data = Data()
+    
     @State private var maxTransfers: Int
     @State private var minTransferTime: Int
     @State private var pedestrianProfile: PedestrianProfile
     @State private var selectedTransportModes: Set<TransportationMode>
+    @State private var showResetConfirmation = false
     
     private let availableTransportModes: [TransportationMode] = [.bus, .tram, .rail, .ferry]
     private let onSave: (RouteOptions) -> Void
     private let routeOptions: RouteOptions
+    
+    private let defaultMaxTransfers = 3
+    private let defaultMinTransferTime = 0
+    private let defaultPedestrianProfile = PedestrianProfile.foot
+    private let defaultTransportModes: Set<TransportationMode> = []
     
     init(routeOptions: RouteOptions, onSave: @escaping (RouteOptions) -> Void) {
         self.routeOptions = routeOptions
@@ -51,6 +62,7 @@ struct RouteOptionsView: View {
                                             Button(action: {
                                                 withAnimation(.spring(response: 0.3)) {
                                                     maxTransfers = number
+                                                    storedMaxTransfers = number
                                                     HapticFeedback.lightImpact()
                                                 }
                                             }) {
@@ -81,7 +93,12 @@ struct RouteOptionsView: View {
                                         .font(.subheadline)
                                         .foregroundColor(.secondary)
                                     
-                                    TransferTimeSelector(selectedTime: $minTransferTime)
+                                    TransferTimeSelector(
+                                        selectedTime: $minTransferTime,
+                                        onTimeChanged: { newTime in
+                                            storedMinTransferTime = newTime
+                                        }
+                                    )
                                 }
                             }
                             .padding()
@@ -105,6 +122,7 @@ struct RouteOptionsView: View {
                                         action: {
                                             withAnimation(.spring(response: 0.3)) {
                                                 pedestrianProfile = .foot
+                                                storedPedestrianProfile = PedestrianProfile.foot.rawValue
                                                 HapticFeedback.lightImpact()
                                             }
                                         }
@@ -117,6 +135,7 @@ struct RouteOptionsView: View {
                                         action: {
                                             withAnimation(.spring(response: 0.3)) {
                                                 pedestrianProfile = .wheelchair
+                                                storedPedestrianProfile = PedestrianProfile.wheelchair.rawValue
                                                 HapticFeedback.lightImpact()
                                             }
                                         }
@@ -158,9 +177,30 @@ struct RouteOptionsView: View {
                                 Text("Cette fonctionnalité n'est pas compatibles avec l'itinéraire séléctionné.")
                                     .foregroundStyle(.gray)
                                     .font(.footnote)
+                                    .padding(.top, -20)
                             }
                             .padding()
                         }
+                        
+                        Button(action: {
+                            showResetConfirmation = true
+                            HapticFeedback.lightImpact()
+                        }) {
+                            HStack {
+                                Image(systemName: "arrow.clockwise")
+                                    .font(.system(size: 16, weight: .medium))
+                                Text("Rétablir les valeurs par défaut")
+                                    .font(.system(size: 16, weight: .medium))
+                            }
+                            .foregroundColor(.accentColor)
+                            .frame(maxWidth: .infinity)
+                            .padding()
+                            .background(
+                                RoundedRectangle(cornerRadius: 16)
+                                    .fill(Color(.secondarySystemGroupedBackground))
+                            )
+                        }
+                        .buttonStyle(ScaleButtonStyle())
                     }
                     .padding()
                 }
@@ -183,6 +223,42 @@ struct RouteOptionsView: View {
                     }
                 }
             }
+            .confirmationDialog(
+                "Rétablir les valeurs par défaut",
+                isPresented: $showResetConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Rétablir", role: .destructive) {
+                    resetToDefaults()
+                    HapticFeedback.mediumImpact()
+                }
+                Button("Annuler", role: .cancel) { }
+            } message: {
+                Text("Cette action rétablira toutes les options aux valeurs par défaut. Cette action ne peut pas être annulée.")
+            }
+            .onAppear {
+                loadStoredPreferences()
+            }
+        }
+    }
+        
+    private func loadStoredPreferences() {
+        maxTransfers = storedMaxTransfers
+        minTransferTime = storedMinTransferTime
+        
+        if let profile = PedestrianProfile(rawValue: storedPedestrianProfile) {
+            pedestrianProfile = profile
+        }
+        
+        if let decodedModes = try? JSONDecoder().decode(Set<TransportationMode>.self, from: storedTransportModes),
+           !decodedModes.isEmpty {
+            selectedTransportModes = decodedModes
+        }
+    }
+    
+    private func saveTransportModesToStorage() {
+        if let encodedModes = try? JSONEncoder().encode(selectedTransportModes) {
+            storedTransportModes = encodedModes
         }
     }
     
@@ -195,6 +271,21 @@ struct RouteOptionsView: View {
             } else {
                 selectedTransportModes.insert(mode)
             }
+            saveTransportModesToStorage()
+        }
+    }
+    
+    private func resetToDefaults() {
+        withAnimation(.spring(response: 0.4)) {
+            maxTransfers = defaultMaxTransfers
+            minTransferTime = defaultMinTransferTime
+            pedestrianProfile = defaultPedestrianProfile
+            selectedTransportModes = defaultTransportModes
+            
+            storedMaxTransfers = defaultMaxTransfers
+            storedMinTransferTime = defaultMinTransferTime
+            storedPedestrianProfile = defaultPedestrianProfile.rawValue
+            saveTransportModesToStorage()
         }
     }
     
@@ -346,6 +437,7 @@ struct TransportModeToggle: View {
 
 struct TransferTimeSelector: View {
     @Binding var selectedTime: Int
+    let onTimeChanged: (Int) -> Void
     private let timeOptions = [0, 2, 5, 7, 10]
     
     var body: some View {
@@ -354,6 +446,7 @@ struct TransferTimeSelector: View {
                 Button(action: {
                     withAnimation(.spring(response: 0.3)) {
                         selectedTime = seconds
+                        onTimeChanged(seconds)
                         HapticFeedback.lightImpact()
                     }
                 }) {
