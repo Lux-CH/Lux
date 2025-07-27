@@ -296,6 +296,16 @@
         }
       }
     },
+    "Ajustez votre recherche d'itinéraires" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adjust your itineraries to your needs"
+          }
+        }
+      }
+    },
     "Annuler" : {
       "localizations" : {
         "en" : {
@@ -528,12 +538,12 @@
         }
       }
     },
-    "Cette fonctionnalité n'est pas compatibles avec l'itinéraire séléctionné." : {
+    "Cette fonctionnalité n'est pas compatible avec l'itinéraire sélectionné." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This feature isn’t compatible with selected trip."
+            "value" : "This feature isn’t compatible with current trip options."
           }
         }
       }

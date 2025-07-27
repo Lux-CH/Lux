@@ -44,185 +44,53 @@ struct RouteOptionsView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color(.systemGroupedBackground)
-                    .ignoresSafeArea()
-                
-                ScrollView {
-                    VStack(spacing: 20) {
-                        OptionsSection(title: "Transferts") {
-                            VStack(spacing: 16) {
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("Nombre maximum")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                    
-                                    HStack {
-                                        ForEach(1...6, id: \.self) { number in
-                                            Button(action: {
-                                                withAnimation(.spring(response: 0.3)) {
-                                                    maxTransfers = number
-                                                    storedMaxTransfers = number
-                                                    HapticFeedback.lightImpact()
-                                                }
-                                            }) {
-                                                Text("\(number)")
-                                                    .font(.system(size: 16, weight: .medium))
-                                                    .frame(width: 44, height: 44)
-                                                    .background(
-                                                        Circle()
-                                                            .fill(maxTransfers == number ?
-                                                                  Color.accentColor :
-                                                                  Color(.tertiarySystemFill))
-                                                    )
-                                                    .overlay(
-                                                        Circle()
-                                                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                                    )
-                                                    .foregroundColor(maxTransfers == number ? .white : .primary)
-                                            }
-                                            .buttonStyle(ScaleButtonStyle())
-                                        }
-                                    }
-                                }
-                                
-                                Divider()
-                                
-                                VStack(alignment: .leading, spacing: 8) {
-                                    Text("Temps minimum entre transferts")
-                                        .font(.subheadline)
-                                        .foregroundColor(.secondary)
-                                    
-                                    TransferTimeSelector(
-                                        selectedTime: $minTransferTime,
-                                        onTimeChanged: { newTime in
-                                            storedMinTransferTime = newTime
-                                        }
-                                    )
-                                }
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color(.secondarySystemGroupedBackground))
-                            )
-                        }
-                        
-                        OptionsSection(title: "Accessibilité") {
-                            VStack(alignment: .leading, spacing: 12) {
-                                Text("Profil de déplacement")
-                                    .font(.subheadline)
-                                    .foregroundColor(.secondary)
-                                
-                                HStack(spacing: 10) {
-                                    AccessibilityProfileButton(
-                                        title: "À pied",
-                                        iconName: "figure.walk",
-                                        isSelected: pedestrianProfile == .foot,
-                                        action: {
-                                            withAnimation(.spring(response: 0.3)) {
-                                                pedestrianProfile = .foot
-                                                storedPedestrianProfile = PedestrianProfile.foot.rawValue
-                                                HapticFeedback.lightImpact()
-                                            }
-                                        }
-                                    )
-                                    
-                                    AccessibilityProfileButton(
-                                        title: "Fauteuil roulant",
-                                        iconName: "figure.roll",
-                                        isSelected: pedestrianProfile == .wheelchair,
-                                        action: {
-                                            withAnimation(.spring(response: 0.3)) {
-                                                pedestrianProfile = .wheelchair
-                                                storedPedestrianProfile = PedestrianProfile.wheelchair.rawValue
-                                                HapticFeedback.lightImpact()
-                                            }
-                                        }
-                                    )
-                                }
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color(.secondarySystemGroupedBackground))
-                            )
-                        }
-                        
-                        OptionsSection(title: "Modes de transport") {
-                            VStack(alignment: .leading, spacing: 8) {
-                                ForEach(availableTransportModes, id: \.self) { mode in
-                                    TransportModeToggle(
-                                        mode: mode,
-                                        isSelected: selectedTransportModes.contains(mode),
-                                        canDeselect: selectedTransportModes.count > 1,
-                                        toggle: {
-                                            toggleTransportMode(mode)
-                                            HapticFeedback.lightImpact()
-                                        }
-                                    )
-                                    
-                                    if mode != availableTransportModes.last {
-                                        Divider()
-                                            .padding(.vertical, 4)
-                                    }
-                                }
-                            }
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color(.secondarySystemGroupedBackground))
-                            )
-                            VStack(alignment: .leading) {
-                                Text("Cette fonctionnalité n'est pas compatibles avec l'itinéraire séléctionné.")
-                                    .foregroundStyle(.gray)
-                                    .font(.footnote)
-                                    .padding(.top, -20)
-                            }
-                            .padding()
-                        }
-                        
-                        Button(action: {
-                            showResetConfirmation = true
-                            HapticFeedback.lightImpact()
-                        }) {
-                            HStack {
-                                Image(systemName: "arrow.clockwise")
-                                    .font(.system(size: 16, weight: .medium))
-                                Text("Rétablir les valeurs par défaut")
-                                    .font(.system(size: 16, weight: .medium))
-                            }
-                            .foregroundColor(.accentColor)
-                            .frame(maxWidth: .infinity)
-                            .padding()
-                            .background(
-                                RoundedRectangle(cornerRadius: 16)
-                                    .fill(Color(.secondarySystemGroupedBackground))
-                            )
-                        }
-                        .buttonStyle(ScaleButtonStyle())
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    headerSection
+                        .padding(.horizontal)
+                    
+                    VStack(spacing: 24) {
+                        transfersSection
+                        accessibilitySection
+                        transportModesSection
+                        resetSection
                     }
-                    .padding()
+                    .padding(.horizontal)
+                    .padding(.top, 22)
                 }
             }
-            .navigationTitle("Options d'itinéraire")
+            .background {
+                LinearGradient(
+                    colors: [
+                        Color(.systemBackground),
+                        Color(.systemGroupedBackground).opacity(0.3),
+                        Color(.systemGroupedBackground)
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .ignoresSafeArea()
+            }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button("Annuler") {
                         dismiss()
                     }
+                    .foregroundStyle(.secondary)
                 }
+                
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button() {
+                    Button("Appliquer") {
                         saveOptions()
                         HapticFeedback.mediumImpact()
-                    } label: {
-                        Text("Appliquer")
-                            .bold()
                     }
+                    .font(.body.weight(.bold))
+                    .foregroundStyle(.accent)
                 }
             }
+            .onAppear {
+                loadStoredPreferences()            }
             .confirmationDialog(
                 "Rétablir les valeurs par défaut",
                 isPresented: $showResetConfirmation,
@@ -236,12 +104,195 @@ struct RouteOptionsView: View {
             } message: {
                 Text("Cette action rétablira toutes les options aux valeurs par défaut. Cette action ne peut pas être annulée.")
             }
-            .onAppear {
-                loadStoredPreferences()
+        }
+    }
+    
+    private var headerSection: some View {
+        VStack(spacing: 16) {
+            HStack {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Options d'itinéraire")
+                        .font(.title2.weight(.bold))
+                        .foregroundStyle(.primary)
+                    
+                    Text("Ajustez votre recherche d'itinéraires")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.leading)
+                }
+                
+                Spacer()
+                
+                ZStack {
+                    Circle()
+                        .fill(.ultraThinMaterial)
+                        .frame(width: 60, height: 60)
+                    
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.title)
+                        .foregroundStyle(.accent)
+                }
             }
         }
     }
-        
+    
+    private var transfersSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            OptionHeader(title: "Transferts", icon: "arrow.triangle.2.circlepath")
+            
+            ModernCard {
+                VStack(spacing: 20) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Nombre maximum")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.primary)
+                        
+                        HStack(spacing: 8) {
+                            ForEach(1...6, id: \.self) { number in
+                                TransferCountButton(
+                                    number: number,
+                                    isSelected: maxTransfers == number,
+                                    onTap: {
+                                        withAnimation(.spring(response: 0.3)) {
+                                            maxTransfers = number
+                                            storedMaxTransfers = number
+                                            HapticFeedback.lightImpact()
+                                        }
+                                    }
+                                )
+                            }
+                        }
+                    }
+                    
+                    Divider()
+                        .opacity(0.5)
+                    
+                    VStack(alignment: .leading, spacing: 12) {
+                        Text("Temps minimum entre transferts")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.primary)
+                        
+                        TransferTimeSelector(
+                            selectedTime: $minTransferTime,
+                            onTimeChanged: { newTime in
+                                storedMinTransferTime = newTime
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+    
+    private var accessibilitySection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            OptionHeader(title: "Accessibilité", icon: "figure.roll")
+            
+            ModernCard {
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Profil de déplacement")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.primary)
+                    
+                    HStack(spacing: 12) {
+                        AccessibilityProfileButton(
+                            title: "À pied",
+                            iconName: "figure.walk",
+                            isSelected: pedestrianProfile == .foot,
+                            action: {
+                                withAnimation(.spring(response: 0.3)) {
+                                    pedestrianProfile = .foot
+                                    storedPedestrianProfile = PedestrianProfile.foot.rawValue
+                                    HapticFeedback.lightImpact()
+                                }
+                            }
+                        )
+                        
+                        AccessibilityProfileButton(
+                            title: "Fauteuil roulant",
+                            iconName: "figure.roll",
+                            isSelected: pedestrianProfile == .wheelchair,
+                            action: {
+                                withAnimation(.spring(response: 0.3)) {
+                                    pedestrianProfile = .wheelchair
+                                    storedPedestrianProfile = PedestrianProfile.wheelchair.rawValue
+                                    HapticFeedback.lightImpact()
+                                }
+                            }
+                        )
+                    }
+                }
+            }
+        }
+    }
+    
+    private var transportModesSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            OptionHeader(title: "Modes de transport", icon: "bus.fill")
+            
+            VStack(spacing: 12) {
+                ModernCard {
+                    VStack(spacing: 0) {
+                        ForEach(Array(availableTransportModes.enumerated()), id: \.element) { index, mode in
+                            TransportModeToggle(
+                                mode: mode,
+                                isSelected: selectedTransportModes.contains(mode),
+                                canDeselect: selectedTransportModes.count > 1,
+                                toggle: {
+                                    toggleTransportMode(mode)
+                                    HapticFeedback.lightImpact()
+                                }
+                            )
+                            
+                            if index < availableTransportModes.count - 1 {
+                                Divider()
+                                    .opacity(0.5)
+                                    .padding(.vertical, 8)
+                            }
+                        }
+                    }
+                }
+                
+                ModernCard(style: .normal) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "info.circle")
+                            .foregroundStyle(.secondary)
+                            .font(.subheadline)
+                        
+                        Text("Cette fonctionnalité n'est pas compatible avec l'itinéraire sélectionné.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                        
+                        Spacer()
+                    }
+                }
+            }
+        }
+    }
+    
+    private var resetSection: some View {
+        Button(action: {
+            showResetConfirmation = true
+            HapticFeedback.lightImpact()
+        }) {
+            ModernCard(style: .accent) {
+                HStack(spacing: 12) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.headline.weight(.medium))
+                        .foregroundStyle(.accent)
+                    
+                    Text("Rétablir les valeurs par défaut")
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.accent)
+                    
+                    Spacer()
+                }
+            }
+        }
+        .buttonStyle(ScaleButtonStyle())
+    }
+    
     private func loadStoredPreferences() {
         maxTransfers = storedMaxTransfers
         minTransferTime = storedMinTransferTime
@@ -313,25 +364,44 @@ struct RouteOptionsView: View {
     }
 }
 
-// MARK: - Helper Views
-struct OptionsSection<Content: View>: View {
+struct OptionHeader: View {
     let title: String
-    let content: Content
-    
-    init(title: String, @ViewBuilder content: () -> Content) {
-        self.title = title
-        self.content = content()
-    }
+    let icon: String
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.primary)
-                .padding(.leading, 4)
+        HStack(spacing: 8) {
+            Image(systemName: icon)
+                .foregroundStyle(.accent)
+                .font(.caption.weight(.medium))
             
-            content
+            Text(title)
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.primary)
         }
+    }
+}
+
+struct TransferCountButton: View {
+    let number: Int
+    let isSelected: Bool
+    let onTap: () -> Void
+    
+    var body: some View {
+        Button(action: onTap) {
+            Text("\(number)")
+                .font(.system(size: 16, weight: .medium))
+                .foregroundColor(isSelected ? .white : .primary)
+                .frame(width: 44, height: 44)
+                .background {
+                    Circle()
+                        .fill(isSelected ? Color.accentColor : Color(.tertiarySystemFill))
+                }
+                .overlay {
+                    Circle()
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                }
+        }
+        .buttonStyle(ScaleButtonStyle())
     }
 }
 
@@ -348,10 +418,10 @@ struct AccessibilityProfileButton: View {
                     Circle()
                         .fill(isSelected ? Color.accentColor : Color(.tertiarySystemFill))
                         .frame(width: 60, height: 60)
-                        .overlay(
+                        .overlay {
                             Circle()
                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                        )
+                        }
                     
                     Image(systemName: iconName)
                         .font(.system(size: 28))
@@ -361,14 +431,15 @@ struct AccessibilityProfileButton: View {
                 Text(title)
                     .font(.system(size: 14, weight: isSelected ? .medium : .regular))
                     .foregroundColor(isSelected ? .accentColor : .primary)
+                    .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
-            .background(
-                RoundedRectangle(cornerRadius: 12)
+            .background {
+                RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
                     .animation(.easeInOut(duration: 0.2), value: isSelected)
-            )
+            }
         }
         .buttonStyle(ScaleButtonStyle())
     }
@@ -399,36 +470,42 @@ struct TransportModeToggle: View {
         Button(action: toggle) {
             let (name, icon, color) = getTransportModeInfo()
             
-            HStack {
+            HStack(spacing: 16) {
                 ZStack {
                     Circle()
                         .fill(color.opacity(0.15))
-                        .frame(width: 40, height: 40)
+                        .frame(width: 44, height: 44)
                     
                     Image(systemName: icon)
-                        .font(.system(size: 18))
+                        .font(.system(size: 18, weight: .medium))
                         .foregroundColor(color)
                 }
                 
-                Text(name)
-                    .font(.system(size: 16, weight: .medium))
-                    .foregroundColor(.primary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(name)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundColor(.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+                
+                Spacer()
                 
                 ZStack {
                     Circle()
-                        .stroke(Color.secondary.opacity(0.3), lineWidth: 2)
+                        .stroke(isSelected ? Color.accentColor : Color.secondary.opacity(0.3), lineWidth: 2)
                         .frame(width: 26, height: 26)
                     
                     if isSelected {
                         Circle()
                             .fill(Color.accentColor)
                             .frame(width: 18, height: 18)
+                            .transition(.scale.combined(with: .opacity))
                     }
                 }
                 .opacity(isSelected || canDeselect ? 1 : 0.5)
+                .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isSelected)
             }
-            .padding(.vertical, 6)
+            .padding(.vertical, 4)
         }
         .buttonStyle(PlainButtonStyle())
         .disabled(!isSelected && !canDeselect)
@@ -442,29 +519,29 @@ struct TransferTimeSelector: View {
     
     var body: some View {
         HStack(spacing: 8) {
-            ForEach(timeOptions, id: \.self) { seconds in
+            ForEach(timeOptions, id: \.self) { minutes in
                 Button(action: {
                     withAnimation(.spring(response: 0.3)) {
-                        selectedTime = seconds
-                        onTimeChanged(seconds)
+                        selectedTime = minutes
+                        onTimeChanged(minutes)
                         HapticFeedback.lightImpact()
                     }
                 }) {
                     VStack(spacing: 4) {
-                        Text("\(seconds)m")
-                            .font(.system(size: 15, weight: selectedTime == seconds ? .semibold : .regular))
-                            .foregroundColor(selectedTime == seconds ? .white : .primary)
+                        Text("\(minutes)m")
+                            .font(.system(size: 15, weight: selectedTime == minutes ? .semibold : .regular))
+                            .foregroundColor(selectedTime == minutes ? .white : .primary)
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background(
-                        RoundedRectangle(cornerRadius: 12)
-                            .fill(selectedTime == seconds ? Color.accentColor : Color(.tertiarySystemFill))
-                    )
-                    .overlay(
+                    .background {
+                        RoundedRectangle(cornerRadius: 12, style: .continuous)
+                            .fill(selectedTime == minutes ? Color.accentColor : Color(.tertiarySystemFill))
+                    }
+                    .overlay {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                    )
+                    }
                 }
                 .buttonStyle(ScaleButtonStyle())
             }
