@@ -175,7 +175,7 @@ struct StopWidgetEntryView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack {
                 if let placeName = entry.departures.first?.place.name {
-                    Text(placeName)
+                    Text("\(Image(systemName: "signpost.right")) \(placeName)")
                         .font(.subheadline)
                         .fontWeight(.bold)
                 }
