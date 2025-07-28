@@ -8,37 +8,70 @@
 import SwiftUI
 
 struct CreditsView: View {
+    private let creditItems = [
+        CreditItem(name: "Constantin Clerc", credit: "Développeur Principal", imageURL: "https://avatars.githubusercontent.com/u/102235607?v=4", url: "https://github.com/c22dev"),
+        CreditItem(name: "Philippe Weidmann", credit: "Données des perturbations", imageURL: "https://avatars.githubusercontent.com/u/5843044?v=4", url: "https://apps.apple.com/fr/app/tpg-max/id1373332448"),
+        CreditItem(name: "Paul Hudson", credit: "CodeScanner — MIT", imageURL: "https://avatars.githubusercontent.com/u/190200?v=4", url: "https://github.com/twostraws/CodeScanner"),
+        CreditItem(name: "Raphaël Mor", credit: "Polyline — MIT", imageURL: "https://avatars.githubusercontent.com/u/772779?v=4", url: "https://github.com/raphaelmor/Polyline"),
+        CreditItem(name: "Yubo Qin", credit: "SymbolPicker — MIT", imageURL: "https://avatars.githubusercontent.com/u/6781789?v=4", url: "https://github.com/xnth97/SymbolPicker"),
+        CreditItem(name: "Edon Valdman", credit: "SwiftUIMessage — MIT", imageURL: "https://avatars.githubusercontent.com/u/22782929?v=4", url: "https://github.com/edonv/SwiftUIMessage"),
+        CreditItem(name: "Hirotakan", credit: "MessagePacker — MIT", imageURL: "https://avatars.githubusercontent.com/u/2901342?v=4", url: "https://github.com/hirotakan/MessagePacker"),
+        CreditItem(name: "Aether Jones", credit: "GlowGetter — MIT", imageURL: "https://avatars.githubusercontent.com/u/64797587?v=4", url: "https://github.com/Aeastr/GlowGetter")
+    ]
     var body: some View {
-        List {
-            Section(
-                content: {
-                    WebCreditCell(
-                        name: "Constantin Clerc", credit: "Développeur Principal", imageURL: "https://avatars.githubusercontent.com/u/102235607?v=4",
-                        url: "https://github.com/c22dev")
-                    WebCreditCell(
-                        name: "Philippe Weidmann", credit: "Données des perturbations",
-                        imageURL: "https://avatars.githubusercontent.com/u/5843044?v=4", url: "https://apps.apple.com/fr/app/tpg-max/id1373332448")
-                    WebCreditCell(
-                        name: "Paul Hudson", credit: "CodeScanner — MIT", imageURL: "https://avatars.githubusercontent.com/u/190200?v=4",
-                        url: "https://github.com/twostraws/CodeScanner")
-                    WebCreditCell(
-                        name: "Raphaël Mor", credit: "Polyline — MIT", imageURL: "https://avatars.githubusercontent.com/u/772779?v=4",
-                        url: "https://github.com/raphaelmor/Polyline")
-                    WebCreditCell(
-                        name: "Yubo Qin", credit: "SymbolPicker — MIT", imageURL: "https://avatars.githubusercontent.com/u/6781789?v=4",
-                        url: "https://github.com/xnth97/SymbolPicker")
-                    WebCreditCell(name: "Edon Valdman", credit: "SwiftUIMessage — MIT", imageURL: "https://avatars.githubusercontent.com/u/22782929?v=4", url: "https://github.com/edonv/SwiftUIMessage")
-                    WebCreditCell(name: "Hirotakan", credit: "MessagePacker — MIT", imageURL: "https://avatars.githubusercontent.com/u/2901342?v=4", url: "https://github.com/hirotakan/MessagePacker")
-                    WebCreditCell(name: "Aether Jones", credit: "GlowGetter — MIT", imageURL: "https://avatars.githubusercontent.com/u/64797587?v=4", url: "https://github.com/Aeastr/GlowGetter")
-                    
-                },
-                footer: {Text("Ci-dessus une liste des crédits de l'application, notamment des différents autres modules utilisés par Lux.")})
+        NavigationStack {
+            ScrollView {
+                LazyVStack(spacing: 20) {
+                    VStack(spacing: 16) {
+                        creditsCard
+                    }
+                    .padding(.horizontal)
+                }
+            }
+            .background(Color(.systemGroupedBackground))
         }
-        .padding(.top, -25)
-        .navigationTitle("Crédits")
-        .navigationBarTitleDisplayMode(.inline)
-        //        .listStyle(GroupedListStyle())
     }
+    
+    private var creditsCard: some View {
+        SettingsCard {
+            Section {
+                ForEach(Array(creditItems.enumerated()), id: \.offset) { index, item in
+                    Button(action: {
+                        guard let actualURL = URL(string: item.url) else { return }
+                        UIApplication.shared.open(actualURL, options: [:], completionHandler: nil)
+                    }) {
+                        WebCreditCell(
+                            name: item.name,
+                            credit: item.credit,
+                            imageURL: item.imageURL,
+                            url: item.url
+                        )
+                    }
+                    .buttonStyle(.plain)
+                    
+                    if index < creditItems.count - 1 {
+                        Divider()
+                            .padding(.leading, 82)
+                    }
+                }
+                
+            } header: {
+                SectionHeader(
+                    icon: "person.3.fill",
+                    iconColor: .blue,
+                    title: "Crédits",
+                    subtitle: "Ci-dessous une liste des crédits de l'application, notamment des différents autres modules utilisés par Lux."
+                )
+            }
+        }
+    }
+}
+
+struct CreditItem {
+    let name: String
+    let credit: String
+    let imageURL: String
+    let url: String
 }
 
 struct WebCreditCell: View {
@@ -46,42 +79,36 @@ struct WebCreditCell: View {
     var credit: String
     var imageURL: String
     var url: String
+    
     var body: some View {
-        HStack(alignment: .center) {
+        HStack(alignment: .center, spacing: 12) {
             AsyncImage(url: URL(string: imageURL)) { image in
                 image
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                    .background(.white)
             } placeholder: {
                 ProgressView()
             }
             .frame(width: 50, height: 50)
-            .cornerRadius(.infinity)
+            .clipShape(Circle())
             
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(name)
-                    .font(.headline)
+                    .font(.body)
+                    .fontWeight(.medium)
                 Text(credit)
-                    .font(.subheadline)
-                    .foregroundColor(.gray)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
             
             Spacer()
             
-            Button(action: {
-                guard let actualURL = URL(string: url) else {
-                  return //be safe
-                }
-                UIApplication.shared.open(actualURL, options: [:], completionHandler: nil)
-            }) {
-                Image(systemName: "info.circle")
-                    .font(.title2)
-                    .foregroundColor(.accentColor)
-            }
-            .buttonStyle(BorderlessButtonStyle())
+            Image(systemName: "arrow.up.right.square")
+                .font(.title3)
+                .foregroundColor(.accentColor)
         }
+        .padding(.horizontal, 20)
+        .padding(.vertical, 12)
         .contentShape(Rectangle())
-        .onTapGesture {}
     }
 }
