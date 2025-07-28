@@ -467,6 +467,7 @@ struct MainNavigationView: View {
                 if settings.swisspassOnHome {
                     Button {
                         showLuxPass = true
+                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                     } label: {
                         VStack(spacing: 4) {
                             HStack {
