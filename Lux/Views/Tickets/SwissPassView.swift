@@ -29,6 +29,10 @@ struct SwissPassView: View {
                         )
                     )
                     .shadow(color: .black.opacity(0.3), radius: 12, x: 3, y: 6)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 16)
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.75)
+                    )
                 
                 VStack(spacing: 0) {
                     HStack {
