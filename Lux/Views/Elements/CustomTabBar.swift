@@ -78,16 +78,14 @@ struct TabButton: View {
                 Spacer(minLength: 0)
                 
                 Image(systemName: tab.icon)
-                    .font(.system(size: 16, weight: selectedTab == tab ? .semibold : .regular))
+                    .font(.system(size: 16, weight: selectedTab == tab ? .bold : .medium))
                     .foregroundStyle(selectedTab == tab ? Color.accentColor : Color.primary.opacity(0.6))
                     .frame(width: 30, height: 30)
                 
-                if selectedTab == tab {
-                    Text(tab.title)
-                        .font(.system(size: 16, weight: .medium))
-                        .foregroundStyle(Color.accentColor)
-                        .transition(.opacity.combined(with: .scale))
-                }
+                Text(tab.title)
+                    .font(.system(size: 16, weight: selectedTab == tab ? .bold : .medium))
+                    .foregroundStyle(selectedTab == tab ? Color.accentColor : Color.primary.opacity(0.6))
+                    .transition(.opacity.combined(with: .scale))
                 
                 Spacer(minLength: 0)
             }
