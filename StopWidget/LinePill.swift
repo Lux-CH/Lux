@@ -44,7 +44,7 @@ struct LinePill: View {
         if isSquared && LineColors.color(for: line) == nil {
             return Color(hex: "EA0706")
         }
-        return LineColors.color(for: line) ?? .black
+        return LineColors.color(for: line) ?? .accentColor
     }
     
     var body: some View {
