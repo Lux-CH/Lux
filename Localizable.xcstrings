@@ -1802,16 +1802,6 @@
         }
       }
     },
-    "Une erreur est survenue lors de son ouverture. Il est possible que le lien ait expiré." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "An error occurred during processing. It might have expired."
-          }
-        }
-      }
-    },
     "Une erreur est survenue lors du chargement de l'itinéraire." : {
       "localizations" : {
         "en" : {
