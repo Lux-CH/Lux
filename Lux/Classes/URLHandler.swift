@@ -21,20 +21,20 @@ enum URLHandlerError: Error, LocalizedError {
     case fileTooLarge
     case invalidFile
     case networkError
-    case decodingError
+    case expiredLink
     
     var errorDescription: String? {
         switch self {
         case .invalidURL:
             return "URL invalide"
         case .fileTooLarge:
-            return "Fichier trop volumineux"
+            return "L'itinéraire partagé est trop volumineux. Pour des raisons de sécurité, Lux ne peut ouvrir ce dernier."
         case .invalidFile:
-            return "Fichier invalide"
+            return "L'itinéraire partagé semble être invalide."
         case .networkError:
-            return "Erreur réseau"
-        case .decodingError:
-            return "Erreur de décodage"
+            return "Une erreur est survenue lors du téléchargement. Assurez vous d'avoir une connexion stable."
+        case .expiredLink:
+            return "Il est possible que l'itinéraire ait expiré ou qu'il soit invalide."
         }
     }
 }
@@ -78,16 +78,22 @@ struct URLHandler {
     }
     
     private static func handleRemoteItinerary(_ url: URL) async -> URLHandlerResult {
-        guard let query = url.query, !query.isEmpty else {
+        let pathComponents = url.pathComponents
+        guard pathComponents.count >= 2,
+              pathComponents[1] != "",
+              pathComponents[1] != "/" else {
             return .error(.invalidURL)
         }
         
+        let identifier = pathComponents[1]
         let itinerarySharer = ItinerarySharer()
         
-        if let downloadedItinerary = await itinerarySharer.downloadItinerary(String(query)) {
-            return .itinerary(downloadedItinerary)
-        } else {
-            return .error(.networkError)
+        let result = await itinerarySharer.downloadItinerary(identifier)
+        switch result {
+        case .success(let itinerary):
+            return .itinerary(itinerary)
+        case .failure(let error):
+            return .error(error)
         }
     }
     
@@ -118,7 +124,7 @@ struct URLHandler {
             return .itinerary(decodedItinerary)
             
         } catch {
-            return .error(.decodingError)
+            return .error(.invalidFile)
         }
     }
 }

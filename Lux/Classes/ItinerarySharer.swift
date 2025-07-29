@@ -54,33 +54,36 @@ class ItinerarySharer {
         return fileURL
     }
     
-    func downloadItinerary(_ identifier: String) async -> Itinerary? {
+    func downloadItinerary(_ identifier: String) async -> Result<Itinerary, URLHandlerError> {
         guard let url = URL(string: "https://0x0.st/\(identifier).luxtrip") else {
-            return nil
+            return .failure(.invalidURL)
         }
         
         do {
             let (data, response) = try await URLSession.shared.data(from: url)
             
             if let httpResponse = response as? HTTPURLResponse {
+                if httpResponse.statusCode == 404 {
+                    return .failure(.expiredLink)
+                }
                 guard httpResponse.statusCode == 200 else {
-                    return nil
+                    return .failure(.networkError)
                 }
             }
             
             guard data.count <= 51200 else {
-                return nil
+                return .failure(.fileTooLarge)
             }
             
             let itinerary = try decode(data)
             guard validateItinerary(itinerary) else {
-                return nil
+                return .failure(.invalidFile)
             }
             
-            return itinerary
+            return .success(itinerary)
             
         } catch {
-            return nil
+            return .failure(.networkError)
         }
     }
     

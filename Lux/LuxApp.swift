@@ -119,7 +119,7 @@ struct LuxApp: App {
             showItineraryProcessingError = true
             
         default:
-            errorMessage = "Erreur inattendue"
+            errorMessage = "Une erreur est survenue."
             showItineraryProcessingError = true
         }
         
