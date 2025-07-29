@@ -1802,12 +1802,12 @@
         }
       }
     },
-    "Une erreur est survenue lors de son ouverture. Assurez-vous que son contenu soit valide." : {
+    "Une erreur est survenue lors de son ouverture. Il est possible que le lien ait expiré." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "An error occurred during processing. Please ensure it’s content is valid."
+            "value" : "An error occurred during processing. It might have expired."
           }
         }
       }
