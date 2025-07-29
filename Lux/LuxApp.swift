@@ -53,7 +53,7 @@ struct LuxApp: App {
                         }
                     }
                 }
-                .fullScreenCover(isPresented: $showItinerarySheet) {
+                .fullScreenCover(isPresented: $showItinerarySheet, onDismiss: {ItinerarySharer().cleanUp()}) {
                     if let itinerary = sharedItinerary {
                         ItineraryView(itinerary: itinerary, fromNearby: false)
                             .preferredColorScheme(
