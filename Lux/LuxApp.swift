@@ -19,18 +19,17 @@ struct LuxApp: App {
     @State private var showStopSheet: Bool = false
     @State private var showConfirmation: Bool = false
     @State private var showItineraryProcessingError: Bool = false
-    @State private var inputedURL: URL?
+    @State private var pendingURL: URL?
     @State private var sharedItinerary: Itinerary?
     @State private var sharedStopDetail: (String, String)?
+    @State private var errorMessage: String = ""
     
     @ObservedObject var settings = Settings.shared
     
     var body: some Scene {
         WindowGroup {
             MainNavigationView()
-                .preferredColorScheme(
-                        getColorScheme() ?? nil
-                )
+                .preferredColorScheme(getColorScheme())
                 .environmentObject(locationManager)
                 .environmentObject(shortcutManager)
                 .environmentObject(disruptionManager)
@@ -38,27 +37,14 @@ struct LuxApp: App {
                 // i am fully aware this will deprecated in the future; however not putting it doesn't apply the accent everywhere; same if you only leave accentColor
                 .accentColor(accentColorManager.selectedAccentColor)
                 .onOpenURL { url in
-                    inputedURL = url
-                    if url.pathExtension == "luxtrip" || (url.scheme == "lux" && url.host == "itinerary") {
-                        showConfirmation = true
-                    } else if let urlStr = inputedURL?.absoluteString, urlStr.contains("//") {
-                        let components = urlStr.components(separatedBy: "//")
-                        if components.count == 2 {
-                            let stopId = components[0]
-                            let encodedName = components[1]
-                            if let name = encodedName.removingPercentEncoding {
-                                self.sharedStopDetail = (stopId, name)
-                                self.showStopSheet = true
-                            }
-                        }
+                    Task {
+                        await handleIncomingURL(url)
                     }
                 }
                 .fullScreenCover(isPresented: $showItinerarySheet) {
                     if let itinerary = sharedItinerary {
                         ItineraryView(itinerary: itinerary, fromNearby: false)
-                            .preferredColorScheme(
-                                    getColorScheme() ?? nil
-                            )
+                            .preferredColorScheme(getColorScheme())
                             .environmentObject(locationManager)
                             .environmentObject(shortcutManager)
                             .environmentObject(disruptionManager)
@@ -76,75 +62,70 @@ struct LuxApp: App {
                 }
                 .alert("Êtes-vous sûr de vouloir ouvrir cet itinéraire ?", isPresented: $showConfirmation) {
                     Button("Ouvrir") {
-                        if let url = inputedURL {
-                            handleItinerary(url)
+                        if let url = pendingURL {
+                            Task {
+                                await handleConfirmedItinerary(url)
+                            }
                         }
                     }
-                    Button("Annuler", role: .cancel) { }
+                    Button("Annuler", role: .cancel) {
+                        pendingURL = nil
+                    }
                 } message: {
                     Text("Cet itinéraire vous a été partagé. Assurez-vous qu'il provient d'une source fiable.")
                 }
                 .alert("L'itinéraire n'a pas pu être ouvert.", isPresented: $showItineraryProcessingError) {
                     Button("OK") { }
                 } message: {
-                    Text("Une erreur est survenue lors de son ouverture. Il est possible que le lien ait expiré.")
+                    Text(errorMessage.isEmpty ? "Une erreur est survenue lors de son ouverture. Il est possible que le lien ait expiré." : errorMessage)
                 }
+        }
+    }
+        
+    @MainActor
+    private func handleIncomingURL(_ url: URL) async {
+        let result = await URLHandler.process(url)
+        
+        switch result {
+        case .confirmationRequired(let url):
+            pendingURL = url
+            showConfirmation = true
+            
+        case .stopDetail(let stopId, let name):
+            sharedStopDetail = (stopId, name)
+            showStopSheet = true
+            
+        case .itinerary(let itinerary):
+            sharedItinerary = itinerary
+            showItinerarySheet = true
+            
+        case .error(let error):
+            errorMessage = error.localizedDescription
+            showItineraryProcessingError = true
         }
     }
     
-    private func handleItinerary(_ url: URL) {
-        if url.scheme == "lux" && url.host == "itinerary" {
-            if let query = url.query, !query.isEmpty {
-                Task {
-                    let itinerarySharer = ItinerarySharer()
-                    if let downloadedItinerary = await itinerarySharer.downloadItinerary(String(query)) {
-                        DispatchQueue.main.async {
-                            self.sharedItinerary = downloadedItinerary
-                            self.showItinerarySheet = true
-                        }
-                    } else {
-                        DispatchQueue.main.async {
-                            self.showItineraryProcessingError = true
-                        }
-                    }
-                }
-            }
-        } else {
-            let hasSSRAccess = url.startAccessingSecurityScopedResource()
+    @MainActor
+    private func handleConfirmedItinerary(_ url: URL) async {
+        let result = await URLHandler.handleConfirmedItinerary(url)
+        
+        switch result {
+        case .itinerary(let itinerary):
+            sharedItinerary = itinerary
+            showItinerarySheet = true
             
-            defer {
-                if hasSSRAccess {
-                    url.stopAccessingSecurityScopedResource()
-                }
-            }
+        case .error(let error):
+            errorMessage = error.localizedDescription
+            showItineraryProcessingError = true
             
-            do {
-                if let fileAttributes = try? FileManager.default.attributesOfItem(atPath: url.path), let size = fileAttributes[.size] as? Int64, size > 51200 {
-                    print("invalid file!")
-                    showItineraryProcessingError.toggle()
-                    return
-                }
-                let data = try Data(contentsOf: url)
-                let itinerarySharer = ItinerarySharer()
-                let decodedItinerary = try itinerarySharer.decode(data)
-                
-                guard itinerarySharer.validateItinerary(decodedItinerary) else {
-                    print("invalid file!")
-                    showItineraryProcessingError.toggle()
-                    return
-                }
-                
-                DispatchQueue.main.async {
-                    self.sharedItinerary = decodedItinerary
-                    self.showItinerarySheet = true
-                }
-                
-            } catch {
-                showItineraryProcessingError.toggle()
-                print(error)
-            }
+        default:
+            errorMessage = "Erreur inattendue"
+            showItineraryProcessingError = true
         }
+        
+        pendingURL = nil
     }
+    
     private func getColorScheme() -> ColorScheme? {
         if settings.autoColorScheme {
             let calendar = Calendar.current
@@ -152,20 +133,17 @@ struct LuxApp: App {
             
             if hour >= 20 || hour < 6 {
                 return .dark
-            }
-            else {
+            } else {
                 return .light
             }
         }
         if settings.customScheme {
             if settings.customSchemeSelection == "dark" {
                 return .dark
-            }
-            else {
+            } else {
                 return .light
             }
-        }
-        else {
+        } else {
             return nil
         }
     }
