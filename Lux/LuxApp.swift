@@ -39,7 +39,7 @@ struct LuxApp: App {
                 .accentColor(accentColorManager.selectedAccentColor)
                 .onOpenURL { url in
                     inputedURL = url
-                    if url.pathExtension == "luxtrip" {
+                    if url.pathExtension == "luxtrip" || (url.scheme == "lux" && url.host == "itinerary") {
                         showConfirmation = true
                     } else if let urlStr = inputedURL?.absoluteString, urlStr.contains("//") {
                         let components = urlStr.components(separatedBy: "//")
@@ -53,7 +53,7 @@ struct LuxApp: App {
                         }
                     }
                 }
-                .fullScreenCover(isPresented: $showItinerarySheet, onDismiss: {ItinerarySharer().cleanUp()}) {
+                .fullScreenCover(isPresented: $showItinerarySheet) {
                     if let itinerary = sharedItinerary {
                         ItineraryView(itinerary: itinerary, fromNearby: false)
                             .preferredColorScheme(
@@ -87,44 +87,62 @@ struct LuxApp: App {
                 .alert("L'itinéraire n'a pas pu être ouvert.", isPresented: $showItineraryProcessingError) {
                     Button("OK") { }
                 } message: {
-                    Text("Une erreur est survenue lors de son ouverture. Assurez-vous que son contenu soit valide.")
+                    Text("Une erreur est survenue lors de son ouverture. Il est possible que le lien ait expiré.")
                 }
         }
     }
     
     private func handleItinerary(_ url: URL) {
-        let hasSSRAccess = url.startAccessingSecurityScopedResource()
-        
-        defer {
-            if hasSSRAccess {
-                url.stopAccessingSecurityScopedResource()
+        if url.scheme == "lux" && url.host == "itinerary" {
+            if let query = url.query, !query.isEmpty {
+                Task {
+                    let itinerarySharer = ItinerarySharer()
+                    if let downloadedItinerary = await itinerarySharer.downloadItinerary(String(query)) {
+                        DispatchQueue.main.async {
+                            self.sharedItinerary = downloadedItinerary
+                            self.showItinerarySheet = true
+                        }
+                    } else {
+                        DispatchQueue.main.async {
+                            self.showItineraryProcessingError = true
+                        }
+                    }
+                }
             }
-        }
-        
-        do {
-            if let fileAttributes = try? FileManager.default.attributesOfItem(atPath: url.path), let size = fileAttributes[.size] as? Int64, size > 51200 {
-                print("invalid file!")
+        } else {
+            let hasSSRAccess = url.startAccessingSecurityScopedResource()
+            
+            defer {
+                if hasSSRAccess {
+                    url.stopAccessingSecurityScopedResource()
+                }
+            }
+            
+            do {
+                if let fileAttributes = try? FileManager.default.attributesOfItem(atPath: url.path), let size = fileAttributes[.size] as? Int64, size > 51200 {
+                    print("invalid file!")
+                    showItineraryProcessingError.toggle()
+                    return
+                }
+                let data = try Data(contentsOf: url)
+                let itinerarySharer = ItinerarySharer()
+                let decodedItinerary = try itinerarySharer.decode(data)
+                
+                guard itinerarySharer.validateItinerary(decodedItinerary) else {
+                    print("invalid file!")
+                    showItineraryProcessingError.toggle()
+                    return
+                }
+                
+                DispatchQueue.main.async {
+                    self.sharedItinerary = decodedItinerary
+                    self.showItinerarySheet = true
+                }
+                
+            } catch {
                 showItineraryProcessingError.toggle()
-                return
+                print(error)
             }
-            let data = try Data(contentsOf: url)
-            let itinerarySharer = ItinerarySharer()
-            let decodedItinerary = try itinerarySharer.decode(data)
-            
-            guard itinerarySharer.validateItinerary(decodedItinerary) else {
-                print("invalid file!")
-                showItineraryProcessingError.toggle()
-                return
-            }
-            
-            DispatchQueue.main.async {
-                self.sharedItinerary = decodedItinerary
-                self.showItinerarySheet = true
-            }
-            
-        } catch {
-            showItineraryProcessingError.toggle()
-            print(error)
         }
     }
     private func getColorScheme() -> ColorScheme? {
