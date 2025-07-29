@@ -54,6 +54,36 @@ class ItinerarySharer {
         return fileURL
     }
     
+    func downloadItinerary(_ identifier: String) async -> Itinerary? {
+        guard let url = URL(string: "https://0x0.st/\(identifier).luxtrip") else {
+            return nil
+        }
+        
+        do {
+            let (data, response) = try await URLSession.shared.data(from: url)
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                guard httpResponse.statusCode == 200 else {
+                    return nil
+                }
+            }
+            
+            guard data.count <= 51200 else {
+                return nil
+            }
+            
+            let itinerary = try decode(data)
+            guard validateItinerary(itinerary) else {
+                return nil
+            }
+            
+            return itinerary
+            
+        } catch {
+            return nil
+        }
+    }
+    
     func validateItinerary(_ itinerary: Itinerary) -> Bool {
         let now = Date()
         let oneYearFromNow = now.addingTimeInterval(365 * 24 * 60 * 60)
