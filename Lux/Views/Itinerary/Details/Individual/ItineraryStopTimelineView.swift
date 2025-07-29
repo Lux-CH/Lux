@@ -30,7 +30,7 @@ struct ItineraryStopTimelineView: View {
     }
     
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 10)) { timeline in
+        TimelineView(.periodic(from: .now, by: 5)) { timeline in
             LazyVStack(spacing: 0) {
                 ForEach(Array(displayedStops.enumerated()), id: \.element.stopId) { index, stop in
                     let actualIndex = getActualIndex(displayIndex: index, stop: stop)
