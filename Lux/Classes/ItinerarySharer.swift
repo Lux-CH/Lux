@@ -11,47 +11,11 @@ import SwiftUI
 import Foundation
 
 class ItinerarySharer {
-    func getPathFromItinerary(_ itinerary: Itinerary) -> URL? {
-        do {
-            return try saveDataToTemp(data: encode(itinerary))
-        }
-        catch {
-            print("error \(error)")
-        }
-        return nil
-    }
-    
     private func encode(_ itinerary: Itinerary) throws -> Data {
         return try MessagePackEncoder().encode(itinerary)
     }
     func decode(_ data: Data) throws -> Itinerary {
         return try MessagePackDecoder().decode(Itinerary.self, from: data)
-    }
-    func cleanUp() {
-        do {
-            let tempDirectory = FileManager.default.temporaryDirectory
-            let directory = tempDirectory.appendingPathComponent("sharedItineraries/")
-            if FileManager.default.fileExists(atPath: directory.path) {
-                try FileManager.default.removeItem(at: directory)
-            }
-        }
-        catch {
-            print(error)
-        }
-    }
-    private func saveDataToTemp(data: Data) throws -> URL {
-        let tempDirectory = FileManager.default.temporaryDirectory
-        let directory = tempDirectory.appendingPathComponent("sharedItineraries/\(UUID().uuidString)")
-        let fileURL = directory.appendingPathComponent("Itineraire.luxtrip")
-
-        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
-
-        if FileManager.default.fileExists(atPath: fileURL.path) {
-            try FileManager.default.removeItem(at: fileURL)
-        }
-
-        try data.write(to: fileURL)
-        return fileURL
     }
     
     func downloadItinerary(_ identifier: String) async -> Result<Itinerary, URLHandlerError> {
@@ -87,6 +51,64 @@ class ItinerarySharer {
         }
     }
     
+    
+    func uploadItinerary(_ itinerary: Itinerary, expiresInHours: Int = 24) async -> Result<String, URLHandlerError> {
+        do {
+            let data = try encode(itinerary)
+            
+            let boundary = UUID().uuidString
+            var body = Data()
+            
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"file\"; filename=\"Itineraire.luxtrip\"\r\n".data(using: .utf8)!)
+            body.append("Content-Type: application/octet-stream\r\n\r\n".data(using: .utf8)!)
+            body.append(data)
+            body.append("\r\n".data(using: .utf8)!)
+            
+            body.append("--\(boundary)\r\n".data(using: .utf8)!)
+            body.append("Content-Disposition: form-data; name=\"expires\"\r\n\r\n".data(using: .utf8)!)
+            body.append("\(expiresInHours)".data(using: .utf8)!)
+            body.append("\r\n".data(using: .utf8)!)
+            
+            body.append("--\(boundary)--\r\n".data(using: .utf8)!)
+            
+            guard let url = URL(string: "https://0x0.st") else {
+                return .failure(.invalidURL)
+            }
+            
+            var request = URLRequest(url: url)
+            request.httpMethod = "POST"
+            request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            request.httpBody = body
+            
+            let (responseData, response) = try await URLSession.shared.data(for: request)
+            
+            if let httpResponse = response as? HTTPURLResponse {
+                guard httpResponse.statusCode == 200 else {
+                    return .failure(.networkError)
+                }
+            }
+            
+            guard let responseString = String(data: responseData, encoding: .utf8)?.trimmingCharacters(in: .whitespacesAndNewlines) else {
+                return .failure(.networkError)
+            }
+            
+            guard responseString.hasPrefix("https://0x0.st/") && responseString.hasSuffix(".luxtrip") else {
+                return .failure(.networkError)
+            }
+            
+            if let url = URL(string: responseString),
+               let lastPathComponent = url.lastPathComponent.split(separator: ".").first {
+                return .success(String(lastPathComponent))
+            } else {
+                return .failure(.networkError)
+            }
+        } catch {
+            return .failure(.networkError)
+        }
+    }
+
+    
     func validateItinerary(_ itinerary: Itinerary) -> Bool {
         let now = Date()
         let oneYearFromNow = now.addingTimeInterval(365 * 24 * 60 * 60)
@@ -120,7 +142,7 @@ class ItinerarySharer {
         
         return true
     }
-
+    
     private func validateLeg(_ leg: Leg) -> Bool {
         guard validatePlace(leg.from) && validatePlace(leg.to) else {
             return false

@@ -380,30 +380,42 @@ struct ShareButtonView: View {
     
     @State private var showingShareDialog = false
     @State private var renderedImage: Image?
+    @State private var isUploading = false
+    @State private var uploadedURL: String?
+    @State private var showingShareSheet = false
     @Environment(\.displayScale) var displayScale
     
     var body: some View {
         Button(action: {
             showingShareDialog = true
         }) {
-            Label("Partager", systemImage: "square.and.arrow.up")
-                .font(.system(size: 16, weight: .medium))
-                .foregroundStyle(.primary)
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background {
-                    RoundedRectangle(cornerRadius: 35)
-                        .fill(.ultraThinMaterial)
-                        .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+            HStack {
+                if isUploading {
+                    ProgressView()
+                        .scaleEffect(0.8)
+                } else {
+                    Image(systemName: "square.and.arrow.up")
                 }
-                .overlay(
-                    RoundedRectangle(cornerRadius: 35)
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                )
+                Text(isUploading ? "Partage..." : "Partager")
+            }
+            .font(.system(size: 16, weight: .medium))
+            .foregroundStyle(.primary)
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .background {
+                RoundedRectangle(cornerRadius: 35)
+                    .fill(.ultraThinMaterial)
+                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+            }
+            .overlay(
+                RoundedRectangle(cornerRadius: 35)
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+            )
         }
+        .disabled(isUploading)
         .confirmationDialog("Partager l'itinéraire", isPresented: $showingShareDialog, titleVisibility: .visible) {
-            if let path = itineraarySharer.getPathFromItinerary(itinerary) {
-                ShareLink("Partager l'entiereté", item: path)
+            Button("Partager l'entiereté") {
+                uploadItinerary()
             }
             
             if let image = renderedImage {
@@ -414,11 +426,34 @@ struct ShareButtonView: View {
         } message: {
             Text("Choisissez comment vous souhaitez partager cet itinéraire.\nLe partage de l'ensemble de l'itinéraire requiert que son receveur ait l'app.")
         }
+        .sheet(isPresented: $showingShareSheet) {
+            if let url = uploadedURL {
+                ShareSheet(items: [url])
+            }
+        }
         .onAppear {
             renderImage()
         }
-        .onDisappear {
-            itineraarySharer.cleanUp()
+    }
+    
+    private func uploadItinerary() {
+        isUploading = true
+        showingShareDialog = false
+        
+        Task {
+            let result = await itineraarySharer.uploadItinerary(itinerary)
+            
+            await MainActor.run {
+                isUploading = false
+                
+                switch result {
+                case .success(let identifier):
+                    uploadedURL = "https://lux.cclerc.ch/share#\(identifier)"
+                    showingShareSheet = true
+                case .failure(let error):
+                    print("upload failed !! \(error)")
+                }
+            }
         }
     }
     
@@ -433,4 +468,17 @@ struct ShareButtonView: View {
             renderedImage = Image(uiImage: uiImage)
         }
     }
+}
+
+// https://stackoverflow.com/a/69694099
+// using UIKit is a bit ridiculous here, c'mon Apple..
+struct ShareSheet: UIViewControllerRepresentable {
+    let items: [Any]
+    
+    func makeUIViewController(context: Context) -> UIActivityViewController {
+        let controller = UIActivityViewController(activityItems: items, applicationActivities: nil)
+        return controller
+    }
+    
+    func updateUIViewController(_ uiViewController: UIActivityViewController, context: Context) {}
 }

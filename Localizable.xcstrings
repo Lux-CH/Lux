@@ -1266,6 +1266,16 @@
         }
       }
     },
+    "Partage..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharing…"
+          }
+        }
+      }
+    },
     "Partager" : {
       "localizations" : {
         "en" : {
