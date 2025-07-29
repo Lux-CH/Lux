@@ -52,9 +52,13 @@ class ItinerarySharer {
     }
     
     
-    func uploadItinerary(_ itinerary: Itinerary, expiresInHours: Int = 24) async -> Result<String, URLHandlerError> {
+    func uploadItinerary(_ itinerary: Itinerary) async -> Result<String, URLHandlerError> {
         do {
             let data = try encode(itinerary)
+            
+            let expiresInHours = await MainActor.run {
+                Settings.shared.luxTripShareExpiryTimeH
+            }
             
             let boundary = UUID().uuidString
             var body = Data()

@@ -27,6 +27,7 @@ class Settings: ObservableObject, @unchecked Sendable {
 
     /// Experimental
     @AppStorage("fetchWalkingDirectionsUsingMKDirections") var fetchWalkingDirectionsUsingMKDirections: Bool = true
+    @AppStorage("luxTripShareExpiryTimeH") var luxTripShareExpiryTimeH: Int = 24
     @AppStorage("crowdbackAllowed") var crowdbackAllowed: Bool = true
     @AppStorage("swisspassOnHome") var swisspassOnHome: Bool = false
 }
