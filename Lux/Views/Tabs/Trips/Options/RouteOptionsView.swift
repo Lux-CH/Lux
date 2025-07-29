@@ -10,7 +10,7 @@ import LuxCom
 
 struct RouteOptionsView: View {
     @Environment(\.dismiss) private var dismiss
-    @AppStorage("routeOptionsMaxTransfers") private var storedMaxTransfers: Int = 3
+    @AppStorage("routeOptionsMaxTransfers") private var storedMaxTransfers: Int = 5
     @AppStorage("routeOptionsMinTransferTime") private var storedMinTransferTime: Int = 0
     @AppStorage("routeOptionsPedestrianProfile") private var storedPedestrianProfile: String = PedestrianProfile.foot.rawValue
     @AppStorage("routeOptionsTransportModes") private var storedTransportModes: Data = Data()
@@ -25,7 +25,7 @@ struct RouteOptionsView: View {
     private let onSave: (RouteOptions) -> Void
     private let routeOptions: RouteOptions
     
-    private let defaultMaxTransfers = 3
+    private let defaultMaxTransfers = 5
     private let defaultMinTransferTime = 0
     private let defaultPedestrianProfile = PedestrianProfile.foot
     private let defaultTransportModes: Set<TransportationMode> = []
