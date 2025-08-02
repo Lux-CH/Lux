@@ -10,18 +10,18 @@ import SwiftUI
 class AccentColorManager: ObservableObject {
     static let shared = AccentColorManager()
     
-    @AppStorage("selectedAccentColor") private var selectedColorName: String = "Orange Lux"
+    @AppStorage("selectedAccentColor") private var selectedColorName: String = String(localized: "Orange Lux")
     
     let availableColors: [(name: String, color: Color)] = [
-        ("Orange Lux", .orange),
-        ("Bleu SBB CFF", Color(hex: "2d327d")),
-        ("Rouge SBB CFF", Color(hex: "EB0000")),
-        ("Orange TPG", Color(hex: "FC5412")),
-        ("Vert CGTE", Color(hex: "2D8859")),
-        ("Jaune Mouettes", .yellow),
-        ("Rouge Grenat", Color(hex: "85142B")),
-        ("Bleu Ice Tea", Color(hex: "3182DB")),
-        ("Rose UNIGE", Color(hex: "D9005D")),
+        (String(localized: "Orange Lux"), .orange),
+        (String(localized: "Bleu SBB CFF"), Color(hex: "2d327d")),
+        (String(localized: "Rouge SBB CFF"), Color(hex: "EB0000")),
+        (String(localized: "Orange TPG"), Color(hex: "FC5412")),
+        (String(localized: "Vert CGTE"), Color(hex: "2D8859")),
+        (String(localized: "Jaune Mouettes"), .yellow),
+        (String(localized: "Rouge Grenat"), Color(hex: "85142B")),
+        (String(localized: "Bleu Ice Tea"), Color(hex: "3182DB")),
+        (String(localized: "Rose UNIGE"), Color(hex: "D9005D")),
     ]
     
     var selectedAccentColor: Color {
