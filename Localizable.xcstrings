@@ -437,6 +437,16 @@
         }
       }
     },
+    "Afficher LuxPass sur l'écran d'accueil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show LuxPass on home screen"
+          }
+        }
+      }
+    },
     "Affluence" : {
       "localizations" : {
         "en" : {
@@ -473,6 +483,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add shortcuts"
+          }
+        }
+      }
+    },
+    "Ajouter un accès rapide à votre SwissPass en remplacant un raccourcis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a quick access to your SwissPass by replacing a shortcut"
           }
         }
       }
@@ -749,6 +769,16 @@
         }
       }
     },
+    "Automatique" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Auto"
+          }
+        }
+      }
+    },
     "Autre" : {
       "localizations" : {
         "en" : {
@@ -779,12 +809,42 @@
         }
       }
     },
+    "Basé sur l'heure" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based on time"
+          }
+        }
+      }
+    },
     "Bienvenue dans LuxPass" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welcome in LuxPass"
+          }
+        }
+      }
+    },
+    "Bleu Ice Tea" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue Ice Tea"
+          }
+        }
+      }
+    },
+    "Bleu SBB CFF" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SBB CFF Blue"
           }
         }
       }
@@ -1001,6 +1061,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chronological"
+          }
+        }
+      }
+    },
+    "Clair" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
           }
         }
       }
@@ -1681,6 +1751,16 @@
         }
       }
     },
+    "Jaune Mouettes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yellow Mouettes"
+          }
+        }
+      }
+    },
     "Jeu" : {
       "localizations" : {
         "en" : {
@@ -2165,6 +2245,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Itinerary options"
+          }
+        }
+      }
+    },
+    "Orange Lux" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux Orange"
+          }
+        }
+      }
+    },
+    "Orange TPG" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TPG Orange"
           }
         }
       }
@@ -2705,6 +2805,36 @@
         }
       }
     },
+    "Rose UNIGE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "UNIGE Pink"
+          }
+        }
+      }
+    },
+    "Rouge Grenat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Garnet Red"
+          }
+        }
+      }
+    },
+    "Rouge SBB CFF" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SBB CFF Red"
+          }
+        }
+      }
+    },
     "s" : {
       "shouldTranslate" : false
     },
@@ -2858,12 +2988,32 @@
         }
       }
     },
+    "Sombre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark"
+          }
+        }
+      }
+    },
     "Stockage sécurisé sur votre appareil" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Secured storage on your device"
+          }
+        }
+      }
+    },
+    "Suit les réglages système" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Follows system settings"
           }
         }
       }
@@ -2894,6 +3044,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selected symbol"
+          }
+        }
+      }
+    },
+    "Système" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System"
           }
         }
       }
@@ -2934,6 +3094,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tickets"
+          }
+        }
+      }
+    },
+    "Toujours en mode clair" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always in light mode"
+          }
+        }
+      }
+    },
+    "Toujours en mode sombre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always in dark mode"
           }
         }
       }
@@ -3164,6 +3344,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Version"
+          }
+        }
+      }
+    },
+    "Vert CGTE" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CGTE Green"
           }
         }
       }
