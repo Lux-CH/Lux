@@ -67,30 +67,10 @@ struct CompactStopView: View {
                     .padding(.bottom, 0)
             }
             .background {
-                if colorScheme == .dark && !settings.highContrastButAccurateLinePill {
-                    MaskedImageView()
-                        .edgesIgnoringSafeArea(.all)
-                } else {
-                    UnevenRoundedRectangle(
-                        topLeadingRadius: 38,
-                        bottomLeadingRadius: 0,
-                        bottomTrailingRadius: 0,
-                        topTrailingRadius: 38,
-                        style: .continuous
-                    )
-                    .fill(
-                        colorScheme == .dark
-                        ? AnyShapeStyle(Color(UIColor.secondarySystemBackground))
-                        : AnyShapeStyle(LinearGradient(
-                            gradient: Gradient(colors: [
-                                Color(UIColor.systemBackground),
-                                Color(UIColor.secondarySystemBackground).opacity(0.3)
-                            ]),
-                            startPoint: .top,
-                            endPoint: .bottom
-                        ))
-                    )
-                    .overlay(
+                MaskedImageView()
+                    .edgesIgnoringSafeArea(.all)
+                    .opacity(colorScheme == .dark ? 1.0 : 0.75)
+                    .background(
                         UnevenRoundedRectangle(
                             topLeadingRadius: 38,
                             bottomLeadingRadius: 0,
@@ -98,21 +78,8 @@ struct CompactStopView: View {
                             topTrailingRadius: 38,
                             style: .continuous
                         )
-                        .strokeBorder(
-                            colorScheme == .dark
-                            ? Color(UIColor.secondarySystemFill)
-                            : Color(UIColor.separator).opacity(0.5),
-                            lineWidth: colorScheme == .dark ? 1 : 0.5
-                        )
+                        .strokeBorder(Color(UIColor.separator).opacity(0.5), lineWidth: colorScheme == .dark ? 0 : 0.5)
                     )
-                    .shadow(
-                        color: colorScheme == .light ? Color.black.opacity(0.08) : Color.clear,
-                        radius: 8,
-                        x: 0,
-                        y: 2
-                    )
-                    .edgesIgnoringSafeArea(.all)
-                }
             }
         }
     }
