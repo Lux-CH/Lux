@@ -171,8 +171,8 @@ struct LineScoreView: View {
                 SectionHeader(
                     icon: "list.bullet",
                     iconColor: .blue,
-                    title: "Mes lignes",
-                    subtitle: "Gérez vos lignes et leurs scores"
+                    title: String(localized: "Mes lignes"),
+                    subtitle: String(localized: "Gérez vos lignes et leurs scores")
                 )
             }
         }
@@ -186,8 +186,8 @@ struct LineScoreView: View {
                 } label: {
                     SettingsRow(
                         icon: "arrow.clockwise",
-                        title: "Réinitialiser tous les scores",
-                        subtitle: "Remet à zéro tous les scores des lignes",
+                        title: String(localized: "Réinitialiser tous les scores"),
+                        subtitle: String(localized: "Remet à zéro tous les scores des lignes"),
                         showChevron: false
                     )
                 }
@@ -198,8 +198,8 @@ struct LineScoreView: View {
                 SectionHeader(
                     icon: "gearshape",
                     iconColor: .orange,
-                    title: "Actions rapides",
-                    subtitle: "Gestion globale des scores"
+                    title: String(localized: "Actions rapides"),
+                    subtitle: String(localized: "Gestion globale des scores")
                 )
             }
         }

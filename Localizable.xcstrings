@@ -347,6 +347,16 @@
         }
       }
     },
+    "Actions rapides" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick actions"
+          }
+        }
+      }
+    },
     "Actualiser" : {
       "localizations" : {
         "en" : {
@@ -1511,12 +1521,32 @@
         }
       }
     },
+    "Gérez vos lignes et leurs scores" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage your lines and their score"
+          }
+        }
+      }
+    },
     "Gérez vos tickets et ajoutez votre SwissPass à Lux." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Manage your tickets and add your SwissPass to Lux"
+          }
+        }
+      }
+    },
+    "Gestion globale des scores" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Global management of scores"
           }
         }
       }
@@ -1959,6 +1989,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thanks for your contribution"
+          }
+        }
+      }
+    },
+    "Mes lignes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My lines"
           }
         }
       }
@@ -2581,6 +2621,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Try again"
+          }
+        }
+      }
+    },
+    "Réinitialiser tous les scores" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset all scores"
+          }
+        }
+      }
+    },
+    "Remet à zéro tous les scores des lignes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset every line’s score to 0"
           }
         }
       }
