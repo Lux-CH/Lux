@@ -17,7 +17,7 @@ struct RouteGroupsView: View {
     @Binding var selectedDate: Date
     
     var body: some View {
-        if viewType == "Groupé" {
+        if viewType == String(localized: "Groupé") {
             ScrollView(.vertical, showsIndicators: true) {
                 VStack(spacing: 0) {
                     let shownRoutes = Array(viewModel.routeNames.prefix(maxGroupsToShow))

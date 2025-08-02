@@ -46,7 +46,7 @@ struct IncomingBusView: View {
                     
                     let displayTrack = group.stopTimes.first {
                         $0.place.track != nil || $0.place.scheduledTrack != nil
-                    }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? "inconnu"
+                    }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? String(localized: "inconnu")
                     
                     let transport = group.stopTimes.first?.mode.displayName ?? "Bus"
                     
@@ -72,27 +72,27 @@ struct IncomingBusView: View {
 extension TransportationMode {
     var displayName: String {
         switch self {
-        case .walk: return "À pied"
-        case .bike: return "Vélo"
-        case .rental: return "Location"
-        case .car: return "Voiture"
-        case .carParking: return "Parking"
-        case .odm: return "ODM"
-        case .transit: return "Transport en commun"
-        case .tram: return "Tram"
-        case .subway: return "Métro"
-        case .ferry: return "Mouette"
-        case .airplane: return "Avion"
-        case .metro: return "Métro"
-        case .bus: return "Bus"
-        case .coach: return "Autocar"
-        case .rail: return "Train"
-        case .highSpeedRail: return "Train"
-        case .longDistance: return "Train"
-        case .nightRail: return "Train"
-        case .regionalFastRail: return "Train"
-        case .regionalRail: return "Train"
-        case .other: return "Autre"
+        case .walk: return String(localized: "À pied")
+        case .bike: return String(localized: "Vélo")
+        case .rental: return String(localized: "Location")
+        case .car: return String(localized: "Voiture")
+        case .carParking: return String(localized: "Parking")
+        case .odm: return String(localized: "ODM")
+        case .transit: return String(localized: "Transport en commun")
+        case .tram: return String(localized: "Tram")
+        case .subway: return String(localized: "Métro")
+        case .ferry: return String(localized: "Mouette")
+        case .airplane: return String(localized: "Avion")
+        case .metro: return String(localized: "Métro")
+        case .bus: return String(localized: "Bus")
+        case .coach: return String(localized: "Autocar")
+        case .rail: return String(localized: "Train")
+        case .highSpeedRail: return String(localized: "Train")
+        case .longDistance: return String(localized: "Train")
+        case .nightRail: return String(localized: "Train")
+        case .regionalFastRail: return String(localized: "Train")
+        case .regionalRail: return String(localized: "Train")
+        case .other: return String(localized: "Autre")
         }
     }
 }

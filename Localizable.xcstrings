@@ -144,6 +144,17 @@
         }
       }
     },
+    "%lldh" : {
+      "comment" : "5h, h meaning hours",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldh"
+          }
+        }
+      }
+    },
     "%lldm" : {
       "localizations" : {
         "en" : {
@@ -172,6 +183,86 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "⚠︎ Dark Color"
+          }
+        }
+      }
+    },
+    "1 an" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 year"
+          }
+        }
+      }
+    },
+    "1 jour" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 day"
+          }
+        }
+      }
+    },
+    "1 mois" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 month"
+          }
+        }
+      }
+    },
+    "6 mois" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 months"
+          }
+        }
+      }
+    },
+    "7 jours" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 days"
+          }
+        }
+      }
+    },
+    "À" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To"
+          }
+        }
+      }
+    },
+    "À pied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking"
+          }
+        }
+      }
+    },
+    "À propos" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About"
           }
         }
       }
@@ -216,6 +307,36 @@
         }
       }
     },
+    "Accès rapide à vos destinations" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quick access to your destinations"
+          }
+        }
+      }
+    },
+    "Accueil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
+          }
+        }
+      }
+    },
+    "Achetez vos tickets ou ajoutez votre SwissPass à Lux." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Buy your tickets or add your SwissPass to Lux."
+          }
+        }
+      }
+    },
     "Actualiser" : {
       "localizations" : {
         "en" : {
@@ -226,12 +347,72 @@
         }
       }
     },
+    "Adaptez l'interface à vos préférences" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adapt the interface to your preferences"
+          }
+        }
+      }
+    },
     "Adresse, lieu, arrêt..." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adress, place, stop…"
+          }
+        }
+      }
+    },
+    "Affiche le nom des raccourcis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Display shortcut names"
+          }
+        }
+      }
+    },
+    "Affiche le retard à côté de l'heure prévue (sinon, inclus dans l'heure)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show delay next to scheduled time (otherwise, included in time)"
+          }
+        }
+      }
+    },
+    "Affiche les raccourcis les plus pertinents en premier" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the most relevant shortcuts first"
+          }
+        }
+      }
+    },
+    "Afficher le retard exact" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show exact delay"
+          }
+        }
+      }
+    },
+    "Afficher les titres" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show titles"
           }
         }
       }
@@ -302,6 +483,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adjust your itineraries to your needs"
+          }
+        }
+      }
+    },
+    "Aller à..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to…"
           }
         }
       }
@@ -488,6 +679,56 @@
         }
       }
     },
+    "Aucune ligne enregistrée" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No line saved"
+          }
+        }
+      }
+    },
+    "Augmente la lisibilité de l'interface" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Increase interface readability"
+          }
+        }
+      }
+    },
+    "Aujourd'hui %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Today %@"
+          }
+        }
+      }
+    },
+    "Autocar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Coach"
+          }
+        }
+      }
+    },
+    "Autre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        }
+      }
+    },
     "Autres départs" : {
       "localizations" : {
         "en" : {
@@ -498,12 +739,42 @@
         }
       }
     },
+    "Avion" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plane"
+          }
+        }
+      }
+    },
     "Bienvenue dans LuxPass" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welcome in LuxPass"
+          }
+        }
+      }
+    },
+    "Bus" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bus"
+          }
+        }
+      }
+    },
+    "Calculer les instructions de marche via MKDirection" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calculate walking directions using MKDirection"
           }
         }
       }
@@ -604,6 +875,16 @@
         }
       }
     },
+    "Choisissez combien de temps un itinéraire partagé reste accessible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose how long a shared route remains accessible"
+          }
+        }
+      }
+    },
     "Choisissez comment vous souhaitez partager cet itinéraire.\nLe partage de l'ensemble de l'itinéraire requiert que son receveur ait l'app." : {
       "localizations" : {
         "en" : {
@@ -624,12 +905,72 @@
         }
       }
     },
+    "Chosissez la mode d'affichage de l'app (clair, sombre, auto..)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the app's display mode (light, dark, auto...)"
+          }
+        }
+      }
+    },
+    "Chronologique" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chronological"
+          }
+        }
+      }
+    },
     "Commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start typing to search for a stop.\nA minimum of 3 characters is required."
+          }
+        }
+      }
+    },
+    "configuré" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "configured"
+          }
+        }
+      }
+    },
+    "Consultez et partagez des informations en temps réel sur les transports." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "View and share real-time transport information."
+          }
+        }
+      }
+    },
+    "Contraste plus important" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Higher contrast"
+          }
+        }
+      }
+    },
+    "Contribuer à CrowdBack" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contribute to CrowdBack"
           }
         }
       }
@@ -674,12 +1015,78 @@
         }
       }
     },
+    "Crédits" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Credits"
+          }
+        }
+      }
+    },
     "Créer un raccourci" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Create a shortcut"
+          }
+        }
+      }
+    },
+    "Dans %lld jour" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In %lld day"
+          }
+        }
+      }
+    },
+    "Dans %lld min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In %lld min"
+          }
+        }
+      }
+    },
+    "Dans %lldh" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In %lldh"
+          }
+        }
+      }
+    },
+    "Dans %lldh %lldmin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In %1$lldh %2$lldmin"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Dans %1$lldh %2$lldmin"
+          }
+        }
+      }
+    },
+    "Demain, %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tomorrow, %@"
           }
         }
       }
@@ -700,6 +1107,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Departure at : %@"
+          }
+        }
+      }
+    },
+    "Depuis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From"
           }
         }
       }
@@ -740,6 +1157,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Direct"
+          }
+        }
+      }
+    },
+    "Durée de partage d'itinéraire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Route sharing duration"
+          }
+        }
+      }
+    },
+    "Effectuer des changements n'est pas recommandé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Making changes is not recommended"
           }
         }
       }
@@ -894,12 +1331,52 @@
         }
       }
     },
+    "Fonctionnalités expérimentales" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Experimental features"
+          }
+        }
+      }
+    },
+    "Gérer les raccourcis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage shortcuts"
+          }
+        }
+      }
+    },
+    "Gérez les lignes que vous fréquentez le plus souvent." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manage the lines you use more often."
+          }
+        }
+      }
+    },
     "Gérez vos tickets et ajoutez votre SwissPass à Lux." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Manage your tickets and add your SwissPass to Lux"
+          }
+        }
+      }
+    },
+    "Groupé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grouped"
           }
         }
       }
@@ -954,6 +1431,46 @@
         }
       }
     },
+    "inconnu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "unknown"
+          }
+        }
+      }
+    },
+    "Inconnue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown"
+          }
+        }
+      }
+    },
+    "Informations sur l'application" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "App infos"
+          }
+        }
+      }
+    },
+    "Interface compacte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Compact interface"
+          }
+        }
+      }
+    },
     "Itinéraire indisponible" : {
       "localizations" : {
         "en" : {
@@ -994,6 +1511,16 @@
         }
       }
     },
+    "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected expiration time is high. Lux cannot guarantee such a retention period."
+          }
+        }
+      }
+    },
     "Les deux premiers raccourcis seront affichés sur l'écran d'accueil." : {
       "localizations" : {
         "en" : {
@@ -1024,12 +1551,32 @@
         }
       }
     },
+    "ligne" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "line"
+          }
+        }
+      }
+    },
     "Ligne %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Line %@"
+          }
+        }
+      }
+    },
+    "Lignes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lines"
           }
         }
       }
@@ -1044,12 +1591,32 @@
         }
       }
     },
+    "Liste des modules utilisés dans l'application" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List of modules used in the app"
+          }
+        }
+      }
+    },
     "Localisation" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Localisation"
+          }
+        }
+      }
+    },
+    "Location" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rental"
           }
         }
       }
@@ -1146,6 +1713,16 @@
         }
       }
     },
+    "Métro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Metro"
+          }
+        }
+      }
+    },
     "Mettez en avant les lignes que vous fréquentez le plus." : {
       "localizations" : {
         "en" : {
@@ -1172,6 +1749,19 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Board at %@"
+          }
+        }
+      }
+    },
+    "Mouette" : {
+      "shouldTranslate" : false
+    },
+    "N/A" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N/A"
           }
         }
       }
@@ -1205,6 +1795,19 @@
           }
         }
       }
+    },
+    "Obtenir les instructions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtain instructions"
+          }
+        }
+      }
+    },
+    "ODM" : {
+      "shouldTranslate" : false
     },
     "OK" : {
       "localizations" : {
@@ -1266,6 +1869,16 @@
         }
       }
     },
+    "Parking" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parking"
+          }
+        }
+      }
+    },
     "Partage..." : {
       "localizations" : {
         "en" : {
@@ -1316,6 +1929,16 @@
         }
       }
     },
+    "Passé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Past"
+          }
+        }
+      }
+    },
     "Passez %@ %@ %@ %@" : {
       "localizations" : {
         "en" : {
@@ -1328,6 +1951,36 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Passez %1$@ %2$@ %3$@ %4$@"
+          }
+        }
+      }
+    },
+    "Personnalisation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customization"
+          }
+        }
+      }
+    },
+    "Personnalisez l'apparence de l'application" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customise the apps appearance"
+          }
+        }
+      }
+    },
+    "Personnalisez le Widget de l'app en sélectionnant un arrêt à afficher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customize the app's Widget by selecting a stop to display"
           }
         }
       }
@@ -1452,12 +2105,32 @@
         }
       }
     },
+    "Quai %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platform %@"
+          }
+        }
+      }
+    },
     "Que souhaitez-vous signaler ?" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "What do you want to report ?"
+          }
+        }
+      }
+    },
+    "raccourci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "shortcut"
           }
         }
       }
@@ -1532,6 +2205,16 @@
         }
       }
     },
+    "Réduire l'espacement dans l'onglet des arrêts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce spacing in stops tab"
+          }
+        }
+      }
+    },
     "Réessayer" : {
       "localizations" : {
         "en" : {
@@ -1601,6 +2284,9 @@
           }
         }
       }
+    },
+    "s" : {
+      "shouldTranslate" : false
     },
     "Saisissez au moins 3 caractères pour rechercher" : {
       "localizations" : {
@@ -1772,12 +2458,52 @@
         }
       }
     },
+    "Train" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Train"
+          }
+        }
+      }
+    },
     "Traitement..." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Processing…"
+          }
+        }
+      }
+    },
+    "Tram" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ram"
+          }
+        }
+      }
+    },
+    "Transport en commun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Public transport"
+          }
+        }
+      }
+    },
+    "Tri par pertinence" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sort by relevance"
           }
         }
       }
@@ -1842,12 +2568,52 @@
         }
       }
     },
+    "Vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bike"
+          }
+        }
+      }
+    },
     "Vérifiez vos données mobile ou votre connexion Wi-Fi et réessayez." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please check your mobile data or your Wi-Fi connection and try again."
+          }
+        }
+      }
+    },
+    "Version" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        }
+      }
+    },
+    "Voie %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track %@"
+          }
+        }
+      }
+    },
+    "Voiture" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Car"
           }
         }
       }
@@ -1878,6 +2644,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You arrived at destination"
+          }
+        }
+      }
+    },
+    "Widget" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget"
           }
         }
       }

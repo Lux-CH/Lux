@@ -45,7 +45,7 @@ struct ExpandedGroupView: View {
                     HStack {
                         let displayTrack = group.stopTimes.first {
                             $0.place.track != nil || $0.place.scheduledTrack != nil
-                        }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? "inconnu"
+                        }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? String(localized: "inconnu")
                         
                         Text(getTrackType(displayTrack))
                             .font(.caption)
@@ -68,9 +68,9 @@ struct ExpandedGroupView: View {
 
 func getTrackType(_ track: String) -> String {
     if Int(track) != nil {
-        return "Voie \(track)"
+        return String(localized: "Voie \(track)")
     }
     else {
-        return "Quai \(track)"
+        return String(localized: "Quai \(track)")
     }
 }

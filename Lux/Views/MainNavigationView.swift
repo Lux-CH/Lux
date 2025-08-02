@@ -22,8 +22,8 @@ enum ViewMode: CaseIterable {
     }
     var title: String {
         switch self {
-        case .home: return "Accueil"
-        case .stops: return "Arrêts"
+        case .home: return String(localized: "Accueil")
+        case .stops: return String(localized: "Arrêts")
         case .search: return "Search"
         }
     }
@@ -166,7 +166,7 @@ struct MainNavigationView: View {
                                         
                                         AnimatedSearchBar(
                                             searchText: viewMode == .home ? $searchText : $stopsViewModel.searchQuery,
-                                            placeholderText: viewMode == .home ? "Aller à..." : "Rechercher un arrêt...",
+                                            placeholderText: viewMode == .home ? String(localized: "Aller à...") : String(localized: "Rechercher un arrêt..."),
                                             onSearch: {
                                                 if viewMode == .stops {
                                                     withAnimation(ultraSmoothSpring) {
