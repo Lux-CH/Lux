@@ -3005,12 +3005,12 @@
         }
       }
     },
-    "Séléctionnez la couleur de l'application" : {
+    "Séléctionnez la couleur de l'application et de l'icône" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Select the app color"
+            "value" : "Select the app and icon color"
           }
         }
       }
