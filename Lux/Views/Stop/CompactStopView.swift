@@ -78,7 +78,39 @@ struct CompactStopView: View {
                         topTrailingRadius: 38,
                         style: .continuous
                     )
-                    .strokeBorder(colorScheme == .dark ? Color(UIColor.secondarySystemFill) : Color(UIColor.systemGray5), lineWidth: 1)
+                    .fill(
+                        colorScheme == .dark
+                        ? AnyShapeStyle(Color(UIColor.secondarySystemBackground))
+                        : AnyShapeStyle(LinearGradient(
+                            gradient: Gradient(colors: [
+                                Color(UIColor.systemBackground),
+                                Color(UIColor.secondarySystemBackground).opacity(0.3)
+                            ]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        ))
+                    )
+                    .overlay(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 38,
+                            bottomLeadingRadius: 0,
+                            bottomTrailingRadius: 0,
+                            topTrailingRadius: 38,
+                            style: .continuous
+                        )
+                        .strokeBorder(
+                            colorScheme == .dark
+                            ? Color(UIColor.secondarySystemFill)
+                            : Color(UIColor.separator).opacity(0.5),
+                            lineWidth: colorScheme == .dark ? 1 : 0.5
+                        )
+                    )
+                    .shadow(
+                        color: colorScheme == .light ? Color.black.opacity(0.08) : Color.clear,
+                        radius: 8,
+                        x: 0,
+                        y: 2
+                    )
                     .edgesIgnoringSafeArea(.all)
                 }
             }
