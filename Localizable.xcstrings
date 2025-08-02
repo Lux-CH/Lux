@@ -699,6 +699,16 @@
         }
       }
     },
+    "Aucun raccourci configuré" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No shortcuts configured"
+          }
+        }
+      }
+    },
     "Aucun résultat trouvé pour %@" : {
       "localizations" : {
         "en" : {
