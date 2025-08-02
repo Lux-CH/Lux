@@ -165,69 +165,69 @@ struct ReportView: View {
     
     private var lowLevelText: String {
         switch selectedAttribute {
-        case .crowd: return "Vide"
-        case .clean: return "Sale"
-        case .heat: return "Froid"
-        case .noise: return "Silencieux"
-        case .smell: return "Pas d'odeur"
+        case .crowd: return String(localized: "Vide")
+        case .clean: return String(localized: "Sale")
+        case .heat: return String(localized: "Froid")
+        case .noise: return String(localized: "Silencieux")
+        case .smell: return String(localized: "Pas d'odeur")
         }
     }
-    
+
     private var highLevelText: String {
         switch selectedAttribute {
-        case .crowd: return "Bondé"
-        case .clean: return "Propre"
-        case .heat: return "Chaud"
-        case .noise: return "Bruyant"
-        case .smell: return "Forte odeur"
+        case .crowd: return String(localized: "Bondé")
+        case .clean: return String(localized: "Propre")
+        case .heat: return String(localized: "Chaud")
+        case .noise: return String(localized: "Bruyant")
+        case .smell: return String(localized: "Forte odeur")
         }
     }
-    
+
     private var intensityDescription: String {
         switch selectedAttribute {
         case .crowd:
             switch selectedLevel {
-            case 1: return "Vide"
-            case 2: return "Peu occupé"
-            case 3: return "Modéré"
-            case 4: return "Occupé"
-            case 5: return "Bondé"
+            case 1: return String(localized: "Vide")
+            case 2: return String(localized: "Peu occupé")
+            case 3: return String(localized: "Modéré")
+            case 4: return String(localized: "Occupé")
+            case 5: return String(localized: "Bondé")
             default: return ""
             }
         case .clean:
             switch selectedLevel {
-            case 1: return "Très sale"
-            case 2: return "Sale"
-            case 3: return "Correct"
-            case 4: return "Propre"
-            case 5: return "Très propre"
+            case 1: return String(localized: "Très sale")
+            case 2: return String(localized: "Sale")
+            case 3: return String(localized: "Correct")
+            case 4: return String(localized: "Propre")
+            case 5: return String(localized: "Très propre")
             default: return ""
             }
         case .heat:
             switch selectedLevel {
-            case 1: return "Très froid"
-            case 2: return "Froid"
-            case 3: return "Tempéré"
-            case 4: return "Chaud"
-            case 5: return "Très chaud"
+            case 1: return String(localized: "Très froid")
+            case 2: return String(localized: "Froid")
+            case 3: return String(localized: "Tempéré")
+            case 4: return String(localized: "Chaud")
+            case 5: return String(localized: "Très chaud")
             default: return ""
             }
         case .noise:
             switch selectedLevel {
-            case 1: return "Silencieux"
-            case 2: return "Calme"
-            case 3: return "Modéré"
-            case 4: return "Bruyant"
-            case 5: return "Très bruyant"
+            case 1: return String(localized: "Silencieux")
+            case 2: return String(localized: "Calme")
+            case 3: return String(localized: "Modéré")
+            case 4: return String(localized: "Bruyant")
+            case 5: return String(localized: "Très bruyant")
             default: return ""
             }
         case .smell:
             switch selectedLevel {
-            case 1: return "Pas d'odeur"
-            case 2: return "Légère"
-            case 3: return "Perceptible"
-            case 4: return "Forte"
-            case 5: return "Très forte"
+            case 1: return String(localized: "Pas d'odeur")
+            case 2: return String(localized: "Légère")
+            case 3: return String(localized: "Perceptible")
+            case 4: return String(localized: "Forte")
+            case 5: return String(localized: "Très forte")
             default: return ""
             }
         }
@@ -425,11 +425,11 @@ struct AttributeCard: View {
     
     private var displayName: String {
         switch attribute {
-        case .crowd: return "Affluence"
-        case .smell: return "Odeur"
-        case .clean: return "Propreté"
-        case .heat: return "Température"
-        case .noise: return "Bruit"
+        case .crowd: return String(localized:"Affluence")
+        case .smell: return String(localized:"Odeur")
+        case .clean: return String(localized:"Propreté")
+        case .heat: return String(localized:"Température")
+        case .noise: return String(localized:"Bruit")
         }
     }
 }
