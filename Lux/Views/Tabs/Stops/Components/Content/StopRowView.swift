@@ -13,6 +13,7 @@ struct StopRowView: View {
     let stop: SearchResult
     let locationManager: LocationManager
     @State private var connections: [String] = []
+    @State private var relativeAngle: Double = 0
     let isSearching: Bool
     
     var body: some View {
@@ -46,6 +47,7 @@ struct StopRowView: View {
                         connections = results
                     }
                 }
+                updateRelativeAngle()
             }
             
             Spacer()
@@ -58,9 +60,10 @@ struct StopRowView: View {
                         stopLon: stop.lon
                     )
                     HStack {
-                        Image(systemName: "location.fill")
+                        Image(systemName: isSearching ? "location.fill" : "location.north.fill")
                             .font(.caption)
                             .foregroundColor(.secondary)
+                            .rotationEffect(.degrees(relativeAngle))
                         Text(formatDistance(distance))
                             .foregroundColor(.secondary)
                             .font(.subheadline)
@@ -74,6 +77,9 @@ struct StopRowView: View {
         .padding(.horizontal)
         .contentShape(Rectangle())
         .background(Color.clear)
+        .onReceive(locationManager.$heading) { _ in
+            updateRelativeAngle()
+        }
     }
     
     private func calculateDistance(userLat: Double, userLon: Double, stopLat: Double, stopLon: Double) -> Double {
@@ -89,5 +95,35 @@ struct StopRowView: View {
         } else {
             return "\(Int(distance))m"
         }
+    }
+    
+    private func calculateRelativeAngle(userLat: Double, userLon: Double, stopLat: Double, stopLon: Double, deviceHeading: Double) -> Double {
+        let lat1 = userLat * .pi / 180
+        let lat2 = stopLat * .pi / 180
+        let deltaLon = (stopLon - userLon) * .pi / 180
+        
+        let y = sin(deltaLon) * cos(lat2)
+        let x = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(deltaLon)
+        
+        let bearing = atan2(y, x) * 180 / .pi
+        let normalizedBearing = bearing >= 0 ? bearing : bearing + 360
+        
+        let relativeAngle = normalizedBearing - deviceHeading
+        return relativeAngle >= 0 ? relativeAngle : relativeAngle + 360
+    }
+    
+    private func updateRelativeAngle() {
+        guard let userLocation = locationManager.location,
+              let heading = locationManager.heading, !isSearching else { return }
+        
+        let deviceHeading = heading.trueHeading >= 0 ? heading.trueHeading : heading.magneticHeading
+
+        relativeAngle = calculateRelativeAngle(
+            userLat: userLocation.coordinate.latitude,
+            userLon: userLocation.coordinate.longitude,
+            stopLat: stop.lat,
+            stopLon: stop.lon,
+            deviceHeading: deviceHeading
+        )
     }
 }

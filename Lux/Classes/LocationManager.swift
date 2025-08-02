@@ -11,6 +11,7 @@ import CoreLocation
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
     @Published var location: CLLocation?
+    @Published var heading: CLHeading?
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     @Published var permissionDenied = false
     @Published var errorMessage: String?
@@ -24,6 +25,13 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         
         if authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways {
             locationManager.startUpdatingLocation()
+            locationManager.startUpdatingHeading()
+        }
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        DispatchQueue.main.async {
+            self.heading = newHeading
         }
     }
     
@@ -42,6 +50,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             case .authorizedWhenInUse, .authorizedAlways:
                 self.permissionDenied = false
                 self.locationManager.startUpdatingLocation()
+                self.locationManager.startUpdatingHeading()
             case .denied, .restricted:
                 self.permissionDenied = true
                 self.errorMessage = "Location access was denied. Please enable it in Settings to use the app properly."
@@ -79,5 +88,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     
     func stopLocationUpdates() {
         locationManager.stopUpdatingLocation()
+        locationManager.stopUpdatingHeading()
     }
 }
