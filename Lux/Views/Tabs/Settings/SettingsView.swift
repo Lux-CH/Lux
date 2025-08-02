@@ -80,7 +80,7 @@ struct SettingsView: View {
                 let plural = shortcutManager.shortcuts.count > 1 ? "s" : ""
                 NavigationLink(destination: ShortcutsListView()) {
                     SettingsRow(
-                        icon: "list.bullet",
+                        icon: "list.star",
                         title: String(localized: "Gérer les raccourcis"),
                         subtitle: "\(shortcutManager.shortcuts.count) \(String(localized: "raccourci"))\(plural) \(String(localized: "configuré"))\(plural)",
                         showChevron: true
@@ -103,7 +103,7 @@ struct SettingsView: View {
                 )
             } header: {
                 SectionHeader(
-                    icon: "location.fill",
+                    icon: "link",
                     iconColor: .blue,
                     title: String(localized: "Raccourcis"),
                     subtitle: String(localized: "Accès rapide à vos destinations")
@@ -219,7 +219,7 @@ struct SettingsView: View {
                     isOn: $settings.fetchWalkingDirectionsUsingMKDirections
                 )
                 SettingsPicker(
-                    icon: "link",
+                    icon: { if #available(iOS 17.2, *) { "square.and.arrow.up.badge.clock" } else { "square.and.arrow.up" } }(),
                     title: String(localized: "Durée de partage d'itinéraire"),
                     subtitle: String(localized: "Choisissez combien de temps un itinéraire partagé reste accessible") + (settings.luxTripShareExpiryTimeH >= 4320 ? "\n⚠︎ " + String(localized: "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention.") : ""),
                     selection: $settings.luxTripShareExpiryTimeH,
