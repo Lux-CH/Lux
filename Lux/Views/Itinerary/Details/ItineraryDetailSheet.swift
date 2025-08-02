@@ -73,7 +73,7 @@ func calculateTimeUntilReachingStop(for stop: Place, now: Date, isCurrentStop: B
     let secondsDifference = Int(relevantTime.timeIntervalSince(now))
     
     if secondsDifference <= 0 {
-        return isCurrentStop ? "Maintenant" : ""
+        return isCurrentStop ? String(localized:"Maintenant") : ""
     }
     
     if secondsDifference < 60 {

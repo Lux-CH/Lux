@@ -317,6 +317,16 @@
         }
       }
     },
+    "Accessibilité" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibility"
+          }
+        }
+      }
+    },
     "Accueil" : {
       "localizations" : {
         "en" : {
@@ -413,6 +423,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show titles"
+          }
+        }
+      }
+    },
+    "Affluence" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crowd"
           }
         }
       }
@@ -759,6 +779,36 @@
         }
       }
     },
+    "Bondé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crowded"
+          }
+        }
+      }
+    },
+    "Bruit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noise"
+          }
+        }
+      }
+    },
+    "Bruyant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noisy"
+          }
+        }
+      }
+    },
     "Bus" : {
       "localizations" : {
         "en" : {
@@ -775,6 +825,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Calculate walking directions using MKDirection"
+          }
+        }
+      }
+    },
+    "Calme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calm"
           }
         }
       }
@@ -858,6 +918,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading departures…"
+          }
+        }
+      }
+    },
+    "Chaud" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hot"
           }
         }
       }
@@ -971,6 +1041,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Contribute to CrowdBack"
+          }
+        }
+      }
+    },
+    "Correct" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Acceptable"
           }
         }
       }
@@ -1331,12 +1411,52 @@
         }
       }
     },
+    "Fauteuil roulant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wheelchair"
+          }
+        }
+      }
+    },
     "Fonctionnalités expérimentales" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Experimental features"
+          }
+        }
+      }
+    },
+    "Forte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strong"
+          }
+        }
+      }
+    },
+    "Forte odeur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Strong smell"
+          }
+        }
+      }
+    },
+    "Froid" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cold"
           }
         }
       }
@@ -1517,6 +1637,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The selected expiration time is high. Lux cannot guarantee such a retention period."
+          }
+        }
+      }
+    },
+    "Légère" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Light"
           }
         }
       }
@@ -1743,6 +1873,26 @@
         }
       }
     },
+    "Modéré" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate"
+          }
+        }
+      }
+    },
+    "Modes de transport" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transportation modes"
+          }
+        }
+      }
+    },
     "Montez à %@" : {
       "localizations" : {
         "en" : {
@@ -1802,6 +1952,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obtain instructions"
+          }
+        }
+      }
+    },
+    "Occupé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Occupied"
+          }
+        }
+      }
+    },
+    "Odeur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Smell"
           }
         }
       }
@@ -1929,6 +2099,16 @@
         }
       }
     },
+    "Pas d'odeur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No smell"
+          }
+        }
+      }
+    },
     "Passé" : {
       "localizations" : {
         "en" : {
@@ -1951,6 +2131,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Passez %1$@ %2$@ %3$@ %4$@"
+          }
+        }
+      }
+    },
+    "Perceptible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noticeable"
           }
         }
       }
@@ -2001,6 +2191,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disruptions (%lld)"
+          }
+        }
+      }
+    },
+    "Peu occupé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lightly occupied"
           }
         }
       }
@@ -2101,6 +2301,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mobility profile"
+          }
+        }
+      }
+    },
+    "Propre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clean"
+          }
+        }
+      }
+    },
+    "Propreté" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cleanliness"
           }
         }
       }
@@ -2298,6 +2518,16 @@
         }
       }
     },
+    "Sale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dirty"
+          }
+        }
+      }
+    },
     "Scanner mon SwissPass" : {
       "localizations" : {
         "en" : {
@@ -2398,6 +2628,16 @@
         }
       }
     },
+    "Silencieux" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silent"
+          }
+        }
+      }
+    },
     "Stockage sécurisé sur votre appareil" : {
       "localizations" : {
         "en" : {
@@ -2434,6 +2674,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selected symbol"
+          }
+        }
+      }
+    },
+    "Température" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temperature"
+          }
+        }
+      }
+    },
+    "Tempéré" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mild"
           }
         }
       }
@@ -2488,12 +2748,82 @@
         }
       }
     },
+    "Transferts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transfers"
+          }
+        }
+      }
+    },
     "Transport en commun" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Public transport"
+          }
+        }
+      }
+    },
+    "Très bruyant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very noisy"
+          }
+        }
+      }
+    },
+    "Très chaud" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very hot"
+          }
+        }
+      }
+    },
+    "Très forte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very strong"
+          }
+        }
+      }
+    },
+    "Très froid" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very cold"
+          }
+        }
+      }
+    },
+    "Très propre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very clean"
+          }
+        }
+      }
+    },
+    "Très sale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Very dirty"
           }
         }
       }
@@ -2594,6 +2924,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Version"
+          }
+        }
+      }
+    },
+    "Vide" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Empty"
           }
         }
       }
