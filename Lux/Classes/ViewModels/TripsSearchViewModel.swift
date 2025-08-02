@@ -80,7 +80,7 @@ class TripsSearchViewModel: ObservableObject {
         viaMinimumStay: [],
         time: nil,
         arriveBy: false,
-        maxTransfers: 3,
+        maxTransfers: 5,
         minTransferTime: 0,
         pedestrianProfile: .foot,
         transitModes: nil,
