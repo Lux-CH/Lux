@@ -166,6 +166,16 @@
       },
       "shouldTranslate" : false
     },
+    "%lldmin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldmin"
+          }
+        }
+      }
+    },
     "•" : {
       "localizations" : {
         "en" : {

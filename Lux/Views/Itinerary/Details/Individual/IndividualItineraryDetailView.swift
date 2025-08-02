@@ -97,7 +97,8 @@ struct IndividualItineraryDetailView: View {
                                 legColor: legColor,
                                 fromStop: leg.from,
                                 toStop: leg.to,
-                                isMultipleLeg: isMultipleLeg
+                                duration: leg.duration,
+                                isMultipleLeg: isMultipleLeg,
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
