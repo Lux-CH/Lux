@@ -166,6 +166,7 @@ struct MultipleItineraryDetailView: View {
                                 legColor: getLegColor(leg),
                                 fromStop: leg.from,
                                 toStop: leg.to,
+                                duration: leg.duration,
                                 isMultipleLeg: true
                             )
                             .padding(.horizontal, 20)
