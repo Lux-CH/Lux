@@ -52,7 +52,7 @@ struct RouteOptionsView: View {
                     VStack(spacing: 24) {
                         transfersSection
                         accessibilitySection
-                        transportModesSection
+//                        transportModesSection
                         resetSection
                     }
                     .padding(.horizontal)
