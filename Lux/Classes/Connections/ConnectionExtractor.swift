@@ -20,7 +20,6 @@ class ConnectionExtractor: ObservableObject {
         try mapFile()
     }
     
-    // mem-maps the file for efficient acccess
     private func mapFile() throws {
         mappedData = try Data(contentsOf: url, options: .mappedIfSafe)
     }
@@ -44,7 +43,6 @@ class ConnectionExtractor: ObservableObject {
         return plist[key] as? [String]
     }
     
-    // release mem ressources
     func releaseResources() {
         mappedData = nil
     }

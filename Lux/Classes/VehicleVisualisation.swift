@@ -19,7 +19,6 @@ struct VehicleAnnotation: Identifiable {
 }
 
 enum VehicleVisualisation {
-    // MARK: - KeyFrame Definition
     struct KeyFrame {
         let point: CLLocationCoordinate2D
         let heading: CLLocationDirection
@@ -28,7 +27,6 @@ enum VehicleVisualisation {
         let isDwelling: Bool
     }
     
-    // MARK: - Default Dwell Times
     private static func defaultDwellTime(for mode: TransportationMode) -> TimeInterval {
         switch mode {
         case .bus, .tram:
@@ -40,7 +38,6 @@ enum VehicleVisualisation {
         }
     }
     
-    // MARK: - KeyFrame Calculation
     static func calculateKeyFrames(for leg: Leg, polylineString: String, precision: Double) -> [KeyFrame] {
         let polyline = Polyline(encodedPolyline: polylineString, precision: precision)
         guard let coordinates = polyline.coordinates, coordinates.count >= 2 else { return [] }
@@ -234,7 +231,7 @@ enum VehicleVisualisation {
                 }
             }
         } else {
-            // handle zero distance case (should be extra rare)
+            // handle zero distance case (should be rare imo)
             let heading = keyFrames.isEmpty ? 0 : keyFrames.last!.heading
             keyFrames.append(KeyFrame(
                 point: coordinates[fromIndex],
@@ -248,7 +245,7 @@ enum VehicleVisualisation {
     
     // https://easings.net/fr
     private static func easeInQuad(_ x: Double) -> Double {
-        return x*x // we could also have used pow
+        return x*x
     }
     
     private static func easeOutQuad(_ x: Double) -> Double {
@@ -270,7 +267,6 @@ enum VehicleVisualisation {
         return closestIndex
     }
     
-    // MARK: - Real-Time Position Interpolation
     static func interpolatePosition(at timestamp: TimeInterval, using keyFrames: [KeyFrame]) -> CLLocationCoordinate2D? {
         guard !keyFrames.isEmpty else { return nil }
         

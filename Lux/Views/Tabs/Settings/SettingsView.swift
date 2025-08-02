@@ -50,7 +50,6 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - Header Card
     private var headerCard: some View {
         VStack(spacing: 12) {
             Image(systemName: "gearshape")
@@ -75,7 +74,6 @@ struct SettingsView: View {
         .padding(.horizontal)
     }
     
-    // MARK: - Shortcuts Card
     private var shortcutsCard: some View {
         SettingsCard {
             Section {
@@ -114,7 +112,6 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - Customization Card
     private var customizationCard: some View {
         SettingsCard {
             Section {
@@ -179,7 +176,6 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: Line Score Card
     private var lineScoreCard: some View {
         SettingsCard {
             Section {
@@ -207,7 +203,6 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - Experimental Card
     private var experimentalCard: some View {
         SettingsCard {
             Section {
@@ -247,7 +242,6 @@ struct SettingsView: View {
         }
     }
     
-    // MARK: - About Card
     private var aboutCard: some View {
         SettingsCard {
             Section {

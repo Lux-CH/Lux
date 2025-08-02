@@ -46,7 +46,6 @@ enum DepartureType: String, CaseIterable, Identifiable {
 }
 
 class TripsSearchViewModel: ObservableObject {
-    // Search fields
     @Published var fromQuery = ""
     @Published var toQuery = ""
     @Published var searchResults: [SearchResult] = []
@@ -56,7 +55,6 @@ class TripsSearchViewModel: ObservableObject {
     @Published var selectedTo: SelectedLocation?
     @Published var activeSearchField: SearchField = .from
     
-    // Trip search related
     @Published var trips: [Itinerary] = []
     @Published var directs: [Itinerary] = []
     @Published var isLoadingTrips = false
@@ -64,7 +62,6 @@ class TripsSearchViewModel: ObservableObject {
     @Published var showTripResults = false
     @Published var showSettings = false
     
-    // Pagination
     @Published var previousPageCursor: String? = nil
     @Published var nextPageCursor: String? = nil
     @Published var isLoadingEarlier = false
@@ -77,7 +74,6 @@ class TripsSearchViewModel: ObservableObject {
     private var hasMoreEarlier = true
     private var hasMoreLater = true
     
-    // Route options
     @Published var routeOptions = RouteOptions(
         from: RouteOptions.RouteLocation(coordinates: (0, 0)),
         to: RouteOptions.RouteLocation(coordinates: (0, 0)),
@@ -96,7 +92,6 @@ class TripsSearchViewModel: ObservableObject {
         maxPostTransitTime: nil
     )
     
-    // Departure settings
     @Published var departureType: DepartureType = .leaveAt
     @Published var selectedDate: Date? = nil
     
@@ -295,9 +290,7 @@ class TripsSearchViewModel: ObservableObject {
             selectedFrom = .currentPosition
         }
     }
-    
-    // MARK: - Trip Search Functions
-    
+        
     func searchTrips(pageCursor: String? = nil) {
         guard let fromLocation = getRouteLocation(for: selectedFrom),
               let toLocation = getRouteLocation(for: selectedTo) else {

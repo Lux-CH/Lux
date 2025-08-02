@@ -16,7 +16,6 @@ class WidgetManager {
         return UserDefaults(suiteName: groupIdentifier)
     }
         
-    // MARK: - Stop ID Management
     func setSelectedStopId(_ stopId: String) {
         sharedDefaults?.set(stopId, forKey: "selectedStopId")
         sharedDefaults?.synchronize()

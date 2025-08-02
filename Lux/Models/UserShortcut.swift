@@ -103,7 +103,6 @@ struct UserShortcut: Identifiable, Codable, Equatable {
             let currentHour = calendar.component(.hour, from: currentDate)
             let currentMinute = calendar.component(.minute, from: currentDate)
             
-            // convert to our weekday enum
             let mappedWeekday = currentWeekday == 1 ? 7 : currentWeekday - 1
             
             if let weekday = TimeSchedule.Weekday(rawValue: mappedWeekday),

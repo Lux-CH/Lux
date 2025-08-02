@@ -54,7 +54,6 @@ struct MainNavigationView: View {
     @State private var initialScreenSize: CGSize = .zero
     @State private var hasInitializedScreenSize = false
     
-    // Animation configs
     private let ultraSmoothSpring = Animation.interactiveSpring(response: 0.4, dampingFraction: 0.85, blendDuration: 0.1)
     private let contentSpring = Animation.interactiveSpring(response: 0.5, dampingFraction: 0.85, blendDuration: 0.15)
     private let searchTransitionSpring = Animation.spring(response: 0.45, dampingFraction: 0.82, blendDuration: 0.1)
@@ -399,7 +398,6 @@ struct MainNavigationView: View {
         }
     }
     
-    // MARK: - Search Mode Drag Gestures
     private var searchModeDragGesture: some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
@@ -652,7 +650,6 @@ struct MainNavigationView: View {
         UIImpactFeedbackGenerator(style: .light).impactOccurred()
     }
     
-    // MARK: - Shortcut Update Methods
     private func updateShortcutsWithCurrentLocation() {
         guard settings.useTimeBasedRelevance else { return }
         
