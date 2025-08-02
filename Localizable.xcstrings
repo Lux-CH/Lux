@@ -1886,7 +1886,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Shortcuts are sorted by time relevance. Those closest in schedule and day appear first—unless you’re very close to your destination."
+            "value" : "Shortcuts are sorted by time relevance. Those closest in schedule and day appear first; unless you’re very close to your destination."
           }
         }
       }
