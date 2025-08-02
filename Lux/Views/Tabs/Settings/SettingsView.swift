@@ -226,7 +226,7 @@ struct SettingsView: View {
                 SettingsPicker(
                     icon: "link",
                     title: "Durée de partage d'itinéraire",
-                    subtitle: "Choisissez combien de temps un itinéraire partagé reste accessible",
+                    subtitle: "Choisissez combien de temps un itinéraire partagé reste accessible \(settings.luxTripShareExpiryTimeH >= 4320 ? "\n⚠︎ Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention." : "")",
                     selection: $settings.luxTripShareExpiryTimeH,
                     options: [
                         (24, "1 jour"),
