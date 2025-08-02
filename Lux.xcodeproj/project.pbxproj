@@ -14,7 +14,6 @@
 		796432242DEED1A1004498A7 /* SwiftUIMessage in Frameworks */ = {isa = PBXBuildFile; productRef = 796432232DEED1A1004498A7 /* SwiftUIMessage */; };
 		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
 		79A2CC3A2E0EDCF80071DD44 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79A2CC392E0EDCF80071DD44 /* LuxCom */; };
-		79A912462DB341660032AB9D /* GPSTests.gpx in Resources */ = {isa = PBXBuildFile; fileRef = 79A912452DB341660032AB9D /* GPSTests.gpx */; };
 		79ABCC9C2E11AACC00A85D71 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ABCC9B2E11AACC00A85D71 /* WidgetKit.framework */; };
 		79ABCC9E2E11AACC00A85D71 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ABCC9D2E11AACC00A85D71 /* SwiftUI.framework */; };
 		79ABCCA92E11AACD00A85D71 /* StopWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 79ABCC992E11AACC00A85D71 /* StopWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -282,7 +281,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				791994C72DE374CF00B2080C /* Localizable.xcstrings in Resources */,
-				79A912462DB341660032AB9D /* GPSTests.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
