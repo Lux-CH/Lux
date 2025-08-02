@@ -76,6 +76,10 @@ func calculateTimeUntilReachingStop(for stop: Place, now: Date, isCurrentStop: B
         return isCurrentStop ? String(localized:"Maintenant") : ""
     }
     
+    if secondsDifference > 86400 {
+        return ""
+    }
+    
     if secondsDifference < 60 {
         return "<1 min"
     }
@@ -83,16 +87,16 @@ func calculateTimeUntilReachingStop(for stop: Place, now: Date, isCurrentStop: B
     let minutes = Int(ceil(Double(secondsDifference) / 60.0))
     
     if minutes < 100 {
-        return "\(minutes) min"
+        return "\(minutes)min"
     }
     
     let hours = minutes / 60
     let remainingMinutes = minutes % 60
     
     if remainingMinutes == 0 {
-        return "\(hours) h"
+        return "\(hours)h"
     } else {
-        return "\(hours) h \(remainingMinutes) min"
+        return "\(hours)h\(remainingMinutes)min"
     }
 }
 
