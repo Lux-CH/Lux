@@ -9,7 +9,6 @@ import SwiftUI
 import LuxCom
 import CoreLocation
 
-// MARK: - Stop Row View
 struct StopRowView: View {
     let stop: SearchResult
     let locationManager: LocationManager
@@ -51,7 +50,6 @@ struct StopRowView: View {
             
             Spacer()
             HStack {
-                // distance calc
                 if let userLocation = locationManager.location {
                     let distance = calculateDistance(
                         userLat: userLocation.coordinate.latitude,

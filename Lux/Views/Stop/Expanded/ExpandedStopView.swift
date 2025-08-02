@@ -24,7 +24,6 @@ struct ExpandedStopView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             VStack(spacing: 0) {
-                // Header
                 ExpandedStopHeaderView(
                     showDatePicker: $showDatePicker,
                     animateIn: $animateIn,
@@ -38,7 +37,6 @@ struct ExpandedStopView: View {
                 )
                 .transition(.move(edge: .top).combined(with: .opacity))
                 
-                // Content
                 ZStack {
                     if viewModel.isLoading {
                         StopContentLoadingView(animateIn: $animateIn, errorMessage: viewModel.errorMessage)
@@ -85,7 +83,6 @@ struct ExpandedStopView: View {
         }
     }
     
-    // MARK: Anim helper
     private func contentTransition(task: @escaping () async -> Void) {
         guard !isChangingContent else { return }
         
@@ -114,7 +111,6 @@ struct ExpandedStopView: View {
         }
     }
     
-    // MARK: API Methods
     private func loadDeparturesForSelectedTime() async {
         await viewModel.refreshDepartures(forTime: selectedDate, showLoading: true)
     }

@@ -70,7 +70,6 @@ struct TripsSearchContentView: View {
     }
 }
 
-// MARK: - Trip Results Content
 struct TripResultsContent: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @State private var appearAnimation = false

@@ -39,7 +39,6 @@ final class DisruptionManager: ObservableObject {
         disruptions.filter { $0.line == line }
     }
     
-    // MARK: - Auto Refresh
     private func startAutoRefresh() {
         refreshTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { _ in
             Task {

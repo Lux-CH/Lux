@@ -2,9 +2,8 @@
 //  WidgetStopSelectorView.swift
 //  Lux
 //
-//  Created by Assistant on 29.06.2025.
+//  Created by Constantin Clerc on 29.06.2025.
 //
-//  Basically LocationSearchView with a few adjustments
 
 import SwiftUI
 import LuxCom

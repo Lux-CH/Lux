@@ -25,12 +25,10 @@ struct ShortcutEditorView: View {
     @State private var isSearchActive = false
     @State private var isEditing = false
     
-    // Time scheduling states
     @State private var hasTimeSchedule = false
     @State private var selectedDays: Set<UserShortcut.TimeSchedule.Weekday> = []
     @State private var selectedTime = Date()
     
-    // Animation states
     @State private var showContent = false
     @Namespace private var heroNamespace
     
@@ -193,7 +191,6 @@ struct ShortcutEditorView: View {
         dismiss()
     }
     
-    // MARK: - UI Components
     private var headerSection: some View {
         VStack(spacing: 16) {
             if !isEditing {

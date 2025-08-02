@@ -43,9 +43,7 @@ struct CompactStopView: View {
             viewModel.stopMonitoring()
         }
     }
-    
-    // MARK: - Subviews
-    
+        
     private var headerView: some View {
         NavigationLink(destination: IndividualStopView(stop: viewModel.stop)) {
             VStack(alignment: .leading, spacing: 0) {

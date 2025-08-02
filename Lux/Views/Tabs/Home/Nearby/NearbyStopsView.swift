@@ -43,7 +43,7 @@ struct NearbyStopsView: View {
                         .font(.footnote)
                         .multilineTextAlignment(.center)
                         .foregroundColor(.gray)
-                        .padding([.bottom, .horizontal]) // wow ! tried this and it work, will def use this in future
+                        .padding([.bottom, .horizontal])
                         .padding(.top, 5)
                     
                     Button("Ouvrir les Réglages") {

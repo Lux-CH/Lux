@@ -9,7 +9,6 @@ import SwiftUI
 import LuxCom
 import CoreLocation
 
-// MARK: - ViewModel
 class StopsViewModel: ObservableObject {
     @Published var searchQuery = ""
     @Published var searchResults: [SearchResult] = []
@@ -17,12 +16,10 @@ class StopsViewModel: ObservableObject {
     @Published var isSearchMode = false
     @Published var showMinCharactersMessage = false
     
-    // Location management
     private var locationManager: LocationManager?
     private var lastFetchedLocation: CLLocation? = nil
     private let significantDistance: CLLocationDistance = 100.0
     
-    // Refresh management
     var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     private var backgroundRefreshTask: Task<Void, Never>? = nil
     
