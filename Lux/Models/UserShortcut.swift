@@ -32,25 +32,25 @@ struct UserShortcut: Identifiable, Codable, Equatable {
             
             var displayName: String {
                 switch self {
-                case .monday: return "Lun"
-                case .tuesday: return "Mar"
-                case .wednesday: return "Mer"
-                case .thursday: return "Jeu"
-                case .friday: return "Ven"
-                case .saturday: return "Sam"
-                case .sunday: return "Dim"
+                case .monday: return String(localized: "Lun")
+                case .tuesday: return String(localized: "Mar")
+                case .wednesday: return String(localized: "Mer")
+                case .thursday: return String(localized: "Jeu")
+                case .friday: return String(localized: "Ven")
+                case .saturday: return String(localized: "Sam")
+                case .sunday: return String(localized: "Dim")
                 }
             }
             
             var shortDisplayName: String {
                 switch self {
-                case .monday: return "L"
-                case .tuesday: return "Ma"
-                case .wednesday: return "Me"
-                case .thursday: return "J"
-                case .friday: return "V"
-                case .saturday: return "S"
-                case .sunday: return "D"
+                case .monday: return String(localized: "L")
+                case .tuesday: return String(localized: "Ma")
+                case .wednesday: return String(localized: "Me")
+                case .thursday: return String(localized: "J")
+                case .friday: return String(localized: "V")
+                case .saturday: return String(localized: "S")
+                case .sunday: return String(localized: "D")
                 }
             }
         }

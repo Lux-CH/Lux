@@ -1115,6 +1115,16 @@
         }
       }
     },
+    "D" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S"
+          }
+        }
+      }
+    },
     "Dans %lld jour" : {
       "localizations" : {
         "en" : {
@@ -1211,6 +1221,16 @@
         }
       }
     },
+    "Destination" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destination"
+          }
+        }
+      }
+    },
     "Destination sélectionnée" : {
       "localizations" : {
         "en" : {
@@ -1227,6 +1247,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Details"
+          }
+        }
+      }
+    },
+    "Dim" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sun"
           }
         }
       }
@@ -1531,6 +1561,16 @@
         }
       }
     },
+    "Icône" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icon"
+          }
+        }
+      }
+    },
     "Il est possible que le serveur soit actuellement indisponible." : {
       "localizations" : {
         "en" : {
@@ -1601,12 +1641,42 @@
         }
       }
     },
+    "J" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "T"
+          }
+        }
+      }
+    },
+    "Jeu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thu"
+          }
+        }
+      }
+    },
     "Jours de la semaine" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Days of the week"
+          }
+        }
+      }
+    },
+    "L" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "M"
           }
         }
       }
@@ -1751,6 +1821,16 @@
         }
       }
     },
+    "Lun" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mon"
+          }
+        }
+      }
+    },
     "Lux vous suggérera ce raccourci à cette heure" : {
       "localizations" : {
         "en" : {
@@ -1771,6 +1851,16 @@
         }
       }
     },
+    "Ma" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "T"
+          }
+        }
+      }
+    },
     "Maintenance en cours" : {
       "localizations" : {
         "en" : {
@@ -1787,6 +1877,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Now"
+          }
+        }
+      }
+    },
+    "Mar" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tue"
           }
         }
       }
@@ -1829,6 +1929,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Walk towards your destination"
+          }
+        }
+      }
+    },
+    "Me" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "W"
+          }
+        }
+      }
+    },
+    "Mer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wed"
           }
         }
       }
@@ -1922,6 +2042,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Intensity level"
+          }
+        }
+      }
+    },
+    "Nom du raccourci" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcut name"
           }
         }
       }
@@ -2305,6 +2435,16 @@
         }
       }
     },
+    "Programmation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programmation"
+          }
+        }
+      }
+    },
     "Propre" : {
       "localizations" : {
         "en" : {
@@ -2508,6 +2648,16 @@
     "s" : {
       "shouldTranslate" : false
     },
+    "S" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S"
+          }
+        }
+      }
+    },
     "Saisissez au moins 3 caractères pour rechercher" : {
       "localizations" : {
         "en" : {
@@ -2524,6 +2674,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dirty"
+          }
+        }
+      }
+    },
+    "Sam" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sat"
           }
         }
       }
@@ -2898,12 +3058,32 @@
         }
       }
     },
+    "V" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "F"
+          }
+        }
+      }
+    },
     "Vélo" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bike"
+          }
+        }
+      }
+    },
+    "Ven" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fri"
           }
         }
       }
