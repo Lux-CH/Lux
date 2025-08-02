@@ -46,7 +46,7 @@ struct AccentColorCustomizerView: View {
                                 .fontWeight(.bold)
                                 .multilineTextAlignment(.center)
                             
-                            Text("Séléctionnez la couleur de l'application")
+                            Text("Séléctionnez la couleur de l'application et de l'icône")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                                 .multilineTextAlignment(.center)
@@ -93,7 +93,7 @@ struct AccentColorCustomizerView: View {
         }
     }
     
-    private func selectColor(_ colorData: (name: String, color: Color)) {
+    private func selectColor(_ colorData: (name: String, color: Color, iconName: String?)) {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
             accentColorManager.setAccentColor(colorData.color)
             selectedColorName = colorData.name
