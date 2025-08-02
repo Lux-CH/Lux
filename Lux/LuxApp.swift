@@ -36,6 +36,14 @@ struct LuxApp: App {
                 .tint(accentColorManager.selectedAccentColor)
                 // i am fully aware this will deprecated in the future; however not putting it doesn't apply the accent everywhere; same if you only leave accentColor
                 .accentColor(accentColorManager.selectedAccentColor)
+                .onAppear {
+                    if ((settings.appLaunchCount % 15) == 0) {
+                        Task.detached(priority: .background) {
+                            await CacheCleaner.performCleanup()
+                        }
+                    }
+                    settings.appLaunchCount += 1
+                }
                 .onOpenURL { url in
                     Task {
                         await handleIncomingURL(url)
