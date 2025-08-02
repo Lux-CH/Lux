@@ -12,6 +12,7 @@ class Settings: ObservableObject, @unchecked Sendable {
     @MainActor static let shared = Settings()
     
     @AppStorage("firstLaunch") var firstLaunch: Bool = true
+    @AppStorage("appLaunchCount") var appLaunchCount: Int = 1
     
     /// Shortcuts
     @AppStorage("showShortcutLabel") var showShortcutLabel: Bool = true
