@@ -1065,6 +1065,16 @@
         }
       }
     },
+    "Ci-dessous une liste des crédits de l'application, notamment des différents autres modules utilisés par Lux." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Below is a list of the application's credits, including the various other modules used by Lux."
+          }
+        }
+      }
+    },
     "Clair" : {
       "localizations" : {
         "en" : {
@@ -1331,6 +1341,16 @@
         }
       }
     },
+    "Développeur Principal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Main Developer"
+          }
+        }
+      }
+    },
     "Dim" : {
       "localizations" : {
         "en" : {
@@ -1347,6 +1367,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Direct"
+          }
+        }
+      }
+    },
+    "Données des perturbations" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disruptions data"
           }
         }
       }
@@ -2836,7 +2866,14 @@
       }
     },
     "s" : {
-      "shouldTranslate" : false
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
+          }
+        }
+      }
     },
     "S" : {
       "localizations" : {
