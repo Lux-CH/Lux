@@ -82,43 +82,44 @@ struct DepartureTimeRow: View {
     }
     
     private func relativeTime(for date: Date?) -> String {
-        guard let date = date else { return "N/A" }
+        guard let date = date else { return String(localized: "N/A") }
         
         let now = Date()
         let components = Calendar.current.dateComponents([.minute], from: now, to: date)
         let secs = Calendar.current.dateComponents([.second], from: now, to: date)
         if let minutes = components.minute {
             if minutes < 0 {
-                return "Passé"
+                return String(localized: "Passé")
             } else if minutes == 0 {
-                return "Maintenant"
+                return String(localized: "Maintenant")
             } else if minutes < 60 {
                 if let sec = secs.second {
-                    return "Dans \(Int(ceil(Double(sec) / 60.0))) min"
+                    return String(localized: "Dans \(Int(ceil(Double(sec) / 60.0))) min")
                 }
                 else {
-                    return "Dans \(minutes) min"
+                    return String(localized: "Dans \(minutes) min")
                 }
             } else {
                 let hours = minutes / 60
                 let remainingMinutes = minutes % 60
                 if hours < 24 {
                     if remainingMinutes == 0 {
-                        return "Dans \(hours)h"
+                        return String(localized: "Dans \(hours)h")
                     } else {
-                        return "Dans \(hours)h \(remainingMinutes)min"
+                        return String(localized: "Dans \(hours)h \(remainingMinutes)min")
                     }
                 } else {
                     let days = hours / 24
                     let remainingHours = hours % 24
-                    var result = "Dans \(days) jour" + (days > 1 ? "s" : "")
+                    let plural = days > 1 ? String(localized: "s") : ""
+                    var result = String(localized: "Dans \(days) jour") + plural
                     if remainingHours > 0 {
-                        result += " \(remainingHours)h"
+                        result += " " + String(localized: "\(remainingHours)h")
                     }
                     return result
                 }
             }
         }
-        return "N/A"
+        return String(localized: "N/A")
     }
 }

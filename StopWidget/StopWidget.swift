@@ -246,7 +246,7 @@ struct DepartureRowView: View {
                 Image(systemName: "arrow.right")
                     .foregroundStyle(Color.primary.opacity(0.3))
                     .font(.system(size: 12))
-                Text(departure.headsign ?? "Inconnu")
+                Text(departure.headsign ?? String(localized: "Inconnu"))
                     .fontWeight(.regular)
                     .lineLimit(1)
                 

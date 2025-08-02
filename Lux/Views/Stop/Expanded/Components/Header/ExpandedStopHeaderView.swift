@@ -52,10 +52,10 @@ struct ExpandedStopHeaderView: View {
         
         if calendar.isDateInToday(selectedDate) {
             formatter.setLocalizedDateFormatFromTemplate("HH:mm")
-            return "Aujourd'hui \(formatter.string(from: selectedDate))"
+            return String(localized:"Aujourd'hui \(formatter.string(from: selectedDate))")
         } else if calendar.isDateInTomorrow(selectedDate) {
             formatter.setLocalizedDateFormatFromTemplate("HH:mm")
-            return "Demain, \(formatter.string(from: selectedDate))"
+            return String(localized:"Demain, \(formatter.string(from: selectedDate))")
         } else {
             formatter.setLocalizedDateFormatFromTemplate("dd/MM HH:mm")
             return formatter.string(from: selectedDate)
@@ -96,7 +96,7 @@ struct ExpandedStopHeaderView: View {
 
 struct CustomSegmentedPicker: View {
     @Binding var selection: String
-    private let options = ["Groupé", "Chronologique"]
+    private let options = [String(localized: "Groupé"), String(localized: "Chronologique")]
     @Namespace private var animation
     @Environment(\.colorScheme) var colorScheme
     

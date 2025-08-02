@@ -79,7 +79,7 @@ struct TripsSearchHeaderView: View {
         TripSearchBar(
             searchText: $viewModel.fromQuery,
             isFocused: $isFromFocused,
-            placeholderText: "Depuis",
+            placeholderText: String(localized:"Depuis"),
             selectedLocation: viewModel.selectedFrom,
             onSearch: { viewModel.performSearch(viewModel.fromQuery) },
             onClear: { viewModel.resetSearch() },
@@ -107,7 +107,7 @@ struct TripsSearchHeaderView: View {
         TripSearchBar(
             searchText: $viewModel.toQuery,
             isFocused: $isToFocused,
-            placeholderText: "À",
+            placeholderText: String(localized:"À"),
             selectedLocation: viewModel.selectedTo,
             onSearch: { viewModel.performSearch(viewModel.toQuery) },
             onClear: { viewModel.resetSearch() },
