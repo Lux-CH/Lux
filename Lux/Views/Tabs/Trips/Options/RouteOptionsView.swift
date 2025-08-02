@@ -138,7 +138,7 @@ struct RouteOptionsView: View {
     
     private var transfersSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            OptionHeader(title: "Transferts", icon: "arrow.triangle.2.circlepath")
+            OptionHeader(title: String(localized: "Transferts"), icon: "arrow.triangle.2.circlepath")
             
             ModernCard {
                 VStack(spacing: 20) {
@@ -186,7 +186,7 @@ struct RouteOptionsView: View {
     
     private var accessibilitySection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            OptionHeader(title: "Accessibilité", icon: "figure.roll")
+            OptionHeader(title: String(localized: "Accessibilité"), icon: "figure.roll")
             
             ModernCard {
                 VStack(alignment: .leading, spacing: 16) {
@@ -196,7 +196,7 @@ struct RouteOptionsView: View {
                     
                     HStack(spacing: 12) {
                         AccessibilityProfileButton(
-                            title: "À pied",
+                            title: String(localized: "À pied"),
                             iconName: "figure.walk",
                             isSelected: pedestrianProfile == .foot,
                             action: {
@@ -209,7 +209,7 @@ struct RouteOptionsView: View {
                         )
                         
                         AccessibilityProfileButton(
-                            title: "Fauteuil roulant",
+                            title: String(localized:"Fauteuil roulant"),
                             iconName: "figure.roll",
                             isSelected: pedestrianProfile == .wheelchair,
                             action: {
@@ -228,7 +228,7 @@ struct RouteOptionsView: View {
     
     private var transportModesSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            OptionHeader(title: "Modes de transport", icon: "bus.fill")
+            OptionHeader(title: String(localized: "Modes de transport"), icon: "bus.fill")
             
             VStack(spacing: 12) {
                 ModernCard {
