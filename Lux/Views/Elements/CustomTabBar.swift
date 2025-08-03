@@ -31,29 +31,32 @@ struct CustomTabBar: View {
             }
         }
         .padding(8)
-        .background(
-            Capsule()
-                .fill(
-                    colorScheme == .dark
-                    ? Color(.secondarySystemBackground).opacity(0.7)
-                    : Color.white
-                )
-                .shadow(
-                    color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
-                    radius: 7.5,
-                    x: 0,
-                    y: 5
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(
-                            colorScheme == .dark
-                            ? Color.primary.opacity(0.1)
-                            : Color.gray.opacity(0.1),
-                            lineWidth: 0.75
-                        )
-                )
-        )
+        .background {
+            ZStack {
+                Capsule()
+                    .fill(
+                        Color(.secondarySystemBackground)
+                    )
+                    .shadow(
+                        color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
+                        radius: 7.5,
+                        x: 0,
+                        y: 5
+                    )
+                Capsule()
+                    .fill(
+                        colorScheme == .dark
+                        ? Color(.secondarySystemBackground).opacity(0.7)
+                        : Color.white
+                    )
+                    .stroke(
+                        colorScheme == .dark
+                        ? Color.primary.opacity(0.1)
+                        : Color.gray.opacity(0.1),
+                        lineWidth: 0.75
+                    )
+            }
+        }
         .frame(height: 54)
         .padding(.horizontal, 24)
         .padding(.bottom, 8)
