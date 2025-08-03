@@ -939,6 +939,16 @@
         }
       }
     },
+    "Calendrier" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar"
+          }
+        }
+      }
+    },
     "Calme" : {
       "localizations" : {
         "en" : {
@@ -1461,12 +1471,32 @@
         }
       }
     },
+    "Enregistrement..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saving…"
+          }
+        }
+      }
+    },
     "Enregistrer" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save"
+          }
+        }
+      }
+    },
+    "Enregistrer dans Calendrier" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save in Calendar"
           }
         }
       }
@@ -1517,6 +1547,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scan error"
+          }
+        }
+      }
+    },
+    "Erreur lors de l'enregistrement : %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An error occurred while saving : %@"
           }
         }
       }
@@ -1851,12 +1891,32 @@
         }
       }
     },
+    "L'accès au calendrier est requis pour enregistrer l'itinéraire. Veuillez autoriser l'accès dans les Réglages." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendar access is required to save the itinerary. Please allow it in Settings."
+          }
+        }
+      }
+    },
     "L’affichage du code SwissPass depuis cette application ne garantit pas sa reconnaissance par les contrôleurs.\n\nLux décline toute responsabilité en cas de refus, d’amende ou de tout autre problème. Veuillez toujours avoir votre SwissPass physique ou l'application officielle avec vous." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Displaying the SwissPass barcode using this application does not guarantee its acceptance by fare inspectors.\n\nLux disclaims all liability for any denial of validity, fines, or other issues arising from the use of this feature. Users are solely responsible for ensuring they carry their official SwissPass card or use an authorized application."
+          }
+        }
+      }
+    },
+    "L'itinéraire a bien été enregistré dans votre calendrier !" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The itinerary was successfully saved in your calendar !"
           }
         }
       }
