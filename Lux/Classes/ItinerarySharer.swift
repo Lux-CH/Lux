@@ -52,12 +52,18 @@ class ItinerarySharer {
     }
     
     
-    func uploadItinerary(_ itinerary: Itinerary) async -> Result<String, URLHandlerError> {
+    func uploadItinerary(_ itinerary: Itinerary, expiresInHours: Int?) async -> Result<String, URLHandlerError> {
         do {
             let data = try encode(itinerary)
             
-            let expiresInHours = await MainActor.run {
-                Settings.shared.luxTripShareExpiryTimeH
+            var actualExpiresInHour = 0
+            if expiresInHours == nil {
+                actualExpiresInHour = await MainActor.run {
+                    Settings.shared.luxTripShareExpiryTimeH
+                }
+            }
+            else {
+                actualExpiresInHour = expiresInHours ?? 24
             }
             
             let boundary = UUID().uuidString
@@ -71,7 +77,7 @@ class ItinerarySharer {
             
             body.append("--\(boundary)\r\n".data(using: .utf8)!)
             body.append("Content-Disposition: form-data; name=\"expires\"\r\n\r\n".data(using: .utf8)!)
-            body.append("\(expiresInHours)".data(using: .utf8)!)
+            body.append("\(actualExpiresInHour)".data(using: .utf8)!)
             body.append("\r\n".data(using: .utf8)!)
             
             body.append("--\(boundary)--\r\n".data(using: .utf8)!)
