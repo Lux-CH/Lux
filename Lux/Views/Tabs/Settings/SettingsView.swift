@@ -254,6 +254,14 @@ struct SettingsView: View {
                     )
                 }
                 .buttonStyle(.plain)
+                #if DEBUG
+                    SettingsRow(
+                        icon: "number",
+                        title: "Sessions",
+                        subtitle: "Vous avez ouvert l'application \(settings.appLaunchCount - 1) fois",
+                        showChevron: false
+                    )
+                #endif
                 SettingsRow(
                     icon: "app.badge",
                     title: String(localized: "Version"),
