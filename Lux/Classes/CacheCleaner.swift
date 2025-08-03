@@ -16,7 +16,6 @@ struct CacheCleaner {
         
         cleanDirectory(at: URL(fileURLWithPath: NSTemporaryDirectory()))
         cleanDirectory(at: documentsPath.appendingPathComponent("Inbox"))
-        cleanDirectory(at: libraryPath.appendingPathComponent("SplashBoard"))
         cleanDirectory(at: libraryPath.appendingPathComponent("Logs"))
         print("cleanup done !")
     }
