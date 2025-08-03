@@ -87,7 +87,7 @@ struct MultipleItineraryDetailView: View {
             
             if fromName == toName {
                 if let fromTrack = fromTrack, let toTrack = toTrack, fromTrack != toTrack {
-                    return Text("Passez \(Int(fromTrack) != nil ? "de la voie" : "du quai") \(fromTrack) \(Int(toTrack) != nil ? "à la voie" : "au quai") \(toTrack)")
+                    return Text("Passez \(Int(fromTrack) != nil ? String(localized: "de la voie") : String(localized: "du quai")) \(fromTrack) \(Int(toTrack) != nil ? String(localized: "à la voie") : String(localized: "au quai")) \(toTrack)")
                 } else {
                     return Text("Correspondance à \(fromName)")
                 }

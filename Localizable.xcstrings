@@ -277,6 +277,16 @@
         }
       }
     },
+    "à la voie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to platform"
+          }
+        }
+      }
+    },
     "À pied" : {
       "localizations" : {
         "en" : {
@@ -665,6 +675,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Attention : le temps entre le %1$@ et le %2$@ est court. Vous risqueriez de rater votre correspondance.\nPour éviter cela, augmentez le temps d'attente minimum dans les options d'itinéraire (page précédente)."
+          }
+        }
+      }
+    },
+    "au quai" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to track"
           }
         }
       }
@@ -1311,6 +1331,16 @@
         }
       }
     },
+    "de la voie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "from platform"
+          }
+        }
+      }
+    },
     "Demain, %@" : {
       "localizations" : {
         "en" : {
@@ -1427,6 +1457,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disruptions data"
+          }
+        }
+      }
+    },
+    "du quai" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "to track"
           }
         }
       }
