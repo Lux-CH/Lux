@@ -56,12 +56,13 @@ struct ShareButtonView: View {
                 uploadItinerary()
             }
             
-            Button("Enregistrer dans Calendrier") {
-                saveToCalendar()
-            }
-            
             if let image = renderedImage {
                 ShareLink("Partager l'aperçu en tant qu'image", item: image, preview: SharePreview("Aperçu de l'itinéraire", image: image))
+            }
+            
+            
+            Button("Enregistrer dans Calendrier") {
+                saveToCalendar()
             }
             
             Button("Annuler", role: .cancel) { }
