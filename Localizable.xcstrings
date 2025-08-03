@@ -102,6 +102,26 @@
         }
       }
     },
+    "%lld rapport(s) n'ont pas pu être envoyés. Les autres ont été transmis avec succès." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld report(s) could not be sent. The others were transmitted successfully."
+          }
+        }
+      }
+    },
+    "%lld rapport(s) transmis avec succès.\nMerci pour votre contribution !" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld report(s) transmitted successfully.\nThank you for your contribution!"
+          }
+        }
+      }
+    },
     "%lld transfer%@" : {
       "localizations" : {
         "en" : {
@@ -1481,32 +1501,12 @@
         }
       }
     },
-    "Envoi..." : {
+    "Erreur de rapport" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Sending…"
-          }
-        }
-      }
-    },
-    "Envoyer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Send"
-          }
-        }
-      }
-    },
-    "Erreur d'envoi" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sending error"
+            "value" : "Report error"
           }
         }
       }
@@ -1557,6 +1557,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Are you sure you want to delete your SwissPass ? This action cannot be canceled."
+          }
+        }
+      }
+    },
+    "Évaluez le niveau actuel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rate the current level"
           }
         }
       }
@@ -1731,12 +1741,12 @@
         }
       }
     },
-    "Impossible d'envoyer le rapport. Il est possible que vous en ayez récemment envoyé un.\nVeuillez réessayer plus tard." : {
+    "Impossible d'envoyer les rapports. Veuillez réessayer plus tard." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "An error occurred while sending the report. It might be possible you sent another recently.\nPlease try again later."
+            "value" : "Unable to send reports. Please try again later."
           }
         }
       }
@@ -2113,16 +2123,6 @@
         }
       }
     },
-    "Merci pour votre contribution" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Thanks for your contribution"
-          }
-        }
-      }
-    },
     "Mes lignes" : {
       "localizations" : {
         "en" : {
@@ -2202,16 +2202,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "N/A"
-          }
-        }
-      }
-    },
-    "Niveau d'intensité" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intensity level"
           }
         }
       }
@@ -2595,6 +2585,16 @@
         }
       }
     },
+    "Précédent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        }
+      }
+    },
     "Prochain: %@" : {
       "localizations" : {
         "en" : {
@@ -2665,16 +2665,6 @@
         }
       }
     },
-    "Que souhaitez-vous signaler ?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "What do you want to report ?"
-          }
-        }
-      }
-    },
     "raccourci" : {
       "localizations" : {
         "en" : {
@@ -2695,12 +2685,42 @@
         }
       }
     },
-    "Rapport envoyé !" : {
+    "Rapport en cours..." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Report sent !"
+            "value" : "Reporting…"
+          }
+        }
+      }
+    },
+    "Rapport partiel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partial report"
+          }
+        }
+      }
+    },
+    "Rapport: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Report: %@"
+          }
+        }
+      }
+    },
+    "Rapports envoyés !" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reports sent!"
           }
         }
       }
@@ -3075,6 +3095,16 @@
         }
       }
     },
+    "Suivant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
+          }
+        }
+      }
+    },
     "Supprimer" : {
       "localizations" : {
         "en" : {
@@ -3091,6 +3121,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete the SwissPass"
+          }
+        }
+      }
+    },
+    "sur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "out of"
           }
         }
       }
@@ -3141,6 +3181,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Minimum time between transfers"
+          }
+        }
+      }
+    },
+    "Terminer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
           }
         }
       }
