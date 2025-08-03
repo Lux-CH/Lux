@@ -16,8 +16,11 @@ struct ShareButtonView: View {
     @State private var showingShareDialog = false
     @State private var renderedImage: Image?
     @State private var isUploading = false
+    @State private var isSavingToCalendar = false
     @State private var uploadedURL: String?
     @State private var showingShareSheet = false
+    @State private var showingCalendarAlert = false
+    @State private var calendarAlertMessage = ""
     @Environment(\.displayScale) var displayScale
     
     var body: some View {
@@ -25,13 +28,13 @@ struct ShareButtonView: View {
             showingShareDialog = true
         }) {
             HStack {
-                if isUploading {
+                if isUploading || isSavingToCalendar {
                     ProgressView()
                         .scaleEffect(0.8)
                 } else {
                     Image(systemName: "square.and.arrow.up")
                 }
-                Text(isUploading ? "Partage..." : "Partager")
+                Text(isUploading ? "Partage..." : isSavingToCalendar ? "Enregistrement..." : "Partager")
             }
             .font(.system(size: 16, weight: .medium))
             .foregroundStyle(.primary)
@@ -47,10 +50,14 @@ struct ShareButtonView: View {
                     .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
             )
         }
-        .disabled(isUploading)
+        .disabled(isUploading || isSavingToCalendar)
         .confirmationDialog("Partager l'itinéraire", isPresented: $showingShareDialog, titleVisibility: .visible) {
             Button("Partager l'entiereté") {
                 uploadItinerary()
+            }
+            
+            Button("Enregistrer dans Calendrier") {
+                saveToCalendar()
             }
             
             if let image = renderedImage {
@@ -66,6 +73,11 @@ struct ShareButtonView: View {
                 ShareSheet(items: [url])
             }
         }
+        .alert("Calendrier", isPresented: $showingCalendarAlert) {
+            Button("OK") { }
+        } message: {
+            Text(calendarAlertMessage)
+        }
         .onAppear {
             renderImage()
         }
@@ -76,7 +88,7 @@ struct ShareButtonView: View {
         showingShareDialog = false
         
         Task {
-            let result = await itineraarySharer.uploadItinerary(itinerary)
+            let result = await itineraarySharer.uploadItinerary(itinerary, expiresInHours: nil)
             
             await MainActor.run {
                 isUploading = false
@@ -87,6 +99,41 @@ struct ShareButtonView: View {
                     showingShareSheet = true
                 case .failure(let error):
                     print("upload failed !! \(error)")
+                }
+            }
+        }
+    }
+    
+    private func saveToCalendar() {
+        let calendarManager = CalendarManager(itinerarySharer: itineraarySharer)
+        isSavingToCalendar = true
+        showingShareDialog = false
+        
+        Task {
+            if calendarManager.authorizationStatus != .fullAccess {
+                let granted = await calendarManager.requestAccess()
+                if !granted {
+                    await MainActor.run {
+                        isSavingToCalendar = false
+                        calendarAlertMessage = String(localized: "L'accès au calendrier est requis pour enregistrer l'itinéraire. Veuillez autoriser l'accès dans les Réglages.")
+                        showingCalendarAlert = true
+                    }
+                    return
+                }
+            }
+            
+            let result = await calendarManager.saveItineraryToCalendar(itinerary)
+            
+            await MainActor.run {
+                isSavingToCalendar = false
+                
+                switch result {
+                case .success(_):
+                    calendarAlertMessage = String(localized: "L'itinéraire a bien été enregistré dans votre calendrier !")
+                    showingCalendarAlert = true
+                case .failure(let error):
+                    calendarAlertMessage = String(localized: "Erreur lors de l'enregistrement : \(error.localizedDescription)")
+                    showingCalendarAlert = true
                 }
             }
         }
