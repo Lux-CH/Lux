@@ -12,27 +12,34 @@ struct ReportView: View {
     let leg: Leg
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var locationManager: LocationManager
-    @State private var selectedAttribute: ReportAttribute = .crowd
-    @State private var selectedLevel: Int = 3
+    
+    @State private var currentStep: Int = 0
+    @State private var attributeValues: [ReportAttribute: Int] = [:]
     @State private var isSubmitting: Bool = false
     @State private var showSuccess: Bool = false
     @State private var showError: Bool = false
     
+    @State private var submissionProgress: Float = 0
+    @State private var submittingAttributeIndex: Int = 0
+    @State private var failedReportsCount: Int = 0
+    
+    private let attributes: [ReportAttribute] = [.crowd, .clean, .heat, .noise]
+    
     var body: some View {
         ZStack {
-            VStack(spacing: 16) {
-                VStack(spacing: 8) {
+            VStack(spacing: 0) {
+                VStack(spacing: 12) {
                     HStack {
-                        Text("Signaler une situation")
+                        Text(String(localized: "Signaler une situation"))
                             .font(.title3)
                             .fontWeight(.semibold)
                         Spacer()
-                        Button("Annuler") {
+                        Button(String(localized: "Annuler")) {
                             dismiss()
                         }
                         .foregroundColor(.secondary)
                     }
-                    .padding(.top, 12.5)
+                    .padding(.top, 12)
                     
                     HStack {
                         LinePill(
@@ -47,112 +54,96 @@ struct ReportView: View {
                             .foregroundColor(.secondary)
                         Spacer()
                     }
-                }
-                
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Que souhaitez-vous signaler ?")
-                        .font(.headline)
-                        .fontWeight(.medium)
                     
-                    LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 2), spacing: 8) {
-                        ForEach([ReportAttribute.crowd, .clean, .heat, .noise], id: \.self) { attribute in
-                            AttributeCard(
-                                attribute: attribute,
-                                isSelected: selectedAttribute == attribute
-                            ) {
-                                selectedAttribute = attribute
-                            }
-                        }
+                    ProgressIndicator(
+                        currentStep: currentStep,
+                        totalSteps: attributes.count
+                    )
+                }
+                .padding(.horizontal, 20)
+                .padding(.bottom, 20)
+                
+                if currentStep < attributes.count {
+                    AttributeStepView(
+                        attribute: attributes[currentStep],
+                        selectedLevel: attributeValues[attributes[currentStep]] ?? 3,
+                        stepNumber: currentStep + 1,
+                        totalSteps: attributes.count
+                    ) { level in
+                        attributeValues[attributes[currentStep]] = level
                     }
-                }
-                
-                VStack(alignment: .leading, spacing: 10) {
-                    Text("Niveau d'intensité")
-                        .font(.headline)
-                        .fontWeight(.medium)
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 32)
                     
-                    VStack(spacing: 8) {
-                        HStack {
-                            Text(lowLevelText)
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                            Spacer()
-                            Text(highLevelText)
-                                .font(.caption2)
-                                .foregroundColor(.secondary)
-                        }
-                        
-                        HStack(spacing: 6) {
-                            ForEach(1...5, id: \.self) { level in
-                                Button {
-                                    selectedLevel = level
-                                } label: {
-                                    RoundedRectangle(cornerRadius: 4)
-                                        .fill(level <= selectedLevel ? colorForLevel(level) : Color(.systemGray5))
-                                        .frame(height: 6)
-                                        .animation(.easeInOut(duration: 0.2), value: selectedLevel)
+                    HStack(spacing: 12) {
+                        if currentStep > 0 {
+                            Button {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    currentStep -= 1
                                 }
-                                .buttonStyle(PlainButtonStyle())
+                            } label: {
+                                Text(String(localized: "Précédent"))
+                                    .fontWeight(.medium)
+                                    .foregroundColor(.secondary)
+                                    .frame(maxWidth: .infinity)
+                                    .frame(height: 44)
+                                    .background(Color(.systemGray6))
+                                    .cornerRadius(12)
                             }
                         }
                         
-                        HStack {
-                            Text("\(selectedLevel)/5")
-                                .font(.caption)
+                        Button {
+                            if currentStep == attributes.count - 1 {
+                                submitAllReports()
+                            } else {
+                                withAnimation(.easeInOut(duration: 0.3)) {
+                                    currentStep += 1
+                                }
+                            }
+                        } label: {
+                            Text(currentStep == attributes.count - 1 ? String(localized: "Terminer") : String(localized: "Suivant"))
                                 .fontWeight(.medium)
-                                .foregroundColor(colorForLevel(selectedLevel))
-                            
-                            Spacer()
-                            
-                            Text(intensityDescription)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .foregroundColor(colorForLevel(selectedLevel))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .frame(height: 44)
+                                .background(Color.accentColor)
+                                .cornerRadius(12)
                         }
+                        .disabled(isSubmitting)
                     }
+                    .padding(.horizontal, 20)
+                    .padding(.bottom, 20)
                 }
-                
-                Spacer(minLength: 12)
-                
-                Button {
-                    submitReport()
-                } label: {
-                    HStack(spacing: 6) {
-                        if isSubmitting {
-                            ProgressView()
-                                .scaleEffect(0.8)
-                                .tint(.white)
-                        }
-                        Text(isSubmitting ? "Envoi..." : "Envoyer")
-                            .fontWeight(.medium)
-                    }
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 44)
-                    .background(Color.accentColor)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
-                }
-                .disabled(isSubmitting)
-                .opacity(isSubmitting ? 0.7 : 1)
             }
-            .padding(.horizontal, 20)
-            .padding(.vertical, 12)
-            .blur(radius: showSuccess || showError ? 3 : 0)
+            .blur(radius: showSuccess || showError || isSubmitting ? 3 : 0)
             .animation(.easeInOut(duration: 0.3), value: showSuccess)
             .animation(.easeInOut(duration: 0.3), value: showError)
+            .animation(.easeInOut(duration: 0.3), value: isSubmitting)
+            
+            if isSubmitting {
+                SubmittingOverlay(
+                    currentAttribute: getCurrentSubmittingAttribute(),
+                    progress: getSubmissionProgress()
+                )
+            }
             
             if showSuccess {
-                SuccessOverlay()
-                    .transition(.asymmetric(
-                        insertion: .scale.combined(with: .opacity),
-                        removal: .opacity
-                    ))
-                    .animation(.spring(response: 0.5, dampingFraction: 0.8), value: showSuccess)
+                SuccessOverlay(
+                    reportCount: attributeValues.count
+                )
+                .transition(.asymmetric(
+                    insertion: .scale.combined(with: .opacity),
+                    removal: .opacity
+                ))
+                .animation(.spring(response: 0.5, dampingFraction: 0.8), value: showSuccess)
             }
             
             if showError {
-                ErrorOverlay {
+                ErrorOverlay(
+                    failedReports: getFailedReportsCount()
+                ) {
                     showError = false
+                    dismiss()
                 }
                 .transition(.asymmetric(
                     insertion: .scale.combined(with: .opacity),
@@ -163,273 +154,74 @@ struct ReportView: View {
         }
     }
     
-    private var lowLevelText: String {
-        switch selectedAttribute {
-        case .crowd: return String(localized: "Vide")
-        case .clean: return String(localized: "Sale")
-        case .heat: return String(localized: "Froid")
-        case .noise: return String(localized: "Silencieux")
-        case .smell: return String(localized: "Pas d'odeur")
-        }
-    }
-
-    private var highLevelText: String {
-        switch selectedAttribute {
-        case .crowd: return String(localized: "Bondé")
-        case .clean: return String(localized: "Propre")
-        case .heat: return String(localized: "Chaud")
-        case .noise: return String(localized: "Bruyant")
-        case .smell: return String(localized: "Forte odeur")
-        }
-    }
-
-    private var intensityDescription: String {
-        switch selectedAttribute {
-        case .crowd:
-            switch selectedLevel {
-            case 1: return String(localized: "Vide")
-            case 2: return String(localized: "Peu occupé")
-            case 3: return String(localized: "Modéré")
-            case 4: return String(localized: "Occupé")
-            case 5: return String(localized: "Bondé")
-            default: return ""
-            }
-        case .clean:
-            switch selectedLevel {
-            case 1: return String(localized: "Très sale")
-            case 2: return String(localized: "Sale")
-            case 3: return String(localized: "Correct")
-            case 4: return String(localized: "Propre")
-            case 5: return String(localized: "Très propre")
-            default: return ""
-            }
-        case .heat:
-            switch selectedLevel {
-            case 1: return String(localized: "Très froid")
-            case 2: return String(localized: "Froid")
-            case 3: return String(localized: "Tempéré")
-            case 4: return String(localized: "Chaud")
-            case 5: return String(localized: "Très chaud")
-            default: return ""
-            }
-        case .noise:
-            switch selectedLevel {
-            case 1: return String(localized: "Silencieux")
-            case 2: return String(localized: "Calme")
-            case 3: return String(localized: "Modéré")
-            case 4: return String(localized: "Bruyant")
-            case 5: return String(localized: "Très bruyant")
-            default: return ""
-            }
-        case .smell:
-            switch selectedLevel {
-            case 1: return String(localized: "Pas d'odeur")
-            case 2: return String(localized: "Légère")
-            case 3: return String(localized: "Perceptible")
-            case 4: return String(localized: "Forte")
-            case 5: return String(localized: "Très forte")
-            default: return ""
-            }
-        }
+    private func getCurrentSubmittingAttribute() -> ReportAttribute {
+        guard submittingAttributeIndex < attributes.count else { return attributes.first! }
+        return attributes[submittingAttributeIndex]
     }
     
-    private func colorForLevel(_ level: Int) -> Color {
-        let progress = Double(level - 1) / 4.0
-        
-        switch selectedAttribute {
-        case .heat:
-            return Color(
-                red: progress * 0.9,
-                green: 0.1 * (1.0 - progress),
-                blue: (1.0 - progress) * 0.9 + 0.1
-            )
-        case .clean:
-            let redComponent = (1.0 - progress) * 0.9
-            let greenComponent = progress * 0.8 + 0.1
-            return Color(
-                red: redComponent,
-                green: greenComponent,
-                blue: 0.1
-            )
-        case .crowd, .noise, .smell:
-            let redComponent = progress * 0.9
-            let greenComponent = (1.0 - progress) * 0.8 + 0.1
-            return Color(
-                red: redComponent,
-                green: greenComponent,
-                blue: 0.1
-            )
-        }
+    private func getSubmissionProgress() -> Float {
+        return Float(submittingAttributeIndex) / Float(attributes.count)
     }
     
-    private func submitReport() {
+    private func getFailedReportsCount() -> Int {
+        return failedReportsCount
+    }
+    
+    private func submitAllReports() {
         guard let tripId = leg.tripId,
               let routeShortName = leg.routeShortName,
               let location = locationManager.location else { return }
         
         isSubmitting = true
-        
-        let report = Report(
-            tripId: tripId,
-            routeShortName: routeShortName,
-            latitude: location.coordinate.latitude,
-            longitude: location.coordinate.longitude,
-            attribute: selectedAttribute,
-            level: selectedLevel
-        )
+        submissionProgress = 0
+        submittingAttributeIndex = 0
+        failedReportsCount = 0
         
         Task {
-            do {
-                try await sendLCBReport(report: report)
+            var successCount = 0
+            
+            for (index, attribute) in attributes.enumerated() {
+                guard let level = attributeValues[attribute] else { continue }
+                
                 await MainActor.run {
-                    isSubmitting = false
-                    showSuccess = true
+                    submittingAttributeIndex = index
+                    submissionProgress = Float(index) / Float(attributes.count)
+                }
+                
+                let report = Report(
+                    tripId: tripId,
+                    routeShortName: routeShortName,
+                    latitude: location.coordinate.latitude,
+                    longitude: location.coordinate.longitude,
+                    attribute: attribute,
+                    level: level
+                )
+                
+                do {
+                    try await sendLCBReport(report: report)
+                    successCount += 1
                     
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+                    try await Task.sleep(nanoseconds: 200_000_000)
+                } catch {
+                    await MainActor.run {
+                        failedReportsCount += 1
+                    }
+                    print("Error sending report for \(attribute): \(error)")
+                }
+            }
+            
+            await MainActor.run {
+                isSubmitting = false
+                
+                if successCount > 0 {
+                    showSuccess = true
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
                         dismiss()
                     }
-                }
-            } catch {
-                await MainActor.run {
-                    isSubmitting = false
+                } else {
                     showError = true
-                    print("Error sending report: \(error)")
                 }
             }
-        }
-    }
-}
-
-struct ErrorOverlay: View {
-    let onDismiss: () -> Void
-    
-    var body: some View {
-        VStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(Color.red)
-                    .frame(width: 80, height: 80)
-                
-                Image(systemName: "xmark")
-                    .font(.system(size: 40, weight: .bold))
-                    .foregroundColor(.white)
-            }
-            
-            VStack(spacing: 8) {
-                Text("Erreur d'envoi")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                
-                Text("Impossible d'envoyer le rapport. Il est possible que vous en ayez récemment envoyé un.\nVeuillez réessayer plus tard.")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-            
-            Button("OK") {
-                onDismiss()
-            }
-            .font(.headline)
-            .foregroundColor(.white)
-            .frame(width: 80, height: 36)
-            .background(Color.red)
-            .cornerRadius(18)
-        }
-        .padding(32)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.regularMaterial)
-                .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
-        )
-        .padding(.horizontal, 40)
-    }
-}
-
-struct SuccessOverlay: View {
-    var body: some View {
-        VStack(spacing: 16) {
-            ZStack {
-                Circle()
-                    .fill(Color.green)
-                    .frame(width: 80, height: 80)
-                
-                Image(systemName: "checkmark")
-                    .font(.system(size: 40, weight: .bold))
-                    .foregroundColor(.white)
-            }
-            
-            VStack(spacing: 8) {
-                Text("Rapport envoyé !")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                
-                Text("Merci pour votre contribution")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-            }
-        }
-        .padding(32)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.regularMaterial)
-                .shadow(color: .black.opacity(0.1), radius: 20, x: 0, y: 10)
-        )
-        .padding(.horizontal, 40)
-    }
-}
-
-struct AttributeCard: View {
-    let attribute: ReportAttribute
-    let isSelected: Bool
-    let action: () -> Void
-    
-    var body: some View {
-        Button(action: action) {
-            VStack(spacing: 6) {
-                Image(systemName: iconName)
-                    .font(.title3)
-                    .foregroundColor(isSelected ? .white : .accentColor)
-                
-                Text(displayName)
-                    .font(.caption)
-                    .fontWeight(.medium)
-                    .foregroundColor(isSelected ? .white : .primary)
-                    .multilineTextAlignment(.center)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 60)
-            .background(
-                RoundedRectangle(cornerRadius: 10)
-                    .fill(isSelected ? Color.accentColor : Color(.systemGray6))
-            )
-            .overlay(
-                RoundedRectangle(cornerRadius: 10)
-                    .stroke(isSelected ? Color.clear : Color(.systemGray4), lineWidth: 0.5)
-            )
-        }
-        .buttonStyle(PlainButtonStyle())
-        .scaleEffect(isSelected ? 0.96 : 1.0)
-        .animation(.easeInOut(duration: 0.15), value: isSelected)
-    }
-    
-    private var iconName: String {
-        switch attribute {
-        case .crowd: return "person.3.fill"
-        case .smell: return "nose.fill"
-        case .clean: return "sparkles"
-        case .heat: return "thermometer.medium"
-        case .noise: return "speaker.wave.2.fill"
-        }
-    }
-    
-    private var displayName: String {
-        switch attribute {
-        case .crowd: return String(localized:"Affluence")
-        case .smell: return String(localized:"Odeur")
-        case .clean: return String(localized:"Propreté")
-        case .heat: return String(localized:"Température")
-        case .noise: return String(localized:"Bruit")
         }
     }
 }
