@@ -11,7 +11,7 @@ import LuxCom
 
 class CalendarManager: ObservableObject {
     private let eventStore = EKEventStore()
-    private let calendarIdentifier = "ch.cclerc.lux.itineraryCal"
+    private let calendarTitle = "Itinéraires Lux"
     let itinerarySharer: ItinerarySharer
     
     @Published var authorizationStatus: EKAuthorizationStatus = .notDetermined
@@ -37,13 +37,13 @@ class CalendarManager: ObservableObject {
     
     private func getLuxCalendar() -> EKCalendar? {
         return eventStore.calendars(for: .event).first { calendar in
-            calendar.calendarIdentifier == calendarIdentifier
+            calendar.title == calendarTitle
         }
     }
     
     private func createLuxCalendar() -> EKCalendar? {
         let calendar = EKCalendar(for: .event, eventStore: eventStore)
-        calendar.title = "Itinéraires Lux"
+        calendar.title = calendarTitle
         calendar.cgColor = UIColor.systemOrange.cgColor
         
         if let source = eventStore.defaultCalendarForNewEvents?.source {
@@ -93,6 +93,7 @@ class CalendarManager: ObservableObject {
         case .failure:
             print("error while uploading !")
         }
+        
         do {
             try eventStore.save(event, span: .thisEvent)
             return .success(())
@@ -125,12 +126,12 @@ class CalendarManager: ObservableObject {
         var notes = "--Itinéraire Lux--\n"
         notes += "Durée : \(formatDuration(itinerary.duration))\n"
         notes += "Nombre de transferts : \(itinerary.transfers)\n"
-        
+        notes += "-- --\n"
         notes += "\n"
         
         for (index, leg) in itinerary.legs.enumerated() {
             if leg.mode == .walk {
-                notes += "  Marchez jusqu'à \(leg.to.name), \(getTrackType(leg.to.track ?? "inconnu"))\n"
+                notes += "  \(index+1). Marchez jusqu'à \(leg.to.name), \(getTrackType(leg.to.track ?? "inconnu"))\n"
             } else {
                 if let routeShortName = leg.routeShortName, let headsign = leg.headsign {
                     notes += "  \(index+1). Prenez le (\(routeShortName)) en direction de \(headsign)\n"
