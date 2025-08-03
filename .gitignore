@@ -61,3 +61,4 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 GPSTests.gpx
+/Lux.xcodeproj/xcuserdata/cclerc.xcuserdatad/xcschemes/xcschememanagement.plist
