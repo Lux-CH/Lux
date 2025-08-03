@@ -190,9 +190,9 @@ struct StopWidgetEntryView: View {
                     .foregroundColor(.secondary)
                 Button(intent: RefreshWidgetIntent()) {
                     Image(systemName: "arrow.clockwise")
-                        .font(.system(size: 10))
+                        .font(.system(size: 12))
                         .foregroundStyle(Color.orange)
-                        .frame(width: 36, height: 16)
+                        .frame(width: 45, height: 20)
                 }
                 .buttonStyle(.plain)
                 .background(
