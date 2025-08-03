@@ -2720,7 +2720,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Platform %@"
+            "value" : "Track %@"
           }
         }
       }
@@ -3540,7 +3540,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Track %@"
+            "value" : "Platform %@"
           }
         }
       }
