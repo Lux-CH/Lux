@@ -18,7 +18,7 @@ struct StopWidgetBundle: WidgetBundle {
 
 
 struct RefreshWidgetIntent: AppIntent {
-    static var title: LocalizedStringResource = "Actualiser les départs"
+    static var title: LocalizedStringResource = "Actualiser les départs des Widgets"
     
     @MainActor
     func perform() async throws -> some IntentResult {
