@@ -13,39 +13,27 @@ struct CacheCleaner {
               let libraryPath = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first else {
             return
         }
-                
+        
         cleanDirectory(at: URL(fileURLWithPath: NSTemporaryDirectory()))
-        removeDirectory(at: documentsPath.appendingPathComponent("Inbox"))
+        cleanDirectory(at: documentsPath.appendingPathComponent("Inbox"))
         cleanDirectory(at: libraryPath.appendingPathComponent("SplashBoard"))
+        cleanDirectory(at: libraryPath.appendingPathComponent("Logs"))
+        print("cleanup done !")
     }
     
     static func cleanDirectory(at url: URL) {
         let fm = FileManager.default
         
         guard fm.fileExists(atPath: url.path) else {
+            print("\(url.path)")
             return
         }
         
         do {
             let contents = try fm.contentsOfDirectory(at: url, includingPropertiesForKeys: nil)
-            
             for item in contents {
                 try fm.removeItem(at: item)
             }
-        } catch {
-            print(error)
-        }
-    }
-
-    static func removeDirectory(at url: URL) {
-        let fm = FileManager.default
-        
-        guard fm.fileExists(atPath: url.path) else {
-            return
-        }
-        
-        do {
-            try fm.removeItem(at: url)
         } catch {
             print(error)
         }
