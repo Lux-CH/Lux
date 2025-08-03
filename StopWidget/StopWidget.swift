@@ -188,6 +188,21 @@ struct StopWidgetEntryView: View {
                 Text(!entry.isPreview ? "Mis à jour à \(formatLastUpdate(entry.lastUpdate))" : "Données fictives")
                     .font(.caption2)
                     .foregroundColor(.secondary)
+                Button(intent: RefreshWidgetIntent()) {
+                    Image(systemName: "arrow.clockwise")
+                        .font(.system(size: 10))
+                        .foregroundStyle(Color.orange)
+                        .frame(width: 36, height: 16)
+                }
+                .buttonStyle(.plain)
+                .background(
+                    RoundedRectangle(cornerRadius: 50)
+                        .fill(Color(.secondarySystemFill).opacity(0.5))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 50)
+                        .strokeBorder(Color.primary.opacity(0.1), lineWidth: 0.5)
+                )
             }
             
             if entry.error != nil {
