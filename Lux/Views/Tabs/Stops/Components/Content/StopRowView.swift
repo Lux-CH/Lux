@@ -22,6 +22,7 @@ struct StopRowView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "signpost.right")
                         .foregroundColor(.secondary)
+                        .accessibilityLabel("Arrêt")
                     
                     Text(stop.name)
                         .fontWeight(.regular)
@@ -37,6 +38,7 @@ struct StopRowView: View {
                                 MorePill()
                             }
                         }
+                        .accessibilityHidden(true)
                     }
                 }
             }
@@ -64,6 +66,7 @@ struct StopRowView: View {
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .rotationEffect(.degrees(relativeAngle))
+                            .accessibilityLabel("L'arrêt est à")
                         Text(formatDistance(distance))
                             .foregroundColor(.secondary)
                             .font(.subheadline)
@@ -74,6 +77,7 @@ struct StopRowView: View {
                     .font(.system(size: 14, weight: .semibold))
             }
         }
+        .accessibilityHint("Double-tappez pour lister les départs de cet arrêt")
         .padding(.horizontal)
         .contentShape(Rectangle())
         .background(Color.clear)

@@ -142,6 +142,8 @@ struct MainNavigationView: View {
                                                             RoundedRectangle(cornerRadius: 35)
                                                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                                         )
+                                                        .accessibilityLabel("Paramètres")
+                                                        .accessibilityHint("Double-tapez pour ouvrir les paramètres de l'application")
                                                 }
                                                 .transition(.scale(scale: 0.8).combined(with: .opacity))
                                             }
@@ -191,6 +193,14 @@ struct MainNavigationView: View {
                                                 transitionToSearchMode()
                                             }
                                         }
+                                        .accessibilityAction(.default) {
+                                            if viewMode == .home {
+                                                transitionToSearchMode()
+                                            }
+                                        }
+                                        .accessibilityLabel(viewMode == .home ? "Recherche de destination" : "")
+                                        .accessibilityHint(viewMode == .home ? "Double-tapez pour ouvrir la recherche d'itinéraires" : "")
+                                        .accessibilityAddTraits(viewMode == .home ? .isSearchField : [])
                                         .padding(.top, viewMode == .home ? 0 : 55)
                                         .offset(y: searchBarOffset)
                                         .animation(searchTransitionSpring, value: viewMode)
@@ -450,6 +460,8 @@ struct MainNavigationView: View {
                         selectedShortcut = firstShortcut
                         transitionToSearchModeWithShortcut(firstShortcut)
                     }
+                    .accessibilityLabel("Raccourcis \(firstShortcut.name)")
+                    .accessibilityAddTraits(.isButton)
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
                 } else {
                     ShortcutButton(
@@ -459,6 +471,8 @@ struct MainNavigationView: View {
                     ) {
                         showShortcutsSettings = true
                     }
+                    .accessibilityLabel("Ajouter un raccourci")
+                    .accessibilityAddTraits(.isButton)
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
                 }
                 
@@ -494,6 +508,7 @@ struct MainNavigationView: View {
                         )
                     }
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
+                    .accessibilityLabel("Raccourcis SwissPass")
                 } else if shortcutManager.visibleShortcuts.count >= 2 {
                     let secondShortcut = shortcutManager.visibleShortcuts[1]
                     ShortcutButton(
@@ -504,6 +519,8 @@ struct MainNavigationView: View {
                         transitionToSearchModeWithShortcut(secondShortcut)
                     }
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
+                    .accessibilityLabel("Raccourcis \(secondShortcut.name)")
+                    .accessibilityAddTraits(.isButton)
                 } else {
                     ShortcutButton(
                         symbol: "plus",
@@ -513,6 +530,8 @@ struct MainNavigationView: View {
                         showShortcutsSettings = true
                     }
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
+                    .accessibilityLabel("Ajouter un raccourci")
+                    .accessibilityAddTraits(.isButton)
                 }
             }
         }

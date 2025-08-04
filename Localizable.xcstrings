@@ -617,6 +617,16 @@
         }
       }
     },
+    "Arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop"
+          }
+        }
+      }
+    },
     "Arrêts" : {
       "localizations" : {
         "en" : {
@@ -865,6 +875,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plane"
+          }
+        }
+      }
+    },
+    "Balayez vers la gauche ou la droite pour changer de direction. Double-cliquez pour obtenir plus de détails sur le prochain départ." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Swipe left or right to change direction. Double-tap for more details about the next departure."
           }
         }
       }
@@ -1461,6 +1481,66 @@
         }
       }
     },
+    "Double-cliquez pour obtenir plus de détails sur le prochain départ." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap for more details about the next departure."
+          }
+        }
+      }
+    },
+    "Double-tapez pour changer d'onglet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap to change tab"
+          }
+        }
+      }
+    },
+    "Double-tapez pour ouvrir la recherche d'itinéraires" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap to open itinerary search"
+          }
+        }
+      }
+    },
+    "Double-tapez pour ouvrir les paramètres de l'application" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap to open app’s settings"
+          }
+        }
+      }
+    },
+    "Double-tapez pour voir tous les départs à cet arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap to see all departures at this stop"
+          }
+        }
+      }
+    },
+    "Double-tappez pour lister les départs de cet arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap to list every departures at this stop"
+          }
+        }
+      }
+    },
     "du quai" : {
       "localizations" : {
         "en" : {
@@ -1951,6 +2031,16 @@
         }
       }
     },
+    "L'arrêt est à" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The stop is at"
+          }
+        }
+      }
+    },
     "L'itinéraire a bien été enregistré dans votre calendrier !" : {
       "localizations" : {
         "en" : {
@@ -2061,12 +2151,32 @@
         }
       }
     },
+    "Liste des arrêts à proximité" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List of nearby stops"
+          }
+        }
+      }
+    },
     "Liste des modules utilisés dans l'application" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "List of modules used in the app"
+          }
+        }
+      }
+    },
+    "Liste des résultats de recherche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List of search results"
           }
         }
       }
@@ -2375,6 +2485,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
+          }
+        }
+      }
+    },
+    "Onglet %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tab %1$@ %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Onglet %1$@ %2$@"
           }
         }
       }
@@ -2785,6 +2911,26 @@
         }
       }
     },
+    "Raccourcis %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shortcuts %@"
+          }
+        }
+      }
+    },
+    "Raccourcis SwissPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SwissPass shortcut"
+          }
+        }
+      }
+    },
     "Rapport en cours..." : {
       "localizations" : {
         "en" : {
@@ -2831,6 +2977,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Searching for routes…"
+          }
+        }
+      }
+    },
+    "Recherche de destination" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destination search"
           }
         }
       }

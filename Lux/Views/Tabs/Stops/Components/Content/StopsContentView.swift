@@ -37,9 +37,11 @@ struct SectionTitleView: View {
     var body: some View {
         HStack {
             Image(systemName: isSearchMode ? "magnifyingglass" : "location.fill")
+                .accessibilityHidden(true)
             Text(isSearchMode ? "Résultats de recherche" : "À proximité")
                 .font(.headline)
                 .fontWeight(.bold)
+                .accessibilityLabel(isSearchMode ? "Liste des résultats de recherche" : "Liste des arrêts à proximité")
         }
         .padding(.top, 17)
         .padding(.horizontal, 25)
