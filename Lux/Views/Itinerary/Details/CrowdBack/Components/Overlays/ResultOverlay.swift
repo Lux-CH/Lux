@@ -77,7 +77,7 @@ struct SuccessOverlay: View {
                     .font(.headline)
                     .fontWeight(.semibold)
                 
-                Text(String(localized: "\(reportCount) rapport(s) transmis avec succès.\nMerci pour votre contribution !"))
+                Text(String(localized: "Vos rapports ont été transmis avec succès.\nMerci pour votre contribution !"))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .multilineTextAlignment(.center)
