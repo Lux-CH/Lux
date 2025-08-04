@@ -14,7 +14,12 @@ struct ReportView: View {
     @EnvironmentObject var locationManager: LocationManager
     
     @State private var currentStep: Int = 0
-    @State private var attributeValues: [ReportAttribute: Int] = [:]
+    @State private var attributeValues: [ReportAttribute: Int] = [
+        .crowd: 3,
+        .clean: 3,
+        .heat: 3,
+        .noise: 3
+    ]
     @State private var isSubmitting: Bool = false
     @State private var showSuccess: Bool = false
     @State private var showError: Bool = false
@@ -206,7 +211,7 @@ struct ReportView: View {
                     await MainActor.run {
                         failedReportsCount += 1
                     }
-                    print("Error sending report for \(attribute): \(error)")
+                    print("error sending report for \(attribute): \(error)")
                 }
             }
             
