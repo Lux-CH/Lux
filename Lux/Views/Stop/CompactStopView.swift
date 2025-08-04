@@ -49,15 +49,19 @@ struct CompactStopView: View {
                 HStack {
                     Image(systemName: "signpost.right")
                         .foregroundColor(.secondary)
+                        .accessibilityHidden(true)
                     
                     Text(viewModel.stop.name)
                         .multilineTextAlignment(.leading)
                         .fontWeight(.bold)
                         .foregroundColor(.primary)
+                        .accessibilityAddTraits(.isHeader)
                     
                     Spacer()
                     
                     connectionPills(prefix: 3)
+                        .accessibilityElement(children: .combine)
+                        .accessibilityLabel(connectionPillsAccessibilityLabel)
                 }
                 .padding(.horizontal, 25)
                 .padding(.bottom, 12)
@@ -65,7 +69,12 @@ struct CompactStopView: View {
                 
                 Divider()
                     .padding(.bottom, 0)
+                    .accessibilityHidden(true)
             }
+            .accessibilityElement(children: .combine)
+            .accessibilityLabel(headerAccessibilityLabel)
+            .accessibilityHint("Double-tapez pour voir tous les départs à cet arrêt")
+            .accessibilityAddTraits(.isButton)
             .background {
                 MaskedImageView()
                     .edgesIgnoringSafeArea(.all)
@@ -80,7 +89,32 @@ struct CompactStopView: View {
                         )
                         .strokeBorder(Color(UIColor.separator).opacity(0.5), lineWidth: colorScheme == .dark ? 0 : 0.5)
                     )
+                    .accessibilityHidden(true)
             }
+        }
+    }
+    
+    private var headerAccessibilityLabel: String {
+        let stopName = "Arrêt \(viewModel.stop.name)"
+        let connectionsText = connectionPillsAccessibilityLabel
+        
+        if connectionsText.isEmpty {
+            return stopName
+        } else {
+            return "\(stopName), \(connectionsText)"
+        }
+    }
+    
+    private var connectionPillsAccessibilityLabel: String {
+        let visibleConnections = viewModel.connections.dropFirst(maxGroupsToShow >= viewModel.connections.count ? 0 : maxGroupsToShow).prefix(3)
+        let connectionNames = visibleConnections.map { $0 }.joined(separator: ", ")
+        
+        if viewModel.connections.count > 3 {
+            return "Correspondances, \(connectionNames) et \(viewModel.connections.count - 3) autres"
+        } else if !connectionNames.isEmpty {
+            return "Correspondances, \(connectionNames)"
+        } else {
+            return ""
         }
     }
     
@@ -88,9 +122,11 @@ struct CompactStopView: View {
         HStack(spacing: 4) {
             ForEach(viewModel.connections.dropFirst(maxGroupsToShow >= viewModel.connections.count ? 0 : maxGroupsToShow).prefix(prefix), id: \.self) { connection in
                 LinePill(line: connection, mode: .bus)
+                    .accessibilityHidden(true)
             }
             if viewModel.connections.count > prefix {
                 MorePill()
+                    .accessibilityHidden(true)
             }
         }
     }
@@ -145,20 +181,68 @@ struct CompactStopView: View {
                             IncomingBusView(group: group, viewModel: viewModel)
                                 .padding(.horizontal)
                                 .tag(index)
+                                .accessibilityElement(children: .combine)
+                                .accessibilityLabel(groupAccessibilityLabel(for: group))
+                                .accessibilityHint(groups.count > 1 ? "Balayez vers la gauche ou la droite pour changer de direction. Double-cliquez pour obtenir plus de détails sur le prochain départ." : "Double-cliquez pour obtenir plus de détails sur le prochain départ.")
                         }
                     }
                 }
                 .frame(height: 70)
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                .accessibilityElement(children: .contain)
+                .accessibilityAddTraits(.updatesFrequently)
                 
                 paginationDotsView(groups: groups, routeName: routeName)
+                    .accessibilityHidden(true)
             }
             
             if routeName != viewModel.routeNames.prefix(maxGroupsToShow).last {
                 Divider()
                     .padding(.horizontal)
+                    .accessibilityHidden(true)
             }
         }
+    }
+    
+    private func groupAccessibilityLabel(for group: GroupedStopTime) -> String {
+        let routeInfo = group.routeShortName
+        let destination = group.headsign
+        let displayTrack = group.stopTimes.first {
+            $0.place.track != nil || $0.place.scheduledTrack != nil
+        }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? String(localized: "inconnu")
+        
+        let transport = group.stopTimes.first?.mode.displayName ?? "Bus"
+        
+        let firstDeparture = group.stopTimes.first?.place.departure ?? group.stopTimes.first?.place.arrival
+        let secondDeparture = group.stopTimes.count > 1 ? (group.stopTimes[1].place.departure ?? group.stopTimes[1].place.arrival) : nil
+        
+        var label = "\(transport) \(routeInfo) en direction de \(destination). \(getTrackType(displayTrack))"
+        
+        let now = Date()
+        
+        if let departure = firstDeparture {
+            let timeDiff = Int(departure.timeIntervalSince(now))
+            
+            if timeDiff <= 60 {
+                label += ", arrive maintenant"
+            } else {
+                let minutes = Int(ceil(Double(timeDiff) / 60.0))
+                label += ", arrive dans \(minutes) minutes"
+            }
+        }
+        
+        if let secondDep = secondDeparture {
+            let timeDiff = Int(secondDep.timeIntervalSince(now))
+            
+            if timeDiff <= 60 {
+                label += ", puis maintenant"
+            } else {
+                let minutes = Int(ceil(Double(timeDiff) / 60.0))
+                label += ", puis dans \(minutes) minutes"
+            }
+        }
+        
+        return label
     }
     
     private func paginationDotsView(groups: [GroupedStopTime], routeName: String) -> some View {

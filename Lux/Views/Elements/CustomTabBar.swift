@@ -27,6 +27,8 @@ struct CustomTabBar: View {
                             }
                         }
                     )
+                    .accessibilityLabel("Onglet \(tab.title) \(selectedTab == tab ? "séléctionné" : "")")
+                    .accessibilityHint("Double-tapez pour changer d'onglet")
                 }
             }
         }

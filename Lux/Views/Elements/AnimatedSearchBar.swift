@@ -21,6 +21,7 @@ struct AnimatedSearchBar: View {
                 .padding(.horizontal, 20)
                 .font(.system(size: 16, weight: .medium))
                 .disabled(isTextFieldDisabled)
+                .accessibilityHidden(isTextFieldDisabled)
                 .overlay(
                     HStack {
                         Spacer()
@@ -31,14 +32,14 @@ struct AnimatedSearchBar: View {
                                     .font(.system(size: 16))
                             }
                             .padding(.trailing, 8)
+                            .accessibilityHidden(isTextFieldDisabled)
                         }
                     }
                 )
                 .onChange(of: searchText) {
                     if searchText.isEmpty {
                         onClear()
-                    }
-                    else {
+                    } else {
                         onSearch()
                     }
                 }
@@ -55,6 +56,7 @@ struct AnimatedSearchBar: View {
             }
             .buttonStyle(PlainButtonStyle())
             .allowsHitTesting(!isTextFieldDisabled)
+            .accessibilityHidden(isTextFieldDisabled)
             .padding(.trailing, 18)
         }
         .frame(width: 350, height: 60)
@@ -65,5 +67,6 @@ struct AnimatedSearchBar: View {
                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
         )
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: placeholderText)
+        .accessibilityElement(children: isTextFieldDisabled ? .ignore : .contain)
     }
 }
