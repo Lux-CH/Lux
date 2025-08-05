@@ -2021,6 +2021,16 @@
         }
       }
     },
+    "Glissez vers le haut pour voir plus d'arrêts à proximité" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slide up to see more nearby stops"
+          }
+        }
+      }
+    },
     "Groupé" : {
       "localizations" : {
         "en" : {
