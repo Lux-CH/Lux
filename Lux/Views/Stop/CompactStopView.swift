@@ -155,11 +155,9 @@ struct CompactStopView: View {
                     .accessibilityHidden(true)
             }
             
-            if routeName != viewModel.routeNames.prefix(maxGroupsToShow).last {
-                Divider()
-                    .padding(.horizontal)
-                    .accessibilityHidden(true)
-            }
+            Divider()
+                .padding(.horizontal)
+                .accessibilityHidden(true)
         }
     }
     
