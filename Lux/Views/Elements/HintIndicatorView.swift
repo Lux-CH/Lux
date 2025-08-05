@@ -1,5 +1,5 @@
 //
-//  SwipeIndicatorView.swift
+//  HintIndicatorView.swift
 //  Lux
 //
 //  Created by Constantin Clerc on 06.08.2025.
@@ -7,19 +7,24 @@
 
 import SwiftUI
 
-struct SwipeIndicatorView: View {
+struct HintIndicatorView: View {
+    let icon: String
+    let message: String
+    let delay: Double
+    let duration: Double
+    
     @State private var isVisible = false
     @State private var bounceOffset: CGFloat = 0
     @State private var pulseOpacity: Double = 0.3
     
     var body: some View {
         VStack(spacing: 4) {
-            Image(systemName: "chevron.compact.up")
+            Image(systemName: icon)
                 .foregroundStyle(.secondary)
                 .font(.system(size: 20, weight: .bold))
                 .offset(y: bounceOffset)
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + delay + 2) {
                         bounce()
                     }
                 }
@@ -28,7 +33,7 @@ struct SwipeIndicatorView: View {
                 }
                 .opacity(isVisible ? pulseOpacity - 0.1 : 0)
             
-            Text("Glissez vers le haut pour voir plus d'arrêts à proximité")
+            Text(message)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .font(.caption)
@@ -37,13 +42,13 @@ struct SwipeIndicatorView: View {
         }
         
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 4) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
                 withAnimation(.easeOut(duration: 0.75)) {
                     isVisible = true
                 }
                 startPulsing()
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 36) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay + duration) {
                 withAnimation(.easeOut(duration: 0.75)) {
                     isVisible = false
                 }
