@@ -294,8 +294,7 @@ struct WelcomeView: View {
             level: 0.0,
             areas: [],
             score: 0.0
-        ), maxGroupsToShow: 3, fromStops: false, showConnections
-                 : false)
+        ), maxGroupsToShow: 3, fromStops: false)
         .padding(.bottom, 7.5)
         .background(Color(.systemBackground).clipShape(
             UnevenRoundedRectangle(
