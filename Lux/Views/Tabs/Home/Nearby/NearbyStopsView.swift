@@ -16,6 +16,7 @@ struct NearbyStopsView: View {
     @State private var isLoading = false
     @State private var isWaitingForLocation = false
     @ObservedObject var settings = Settings.shared
+    @ObservedObject var progress = Progress.shared
     
     @State private var lastFetchedLocation: CLLocation? = nil
     @State private var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -160,8 +161,13 @@ struct NearbyStopsView: View {
                     }
                     
                     if settings.appLaunchCount < 5 {
-                        SwipeIndicatorView()
-                            .padding(.top, 14)
+                        HintIndicatorView(
+                            icon: "chevron.compact.up",
+                            message: String(localized: "Glissez vers le haut pour voir plus d'arrêts à proximité"),
+                            delay: 2,
+                            duration: 35
+                        )
+                        .padding(.top, 14)
                     }
                 }
             }
