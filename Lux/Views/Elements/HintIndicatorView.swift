@@ -12,6 +12,7 @@ struct HintIndicatorView: View {
     let message: String
     let delay: Double
     let duration: Double
+    let onDismiss: (() -> Void)?
     
     @State private var isVisible = false
     @State private var bounceOffset: CGFloat = 0
@@ -51,6 +52,7 @@ struct HintIndicatorView: View {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay + duration) {
                 withAnimation(.easeOut(duration: 0.75)) {
                     isVisible = false
+                    onDismiss?()
                 }
             }
         }
