@@ -25,6 +25,7 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("autoColorScheme") var autoColorScheme: Bool = false
     @AppStorage("customScheme") var customScheme: Bool = false
     @AppStorage("customSchemeSelection") var customSchemeSelection: String = ""
+    @AppStorage("easyOnTheEyes") var easyOnTheEyes: Bool = false
 
     /// Experimental
     @AppStorage("fetchWalkingDirectionsUsingMKDirections") var fetchWalkingDirectionsUsingMKDirections: Bool = true
