@@ -15,6 +15,7 @@ struct NearbyStopsView: View {
     @State private var searchResults: [SearchResult] = []
     @State private var isLoading = false
     @State private var isWaitingForLocation = false
+    @ObservedObject var settings = Settings.shared
     
     @State private var lastFetchedLocation: CLLocation? = nil
     @State private var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -150,23 +151,18 @@ struct NearbyStopsView: View {
                         .foregroundColor(.accentColor)
                 }
             } else {
-                VStack(spacing: 2.5) {
+                VStack(spacing: 8) {
                     if let firstSearchResult = searchResults.first {
                         ZStack {
-                            StopView(stop: firstSearchResult, maxGroupsToShow: 3, fromStops: false)
+                            StopView(stop: firstSearchResult, maxGroupsToShow: 5, fromStops: false)
                         }
                         .frame(maxWidth: .infinity)
                     }
                     
-                    if searchResults.count >= 2 {
-                        ZStack {
-                            StopView(stop: searchResults[1], maxGroupsToShow: 2, fromStops: false)
-                        }
-                        .frame(maxWidth: .infinity)
+                    if settings.appLaunchCount < 5 {
+                        SwipeIndicatorView()
+                            .padding(.top, 14)
                     }
-                    
-                    Divider()
-                        .padding(.horizontal, 20)
                 }
             }
         }
