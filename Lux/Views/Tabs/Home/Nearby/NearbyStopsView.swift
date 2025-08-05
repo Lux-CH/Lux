@@ -166,8 +166,18 @@ struct NearbyStopsView: View {
                             message: String(localized: "Glissez vers le haut pour voir plus d'arrêts à proximité"),
                             delay: 2,
                             duration: 35
-                        )
-                        .padding(.top, 14)
+                        ) {}
+                            .padding(.top, 14)
+                    } else if progress.numOfTimesStopViewWasOpened >= 5 && settings.reduceSpacerBtwnStopContentView && !progress.compactModeSuggestion {
+                        HintIndicatorView(
+                            icon: "rectangle.expand.vertical",
+                            message: String(localized: "Vous préférez voir deux arrêts ? Désactivez le mode compact dans les réglages."),
+                            delay: 4,
+                            duration: 32
+                        ) {
+                            progress.compactModeSuggestion = true
+                        }
+                        .padding(.top, 0)
                     }
                 }
             }

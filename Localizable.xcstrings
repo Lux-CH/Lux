@@ -4121,6 +4121,16 @@
         }
       }
     },
+    "Vous préférez voir deux arrêts ? Désactivez le mode compact dans les réglages." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You would prefer seeing two stops ? Disable compact mode in settings."
+          }
+        }
+      }
+    },
     "Widget" : {
       "localizations" : {
         "en" : {
