@@ -317,6 +317,16 @@
         }
       }
     },
+    "Accédez rapidement à vos destinations préférées en fonction du temps, de votre position, et de vos habitudes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quickly access your favorite destinations based on the weather, your location, and your habits."
+          }
+        }
+      }
+    },
     "Accès à la localisation refusé" : {
       "localizations" : {
         "en" : {
@@ -557,6 +567,36 @@
         }
       }
     },
+    "Ajoutez des raccourcis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add shortucts"
+          }
+        }
+      }
+    },
+    "Ajoutez votre SwissPass à Lux" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add your SwissPass to Lux"
+          }
+        }
+      }
+    },
+    "Ajustez le style de Lux selon vos préférences" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tail Lux’s appearance to your preference"
+          }
+        }
+      }
+    },
     "Ajustez votre recherche d'itinéraires" : {
       "localizations" : {
         "en" : {
@@ -603,6 +643,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apply"
+          }
+        }
+      }
+    },
+    "Apprenez à lire les informations en temps réel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Learn how to read information in real time"
           }
         }
       }
@@ -659,6 +709,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scheduled arrival : %@"
+          }
+        }
+      }
+    },
+    "Astuce" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tip"
           }
         }
       }
@@ -779,6 +839,16 @@
         }
       }
     },
+    "Aucune information en temps réel disponible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No real time information available"
+          }
+        }
+      }
+    },
     "Aucune ligne ajoutée" : {
       "localizations" : {
         "en" : {
@@ -849,6 +919,16 @@
         }
       }
     },
+    "Autre jour" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other day"
+          }
+        }
+      }
+    },
     "Autres départs" : {
       "localizations" : {
         "en" : {
@@ -895,6 +975,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welcome in LuxPass"
+          }
+        }
+      }
+    },
+    "Bienvenue sur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Welcome on"
           }
         }
       }
@@ -1165,6 +1255,16 @@
         }
       }
     },
+    "Commencer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
     "Commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis" : {
       "localizations" : {
         "en" : {
@@ -1175,12 +1275,32 @@
         }
       }
     },
+    "Comprenez l'état de vos transports" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Understand transport state"
+          }
+        }
+      }
+    },
     "configuré" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "configured"
+          }
+        }
+      }
+    },
+    "Configurez LuxPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configure LuxPass"
           }
         }
       }
@@ -1377,6 +1497,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Departure at : %@"
+          }
+        }
+      }
+    },
+    "Déplacez-vous facilement dans Genève" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travel easily in Geneva."
           }
         }
       }
@@ -1731,6 +1861,26 @@
         }
       }
     },
+    "Exemple d'arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop example"
+          }
+        }
+      }
+    },
+    "Faites de Lux le votre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make Lux yours"
+          }
+        }
+      }
+    },
     "Fauteuil roulant" : {
       "localizations" : {
         "en" : {
@@ -1831,12 +1981,32 @@
         }
       }
     },
+    "Glissez horizontalement pour voir les différentes directions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slide horizontally to see other directions"
+          }
+        }
+      }
+    },
     "Groupé" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Grouped"
+          }
+        }
+      }
+    },
+    "Guide des transports" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transports guide"
           }
         }
       }
@@ -1857,6 +2027,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Usual time"
+          }
+        }
+      }
+    },
+    "Horaire d'un jour différent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Schedule for a different day"
+          }
+        }
+      }
+    },
+    "Horaire théorique" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Planned schedule"
           }
         }
       }
@@ -1917,6 +2107,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unknown"
+          }
+        }
+      }
+    },
+    "Indiquez les lignes que vous fréquentez le plus souvent pour les mettre en avant dans Lux. Si vous ne le faites pas, elles seront automatiquement ajoutées." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select the lines you use most often to highlight them in Lux. If you don't, they will be added automatically."
+          }
+        }
+      }
+    },
+    "Information précise et actualisée" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accurate and up-to-date information"
           }
         }
       }
@@ -2061,12 +2271,32 @@
         }
       }
     },
+    "Légende des couleurs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color legend"
+          }
+        }
+      }
+    },
     "Légère" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Light"
+          }
+        }
+      }
+    },
+    "Les arrêts sont représentés par l'icône %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stops are represented by the %@ icon"
           }
         }
       }
@@ -2197,6 +2427,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mon"
+          }
+        }
+      }
+    },
+    "Lux" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux"
           }
         }
       }
@@ -2701,6 +2941,16 @@
         }
       }
     },
+    "Personnalisez Lux pour l'adapter à vos besoins et préférences" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customize Lux to suit your needs and preferences."
+          }
+        }
+      }
+    },
     "Personnalisez votre expérience Lux" : {
       "localizations" : {
         "en" : {
@@ -3111,6 +3361,16 @@
         }
       }
     },
+    "Retard/Avance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Late/Early"
+          }
+        }
+      }
+    },
     "Risqué" : {
       "localizations" : {
         "en" : {
@@ -3431,6 +3691,16 @@
         }
       }
     },
+    "Temps réel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Real time"
+          }
+        }
+      }
+    },
     "Terminer" : {
       "localizations" : {
         "en" : {
@@ -3467,6 +3737,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Always in dark mode"
+          }
+        }
+      }
+    },
+    "Tout est prêt !" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everything is ready !"
           }
         }
       }
@@ -3517,6 +3797,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Public transport"
+          }
+        }
+      }
+    },
+    "Transport en retard ou en avance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transport delayed or early"
           }
         }
       }
@@ -3777,6 +4067,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You arrived at destination"
+          }
+        }
+      }
+    },
+    "Vous êtes désormais prêt à utiliser Lux." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You are now ready to use Lux."
           }
         }
       }
