@@ -42,7 +42,7 @@ struct HintIndicatorView: View {
         }
         
         .onAppear {
-            DispatchQueue.main.asyncAfter(deadline: .now() + duration) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 withAnimation(.easeOut(duration: 0.75)) {
                     isVisible = true
                 }
