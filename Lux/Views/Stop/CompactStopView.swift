@@ -14,15 +14,13 @@ struct CompactStopView: View {
     @ObservedObject var settings = Settings.shared
 
     let maxGroupsToShow: Int
-    let showConnections: Bool
     
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
-    init(stop: SearchResult, maxGroupsToShow: Int, showConnections: Bool) {
+    init(stop: SearchResult, maxGroupsToShow: Int) {
         self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: false))
         self.maxGroupsToShow = maxGroupsToShow
-        self.showConnections = showConnections
     }
     
     var body: some View {
@@ -60,12 +58,6 @@ struct CompactStopView: View {
                         .accessibilityAddTraits(.isHeader)
                     
                     Spacer()
-                    
-                    if showConnections {
-                        connectionPills(prefix: 3)
-                            .accessibilityElement(children: .combine)
-                            .accessibilityLabel(connectionPillsAccessibilityLabel)
-                    }
                 }
                 .padding(.horizontal, 25)
                 .padding(.bottom, 12)
@@ -76,7 +68,7 @@ struct CompactStopView: View {
                     .accessibilityHidden(true)
             }
             .accessibilityElement(children: .combine)
-            .accessibilityLabel(headerAccessibilityLabel)
+            .accessibilityLabel("Arrêt \(viewModel.stop.name)")
             .accessibilityHint("Double-tapez pour voir tous les départs à cet arrêt")
             .accessibilityAddTraits(.isButton)
             .background {
@@ -93,43 +85,6 @@ struct CompactStopView: View {
                         )
                         .strokeBorder(Color(UIColor.separator).opacity(0.5), lineWidth: colorScheme == .dark ? 0 : 0.5)
                     )
-                    .accessibilityHidden(true)
-            }
-        }
-    }
-    
-    private var headerAccessibilityLabel: String {
-        let stopName = "Arrêt \(viewModel.stop.name)"
-        let connectionsText = connectionPillsAccessibilityLabel
-        
-        if connectionsText.isEmpty {
-            return stopName
-        } else {
-            return "\(stopName), \(connectionsText)"
-        }
-    }
-    
-    private var connectionPillsAccessibilityLabel: String {
-        let visibleConnections = viewModel.connections.dropFirst(maxGroupsToShow >= viewModel.connections.count ? 0 : maxGroupsToShow).prefix(3)
-        let connectionNames = visibleConnections.map { $0 }.joined(separator: ", ")
-        
-        if viewModel.connections.count > 3 {
-            return "Correspondances, \(connectionNames) et \(viewModel.connections.count - 3) autres"
-        } else if !connectionNames.isEmpty {
-            return "Correspondances, \(connectionNames)"
-        } else {
-            return ""
-        }
-    }
-    
-    private func connectionPills(prefix: Int) -> some View {
-        HStack(spacing: 4) {
-            ForEach(viewModel.connections.dropFirst(maxGroupsToShow >= viewModel.connections.count ? 0 : maxGroupsToShow).prefix(prefix), id: \.self) { connection in
-                LinePill(line: connection, mode: .bus)
-                    .accessibilityHidden(true)
-            }
-            if viewModel.connections.count > prefix {
-                MorePill()
                     .accessibilityHidden(true)
             }
         }
