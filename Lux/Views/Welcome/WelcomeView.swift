@@ -12,10 +12,13 @@ struct WelcomeView: View {
     @State private var currentPage: Int = 0
     @Environment(\.dismiss) var dismiss
     @ObservedObject var settings = Settings.shared
+    @Environment(\.colorScheme) var colorScheme
     
     @State private var showShortcuts = false
     @State private var showLineScore = false
     @State private var showLuxPass = false
+    
+    @State private var cardStyleIsSubtle: Bool = true
 
     private let totalPages = 4
     
@@ -54,6 +57,12 @@ struct WelcomeView: View {
                     LuxPassView(showSwisspassOnHome: .constant(false), isFromHome: false)
                         .background(Color(.secondarySystemBackground))
                 }
+            }
+            .onAppear {
+                cardStyleIsSubtle = colorScheme == .light
+            }
+            .onChange(of: colorScheme) {
+                cardStyleIsSubtle = colorScheme == .light
             }
         }
     }
@@ -168,7 +177,7 @@ struct WelcomeView: View {
     }
     
     private var legendCard: some View {
-        ModernCard(style: .normal) {
+        ModernCard(style: cardStyleIsSubtle ? .subtle : .normal) {
             VStack(alignment: .leading, spacing: 24) {
                 legendHeader
                 legendItems
@@ -253,7 +262,7 @@ struct WelcomeView: View {
     }
     
     private var stopsExampleCard: some View {
-        ModernCard(style: .normal) {
+        ModernCard(style: cardStyleIsSubtle ? .subtle : .normal) {
             VStack(spacing: 20) {
                 stopExampleHeader
                 stopPreviewCard
@@ -277,7 +286,7 @@ struct WelcomeView: View {
     }
     
     private var stopPreviewCard: some View {
-        ModernCard(style: .normal) {
+        ModernCard(style: cardStyleIsSubtle ? .normal : .subtle) {
             StopPreviewWelcomeView(
                 stop: SearchResult(
                     type: .stop,
@@ -295,7 +304,7 @@ struct WelcomeView: View {
     }
     
     private var tipCard: some View {
-        ModernCard(style: .normal) {
+        ModernCard(style: cardStyleIsSubtle ? .normal : .subtle) {
             HStack(spacing: 12) {
                 Image(systemName: "hand.point.up.left.fill")
                     .font(.system(size: 16))
@@ -333,7 +342,7 @@ struct WelcomeView: View {
     }
     
     private var customizationCard: some View {
-        ModernCard(style: .normal) {
+        ModernCard(style: cardStyleIsSubtle ? .subtle : .normal) {
             VStack(alignment: .leading, spacing: 24) {
                 customizationHeader
                 customizationItems
