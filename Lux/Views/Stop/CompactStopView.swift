@@ -14,13 +14,15 @@ struct CompactStopView: View {
     @ObservedObject var settings = Settings.shared
 
     let maxGroupsToShow: Int
+    let dontShowLastDivider: Bool
     
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
-    init(stop: SearchResult, maxGroupsToShow: Int) {
+    init(stop: SearchResult, maxGroupsToShow: Int, dontShowLastDivider: Bool) {
         self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: false))
         self.maxGroupsToShow = maxGroupsToShow
+        self.dontShowLastDivider = dontShowLastDivider
     }
     
     var body: some View {
@@ -155,9 +157,11 @@ struct CompactStopView: View {
                     .accessibilityHidden(true)
             }
             
-            Divider()
-                .padding(.horizontal)
-                .accessibilityHidden(true)
+            if !(dontShowLastDivider && routeName == viewModel.routeNames.prefix(maxGroupsToShow).last) {
+                Divider()
+                    .padding(.horizontal)
+                    .accessibilityHidden(true)
+            }
         }
     }
     
