@@ -10,6 +10,10 @@ import SwiftUI
 class Progress: ObservableObject, @unchecked Sendable {
     @MainActor static let shared = Progress()
     
+    // counts
     @AppStorage("progress_numOfTimesStopViewWasOpened") var numOfTimesStopViewWasOpened: Int = 0
     @AppStorage("progress_numOfTimesTripViewWasOpened") var numOfTimesTripViewWasOpened: Int = 0
+    
+    // tips
+    @AppStorage("tip_shownCompactModeSuggestion") var compactModeSuggestion: Bool = false
 }
