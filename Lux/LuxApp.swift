@@ -49,6 +49,12 @@ struct LuxApp: App {
                         await handleIncomingURL(url)
                     }
                 }
+                .fullScreenCover(isPresented: $settings.firstLaunch) {
+                    WelcomeView()
+                        .environmentObject(locationManager)
+                        .environmentObject(shortcutManager)
+                        .environmentObject(disruptionManager)
+                }
                 .fullScreenCover(isPresented: $showItinerarySheet) {
                     if let itinerary = sharedItinerary {
                         ItineraryView(itinerary: itinerary, fromNearby: false)
