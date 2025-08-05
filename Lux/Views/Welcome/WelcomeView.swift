@@ -248,7 +248,7 @@ struct WelcomeView: View {
     }
     
     private var stopsPage: some View {
-        VStack(spacing: 36) {
+        VStack(spacing: 24) {
             pageHeader(
                 icon: "signpost.right",
                 title: String(localized: "Arrêts"),
@@ -264,66 +264,102 @@ struct WelcomeView: View {
     private var stopsExampleCard: some View {
         ModernCard(style: cardStyleIsSubtle ? .subtle : .normal) {
             VStack(spacing: 20) {
-                stopExampleHeader
+                Text("Exemple d'arrêt")
+                    .font(.headline)
+                    .fontWeight(.semibold)
                 stopPreviewCard
+                    .overlay(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 38,
+                            bottomLeadingRadius: 19,
+                            bottomTrailingRadius: 19,
+                            topTrailingRadius: 38,
+                            style: .continuous
+                        )
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 1)
+                    )
                 tipCard
             }
         }
     }
     
-    private var stopExampleHeader: some View {
-        HStack {
-            Image(systemName: "signpost.right")
-                .font(.system(size: 18))
-                .foregroundColor(.orange)
-            
-            Text("Exemple d'arrêt")
-                .font(.headline)
-                .fontWeight(.semibold)
-            
-            Spacer()
-        }
-    }
-    
     private var stopPreviewCard: some View {
-        ModernCard(style: cardStyleIsSubtle ? .normal : .subtle) {
-            StopPreviewWelcomeView(
-                stop: SearchResult(
-                    type: .stop,
-                    tokens: [],
-                    name: "Lancy-Bachet, gare",
-                    id: "ch_Parent8587075",
-                    lat: 0.0,
-                    lon: 0.0,
-                    level: 0.0,
-                    areas: [],
-                    score: 0.0
-                )
-            )
-        }
+        StopView(stop:SearchResult(
+            type: .stop,
+            tokens: [],
+            name: "Bel Air",
+            id: "ch_Parent8587387",
+            lat: 0.0,
+            lon: 0.0,
+            level: 0.0,
+            areas: [],
+            score: 0.0
+        ), maxGroupsToShow: 3, fromStops: false, showConnections
+                 : false)
+        .padding(.bottom, 7.5)
+        .background(Color(.systemBackground).clipShape(
+            UnevenRoundedRectangle(
+                topLeadingRadius: 38,
+                bottomLeadingRadius: 19,
+                bottomTrailingRadius: 19,
+                topTrailingRadius: 38,
+                style: .continuous
+            ))
+        )
     }
     
     private var tipCard: some View {
         ModernCard(style: cardStyleIsSubtle ? .normal : .subtle) {
-            HStack(spacing: 12) {
-                Image(systemName: "hand.point.up.left.fill")
-                    .font(.system(size: 16))
-                    .foregroundColor(.blue)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Astuce")
+            VStack(alignment: .leading, spacing: 4) {
+                HStack(spacing: 8) {
+                    Image(systemName: "lightbulb.fill")
+                        .font(.system(size: 14))
+                        .foregroundColor(.blue)
+                    
+                    Text("Astuces")
                         .font(.caption)
                         .fontWeight(.semibold)
                         .foregroundColor(.blue)
                     
-                    Text("Glissez horizontalement pour voir les différentes directions")
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
+                    Spacer()
                 }
+                .padding(.bottom, 8)
                 
-                Spacer()
+                VStack(alignment: .leading, spacing: 12) {
+                    tipItem(
+                        icon: "hand.tap.fill",
+                        text: Text("Cliquez sur \"\(Image(systemName: "signpost.right"))Bel Air\" pour plus de départs"),
+                        color: .red
+                    )
+                    
+                    tipItem(
+                        icon: "hand.draw.fill",
+                        text: Text("**Glissez horizontalement** pour changer de direction"),
+                        color: .green
+                    )
+                    
+                    tipItem(
+                        icon: "info.circle.fill",
+                        text: Text("Cliquez sur une ligne pour voir ses détails"),
+                        color: .blue
+                    )
+                }
             }
+        }
+    }
+
+    private func tipItem(icon: String, text: Text, color: Color) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: icon)
+                .font(.system(size: 12))
+                .foregroundColor(color)
+                .frame(width: 16)
+            
+            text
+                .font(.caption)
+                .fontWeight(.medium)
+                .foregroundColor(.primary)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
     
@@ -406,11 +442,12 @@ struct WelcomeView: View {
                 Image(systemName: icon)
                     .font(.system(size: 32))
                     .foregroundStyle(luxGradient)
+                    .opacity(icon == "signpost.right" ? 0.0 : 1.0)
                 
                 Text(title)
                     .font(.title)
                     .fontWeight(.bold)
-                    .foregroundColor(.primary)
+                    .foregroundStyle(icon == "signpost.right" ? AnyShapeStyle(luxGradient) : AnyShapeStyle(Color.primary))
             }
             
             subtitle

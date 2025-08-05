@@ -14,13 +14,15 @@ struct CompactStopView: View {
     @ObservedObject var settings = Settings.shared
 
     let maxGroupsToShow: Int
+    let showConnections: Bool
     
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
-    init(stop: SearchResult, maxGroupsToShow: Int) {
+    init(stop: SearchResult, maxGroupsToShow: Int, showConnections: Bool) {
         self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: false))
         self.maxGroupsToShow = maxGroupsToShow
+        self.showConnections = showConnections
     }
     
     var body: some View {
@@ -59,9 +61,11 @@ struct CompactStopView: View {
                     
                     Spacer()
                     
-                    connectionPills(prefix: 3)
-                        .accessibilityElement(children: .combine)
-                        .accessibilityLabel(connectionPillsAccessibilityLabel)
+                    if showConnections {
+                        connectionPills(prefix: 3)
+                            .accessibilityElement(children: .combine)
+                            .accessibilityLabel(connectionPillsAccessibilityLabel)
+                    }
                 }
                 .padding(.horizontal, 25)
                 .padding(.bottom, 12)

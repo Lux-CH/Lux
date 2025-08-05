@@ -18,6 +18,16 @@
     "*" : {
       "shouldTranslate" : false
     },
+    "**Glissez horizontalement** pour changer de direction" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Slide horizontally** to see other directions"
+          }
+        }
+      }
+    },
     "/ %.2f €" : {
       "shouldTranslate" : false
     },
@@ -713,12 +723,12 @@
         }
       }
     },
-    "Astuce" : {
+    "Astuces" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Tip"
+            "value" : "Tips"
           }
         }
       }
@@ -1251,6 +1261,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Light"
+          }
+        }
+      }
+    },
+    "Cliquez sur \"%@Bel Air\" pour plus de départs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap on «%@ Bel Air» for more departures"
+          }
+        }
+      }
+    },
+    "Cliquez sur une ligne pour voir ses détails" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap on a line to see it’s details"
           }
         }
       }
@@ -1977,16 +2007,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Global management of scores"
-          }
-        }
-      }
-    },
-    "Glissez horizontalement pour voir les différentes directions" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Slide horizontally to see other directions"
           }
         }
       }
