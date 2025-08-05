@@ -677,6 +677,16 @@
         }
       }
     },
+    "Arrêt %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop %@"
+          }
+        }
+      }
+    },
     "Arrêts" : {
       "localizations" : {
         "en" : {
