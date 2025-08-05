@@ -151,11 +151,16 @@ struct NearbyStopsView: View {
                 }
             } else {
                 VStack(spacing: 2.5) {
-                    ForEach(searchResults.prefix(2)) { result in
-                        let maxGroups = (searchResults.firstIndex(where: { $0.id == result.id }) == 1) ? 2 : 3
-                        
+                    if let firstSearchResult = searchResults.first {
                         ZStack {
-                            StopView(stop: result, maxGroupsToShow: maxGroups, fromStops: false)
+                            StopView(stop: firstSearchResult, maxGroupsToShow: 3, fromStops: false)
+                        }
+                        .frame(maxWidth: .infinity)
+                    }
+                    
+                    if searchResults.count >= 2 {
+                        ZStack {
+                            StopView(stop: searchResults[1], maxGroupsToShow: 2, fromStops: false)
                         }
                         .frame(maxWidth: .infinity)
                     }
