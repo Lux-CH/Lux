@@ -271,8 +271,8 @@ struct WelcomeView: View {
                     .overlay(
                         UnevenRoundedRectangle(
                             topLeadingRadius: 38,
-                            bottomLeadingRadius: 19,
-                            bottomTrailingRadius: 19,
+                            bottomLeadingRadius: 24,
+                            bottomTrailingRadius: 24,
                             topTrailingRadius: 38,
                             style: .continuous
                         )
@@ -300,8 +300,8 @@ struct WelcomeView: View {
         .background(Color(.systemBackground).clipShape(
             UnevenRoundedRectangle(
                 topLeadingRadius: 38,
-                bottomLeadingRadius: 19,
-                bottomTrailingRadius: 19,
+                bottomLeadingRadius: 24,
+                bottomTrailingRadius: 24,
                 topTrailingRadius: 38,
                 style: .continuous
             ))
