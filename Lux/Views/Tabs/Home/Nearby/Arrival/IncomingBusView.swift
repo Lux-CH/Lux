@@ -56,12 +56,16 @@ struct IncomingBusView: View {
                         .multilineTextAlignment(.leading)
                 }
                 Spacer()
-                VStack(alignment: .trailing) {
+                VStack(alignment: .trailing, spacing: 2) {
                     if let firstStop = group.stopTimes.first {
                         ArrivalMinuteView(incomingStop: firstStop)
+                            .font(.system(size: 19, weight: .semibold))
                     }
+                    
                     if group.stopTimes.count > 1 {
                         ArrivalMinuteView(incomingStop: group.stopTimes[1])
+                            .font(.system(size: 11, weight: .regular))
+                            .opacity(0.7)
                     }
                 }
             }
