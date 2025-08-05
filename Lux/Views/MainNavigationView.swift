@@ -34,6 +34,7 @@ struct MainNavigationView: View {
     @State private var headerHeight: CGFloat = 215
     @State private var searchText: String = ""
     @ObservedObject var settings = Settings.shared
+    @ObservedObject var progress = Progress.shared
     @FocusState private var isSearchBarFocused: Bool
 
     @State private var showSettings: Bool = false
@@ -578,7 +579,7 @@ struct MainNavigationView: View {
                 HapticFeedback.lightImpact()
             }
         }
-        
+        progress.numOfTimesTripViewWasOpened+=1 // only here because shortcuts are not considered purely "intentionals"
         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
     }
     
@@ -714,6 +715,7 @@ struct MainNavigationView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
             stopsViewModel.loadNearbyStops(showLoading: false)
         }
+        progress.numOfTimesStopViewWasOpened += 1
     }
     
     // doing cas par cas is a really ugly solution
