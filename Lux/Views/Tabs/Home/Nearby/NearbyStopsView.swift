@@ -23,6 +23,7 @@ struct NearbyStopsView: View {
     @State private var backgroundRefreshTask: Task<Void, Never>? = nil
     @State private var isUserConnectedToInternet: Bool = false
     @State private var maintenanceStatus: MaintenanceStatus? = nil
+    @State private var showingSuggestion: Bool = false
     
     private let significantDistance: CLLocationDistance = 100.0
     
@@ -153,11 +154,17 @@ struct NearbyStopsView: View {
                 }
             } else {
                 VStack(spacing: 8) {
-                    ForEach(Array(searchResults.prefix(1))) { result in
-                        ZStack {
-                            StopView(stop: result, maxGroupsToShow: 5, fromStops: false)
+                    VStack(spacing: 2.5) {
+                        ForEach(Array(searchResults.prefix(2).enumerated()), id: \.element.id) { index, result in
+                            ZStack {
+                                StopView(stop: result, maxGroupsToShow: index == 0 ? 3 : (showingSuggestion ? 1 : 2), fromStops: false)
+                            }
+                            .frame(maxWidth: .infinity)
                         }
-                        .frame(maxWidth: .infinity)
+                        
+                        Divider()
+                            .padding(.horizontal, 20)
+                        
                     }
                     
                     if settings.appLaunchCount < 5 {
@@ -166,18 +173,27 @@ struct NearbyStopsView: View {
                             message: String(localized: "Glissez vers le haut pour voir plus d'arrêts à proximité"),
                             delay: 2,
                             duration: 35
-                        ) {}
-                            .padding(.top, 14)
-                    } else if progress.numOfTimesStopViewWasOpened >= 5 && settings.reduceSpacerBtwnStopContentView && !progress.compactModeSuggestion {
-                        HintIndicatorView(
-                            icon: "rectangle.expand.vertical",
-                            message: String(localized: "Vous préférez voir deux arrêts ? Désactivez le mode compact dans les réglages."),
-                            delay: 4,
-                            duration: 32
                         ) {
-                            progress.compactModeSuggestion = true
+                            showingSuggestion = false
                         }
-                        .padding(.top, 0)
+                        .onAppear {
+                            showingSuggestion = true
+                        }
+                        .padding(.top, 14)
+                    } else if progress.numOfTimesTripViewWasOpened <= 5 && !progress.shownTripViewSuggestion {
+                        HintIndicatorView(
+                            icon: "chevron.compact.down",
+                            message: String(localized: "Glissez vers le bas pour planifier un itinéraire ou obtenir des directions"),
+                            delay: 2,
+                            duration: 35
+                        ) {
+                            progress.shownTripViewSuggestion = true
+                            showingSuggestion = false
+                        }
+                        .onAppear {
+                            showingSuggestion = true
+                        }
+                        .padding(.top, 14)
                     }
                 }
             }
