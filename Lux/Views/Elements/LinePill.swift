@@ -49,13 +49,20 @@ struct LinePill: View {
     }
     
     var body: some View {
+        let fillColor: Color = settings.easyOnTheEyes ?
+            .clear :
+            (settings.highContrastButAccurateLinePill ? lineColor : lineColor.opacity(0.25))
+
+        let strokeColor: Color = settings.easyOnTheEyes ?
+            lineColor :
+            Color.primary.opacity(0.1)
         ZStack {
             RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
-                .fill(settings.highContrastButAccurateLinePill ? lineColor : lineColor.opacity(0.25))
+                .fill(fillColor)
                 .frame(width: width, height: height)
                 .overlay(
                     RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                        .stroke(strokeColor, lineWidth: 0.5)
                 )
             
             Text(formattedLine)
@@ -69,13 +76,21 @@ struct LinePill: View {
 struct MorePill: View {
     @ObservedObject var settings = Settings.shared
     var body: some View {
+        let fillColor: Color = settings.easyOnTheEyes ?
+            .clear :
+            (settings.highContrastButAccurateLinePill ? Color(.secondarySystemFill) : Color.accentColor.opacity(0.25))
+        
+        let strokeColor: Color = settings.easyOnTheEyes ?
+            Color.accentColor.opacity(0.1) :
+            Color.primary.opacity(0.1)
+        
         ZStack {
             RoundedRectangle(cornerRadius: 50)
-                .fill(settings.highContrastButAccurateLinePill ? Color(.secondarySystemFill) : Color.accentColor.opacity(0.25))
+                .fill(fillColor)
                 .frame(width: 30, height: 20)
                 .overlay(
                     RoundedRectangle(cornerRadius: 50)
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                        .stroke(strokeColor, lineWidth: 0.5)
                 )
             Image(systemName: "ellipsis")
                 .foregroundColor(Color.accentColor)

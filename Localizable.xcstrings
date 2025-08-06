@@ -1142,6 +1142,26 @@
         }
       }
     },
+    "Cette option est indisponible lorsque \"Contraste plus important\" est activé." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This option is unavailable when « Higher contrast » is enabled."
+          }
+        }
+      }
+    },
+    "Cette option est indisponible lorsque \"Mode confort\" est activée." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This option is unavailable when « Comfort mode » is enabled."
+          }
+        }
+      }
+    },
     "Chargement de l'itinéraire..." : {
       "localizations" : {
         "en" : {
@@ -2633,6 +2653,16 @@
         }
       }
     },
+    "Mode confort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comfort mode"
+          }
+        }
+      }
+    },
     "Mode d'affichage" : {
       "localizations" : {
         "en" : {
@@ -3317,6 +3347,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reduce spacing in stops tab"
+          }
+        }
+      }
+    },
+    "Réduit la variété de couleurs dans l'application." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reduce color variety in the app."
           }
         }
       }

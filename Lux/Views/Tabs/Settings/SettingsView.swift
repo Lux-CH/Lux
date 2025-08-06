@@ -134,9 +134,18 @@ struct SettingsView: View {
                 SettingsToggle(
                     icon: "lightspectrum.horizontal",
                     title: String(localized: "Contraste plus important"),
-                    subtitle: String(localized: "Augmente la lisibilité de l'interface"),
+                    subtitle: settings.easyOnTheEyes ? String(localized: "Cette option est indisponible lorsque \"Mode confort\" est activée.") : String(localized: "Augmente la lisibilité de l'interface"),
                     isOn: $settings.highContrastButAccurateLinePill
                 )
+                .disabled(settings.easyOnTheEyes)
+                
+                SettingsToggle(
+                    icon: "eyeglasses",
+                    title: String(localized: "Mode confort"),
+                    subtitle: settings.highContrastButAccurateLinePill ? String(localized: "Cette option est indisponible lorsque \"Contraste plus important\" est activé.") : String(localized: "Réduit la variété de couleurs dans l'application."),
+                    isOn: $settings.easyOnTheEyes
+                )
+                .disabled(settings.highContrastButAccurateLinePill)
                 
                 NavigationLink(destination: AccentColorCustomizerView()) {
                     SettingsRow(
