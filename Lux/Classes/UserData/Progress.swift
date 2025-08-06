@@ -15,5 +15,5 @@ class Progress: ObservableObject, @unchecked Sendable {
     @AppStorage("progress_numOfTimesTripViewWasOpened") var numOfTimesTripViewWasOpened: Int = 0
     
     // tips
-    @AppStorage("tip_shownCompactModeSuggestion") var compactModeSuggestion: Bool = false
+    @AppStorage("tip_shownTripViewSuggestion") var shownTripViewSuggestion: Bool = false
 }

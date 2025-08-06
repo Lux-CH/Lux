@@ -2041,6 +2041,16 @@
         }
       }
     },
+    "Glissez vers le bas pour planifier un itinéraire ou obtenir des directions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slide down to plan an itinerary or obtain directions"
+          }
+        }
+      }
+    },
     "Glissez vers le haut pour voir plus d'arrêts à proximité" : {
       "localizations" : {
         "en" : {
@@ -4157,16 +4167,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You are now ready to use Lux."
-          }
-        }
-      }
-    },
-    "Vous préférez voir deux arrêts ? Désactivez le mode compact dans les réglages." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You would prefer seeing two stops ? Disable compact mode in settings."
           }
         }
       }
