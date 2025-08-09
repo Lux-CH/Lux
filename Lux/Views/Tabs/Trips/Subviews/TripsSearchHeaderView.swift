@@ -180,7 +180,7 @@ struct TripsSearchHeaderView: View {
             VStack(spacing: 0) {
                 HStack(spacing: 8) {
                     Image(systemName: "location")
-                        .foregroundStyle(viewModel.selectedFrom == nil ? .secondary : Color.accent)
+                        .foregroundStyle(viewModel.selectedFrom == nil ? .secondary : Color.accentColor)
                         .frame(width: 20)
                     fromSearchBar
                         .padding(.vertical, 8)
@@ -191,7 +191,7 @@ struct TripsSearchHeaderView: View {
                 
                 HStack(spacing: 8) {
                     Image(systemName: "flag.checkered")
-                        .foregroundStyle(viewModel.selectedTo == nil ? .secondary : Color.accent)
+                        .foregroundStyle(viewModel.selectedTo == nil ? .secondary : Color.accentColor)
                         .frame(width: 20)
                     toSearchBar
                         .padding(.vertical, 8)
