@@ -14,6 +14,7 @@ struct TripsSearchHeaderView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var isSwapping = false
     @State private var showTimePicker = false
+    @State var isFromStop: Bool = false
     var onBack: (() -> Void)?
     
     var body: some View {
@@ -39,7 +40,9 @@ struct TripsSearchHeaderView: View {
     private var headerBackground: some View {
         RoundedRectangle(cornerRadius: 32, style: .continuous)
             .fill(
-                Color.clear
+                isFromStop ? (colorScheme == .dark
+                ? Color(.secondarySystemBackground).opacity(0.8)
+                : Color.white) : Color.clear
             )
             .frame(height: 225)
             .clipShape(
