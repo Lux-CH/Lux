@@ -78,7 +78,7 @@ struct ExpandedStopHeaderView: View {
             .padding(.vertical, 4)
             .padding(.horizontal, 8)
             .background(
-                RoundedRectangle(cornerRadius: 35)
+                Capsule(style: .continuous)
                     .fill(Color.accentColor.opacity(0.1))
             )
         }

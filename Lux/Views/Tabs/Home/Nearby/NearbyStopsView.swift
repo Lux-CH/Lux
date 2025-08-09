@@ -58,14 +58,11 @@ struct NearbyStopsView: View {
                     .foregroundStyle(Color.accentColor)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
-                    .background {
-                        RoundedRectangle(cornerRadius: 35)
+                    .background(
+                        Capsule(style: .continuous)
                             .fill(.ultraThinMaterial)
-                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-                    }
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 35)
                             .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                     )
                 }
                 .padding(.top, -15)
