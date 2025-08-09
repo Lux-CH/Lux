@@ -507,6 +507,16 @@
         }
       }
     },
+    "Aide" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Help"
+          }
+        }
+      }
+    },
     "Ajoutées automatiquement" : {
       "localizations" : {
         "en" : {
@@ -4063,6 +4073,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An error occurred while loading the itinerary"
+          }
+        }
+      }
+    },
+    "Une question, un bug ou une suggestion ? Cliquez ici." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Have a question, found a bug, or have a suggestion? Click here."
           }
         }
       }
