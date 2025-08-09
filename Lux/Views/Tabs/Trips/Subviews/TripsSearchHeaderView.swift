@@ -200,26 +200,30 @@ struct TripsSearchHeaderView: View {
                     y: 2
                 )
             
-            VStack(spacing: 0) {
-                HStack(spacing: 8) {
-                    Image(systemName: "location")
-                        .foregroundStyle(viewModel.selectedFrom == nil ? .secondary : Color.accentColor)
-                        .frame(width: 20)
-                    fromSearchBar
-                        .padding(.vertical, 8)
-                }
-                .padding(.horizontal, 12)
+            ZStack {
+                connectionLine
                 
-                Divider()
-                
-                HStack(spacing: 8) {
-                    Image(systemName: "flag.checkered")
-                        .foregroundStyle(viewModel.selectedTo == nil ? .secondary : Color.accentColor)
-                        .frame(width: 20)
-                    toSearchBar
-                        .padding(.vertical, 8)
+                VStack(spacing: 0) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "location")
+                            .foregroundStyle(viewModel.selectedFrom == nil ? .secondary : Color.accentColor)
+                            .frame(width: 20)
+                        fromSearchBar
+                            .padding(.vertical, 8)
+                    }
+                    .padding(.horizontal, 12)
+                    
+                    Divider()
+                    
+                    HStack(spacing: 8) {
+                        Image(systemName: "flag.checkered")
+                            .foregroundStyle(viewModel.selectedTo == nil ? .secondary : Color.accentColor)
+                            .frame(width: 20)
+                        toSearchBar
+                            .padding(.vertical, 8)
+                    }
+                    .padding(.horizontal, 12)
                 }
-                .padding(.horizontal, 12)
             }
             
             swapButton
@@ -230,6 +234,33 @@ struct TripsSearchHeaderView: View {
             insertion: .opacity.combined(with: .move(edge: .bottom)).combined(with: .scale(scale: 0.95)),
             removal: .opacity.combined(with: .move(edge: .bottom)).combined(with: .scale(scale: 0.95))
         ))
+    }
+    
+    private var connectionLine: some View {
+        VStack {
+            Spacer()
+            HStack {
+                Rectangle()
+                    .fill(
+                        LinearGradient(
+                            gradient: Gradient(colors: [
+                                viewModel.selectedFrom == nil ? Color.secondary.opacity(0.3) : Color.accentColor.opacity(0.4),
+                                viewModel.selectedTo == nil ? Color.secondary.opacity(0.3) : Color.accentColor.opacity(0.4)
+                            ]),
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(width: 2, height: 30)
+                    .cornerRadius(1)
+                    .animation(.easeInOut(duration: 0.3), value: viewModel.selectedFrom)
+                    .animation(.easeInOut(duration: 0.3), value: viewModel.selectedTo)
+                
+                Spacer()
+            }
+            .padding(.leading, 20)
+            Spacer()
+        }
     }
     
     private var fromSearchBar: some View {
