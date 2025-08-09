@@ -75,6 +75,7 @@ struct TripsSearchHeaderView: View {
             .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.showTripResults)
     }
     
+    @ViewBuilder
     private var topBar: some View {
         HStack(spacing: 8) {
             if onBack != nil {
@@ -127,6 +128,7 @@ struct TripsSearchHeaderView: View {
         .padding(.horizontal, 4)
     }
     
+    @ViewBuilder
     private var timeChip: some View {
         Button(action: {
             HapticFeedback.lightImpact()
@@ -168,6 +170,7 @@ struct TripsSearchHeaderView: View {
         }
     }
     
+    @ViewBuilder
     private var optionsChip: some View {
         Button(action: {
             HapticFeedback.lightImpact()
