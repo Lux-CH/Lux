@@ -31,7 +31,7 @@ struct ShortcutButton: View {
             }
             .frame(width: 134, height: 52.5)
             .background(
-                RoundedRectangle(cornerRadius: 35)
+                Capsule(style: .continuous)
                     .stroke(
                         isPlaceholder ? Color.secondary.opacity(0.3) : Color.primary.opacity(0.1),
                         style: StrokeStyle(lineWidth: isPlaceholder ? 2 : 0.5, dash: isPlaceholder ? [6] : [])

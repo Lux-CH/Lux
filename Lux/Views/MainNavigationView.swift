@@ -140,7 +140,7 @@ struct MainNavigationView: View {
                                                         .background(Color(.secondarySystemFill).opacity(0.5))
                                                         .cornerRadius(35)
                                                         .overlay(
-                                                            RoundedRectangle(cornerRadius: 35)
+                                                            Capsule(style: .continuous)
                                                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                                         )
                                                         .accessibilityLabel("Paramètres")
@@ -440,7 +440,7 @@ struct MainNavigationView: View {
                     }
                     .frame(width: 275, height: 52)
                     .background(
-                        RoundedRectangle(cornerRadius: 35)
+                        Capsule(style: .continuous)
                             .stroke(Color.secondary.opacity(0.3),
                                     style: StrokeStyle(lineWidth: 2, dash: [6])
                                    )
@@ -496,7 +496,7 @@ struct MainNavigationView: View {
                         }
                         .frame(width: 134, height: 52.5)
                         .background(
-                            RoundedRectangle(cornerRadius: 35)
+                            Capsule(style: .continuous)
                                 .stroke(
                                     Color.primary.opacity(0.1),
                                     style: StrokeStyle(lineWidth: 0.5)
