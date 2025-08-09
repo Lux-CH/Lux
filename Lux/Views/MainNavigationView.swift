@@ -223,7 +223,6 @@ struct MainNavigationView: View {
                                 }
                             }
                         }
-                        .offset(y: min(0, searchDragOffset))
                         .ignoresSafeArea(edges: .top)
                         .zIndex(viewMode == .stops && settings.reduceSpacerBtwnStopContentView ? 1 : 0)
                         
@@ -414,7 +413,7 @@ struct MainNavigationView: View {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
                 withAnimation(.interactiveSpring(response: 0.1, dampingFraction: 1.0)) {
-                    searchDragOffset = (min(0, value.translation.height) * 0.6)
+                    searchDragOffset = min(0, value.translation.height)
                 }
             }
             .onEnded { value in
