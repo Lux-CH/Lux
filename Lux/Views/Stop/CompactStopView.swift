@@ -153,8 +153,14 @@ struct CompactStopView: View {
                 .accessibilityElement(children: .contain)
                 .accessibilityAddTraits(.updatesFrequently)
                 
-                paginationDotsView(groups: groups, routeName: routeName)
-                    .accessibilityHidden(true)
+                PaginationDotsView(
+                    groupsCount: groups.count,
+                    currentPage: viewModel.currentPages[routeName] ?? 0,
+                    activeDotColor: activeDotColor,
+                    inactiveDotColor: inactiveDotColor,
+                    animateIn: .constant(true)
+                )
+                .accessibilityHidden(true)
             }
             
             if !(dontShowLastDivider && routeName == viewModel.routeNames.prefix(maxGroupsToShow).last) {
@@ -204,21 +210,5 @@ struct CompactStopView: View {
         }
         
         return label
-    }
-    
-    private func paginationDotsView(groups: [GroupedStopTime], routeName: String) -> some View {
-        Group {
-            if groups.count > 1 {
-                let currentPage = viewModel.currentPages[routeName] ?? 0
-                HStack(spacing: 6) {
-                    ForEach(0..<min(groups.count, 10), id: \.self) { index in
-                        Circle()
-                            .frame(width: 5, height: 5)
-                            .foregroundColor(index == currentPage ? activeDotColor : inactiveDotColor)
-                    }
-                }
-                .padding(.bottom, 5)
-            }
-        }
     }
 }
