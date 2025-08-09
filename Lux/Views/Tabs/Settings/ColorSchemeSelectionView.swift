@@ -174,7 +174,7 @@ struct ThemeSelectionCard: View {
                                 .foregroundColor(.secondary)
                                 .padding(.horizontal, 6)
                                 .padding(.vertical, 2)
-                                .background(Capsule().fill(Color(.tertiarySystemFill)))
+                                .background(Capsule(style:.continuous).fill(Color(.tertiarySystemFill)))
                         }
                         
                         Spacer()

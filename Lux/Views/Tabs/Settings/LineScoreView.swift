@@ -120,7 +120,7 @@ struct LineScoreView: View {
                                         .padding(.horizontal, 6)
                                         .padding(.vertical, 2)
                                         .background(Color(.tertiarySystemFill))
-                                        .clipShape(Capsule())
+                                        .clipShape(Capsule(style: .continuous))
                                     
                                     Image(systemName: "chevron.right")
                                         .rotationEffect(.degrees(showLowScoreLines ? 90 : 0))

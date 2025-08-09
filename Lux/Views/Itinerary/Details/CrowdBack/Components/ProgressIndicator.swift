@@ -41,7 +41,7 @@ struct ProgressIndicator: View {
             .padding(.horizontal, 12)
             .padding(.vertical, 4)
             .background(
-                Capsule()
+                Capsule(style: .continuous)
                     .fill(Color.accentColor.opacity(0.1))
             )
         }
