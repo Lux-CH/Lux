@@ -223,6 +223,7 @@ struct MainNavigationView: View {
                                 }
                             }
                         }
+                        .offset(y: min(0, searchDragOffset))
                         .ignoresSafeArea(edges: .top)
                         .zIndex(viewMode == .stops && settings.reduceSpacerBtwnStopContentView ? 1 : 0)
                         
@@ -296,7 +297,6 @@ struct MainNavigationView: View {
                                     .transition(contentTransition)
                                 } else if viewMode == .search {
                                     TripsSearchContentView(viewModel: searchViewModel)
-                                        .offset(y: max(0, searchDragOffset))
                                         .animation(.interactiveSpring(), value: searchDragOffset)
                                         .gesture(searchModeDragGesture)
                                         .transition(searchModeTransition)
@@ -304,6 +304,7 @@ struct MainNavigationView: View {
                             }
                             .animation(contentSpring, value: viewMode)
                         }
+                        .offset(y: max(0, -(searchDragOffset)))
                         .ignoresSafeArea(edges: .bottom)
                         .simultaneousGesture(
                             viewMode != .search ?
@@ -412,10 +413,12 @@ struct MainNavigationView: View {
     private var searchModeDragGesture: some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                searchDragOffset = max(0, value.translation.height)
+                withAnimation(.interactiveSpring(response: 0.1, dampingFraction: 1.0)) {
+                    searchDragOffset = (min(0, value.translation.height) * 0.6)
+                }
             }
             .onEnded { value in
-                if value.translation.height > 200 {
+                if value.translation.height < -200 {
                     exitSearchMode()
                 } else {
                     searchDragOffset = 0
