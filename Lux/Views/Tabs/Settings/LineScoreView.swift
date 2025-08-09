@@ -63,12 +63,9 @@ struct LineScoreView: View {
         }
         .padding(.vertical, 24)
         .frame(maxWidth: .infinity)
-        .background {
+        .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemGroupedBackground))
-        }
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
         )
         .padding(.horizontal)
@@ -315,11 +312,8 @@ struct EditableLinePill: View {
         ZStack {
             RoundedRectangle(cornerRadius: isSquared ? 4 : 50)
                 .fill(settings.highContrastButAccurateLinePill ? lineColor : lineColor.opacity(0.25))
+                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                 .frame(width: 80, height: 50)
-                .overlay(
-                    RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                )
             
             TextField("XX", text: $lineNumber)
                 .font(.custom("NimbusSansBeckerPBla", size: 18))

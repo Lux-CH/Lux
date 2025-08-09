@@ -77,14 +77,11 @@ struct StopAnnotationView: View {
             
             Circle()
                 .fill(.white)
+                .stroke(annotation.color, lineWidth: isTerminal || annotation.isTerminal ? 3 : 1)
                 .frame(
                     width: getCircleSize(),
                     height: getCircleSize()
                 )
-                .overlay {
-                    Circle()
-                        .stroke(annotation.color, lineWidth: isTerminal || annotation.isTerminal ? 3 : 1)
-                }
                 .shadow(color: Color.black.opacity(0.2), radius: 2, x: 0, y: 1)
                 .scaleEffect(isAnimating ? 1.2 : 1.0)
         }

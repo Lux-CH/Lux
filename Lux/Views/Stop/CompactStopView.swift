@@ -73,7 +73,7 @@ struct CompactStopView: View {
             .accessibilityLabel("Arrêt \(viewModel.stop.name)")
             .accessibilityHint("Double-tapez pour voir tous les départs à cet arrêt")
             .accessibilityAddTraits(.isButton)
-            .background {
+            .background(
                 MaskedImageView()
                     .edgesIgnoringSafeArea(.all)
                     .opacity(colorScheme == .dark ? 1.0 : 0.75)
@@ -88,7 +88,7 @@ struct CompactStopView: View {
                         .strokeBorder(Color(UIColor.separator).opacity(0.5), lineWidth: colorScheme == .dark ? 0 : 0.5)
                     )
                     .accessibilityHidden(true)
-            }
+            )
         }
     }
     

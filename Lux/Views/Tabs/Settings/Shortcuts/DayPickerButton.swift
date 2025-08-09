@@ -19,14 +19,11 @@ struct DayPickerButton: View {
                 ZStack {
                     Circle()
                         .fill(isSelected ? accentColorManager.selectedAccentColor : Color(.quaternarySystemFill))
+                        .stroke(
+                            isSelected ? Color.clear : Color(.separator).opacity(0.3),
+                            lineWidth: 0.5
+                        )
                         .frame(width: 40, height: 40)
-                        .overlay {
-                            Circle()
-                                .stroke(
-                                    isSelected ? Color.clear : Color(.separator).opacity(0.3),
-                                    lineWidth: 0.5
-                                )
-                        }
                     
                     Text(day.shortDisplayName)
                         .font(.system(size: 13, weight: .medium, design: .rounded))

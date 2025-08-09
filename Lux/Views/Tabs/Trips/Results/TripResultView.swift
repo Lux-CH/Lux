@@ -132,6 +132,7 @@ struct TripResultView: View {
                     .fill(colorScheme == .dark ?
                           Color(.systemFill).opacity(0.3) :
                             Color(.systemBackground))
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                     .shadow(
                         color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1),
                         radius: isPressed ? 4 : 10,
@@ -141,6 +142,7 @@ struct TripResultView: View {
             } else {
                 RoundedRectangle(cornerRadius: 24, style: .continuous)
                     .fill(Color(.secondarySystemGroupedBackground))
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                     .shadow(
                         color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1),
                         radius: isPressed ? 4 : 10,
@@ -149,10 +151,6 @@ struct TripResultView: View {
                     )
             }
         }
-        .overlay(
-            RoundedRectangle(cornerRadius: 24)
-                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-        )
         .scaleEffect(isPressed ? 0.98 : 1)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isPressed)
         .contentShape(RoundedRectangle(cornerRadius: 20))

@@ -51,11 +51,8 @@ struct LinePill: View {
         ZStack {
             RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
                 .fill(lineColor.opacity(0.25))
+                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                 .frame(width: width, height: height)
-                .overlay(
-                    RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                )
             
             Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
