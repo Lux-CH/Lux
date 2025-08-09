@@ -35,7 +35,7 @@ struct CustomTabBar: View {
         .padding(8)
         .background(
             ZStack {
-                Capsule()
+                Capsule(style: .continuous)
                     .fill(
                         Color(.secondarySystemBackground)
                     )
@@ -45,7 +45,7 @@ struct CustomTabBar: View {
                         x: 0,
                         y: 5
                     )
-                Capsule()
+                Capsule(style: .continuous)
                     .fill(
                         colorScheme == .dark
                         ? Color(.secondarySystemBackground).opacity(0.7)
@@ -98,7 +98,7 @@ struct TabButton: View {
             .padding(.vertical, 8)
             .background {
                 if selectedTab == tab {
-                    Capsule()
+                    Capsule(style: .continuous)
                         .fill(
                             colorScheme == .dark
                             ? Color.accentColor.opacity(0.15)
