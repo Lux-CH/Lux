@@ -277,6 +277,17 @@ struct SettingsView: View {
                     }
                 }
                 SettingsRow(
+                    icon: "questionmark.circle",
+                    title: String(localized: "Aide"),
+                    subtitle: String(localized: "Une question, un bug ou une suggestion ? Cliquez ici."),
+                    showChevron: true
+                )
+                .onTapGesture {
+                    if let url = URL(string:"mailto:lux-help@cclerc.ch?body=\n\n---\nVeuillez ne pas supprimer le texte ci-dessous\nv\((Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "UNKNOWN"))") {
+                        UIApplication.shared.open(url)
+                    }
+                }
+                SettingsRow(
                     icon: "app.badge",
                     title: String(localized: "Version"),
                     // MARK: CHANGE THAT WHEN IN PROD
