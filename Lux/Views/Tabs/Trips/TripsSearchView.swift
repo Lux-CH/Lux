@@ -39,6 +39,7 @@ struct TripsSearchView: View {
                             viewModel: viewModel,
                             isFromFocused: $isFromFocused,
                             isToFocused: $isToFocused,
+                            isFromStop: true,
                             onBack: { dismiss() }
                         )
                         .gesture(dragGesture)
