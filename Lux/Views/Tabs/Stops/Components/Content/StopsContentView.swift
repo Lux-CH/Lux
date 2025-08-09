@@ -9,6 +9,10 @@ import SwiftUI
 import LuxCom
 
 struct StopsContentView: View {
+    @ObservedObject var progress = Progress.shared
+    @State private var isShowingTip: Bool = false
+    @Environment(\.colorScheme) var colorScheme
+    
     let isSearchMode: Bool
     let isLoading: Bool
     let searchResults: [SearchResult]
@@ -16,7 +20,7 @@ struct StopsContentView: View {
     let locationManager: LocationManager
     
     var body: some View {
-        VStack(alignment: .leading) {            
+        VStack(alignment: .leading) {
             StopsStatusMessageView(
                 showMinCharactersMessage: showMinCharactersMessage,
                 isLoading: isLoading,
@@ -26,6 +30,52 @@ struct StopsContentView: View {
             
             if !searchResults.isEmpty {
                 StopsList(stops: searchResults, locationManager: locationManager, isSearching: isSearchMode)
+            }
+        }
+        .overlay {
+            if progress.numOfTimesStopViewWasOpened == 1 {
+                HintIndicatorView(icon: "chevron.compact.down",
+                                  message: String(localized: "Glissez vers le bas pour retourner sur l'écran d'accueil"),
+                                  delay: 2,
+                                  duration: 10,
+                                  onDismiss: {isShowingTip = false})
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        withAnimation(.easeOut(duration: 0.75)) {
+                            isShowingTip = true
+                        }
+                    }
+                }
+                .background(
+                    // totally not from customtabbar :)
+                    ZStack {
+                        Capsule(style: .continuous)
+                            .fill(
+                                Color(.secondarySystemBackground)
+                            )
+                            .shadow(
+                                color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
+                                radius: 7.5,
+                                x: 0,
+                                y: 5
+                            )
+                        Capsule(style: .continuous)
+                            .fill(
+                                colorScheme == .dark
+                                ? Color(.secondarySystemBackground).opacity(0.7)
+                                : Color.white
+                            )
+                            .stroke(
+                                colorScheme == .dark
+                                ? Color.primary.opacity(0.1)
+                                : Color.gray.opacity(0.1),
+                                lineWidth: 0.75
+                            )
+                    }
+                        .opacity(isShowingTip ? 1.0 : 0.0)
+                        .frame(width: 350, height: 65)
+                )
+                .padding(.top, 375)
             }
         }
     }
