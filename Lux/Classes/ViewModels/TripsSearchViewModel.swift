@@ -19,7 +19,7 @@ enum SelectedLocation: Equatable {
         case .searchResult(let result):
             return result.name
         case .currentPosition:
-            return "Position Actuelle"
+            return String(localized: "Position Actuelle")
         }
     }
     
