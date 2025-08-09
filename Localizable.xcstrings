@@ -1375,6 +1375,16 @@
         }
       }
     },
+    "Consultez la politique de confidentialité en ligne" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Read the privacy policy on the web"
+          }
+        }
+      }
+    },
     "Contraste plus important" : {
       "localizations" : {
         "en" : {
@@ -3123,6 +3133,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Earlier"
+          }
+        }
+      }
+    },
+    "Politique de confidentialité" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Privacy policy"
           }
         }
       }
