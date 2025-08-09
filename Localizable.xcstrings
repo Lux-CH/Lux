@@ -2091,6 +2091,22 @@
         }
       }
     },
+    "Heure de %@: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time of %1$@: %2$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Heure de %1$@: %2$@"
+          }
+        }
+      }
+    },
     "Heure habituelle" : {
       "localizations" : {
         "en" : {
@@ -2217,6 +2233,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compact interface"
+          }
+        }
+      }
+    },
+    "Inverser le champ De et le champ À" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invert « From » field and « To » field"
           }
         }
       }
