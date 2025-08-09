@@ -112,7 +112,7 @@ struct TripsSearchHeaderView: View {
             .padding(.horizontal, 20)
             .background(
                 Capsule(style: .continuous)
-                    .fill(Color.accentColor.opacity(colorScheme == .dark ? 0.05 : 0.12))
+                    .fill(Color.accentColor.opacity(0.12))
             )
             .overlay(
                 Capsule(style: .continuous)
@@ -148,7 +148,7 @@ struct TripsSearchHeaderView: View {
             .padding(.horizontal, 20)
             .background(
                 Capsule(style: .continuous)
-                    .fill(Color.accentColor.opacity(colorScheme == .dark ? 0.05 : 0.12))
+                    .fill(Color.accentColor.opacity(0.12))
             )
             .overlay(
                 Capsule(style: .continuous)
