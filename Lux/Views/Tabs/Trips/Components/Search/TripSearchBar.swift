@@ -66,6 +66,7 @@ struct TripSearchBar: View {
                             .contentShape(Circle())
                     }
                     .transition(.scale.combined(with: .opacity))
+                    .padding(.trailing, 35)
                     .animation(.spring(response: 0.4), value: searchText)
                 }
             }
