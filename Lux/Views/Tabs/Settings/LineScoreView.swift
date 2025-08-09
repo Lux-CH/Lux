@@ -367,6 +367,7 @@ struct AddLineScoreView: View {
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 
                 VStack(spacing: 12) {
