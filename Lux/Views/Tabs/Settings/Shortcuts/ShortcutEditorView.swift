@@ -14,6 +14,7 @@ struct ShortcutEditorView: View {
     @StateObject private var viewModel = ShortcutEditorViewModel()
     @EnvironmentObject private var shortcutManager: ShortcutManager
     @EnvironmentObject private var locationManager: LocationManager
+    @ObservedObject private var accentColorManager = AccentColorManager.shared
     
     var shortcutToEdit: UserShortcut?
     
@@ -78,7 +79,7 @@ struct ShortcutEditorView: View {
                         saveShortcut()
                     }
                     .font(.body.weight(.bold))
-                    .foregroundStyle(canSave ? .accent : .secondary)
+                    .foregroundStyle(canSave ? accentColorManager.selectedAccentColor : .secondary)
                     .disabled(!canSave)
                     .scaleEffect(canSave ? 1.0 : 0.95)
                     .animation(.spring(response: 0.3, dampingFraction: 0.8), value: canSave)
@@ -215,7 +216,7 @@ struct ShortcutEditorView: View {
                         
                         Image(systemName: "plus.circle.fill")
                             .font(.title)
-                            .foregroundStyle(.accent)
+                            .foregroundStyle(accentColorManager.selectedAccentColor)
                     }
                 }
                 .opacity(showContent ? 1 : 0)
@@ -248,12 +249,12 @@ struct ShortcutEditorView: View {
                     HStack(spacing: 16) {
                         ZStack {
                             Circle()
-                                .fill(Color.accentColor.opacity(0.1))
+                                .fill(accentColorManager.selectedAccentColor.opacity(0.1))
                                 .frame(width: 44, height: 44)
                             
                             Image(systemName: selectedSymbol)
                                 .font(.title2.weight(.medium))
-                                .foregroundStyle(.accent)
+                                .foregroundStyle(accentColorManager.selectedAccentColor)
                         }
                         
                         VStack(alignment: .leading, spacing: 2) {
@@ -332,15 +333,15 @@ struct ShortcutEditorView: View {
                             }
                         }
                     } label: {
-                        ModernCard(style: .accent) {
+                        ModernCard(style: .accent, optionalColor: accentColorManager.selectedAccentColor) {
                             HStack(spacing: 12) {
                                 Image(systemName: "location.fill")
-                                    .foregroundStyle(.accent)
+                                    .foregroundStyle(accentColorManager.selectedAccentColor)
                                     .font(.headline.weight(.medium))
                                 
                                 Text("Utiliser ma position actuelle")
                                     .font(.subheadline.weight(.medium))
-                                    .foregroundStyle(.accent)
+                                    .foregroundStyle(accentColorManager.selectedAccentColor)
                                 
                                 Spacer()
                             }
@@ -453,11 +454,12 @@ struct ShortcutEditorView: View {
 struct EditorSectionHeader: View {
     let title: String
     let icon: String
+    @ObservedObject private var accentColorManager = AccentColorManager.shared
     
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
-                .foregroundStyle(.accent)
+                .foregroundStyle(accentColorManager.selectedAccentColor)
                 .font(.caption.weight(.medium))
             
             Text(title)
