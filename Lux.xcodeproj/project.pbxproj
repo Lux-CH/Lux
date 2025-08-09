@@ -13,6 +13,7 @@
 		791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SymbolPicker */; };
 		796432242DEED1A1004498A7 /* SwiftUIMessage in Frameworks */ = {isa = PBXBuildFile; productRef = 796432232DEED1A1004498A7 /* SwiftUIMessage */; };
 		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
+		7981C7A72E48052500246701 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 7981C7A62E48052500246701 /* InfoPlist.xcstrings */; };
 		7986885A2E3FEE15003FE496 /* SearchStopIntent.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 798688512E3FEE15003FE496 /* SearchStopIntent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		798688612E3FEE7D003FE496 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 798688602E3FEE7D003FE496 /* LuxCom */; };
 		79A2CC3A2E0EDCF80071DD44 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79A2CC392E0EDCF80071DD44 /* LuxCom */; };
@@ -70,6 +71,7 @@
 
 /* Begin PBXFileReference section */
 		791994C62DE374CF00B2080C /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
+		7981C7A62E48052500246701 /* InfoPlist.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = InfoPlist.xcstrings; sourceTree = "<group>"; };
 		798688512E3FEE15003FE496 /* SearchStopIntent.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.extensionkit-extension"; includeInIndex = 0; path = SearchStopIntent.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		799D2A672D98ABF80066E9F5 /* Lux.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lux.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		79A912452DB341660032AB9D /* GPSTests.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = GPSTests.gpx; sourceTree = "<group>"; };
@@ -183,6 +185,7 @@
 		799D2A5E2D98ABF80066E9F5 = {
 			isa = PBXGroup;
 			children = (
+				7981C7A62E48052500246701 /* InfoPlist.xcstrings */,
 				79ABCCAF2E11AAD300A85D71 /* StopWidgetExtension.entitlements */,
 				791994C62DE374CF00B2080C /* Localizable.xcstrings */,
 				79A912452DB341660032AB9D /* GPSTests.gpx */,
@@ -362,6 +365,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7981C7A72E48052500246701 /* InfoPlist.xcstrings in Resources */,
 				791994C72DE374CF00B2080C /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
