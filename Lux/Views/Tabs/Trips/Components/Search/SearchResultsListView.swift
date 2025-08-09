@@ -178,7 +178,7 @@ struct ErrorView: View {
                 ? Color(.tertiarySystemBackground)
                 : Color(.systemBackground)
             )
-            .clipShape(Capsule())
+            .clipShape(Capsule(style: .continuous))
             .padding(.top, 10)
         }
         .padding(.top, 40)

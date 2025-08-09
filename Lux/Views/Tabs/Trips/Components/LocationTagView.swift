@@ -20,7 +20,7 @@ struct LocationTagView: View {
                     .foregroundColor(.accentColor)
                     .frame(width: 28, height: 18)
                     .background(Color.accentColor.opacity(0.12))
-                    .clipShape(Capsule())
+                    .clipShape(Capsule(style: .continuous))
                     .overlay(
                         Capsule(style: .continuous)
                             .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)

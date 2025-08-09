@@ -67,7 +67,7 @@ struct AccentColorCustomizerView: View {
                                     .padding(.horizontal, 12)
                                     .padding(.vertical, 4)
                                     .background(Color.secondary.opacity(0.1))
-                                    .clipShape(Capsule())
+                                    .clipShape(Capsule(style: .continuous))
                                     .foregroundStyle(.red)
                             }
                         }

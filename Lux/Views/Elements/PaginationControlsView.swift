@@ -62,7 +62,7 @@ struct PaginationControlsView: View {
         }
         .foregroundColor(.accentColor)
         .background(
-            Capsule()
+            Capsule(style: .continuous)
                 .fill(
                     colorScheme == .dark
                     ? Color(.secondarySystemBackground)

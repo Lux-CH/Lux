@@ -83,9 +83,9 @@ struct LuxPassView: View {
                         .padding()
                         .background(.ultraThinMaterial)
                         .foregroundStyle(Color.accentColor)
-                        .clipShape(Capsule())
+                        .clipShape(Capsule(style: .continuous))
                         .overlay(
-                            Capsule()
+                            Capsule(style: .continuous)
                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                         )
                         .shadow(color: .black.opacity(0.1), radius: 8, x: 0, y: 4)

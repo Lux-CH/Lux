@@ -77,7 +77,7 @@ struct TripResultView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
                 .background(
-                    Capsule()
+                    Capsule(style: .continuous)
                         .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
                 )
             }
