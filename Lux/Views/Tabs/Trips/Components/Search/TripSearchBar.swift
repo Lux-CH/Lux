@@ -18,25 +18,9 @@ struct TripSearchBar: View {
     var onSearch: () -> Void
     var onClear: () -> Void
     var onRemoveTag: (() -> Void)?
-    var iconName: String
     
     var body: some View {
-        HStack(spacing: 12) {
-            ZStack {
-                Circle()
-                    .fill(selectedLocation != nil ?
-                          Color.accentColor.opacity(0.15) :
-                          Color(.systemFill).opacity(0.4))
-                    .frame(width: 36, height: 36)
-                    .animation(.spring(response: 0.3), value: selectedLocation)
-                
-                Image(systemName: selectedLocation != nil && iconName == "location" ? "location.fill" :
-                      iconName)
-                    .font(.system(size: 16, weight: selectedLocation != nil ? .medium : .regular))
-                    .foregroundColor(selectedLocation != nil ? .accentColor : .secondary)
-                    .symbolEffect(.bounce, options: .speed(1.5), value: selectedLocation)
-            }
-            
+        HStack(spacing: 10) {
             if let location = selectedLocation {
                 LocationTagView(location: location) {
                     onRemoveTag?()
@@ -50,7 +34,7 @@ struct TripSearchBar: View {
                 TextField(placeholderText, text: $searchText)
                     .focused($isFocused)
                     .font(.system(size: 16, weight: .medium))
-                    .padding(.vertical, 2)
+                    .padding(.vertical, 6)
                     .submitLabel(.search)
                     .onChange(of: searchText) {
                         if searchText.isEmpty {
@@ -68,7 +52,7 @@ struct TripSearchBar: View {
                     .transition(.opacity)
             }
             
-            Spacer()
+            Spacer(minLength: 4)
             
             if selectedLocation == nil {
                 if !searchText.isEmpty {
@@ -78,54 +62,16 @@ struct TripSearchBar: View {
                     }) {
                         Image(systemName: "xmark.circle.fill")
                             .foregroundColor(.gray)
-                            .font(.system(size: 18))
+                            .font(.system(size: 16))
                             .contentShape(Circle())
                     }
                     .transition(.scale.combined(with: .opacity))
                     .animation(.spring(response: 0.4), value: searchText)
                 }
-                
-                Button(action: {
-                    onSearch()
-                    HapticFeedback.lightImpact()
-                }) {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 16))
-                        .foregroundColor(.accentColor)
-                        .frame(width: 32, height: 32)
-                        .background(
-                            Circle()
-                                .fill(Color.accentColor.opacity(0.12))
-                        )
-                }
-                .padding(.leading, 4)
-                .disabled(searchText.count < 3)
-                .opacity(searchText.count < 3 ? 0.5 : 1)
-                .animation(.easeInOut(duration: 0.2), value: searchText.count < 3)
             }
         }
-        .padding(.vertical, 10)
-        .padding(.horizontal, 14)
-        .frame(height: 58)
-        .background(
-            RoundedRectangle(cornerRadius: 35)
-                .fill(Color(.secondarySystemFill).opacity(0.5))
-                .shadow(
-                    color: Color.black.opacity(isFocused ? 0.08 : 0.05),
-                    radius: isFocused ? 6 : 4,
-                    x: 0,
-                    y: 2
-                )
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 35)
-                .stroke(
-                    isFocused ? Color.accentColor.opacity(0.4) : Color.primary.opacity(0.1),
-                    lineWidth: isFocused ? 2 : 0.5
-                )
-                .animation(.easeInOut(duration: 0.2), value: isFocused)
-        )
-        .scaleEffect(isFocused ? 1.02 : 1)
+        .frame(height: 40)
+        .scaleEffect(1)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isFocused)
         .animation(.spring(response: 0.4), value: searchText)
     }
