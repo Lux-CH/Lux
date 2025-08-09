@@ -12,7 +12,7 @@ struct ColorSchemeSelectionView: View {
     var dimiss: () -> Void
     
     private let themeOptions = [
-        ThemeOption(id: "system", title: String(localized: "Système"), subtitle: String(localized: "Suit les réglages système"), icon: "iphone", color: .accent, isDefault: true),
+        ThemeOption(id: "system", title: String(localized: "Système"), subtitle: String(localized: "Suit les réglages système"), icon: "iphone", color: .accentColor, isDefault: true),
         ThemeOption(id: "automatic", title: String(localized: "Automatique"), subtitle: String(localized: "Basé sur l'heure"), icon: "clock.arrow.2.circlepath", color: .purple),
         ThemeOption(id: "light", title: String(localized: "Clair"), subtitle: String(localized: "Toujours en mode clair"), icon: "sun.max", color: .yellow),
         ThemeOption(id: "dark", title: String(localized: "Sombre"), subtitle: String(localized: "Toujours en mode sombre"), icon: "moon", color: .indigo)
