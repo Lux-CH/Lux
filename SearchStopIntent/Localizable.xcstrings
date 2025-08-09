@@ -1,0 +1,67 @@
+{
+  "sourceLanguage" : "fr",
+  "strings" : {
+    "%@ → %@" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ → %2$@"
+          }
+        }
+      },
+      "shouldTranslate" : false
+    },
+    "Arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop"
+          }
+        }
+      }
+    },
+    "Aucun arrêt trouvé pour \"%@\"." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No stop found for «%@»"
+          }
+        }
+      }
+    },
+    "Aucun départ trouvé pour l'arrêt \"%@\"." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No departures found for stop «%@»"
+          }
+        }
+      }
+    },
+    "Départs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departures"
+          }
+        }
+      }
+    },
+    "Obtenir les prochains départs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get next departures"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
