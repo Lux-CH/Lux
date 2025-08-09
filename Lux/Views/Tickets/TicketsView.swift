@@ -232,7 +232,7 @@ struct TicketRow: View {
                     Text(durationText)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.accentColor)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -260,11 +260,11 @@ struct TicketRow: View {
                 if isPurchasing {
                     ProgressView()
                         .scaleEffect(0.8)
-                        .tint(.orange)
+                        .tint(.accentColor)
                 } else {
                     Image(systemName: "arrow.right.circle.fill")
                         .font(.title2)
-                        .foregroundColor(.orange)
+                        .foregroundColor(.accentColor)
                 }
             }
             .padding(.horizontal, 20)
