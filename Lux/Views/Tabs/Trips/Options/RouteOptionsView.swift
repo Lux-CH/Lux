@@ -14,6 +14,7 @@ struct RouteOptionsView: View {
     @AppStorage("routeOptionsMinTransferTime") private var storedMinTransferTime: Int = 0
     @AppStorage("routeOptionsPedestrianProfile") private var storedPedestrianProfile: String = PedestrianProfile.foot.rawValue
     @AppStorage("routeOptionsTransportModes") private var storedTransportModes: Data = Data()
+    @ObservedObject var accentColorManager = AccentColorManager.shared
     
     @State private var maxTransfers: Int
     @State private var minTransferTime: Int
@@ -86,7 +87,7 @@ struct RouteOptionsView: View {
                         HapticFeedback.mediumImpact()
                     }
                     .font(.body.weight(.bold))
-                    .foregroundStyle(.accent)
+                    .foregroundStyle(accentColorManager.selectedAccentColor)
                 }
             }
             .onAppear {
@@ -130,7 +131,7 @@ struct RouteOptionsView: View {
                     
                     Image(systemName: "slider.horizontal.3")
                         .font(.title)
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(accentColorManager.selectedAccentColor)
                 }
             }
         }
@@ -276,15 +277,15 @@ struct RouteOptionsView: View {
             showResetConfirmation = true
             HapticFeedback.lightImpact()
         }) {
-            ModernCard(style: .accent) {
+            ModernCard(style: .accent, optionalColor: accentColorManager.selectedAccentColor) {
                 HStack(spacing: 12) {
                     Image(systemName: "arrow.clockwise")
                         .font(.headline.weight(.medium))
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(accentColorManager.selectedAccentColor)
                     
                     Text("Rétablir les valeurs par défaut")
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(.accent)
+                        .foregroundStyle(accentColorManager.selectedAccentColor)
                     
                     Spacer()
                 }
@@ -367,11 +368,12 @@ struct RouteOptionsView: View {
 struct OptionHeader: View {
     let title: String
     let icon: String
-    
+    @ObservedObject var accentColorManager = AccentColorManager.shared
+
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
-                .foregroundStyle(.accent)
+                .foregroundStyle(accentColorManager.selectedAccentColor)
                 .font(.caption.weight(.medium))
             
             Text(title)
@@ -385,6 +387,7 @@ struct TransferCountButton: View {
     let number: Int
     let isSelected: Bool
     let onTap: () -> Void
+    @ObservedObject var accentColorManager = AccentColorManager.shared
     
     var body: some View {
         Button(action: onTap) {
@@ -394,7 +397,7 @@ struct TransferCountButton: View {
                 .frame(width: 44, height: 44)
                 .background {
                     Circle()
-                        .fill(isSelected ? Color.accentColor : Color(.tertiarySystemFill))
+                        .fill(isSelected ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
                 }
                 .overlay {
                     Circle()
@@ -410,13 +413,14 @@ struct AccessibilityProfileButton: View {
     let iconName: String
     let isSelected: Bool
     let action: () -> Void
+    @ObservedObject var accentColorManager = AccentColorManager.shared
     
     var body: some View {
         Button(action: action) {
             VStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(isSelected ? Color.accentColor : Color(.tertiarySystemFill))
+                        .fill(isSelected ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
                         .frame(width: 60, height: 60)
                         .overlay {
                             Circle()
@@ -430,14 +434,14 @@ struct AccessibilityProfileButton: View {
                 
                 Text(title)
                     .font(.system(size: 14, weight: isSelected ? .medium : .regular))
-                    .foregroundColor(isSelected ? .accentColor : .primary)
+                    .foregroundColor(isSelected ? accentColorManager.selectedAccentColor : .primary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
             .background {
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(isSelected ? Color.accentColor : Color.clear, lineWidth: 2)
+                    .stroke(isSelected ? accentColorManager.selectedAccentColor : Color.clear, lineWidth: 2)
                     .animation(.easeInOut(duration: 0.2), value: isSelected)
             }
         }
@@ -516,6 +520,8 @@ struct TransferTimeSelector: View {
     @Binding var selectedTime: Int
     let onTimeChanged: (Int) -> Void
     private let timeOptions = [0, 2, 5, 7, 10]
+    @ObservedObject var accentColorManager = AccentColorManager.shared
+
     
     var body: some View {
         HStack(spacing: 8) {
@@ -536,7 +542,7 @@ struct TransferTimeSelector: View {
                     .padding(.vertical, 12)
                     .background {
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(selectedTime == minutes ? Color.accentColor : Color(.tertiarySystemFill))
+                            .fill(selectedTime == minutes ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
                     }
                     .overlay {
                         RoundedRectangle(cornerRadius: 12)

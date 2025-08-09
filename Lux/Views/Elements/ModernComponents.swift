@@ -15,10 +15,12 @@ struct ModernCard<Content: View>: View {
     }
     
     let style: Style
+    let optionalColor: Color?
     @ViewBuilder let content: Content
     
-    init(style: Style = .normal, @ViewBuilder content: () -> Content) {
+    init(style: Style = .normal, optionalColor: Color? = nil, @ViewBuilder content: () -> Content) {
         self.style = style
+        self.optionalColor = optionalColor
         self.content = content()
     }
     
@@ -40,7 +42,7 @@ struct ModernCard<Content: View>: View {
         case .normal:
             return Color(.secondarySystemGroupedBackground)
         case .accent:
-            return Color.accentColor.opacity(0.05)
+            return (optionalColor ?? Color.accentColor).opacity(0.05)
         case .subtle:
             return Color(.tertiarySystemGroupedBackground)
         }
