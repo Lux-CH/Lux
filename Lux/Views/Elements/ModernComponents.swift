@@ -66,12 +66,14 @@ struct ModernTextFieldStyle: TextFieldStyle {
 }
 
 struct ModernToggleStyle: ToggleStyle {
+    @ObservedObject var accentColorManager = AccentColorManager.shared
+
     func makeBody(configuration: Configuration) -> some View {
         Button {
             configuration.isOn.toggle()
         } label: {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(configuration.isOn ? Color.accentColor : Color(.systemGray4))
+                .fill(configuration.isOn ? accentColorManager.selectedAccentColor : Color(.systemGray4))
                 .frame(width: 50, height: 30)
                 .overlay {
                     Circle()
