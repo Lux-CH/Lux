@@ -164,7 +164,7 @@ struct NearbyStopsView: View {
                         
                     }
                     
-                    if settings.appLaunchCount < 5 && progress.numOfTimesStopViewWasOpened < 3 {
+                    if settings.appLaunchCount < 5 && progress.numOfTimesStopViewWasOpened < 2 {
                         HintIndicatorView(
                             icon: "chevron.compact.up",
                             message: String(localized: "Glissez vers le haut pour voir plus d'arrêts à proximité"),
@@ -177,7 +177,7 @@ struct NearbyStopsView: View {
                             showingSuggestion = true
                         }
                         .padding(.top, 14)
-                    } else if progress.numOfTimesTripViewWasOpened <= 5 && !progress.shownTripViewSuggestion {
+                    } else if progress.numOfTimesTripViewWasOpened < 2 && !progress.shownTripViewSuggestion {
                         HintIndicatorView(
                             icon: "chevron.compact.down",
                             message: String(localized: "Glissez vers le bas pour planifier un itinéraire ou obtenir des directions"),
