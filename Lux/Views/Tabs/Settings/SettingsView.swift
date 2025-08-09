@@ -263,14 +263,19 @@ struct SettingsView: View {
                     )
                 }
                 .buttonStyle(.plain)
-                #if DEBUG
-                    SettingsRow(
-                        icon: "number",
-                        title: "Sessions",
-                        subtitle: "Vous avez ouvert l'application \(settings.appLaunchCount - 1) fois",
-                        showChevron: false
-                    )
-                #endif
+                SettingsRow(
+                    icon: "lock.shield",
+                    title: String(localized: "Politique de confidentialité"),
+                    subtitle: String(localized: "Consultez la politique de confidentialité en ligne"),
+                    showChevron: true
+                )
+                .onTapGesture {
+                    if Locale.current.language.languageCode == "fr", let url = URL(string: "https://lux.cclerc.ch/privacy/fr.html") {
+                        UIApplication.shared.open(url)
+                    } else if let url = URL(string: "https://lux.cclerc.ch/privacy/en.html") {
+                        UIApplication.shared.open(url)
+                    }
+                }
                 SettingsRow(
                     icon: "app.badge",
                     title: String(localized: "Version"),
