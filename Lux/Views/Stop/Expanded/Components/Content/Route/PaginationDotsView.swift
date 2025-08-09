@@ -21,7 +21,7 @@ struct PaginationDotsView: View {
                     ForEach(0..<min(groupsCount, 10), id: \.self) { index in
                         Circle()
                             .frame(width: 5, height: 5)
-                            .scaleEffect(index == currentPage ? 1.2 : 1)
+                            .scaleEffect(index == currentPage ? 1.0 : 0.8)
                             .foregroundColor(index == currentPage ? activeDotColor : inactiveDotColor)
                             .animation(.spring(response: 0.3, dampingFraction: 0.7), value: currentPage)
                     }
