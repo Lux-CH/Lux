@@ -28,8 +28,6 @@ struct ShortcutsListView: View {
             .padding(.vertical)
         }
         .background(Color(.systemGroupedBackground))
-        .navigationTitle("Raccourcis")
-        .navigationBarTitleDisplayMode(.large)
         .sheet(item: $editingShortcut) { shortcut in
             ShortcutEditorView(shortcutToEdit: shortcut)
         }
