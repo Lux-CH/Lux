@@ -554,7 +554,7 @@ struct MainNavigationView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.025) {
             withAnimation(searchTransitionSpring) {
                 viewMode = .search
-                headerHeight = 205
+                headerHeight = 225
             }
             
             searchText = ""
@@ -598,7 +598,7 @@ struct MainNavigationView: View {
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.025) {
             withAnimation(searchTransitionSpring) {
                 viewMode = .search
-                headerHeight = 205
+                headerHeight = 225
             }
         }
         
@@ -720,7 +720,9 @@ struct MainNavigationView: View {
     
     // doing cas par cas is a really ugly solution
     private func compactSize() -> CGFloat {
-        if viewMode == .stops && settings.reduceSpacerBtwnStopContentView {
+        if viewMode == .search {
+            return -10
+        } else if viewMode == .stops && settings.reduceSpacerBtwnStopContentView {
             /*
              from 30min of simulator testing:
              model, height, padding
