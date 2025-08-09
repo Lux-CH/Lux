@@ -2071,6 +2071,16 @@
         }
       }
     },
+    "Glissez vers le bas pour retourner sur l'écran d'accueil" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slide down to go back to home screen"
+          }
+        }
+      }
+    },
     "Glissez vers le haut pour retourner sur l'écran d'accueil" : {
       "localizations" : {
         "en" : {
