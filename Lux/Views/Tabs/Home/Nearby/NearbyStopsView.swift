@@ -164,7 +164,7 @@ struct NearbyStopsView: View {
                         
                     }
                     
-                    if settings.appLaunchCount < 5 {
+                    if settings.appLaunchCount < 5 && progress.numOfTimesStopViewWasOpened > 3 {
                         HintIndicatorView(
                             icon: "chevron.compact.up",
                             message: String(localized: "Glissez vers le haut pour voir plus d'arrêts à proximité"),
