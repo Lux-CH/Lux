@@ -34,7 +34,7 @@ struct TripsSearchView: View {
                     .ignoresSafeArea()
                     .gesture(dragGesture)
                     
-                    VStack(spacing: 0) {
+                    VStack(spacing: -15) {
                         TripsSearchHeaderView(
                             viewModel: viewModel,
                             isFromFocused: $isFromFocused,
