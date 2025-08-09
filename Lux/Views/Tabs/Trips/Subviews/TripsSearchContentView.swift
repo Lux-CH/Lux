@@ -194,7 +194,7 @@ struct EmptyStateContent: View {
                         )
                         .overlay(
                             RoundedRectangle(cornerRadius: 16)
-                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
                         )
                         .foregroundColor(.accentColor)
                     }
