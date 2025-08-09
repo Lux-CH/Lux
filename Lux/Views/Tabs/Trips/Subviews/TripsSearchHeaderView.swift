@@ -15,6 +15,8 @@ struct TripsSearchHeaderView: View {
     @State private var isSwapping = false
     @State private var showTimePicker = false
     @State var isFromStop: Bool = false
+    @State private var headerOffset: CGFloat = -100
+    @State private var contentOpacity: Double = 0
     var onBack: (() -> Void)?
     
     var body: some View {
@@ -23,12 +25,21 @@ struct TripsSearchHeaderView: View {
             
             VStack(spacing: 22.5) {
                 topBar
+                    .opacity(contentOpacity)
                 inputCard
+                    .opacity(contentOpacity)
             }
             .padding(.top, 47.5)
             .padding(.horizontal, 16)
+            .offset(y: headerOffset)
         }
         .ignoresSafeArea(edges: .top)
+        .onAppear {
+            withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.1)) {
+                headerOffset = 0
+                contentOpacity = 1.0
+            }
+        }
         .sheet(isPresented: $viewModel.showSettings) {
             RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
                 viewModel.updateRouteOptions(newOptions)
@@ -67,7 +78,16 @@ struct TripsSearchHeaderView: View {
     private var topBar: some View {
         HStack(spacing: 8) {
             if onBack != nil {
-                Button(action: { onBack?() }) {
+                Button(action: {
+                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
+                        headerOffset = -80
+                        contentOpacity = 0
+                    }
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        onBack?()
+                    }
+                }) {
                     Image(systemName: "chevron.backward")
                         .font(.system(size: 16, weight: .semibold))
                         .frame(maxHeight: 15)
@@ -84,13 +104,25 @@ struct TripsSearchHeaderView: View {
                         )
                 }
                 .buttonStyle(ScaleButtonStyle())
+                .transition(.asymmetric(
+                    insertion: .opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.8)),
+                    removal: .opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.8))
+                ))
             }
             
             Spacer()
             
             timeChip
+                .transition(.asymmetric(
+                    insertion: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8)),
+                    removal: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8))
+                ))
             
             optionsChip
+                .transition(.asymmetric(
+                    insertion: .opacity.combined(with: .move(edge: .trailing)).combined(with: .scale(scale: 0.8)),
+                    removal: .opacity.combined(with: .move(edge: .trailing)).combined(with: .scale(scale: 0.8))
+                ))
         }
         .padding(.horizontal, 4)
     }
@@ -203,6 +235,10 @@ struct TripsSearchHeaderView: View {
                 .padding(.trailing, 6)
         }
         .frame(height: 98)
+        .transition(.asymmetric(
+            insertion: .opacity.combined(with: .move(edge: .bottom)).combined(with: .scale(scale: 0.95)),
+            removal: .opacity.combined(with: .move(edge: .bottom)).combined(with: .scale(scale: 0.95))
+        ))
     }
     
     private var fromSearchBar: some View {
