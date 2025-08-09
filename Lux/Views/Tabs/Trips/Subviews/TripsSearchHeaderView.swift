@@ -20,42 +20,28 @@ struct TripsSearchHeaderView: View {
         ZStack(alignment: .top) {
             headerBackground
             
-            VStack(alignment: .center, spacing: 20) {
-                HStack(spacing: 14) {
-                    RouteIndicatorView(onBack: onBack)
-                    
-                    VStack(spacing: 18) {
-                        HStack {
-                            fromSearchBar
-                            HStack(spacing: 8) {
-                                timeButton
-                                settingsButton
-                            }
-                            .padding(.leading, 8)
-                        }
-                        
-                        HStack {
-                            toSearchBar
-                            swapButton
-                                .padding(.leading, 8)
-                        }
-                    }
-                }
+            VStack(spacing: 22.5) {
+                topBar
+                inputCard
             }
-            .padding(.top, 50)
-            .padding(.horizontal, 20)
+            .padding(.top, 47.5)
+            .padding(.horizontal, 16)
         }
         .ignoresSafeArea(edges: .top)
+        .sheet(isPresented: $viewModel.showSettings) {
+            RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
+                viewModel.updateRouteOptions(newOptions)
+            }
+            .presentationDetents([.medium, .large])
+        }
     }
     
     private var headerBackground: some View {
         RoundedRectangle(cornerRadius: 32, style: .continuous)
             .fill(
-                colorScheme == .dark
-                    ? Color(.secondarySystemBackground).opacity(0.8)
-                    : Color.white
+                Color.clear
             )
-            .frame(height: 205)
+            .frame(height: 225)
             .clipShape(
                 .rect(
                     topLeadingRadius: 0,
@@ -75,6 +61,147 @@ struct TripsSearchHeaderView: View {
             .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.showTripResults)
     }
     
+    private var topBar: some View {
+        HStack(spacing: 8) {
+            if onBack != nil {
+                Button(action: { onBack?() }) {
+                    Image(systemName: "chevron.backward")
+                        .font(.system(size: 16, weight: .semibold))
+                        .frame(maxHeight: 15)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 20)
+                        .foregroundColor(.accentColor)
+                        .background(
+                            Capsule(style: .continuous)
+                                .fill(Color(.secondarySystemFill).opacity(0.5))
+                        )
+                        .overlay(
+                            Capsule(style: .continuous)
+                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                        )
+                }
+                .buttonStyle(ScaleButtonStyle())
+            }
+            
+            Spacer()
+            
+            timeChip
+            
+            optionsChip
+        }
+        .padding(.horizontal, 4)
+    }
+    
+    private var timeChip: some View {
+        Button(action: {
+            HapticFeedback.lightImpact()
+            showTimePicker = true
+        }) {
+            HStack(spacing: 6) {
+                Image(systemName: "clock")
+                    .font(.system(size: 14, weight: .semibold))
+                if viewModel.selectedDate != nil {
+                    Text(timeSummaryText)
+                        .font(.system(size: 13, weight: .medium))
+                        .lineLimit(1)
+                }
+            }
+            .foregroundColor(.accentColor)
+            .frame(maxHeight: 15)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 20)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(Color.accentColor.opacity(colorScheme == .dark ? 0.05 : 0.12))
+            )
+            .overlay(
+                Capsule(style: .continuous)
+                    .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+            )
+        }
+        .buttonStyle(ScaleButtonStyle())
+        .accessibilityLabel("Heure de \(viewModel.departureType == .arriveBy ? "d'arrivée" : "départ"): \(timeSummaryText)")
+        .popover(isPresented: $showTimePicker) {
+            TripsSearchTimePickerView(
+                selectedDate: $viewModel.selectedDate,
+                departureType: $viewModel.departureType,
+                showDatePicker: $showTimePicker
+            ) {
+                viewModel.changeDepartureType(viewModel.departureType)
+            }
+            .presentationCompactAdaptation(.popover)
+        }
+    }
+    
+    private var optionsChip: some View {
+        Button(action: {
+            HapticFeedback.lightImpact()
+            viewModel.showSettings = true
+        }) {
+            HStack(spacing: 6) {
+                Image(systemName: "slider.horizontal.3")
+                    .font(.system(size: 14, weight: .semibold))
+            }
+            .foregroundColor(.accentColor)
+            .frame(maxHeight: 15)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 20)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(Color.accentColor.opacity(colorScheme == .dark ? 0.05 : 0.12))
+            )
+            .overlay(
+                Capsule(style: .continuous)
+                    .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+            )
+        }
+        .buttonStyle(ScaleButtonStyle())
+        .accessibilityLabel("Options d'itinéraire")
+    }
+    
+    private var inputCard: some View {
+        ZStack(alignment: .trailing) {
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(Color(.secondarySystemFill).opacity(0.5))
+                .overlay(
+                    RoundedRectangle(cornerRadius: 28)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                )
+                .shadow(
+                    color: Color.black.opacity(0.05),
+                    radius: 8,
+                    x: 0,
+                    y: 2
+                )
+            
+            VStack(spacing: 0) {
+                HStack(spacing: 8) {
+                    Image(systemName: "location")
+                        .foregroundStyle(viewModel.selectedFrom == nil ? .secondary : Color.accent)
+                        .frame(width: 20)
+                    fromSearchBar
+                        .padding(.vertical, 8)
+                }
+                .padding(.horizontal, 12)
+                
+                Divider()
+                
+                HStack(spacing: 8) {
+                    Image(systemName: "flag.checkered")
+                        .foregroundStyle(viewModel.selectedTo == nil ? .secondary : Color.accent)
+                        .frame(width: 20)
+                    toSearchBar
+                        .padding(.vertical, 8)
+                }
+                .padding(.horizontal, 12)
+            }
+            
+            swapButton
+                .padding(.trailing, 6)
+        }
+        .frame(height: 98)
+    }
+    
     private var fromSearchBar: some View {
         TripSearchBar(
             searchText: $viewModel.fromQuery,
@@ -87,8 +214,7 @@ struct TripsSearchHeaderView: View {
                 withAnimation(.spring(response: 0.4)) {
                     viewModel.removeFromLocation()
                 }
-            },
-            iconName: "location"
+            }
         )
         .onTapGesture {
             if viewModel.selectedFrom == nil {
@@ -115,8 +241,7 @@ struct TripsSearchHeaderView: View {
                 withAnimation(.spring(response: 0.4)) {
                     viewModel.removeToLocation()
                 }
-            },
-            iconName: "mappin"
+            }
         )
         .onTapGesture {
             if viewModel.selectedTo == nil {
@@ -145,12 +270,16 @@ struct TripsSearchHeaderView: View {
             Image(systemName: "arrow.up.arrow.down")
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(swapButtonForegroundColor)
-                .frame(width: 42, height: 42)
-                .background(buttonBackground)
-                .clipShape(Circle())
+                .frame(width: 38, height: 38)
+                .background(
+                    Circle()
+                        .fill(Color(.secondarySystemFill).opacity(0.5))
+                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+                        .background(Circle().fill(Color(.secondarySystemBackground)))
+                )
                 .overlay(
                     Circle()
-                        .strokeBorder(buttonBorderColor, lineWidth: 0.5)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                 )
                 .rotationEffect(isSwapping ? Angle(degrees: 180) : .zero)
                 .animation(.spring(response: 0.5, dampingFraction: 0.6), value: isSwapping)
@@ -158,122 +287,53 @@ struct TripsSearchHeaderView: View {
         }
         .disabled(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
         .buttonStyle(PlainButtonStyle())
-        .sheet(isPresented: $viewModel.showSettings) {
-            RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
-                viewModel.updateRouteOptions(newOptions)
-            }
-            .presentationDetents([.medium, .large])
-        }
-    }
-    
-    private var timeButton: some View {
-        Button(action: {
-            HapticFeedback.lightImpact()
-            showTimePicker = true
-        }) {
-            Image(systemName: "clock")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.accentColor)
-                .frame(width: 42, height: 42)
-                .background(buttonBackground)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .strokeBorder(buttonBorderColor, lineWidth: 0.5)
-                )
-        }
-        .buttonStyle(ScaleButtonStyle())
-        .popover(isPresented: $showTimePicker) {
-            TripsSearchTimePickerView(
-                selectedDate: $viewModel.selectedDate,
-                departureType: $viewModel.departureType,
-                showDatePicker: $showTimePicker
-            ) {
-                viewModel.changeDepartureType(viewModel.departureType)
-            }
-            .presentationCompactAdaptation(.popover)
-        }
-    }
-    
-    private var settingsButton: some View {
-        Button(action: {
-            HapticFeedback.lightImpact()
-            viewModel.showSettings = true
-        }) {
-            Image(systemName: "slider.horizontal.3")
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(.accentColor)
-                .frame(width: 42, height: 42)
-                .background(buttonBackground)
-                .clipShape(Circle())
-                .overlay(
-                    Circle()
-                        .strokeBorder(buttonBorderColor, lineWidth: 0.5)
-                )
-        }
-        .buttonStyle(ScaleButtonStyle())
-    }
-    
-    private var buttonBackground: some View {
-        Circle()
-            .fill(Color(.secondarySystemFill).opacity(0.5))
-    }
-    
-    private var buttonBorderColor: Color {
-        Color.primary.opacity(0.1)
+        .accessibilityLabel("Inverser le champ De et le champ À")
     }
     
     private var swapButtonForegroundColor: Color {
         let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
         return isEnabled ? .accentColor : Color(.tertiaryLabel)
     }
-}
-
-struct RouteIndicatorView: View {
-    var onBack: (() -> Void)?
     
-    var body: some View {
-        VStack(spacing: 22) {
-            Circle()
-                .fill(Color.accentColor)
-                .frame(width: 14, height: 14)
-            
-            ForEach(0..<3) { index in
-                Circle()
-                    .fill(index != 1 ? Color.gray.opacity(0.5) : Color.clear)
-                    .frame(width: 4, height: 4)
-                    .overlay(alignment: .center) {
-                        if index == 1 {
-                            backButton
-                        }
-                    }
-            }
-            
-            RoundedRectangle(cornerRadius: 4)
-                .fill(Color.accentColor.opacity(0.8))
-                .frame(width: 14, height: 14)
+    private var timeSummaryText: String {
+        let typeText = viewModel.departureType == .arriveBy
+        ? String(localized: "Arrivée")
+        : String(localized: "Départ")
+        
+        if let date = viewModel.selectedDate {
+            let dateText = Self.formatDate(date)
+            return "\(typeText) • \(dateText)"
+        } else {
+            return "\(typeText) \(String(localized: "Maintenant"))"
         }
-        .padding(.vertical, 4)
     }
     
-    @ViewBuilder
-    private var backButton: some View {
-        Button(action: { onBack?() }) {
-            Image(systemName: "chevron.backward")
-                .font(.system(size: 16, weight: .semibold))
-                .frame(width: 12, height: 12)
-                .foregroundColor(.accentColor)
-                .padding(10)
-                .background(
-                    Circle()
-                        .fill(Color(.secondarySystemFill).opacity(0.5))
-                )
-                .overlay(
-                    Circle()
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                )
+    private static func formatDate(_ date: Date) -> String {
+        let calendar = Calendar.current
+        let now = Date()
+        
+        if calendar.isDate(date, inSameDayAs: now) {
+            return timeOnlyFormatter.string(from: date)
+        } else if calendar.isDate(date, inSameDayAs: calendar.date(byAdding: .day, value: 1, to: now) ?? now) {
+            let timeString = timeOnlyFormatter.string(from: date)
+            return "\(timeString)*"
+        } else {
+            return dateAndTimeFormatter.string(from: date)
         }
-        .padding(.leading, 2)
-        .transition(.opacity.combined(with: .move(edge: .leading)).combined(with: .scale(scale: 0.9)))
     }
+    
+    private static let timeOnlyFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.locale = .autoupdatingCurrent
+        df.timeStyle = .short
+        return df
+    }()
+    
+    private static let dateAndTimeFormatter: DateFormatter = {
+        let df = DateFormatter()
+        df.locale = .autoupdatingCurrent
+        df.dateStyle = .short
+        df.timeStyle = .short
+        return df
+    }()
 }
