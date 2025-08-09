@@ -68,20 +68,17 @@ struct PaginationControlsView: View {
                     ? Color(.secondarySystemBackground)
                     : Color.white
                 )
+                .stroke(
+                    colorScheme == .dark
+                    ? Color.primary.opacity(0.1)
+                    : Color.gray.opacity(0.1),
+                    lineWidth: 0.75
+                )
                 .shadow(
                     color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
                     radius: 7.5,
                     x: 0,
                     y: 5
-                )
-                .overlay(
-                    Capsule()
-                        .stroke(
-                            colorScheme == .dark
-                            ? Color.primary.opacity(0.1)
-                            : Color.gray.opacity(0.1),
-                            lineWidth: 0.75
-                        )
                 )
                 .scaleEffect(isChangingContent ? 0.98 : 1)
                 .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isChangingContent)

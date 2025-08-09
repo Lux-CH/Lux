@@ -98,9 +98,6 @@ struct TripsSearchHeaderView: View {
                         .background(
                             Capsule(style: .continuous)
                                 .fill(Color(.secondarySystemFill).opacity(0.5))
-                        )
-                        .overlay(
-                            Capsule(style: .continuous)
                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                         )
                 }
@@ -150,9 +147,6 @@ struct TripsSearchHeaderView: View {
             .background(
                 Capsule(style: .continuous)
                     .fill(Color.accentColor.opacity(0.12))
-            )
-            .overlay(
-                Capsule(style: .continuous)
                     .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
             )
         }
@@ -187,9 +181,6 @@ struct TripsSearchHeaderView: View {
             .background(
                 Capsule(style: .continuous)
                     .fill(Color.accentColor.opacity(0.12))
-            )
-            .overlay(
-                Capsule(style: .continuous)
                     .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
             )
         }
@@ -201,10 +192,7 @@ struct TripsSearchHeaderView: View {
         ZStack(alignment: .trailing) {
             RoundedRectangle(cornerRadius: 28, style: .continuous)
                 .fill(Color(.secondarySystemFill).opacity(0.5))
-                .overlay(
-                    RoundedRectangle(cornerRadius: 28)
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                )
+                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                 .shadow(
                     color: Color.black.opacity(0.05),
                     radius: 8,
@@ -316,12 +304,9 @@ struct TripsSearchHeaderView: View {
                 .background(
                     Circle()
                         .fill(Color(.secondarySystemFill).opacity(0.5))
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                         .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
                         .background(Circle().fill(Color(.secondarySystemBackground)))
-                )
-                .overlay(
-                    Circle()
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                 )
                 .rotationEffect(isSwapping ? Angle(degrees: 180) : .zero)
                 .animation(.spring(response: 0.5, dampingFraction: 0.6), value: isSwapping)

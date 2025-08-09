@@ -33,7 +33,7 @@ struct CustomTabBar: View {
             }
         }
         .padding(8)
-        .background {
+        .background(
             ZStack {
                 Capsule()
                     .fill(
@@ -58,7 +58,7 @@ struct CustomTabBar: View {
                         lineWidth: 0.75
                     )
             }
-        }
+        )
         .frame(height: 54)
         .padding(.horizontal, 24)
         .padding(.bottom, 8)
@@ -104,13 +104,8 @@ struct TabButton: View {
                             ? Color.accentColor.opacity(0.15)
                             : Color.accentColor.opacity(0.1)
                         )
-                        .matchedGeometryEffect(id: "TAB", in: namespace)
-                }
-            }
-            .overlay {
-                if selectedTab == tab {
-                    Capsule()
                         .stroke(Color.primary.opacity(0.1), lineWidth: 0.25)
+                        .matchedGeometryEffect(id: "TAB", in: namespace)
                 }
             }
         }

@@ -27,12 +27,9 @@ struct ModernCard<Content: View>: View {
     var body: some View {
         content
             .padding(16)
-            .background {
+            .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(backgroundColor)
-            }
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
             )
     }
@@ -53,12 +50,9 @@ struct ModernTextFieldStyle: TextFieldStyle {
     func _body(configuration: TextField<Self._Label>) -> some View {
         configuration
             .padding(16)
-            .background {
+            .background(
                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                     .fill(Color(.secondarySystemGroupedBackground))
-            }
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
                     .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
             )
             .font(.body)
@@ -75,14 +69,14 @@ struct ModernToggleStyle: ToggleStyle {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(configuration.isOn ? accentColorManager.selectedAccentColor : Color(.systemGray4))
                 .frame(width: 50, height: 30)
-                .overlay {
+                .overlay(
                     Circle()
                         .fill(.white)
                         .frame(width: 26, height: 26)
                         .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
                         .offset(x: configuration.isOn ? 10 : -10)
                         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isOn)
-                }
+                )
         }
         .buttonStyle(PlainButtonStyle())
     }

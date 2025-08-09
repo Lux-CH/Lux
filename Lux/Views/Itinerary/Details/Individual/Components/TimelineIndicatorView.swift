@@ -57,11 +57,8 @@ struct TimelineIndicatorView: View {
         ZStack {
             Circle()
                 .fill(backgroundCircleColor)
+                .stroke(legColor, lineWidth: 1.5)
                 .frame(width: 28, height: 28)
-                .overlay(
-                    Circle()
-                        .stroke(legColor, lineWidth: 1.5)
-                )
             
             Image(systemName: symbolName)
                 .resizable()
@@ -76,22 +73,16 @@ struct TimelineIndicatorView: View {
     private var currentStopView: some View {
         Circle()
             .fill(legColor)
+            .stroke(Color.accentColor, lineWidth: 2.5)
             .frame(width: 18, height: 18)
-            .overlay(
-                Circle()
-                    .stroke(Color.accentColor, lineWidth: 2.5)
-            )
     }
     
     @ViewBuilder
     private var standardStopView: some View {
         Circle()
             .fill(legColor)
+            .stroke(Color(.systemBackground), lineWidth: 2)
             .frame(width: 16, height: 16)
-            .overlay(
-                Circle()
-                    .stroke(Color(.systemBackground), lineWidth: 2)
-            )
     }
     
     private var isSpecialStop: Bool {

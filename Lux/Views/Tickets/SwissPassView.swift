@@ -28,11 +28,8 @@ struct SwissPassView: View {
                             endPoint: .bottomTrailing
                         )
                     )
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.75)
                     .shadow(color: .black.opacity(0.3), radius: 12, x: 3, y: 6)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.75)
-                    )
                 
                 VStack(spacing: 0) {
                     HStack {
@@ -60,10 +57,10 @@ struct SwissPassView: View {
                                     RoundedRectangle(cornerRadius: 6)
                                         .fill(Color.white)
                                         .frame(width: 120, height: 120)
-                                        .overlay {
+                                        .overlay(
                                             ProgressView()
                                                 .scaleEffect(0.8)
-                                        }
+                                        )
                                 } else if let qrImage = qrCodeImage {
                                     qrImage
                                         .resizable()
@@ -84,10 +81,10 @@ struct SwissPassView: View {
                                         .fill(Color.white)
                                         .frame(height: 70)
                                         .frame(maxWidth: 250)
-                                        .overlay {
+                                        .overlay(
                                             ProgressView()
                                                 .scaleEffect(0.6)
-                                        }
+                                        )
                                 } else if let barcodeImg = barcodeImage {
                                     barcodeImg
                                         .resizable()

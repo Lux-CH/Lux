@@ -191,9 +191,6 @@ struct EmptyStateContent: View {
                         .background(
                             RoundedRectangle(cornerRadius: 16)
                                 .fill(Color.accentColor.opacity(0.15))
-                        )
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 16)
                                 .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
                         )
                         .foregroundColor(.accentColor)
@@ -241,9 +238,6 @@ struct EmptyStateContent: View {
                                 .background(
                                     RoundedRectangle(cornerRadius: 16)
                                         .fill(Color.secondary.opacity(0.1))
-                                )
-                                .overlay(
-                                    RoundedRectangle(cornerRadius: 16)
                                         .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                 )
                                 

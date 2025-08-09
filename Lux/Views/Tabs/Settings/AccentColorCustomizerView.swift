@@ -123,6 +123,7 @@ struct ModernColorOptionView: View {
                 ZStack {
                     Circle()
                         .fill(color)
+                        .stroke(Color.primary.opacity(0.1), lineWidth: !isSelected ? 0.5 : 0.0)
                         .frame(width: 70, height: 70)
 //                        .shadow(
 //                            color: color.opacity(0.3),
@@ -130,12 +131,6 @@ struct ModernColorOptionView: View {
 //                            x: 0,
 //                            y: isSelected ? 8 : 4
 //                        )
-                        .overlay {
-                            if !isSelected {
-                                Circle()
-                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                            }
-                        }
                     
                     if isSelected {
                         Circle()

@@ -53,7 +53,7 @@ struct ShortcutEditorView: View {
                 }
                 .scrollDismissesKeyboard(.immediately)
             }
-            .background {
+            .background(
                 LinearGradient(
                     colors: [
                         Color(.systemBackground),
@@ -64,7 +64,7 @@ struct ShortcutEditorView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
-            }
+            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {

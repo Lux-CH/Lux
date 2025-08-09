@@ -59,11 +59,8 @@ struct LinePill: View {
         ZStack {
             RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
                 .fill(fillColor)
+                .stroke(strokeColor, lineWidth: 0.5)
                 .frame(width: width, height: height)
-                .overlay(
-                    RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
-                        .stroke(strokeColor, lineWidth: 0.5)
-                )
             
             Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
@@ -87,11 +84,8 @@ struct MorePill: View {
         ZStack {
             RoundedRectangle(cornerRadius: 50)
                 .fill(fillColor)
+                .stroke(strokeColor, lineWidth: 0.5)
                 .frame(width: 30, height: 20)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 50)
-                        .stroke(strokeColor, lineWidth: 0.5)
-                )
             Image(systemName: "ellipsis")
                 .foregroundColor(Color.accentColor)
                 .multilineTextAlignment(.center)

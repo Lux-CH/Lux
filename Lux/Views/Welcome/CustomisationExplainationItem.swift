@@ -70,9 +70,6 @@ struct CustomisationQuickView: View {
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.secondarySystemGroupedBackground))
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
         )
         .padding(.horizontal)

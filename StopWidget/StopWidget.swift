@@ -198,9 +198,6 @@ struct StopWidgetEntryView: View {
                 .background(
                     RoundedRectangle(cornerRadius: 50)
                         .fill(Color(.secondarySystemFill).opacity(0.5))
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: 50)
                         .strokeBorder(Color.primary.opacity(0.1), lineWidth: 0.5)
                 )
             }

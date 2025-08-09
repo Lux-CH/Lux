@@ -60,7 +60,7 @@ struct RouteOptionsView: View {
                     .padding(.top, 22)
                 }
             }
-            .background {
+            .background(
                 LinearGradient(
                     colors: [
                         Color(.systemBackground),
@@ -71,7 +71,7 @@ struct RouteOptionsView: View {
                     endPoint: .bottom
                 )
                 .ignoresSafeArea()
-            }
+            )
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -395,14 +395,11 @@ struct TransferCountButton: View {
                 .font(.system(size: 16, weight: .medium))
                 .foregroundColor(isSelected ? .white : .primary)
                 .frame(width: 44, height: 44)
-                .background {
+                .background(
                     Circle()
                         .fill(isSelected ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
-                }
-                .overlay {
-                    Circle()
                         .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                }
+                )
         }
         .buttonStyle(ScaleButtonStyle())
     }
@@ -421,11 +418,8 @@ struct AccessibilityProfileButton: View {
                 ZStack {
                     Circle()
                         .fill(isSelected ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                         .frame(width: 60, height: 60)
-                        .overlay {
-                            Circle()
-                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                        }
                     
                     Image(systemName: iconName)
                         .font(.system(size: 28))
@@ -439,11 +433,11 @@ struct AccessibilityProfileButton: View {
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
-            .background {
+            .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
                     .stroke(isSelected ? accentColorManager.selectedAccentColor : Color.clear, lineWidth: 2)
                     .animation(.easeInOut(duration: 0.2), value: isSelected)
-            }
+            )
         }
         .buttonStyle(ScaleButtonStyle())
     }
@@ -540,14 +534,11 @@ struct TransferTimeSelector: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background {
+                    .background(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
                             .fill(selectedTime == minutes ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
-                    }
-                    .overlay {
-                        RoundedRectangle(cornerRadius: 12)
                             .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                    }
+                    )
                 }
                 .buttonStyle(ScaleButtonStyle())
             }

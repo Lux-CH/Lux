@@ -51,12 +51,9 @@ struct ColorSchemeSelectionView: View {
         }
         .padding(.vertical, 24)
         .frame(maxWidth: .infinity)
-        .background {
+        .background(
             RoundedRectangle(cornerRadius: 16, style: .continuous)
                 .fill(Color(.secondarySystemGroupedBackground))
-        }
-        .overlay(
-            RoundedRectangle(cornerRadius: 16)
                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
         )
         .padding(.horizontal)
@@ -205,10 +202,7 @@ struct ThemeSelectionCard: View {
                 RoundedRectangle(cornerRadius: 16)
                     .fill(Color(.secondarySystemGroupedBackground))
                     .stroke(isSelected ? option.color : Color.clear, lineWidth: 2)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                    )
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
             )
         }
         .buttonStyle(PlainButtonStyle())
