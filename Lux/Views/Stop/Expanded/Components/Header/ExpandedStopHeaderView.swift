@@ -121,8 +121,8 @@ struct CustomSegmentedPicker: View {
                 .background(
                     ZStack {
                         if selection == option {
-                            RoundedRectangle(cornerRadius: 35)
-                                .fill(Color.accentColor.opacity(0.1))
+                            Capsule(style: .continuous)
+                                .fill(Color.accentColor.opacity(0.12))
                                 .matchedGeometryEffect(id: "selection", in: animation)
                         }
                     }
@@ -131,8 +131,8 @@ struct CustomSegmentedPicker: View {
         }
         .padding(2)
         .overlay(
-            RoundedRectangle(cornerRadius: 35)
-                .stroke(Color.accentColor.opacity(0.85), lineWidth: colorScheme == .dark ? 0.1 : 0.5)
+            Capsule(style: .continuous)
+                .stroke(Color.accentColor.opacity(0.35), lineWidth: colorScheme == .dark ? 0.5 : 0.75)
         )
         .frame(height: 28)
     }
