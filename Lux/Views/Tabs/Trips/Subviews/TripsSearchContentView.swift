@@ -153,15 +153,28 @@ struct TripResultsContent: View {
 struct EmptyStateContent: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @EnvironmentObject var shortcutManager: ShortcutManager
+    @ObservedObject var progress = Progress.shared
     @State private var isAnimating = false
+    @State private var showingSuggestion: Bool = false
     
     var body: some View {
         VStack(spacing: 24) {
+            if progress.numOfTimesTripViewWasOpened == 1 {
+                HintIndicatorView(icon: "chevron.compact.up",
+                                  message: String(localized: "Glissez vers le haut pour retourner sur l'écran d'accueil"),
+                                  delay: 1,
+                                  duration: 15,
+                                  onDismiss: {showingSuggestion = false})
+                .onAppear {
+                    showingSuggestion = true
+                }
+                .padding(.top, 20)
+            }
             Image(systemName: "map")
                 .font(.system(size: 40, weight: .light))
                 .foregroundColor(.secondary.opacity(0.6))
                 .symbolEffect(.pulse, options: .repeating, value: isAnimating)
-                .padding(.top, 60)
+                .padding(.top, showingSuggestion ? 5 : 60)
             
             Text("Entrez un point de départ et une destination")
                 .font(.headline)
