@@ -15,11 +15,15 @@ struct LocationTagView: View {
         HStack(spacing: 6) {
             if case .currentPosition = location {
                 Image(systemName: "location.fill")
-                    .font(.system(size: 12))
-                    .foregroundColor(.white)
-                    .frame(width: 20, height: 20)
-                    .background(Color.accentColor)
-                    .clipShape(Circle())
+                    .font(.system(size: 10))
+                    .foregroundColor(.accentColor)
+                    .frame(width: 28, height: 18)
+                    .background(Color.accentColor.opacity(0.12))
+                    .clipShape(Capsule())
+                    .overlay(
+                        Capsule(style: .continuous)
+                            .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                    )
             }
             
             Text(location.displayName)
@@ -36,17 +40,17 @@ struct LocationTagView: View {
             }
             .buttonStyle(BorderlessButtonStyle())
         }
-        .padding(.vertical, 6)
-        .padding(.horizontal, 10)
+        .frame(maxHeight: 15)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 15)
         .background(
-            RoundedRectangle(cornerRadius: 75)
-                .fill(
-                      Color(.systemFill).opacity(0.2))
-                .shadow(color: Color.black.opacity(0.03), radius: 2, x: 0, y: 1)
+            RoundedRectangle(cornerRadius: 75, style: .continuous)
+                .fill(Color(.secondarySystemFill).opacity(0.4))
+                .shadow(color: Color.black.opacity(0.1), radius: 4, x: 0, y: 2)
         )
         .overlay(
-            RoundedRectangle(cornerRadius: 75)
-                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+            RoundedRectangle(cornerRadius: 75, style: .continuous)
+                .stroke(Color.primary.opacity(0.15), lineWidth: 0.75)
         )
         .animation(.spring(response: 0.3), value: location)
     }
