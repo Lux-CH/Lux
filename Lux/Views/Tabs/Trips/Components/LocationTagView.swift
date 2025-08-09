@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct LocationTagView: View {
+    @EnvironmentObject var shortcutManager: ShortcutManager
     let location: SelectedLocation
     let onRemove: () -> Void
     
     var body: some View {
         HStack(spacing: 6) {
-            if case .currentPosition = location {
-                Image(systemName: "location.fill")
+            if let icon = iconName {
+                Image(systemName: icon)
                     .font(.system(size: 10))
                     .foregroundColor(.accentColor)
                     .frame(width: 28, height: 18)
@@ -53,5 +54,19 @@ struct LocationTagView: View {
                 .stroke(Color.primary.opacity(0.15), lineWidth: 0.75)
         )
         .animation(.spring(response: 0.3), value: location)
+    }
+    
+    private var iconName: String? {
+        if case .currentPosition = location {
+            return "location.fill"
+        }
+        
+        if let shortcut = shortcutManager.shortcuts.first(where: {
+            $0.name.localizedCaseInsensitiveCompare(location.displayName) == .orderedSame
+        }) {
+            return shortcut.symbol
+        }
+        
+        return nil
     }
 }
