@@ -12,6 +12,7 @@ struct AccentColorCustomizerView: View {
     @Environment(\.colorScheme) var colorScheme
     @State private var selectedColorScale: CGFloat = 1.0
     @State private var selectedColorName = ""
+    @State private var showDarkColorAlert: Bool = false
         
     var body: some View {
         NavigationView {
@@ -62,13 +63,21 @@ struct AccentColorCustomizerView: View {
                                 .fontWeight(.semibold)
                             Spacer()
                             if accentColorManager.selectedAccentColor == Color(hex: "2d327d") && colorScheme == .dark {
-                                Text("⚠︎ Couleur Sombre")
-                                    .font(.caption)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 4)
-                                    .background(Color.secondary.opacity(0.1))
-                                    .clipShape(Capsule(style: .continuous))
-                                    .foregroundStyle(.red)
+                                Button {showDarkColorAlert = true} label: {
+                                    Text("⚠︎ Couleur Sombre")
+                                        .font(.caption)
+                                        .padding(.horizontal, 12)
+                                        .padding(.vertical, 4)
+                                        .background(Color.secondary.opacity(0.1))
+                                        .clipShape(Capsule(style: .continuous))
+                                        .foregroundStyle(.red)
+                                }
+                                .buttonStyle(PlainButtonStyle())
+                                .alert("Couleur Sombre", isPresented: $showDarkColorAlert) {
+                                    Button("OK", role: .cancel) { }
+                                } message: {
+                                    Text("La couleur séléctionnée n'est pas bien visible en mode sombre. Pensez à passer en mode clair dans les paramètres \"Mode d'Affichage\"")
+                                }
                             }
                         }
                         .padding(.horizontal, 24)

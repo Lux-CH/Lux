@@ -1455,6 +1455,16 @@
         }
       }
     },
+    "Couleur Sombre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dark Color"
+          }
+        }
+      }
+    },
     "Couleurs disponibles" : {
       "localizations" : {
         "en" : {
@@ -2393,6 +2403,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The trip could not be opened."
+          }
+        }
+      }
+    },
+    "La couleur séléctionnée n'est pas bien visible en mode sombre. Pensez à passer en mode clair dans les paramètres \"Mode d'Affichage\"" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected color is not quite visible in dark mode. Consider switching to light mode in « Display mode » settings"
           }
         }
       }
