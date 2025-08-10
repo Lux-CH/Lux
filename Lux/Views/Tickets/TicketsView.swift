@@ -103,7 +103,7 @@ struct UserTypeSelector: View {
                 .pickerStyle(.segmented)
                 .padding(.horizontal, 20)
                 
-                Text("Note : Les tickets ci-dessous seront achetés via un SMS envoyé par le service officiel des TPG suite à votre confirmation. Des frais SMS standard peuvent s’appliquer.\nLes tickets ne sont pas gérés par Lux et leurs tarifs peuvent évoluer à tout moment sans préavis.")
+                Text("Note : Les tickets ci-dessous seront achetés via un SMS envoyé au service officiel des TPG suite à votre confirmation. Des frais SMS standard peuvent s’appliquer.\nLes tickets ne sont pas gérés par Lux et leurs tarifs peuvent évoluer à tout moment sans préavis.")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 20)

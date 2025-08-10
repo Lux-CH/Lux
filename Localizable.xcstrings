@@ -2832,12 +2832,12 @@
         }
       }
     },
-    "Note : Les tickets ci-dessous seront achetés via un SMS envoyé par le service officiel des TPG suite à votre confirmation. Des frais SMS standard peuvent s’appliquer.\nLes tickets ne sont pas gérés par Lux et leurs tarifs peuvent évoluer à tout moment sans préavis." : {
+    "Note : Les tickets ci-dessous seront achetés via un SMS envoyé au service officiel des TPG suite à votre confirmation. Des frais SMS standard peuvent s’appliquer.\nLes tickets ne sont pas gérés par Lux et leurs tarifs peuvent évoluer à tout moment sans préavis." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Note: The tickets below will be purchased via an SMS sent by the official TPG service after your confirmation. Standard SMS fees may apply.\nThe tickets are not managed by Lux, and prices may change at any time without notice."
+            "value" : "Note: The tickets below will be purchased via an SMS sent to the official TPG service after your confirmation. Standard SMS fees may apply.\nThe tickets are not managed by Lux, and prices may change at any time without notice."
           }
         }
       }
