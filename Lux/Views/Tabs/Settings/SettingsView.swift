@@ -13,6 +13,7 @@ struct SettingsView: View {
     @EnvironmentObject private var shortcutManager: ShortcutManager
     @ObservedObject var settings = Settings.shared
     @ObservedObject var accentColorManager = AccentColorManager.shared
+    @State private var showWelcome: Bool = false
     
     var body: some View {
         NavigationStack {
@@ -287,6 +288,18 @@ struct SettingsView: View {
                         UIApplication.shared.open(url)
                     }
                 }
+                SettingsRow(
+                    icon: "hand.wave",
+                    title: String(localized: "Afficher l'écran de bienvenue"),
+                    subtitle: String(localized: "Réaffiche l'écran initial visible lors de la première ouverture de l'app."),
+                    showChevron: true)
+                .onTapGesture {
+                    showWelcome = true
+                }
+                .fullScreenCover(isPresented: $showWelcome) {
+                    WelcomeView()
+                }
+                
                 SettingsRow(
                     icon: "app.badge",
                     title: String(localized: "Version"),
