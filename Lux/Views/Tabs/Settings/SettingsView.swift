@@ -291,7 +291,7 @@ struct SettingsView: View {
                 SettingsRow(
                     icon: "hand.wave",
                     title: String(localized: "Afficher l'écran de bienvenue"),
-                    subtitle: String(localized: "Réaffiche l'écran initial visible lors de la première ouverture de l'app."),
+                    subtitle: String(localized: "Réaffiche l'écran initial visible lors de la première ouverture de l'app"),
                     showChevron: true)
                 .onTapGesture {
                     showWelcome = true

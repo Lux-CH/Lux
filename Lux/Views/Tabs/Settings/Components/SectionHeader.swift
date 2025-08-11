@@ -23,7 +23,7 @@ struct SectionHeader: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(title)
                     .font(.caption)
-                    .fontWeight(.semibold)
+                    .fontWeight(.black)
                     .textCase(.uppercase)
                     .foregroundColor(.secondary)
                 
