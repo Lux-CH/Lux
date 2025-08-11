@@ -10,6 +10,7 @@ import SwiftUI
 struct CreditsView: View {
     private let creditItems = [
         CreditItem(name: "Constantin Clerc", credit: String(localized: "Développeur Principal"), imageURL: "https://avatars.githubusercontent.com/u/102235607?v=4", url: "https://github.com/c22dev"),
+        CreditItem(name: "Valentin Busi Dias", credit: String(localized: "Assistant intuitivité et design"), imageURL: "https://i.ibb.co/7NxL2CDP/Capture-d-cran-2025-08-11-18-46-39.png", url: "https://cclerc.ch/val"),
         CreditItem(name: "Philippe Weidmann", credit: String(localized: "Données des perturbations"), imageURL: "https://avatars.githubusercontent.com/u/5843044?v=4", url: "https://github.com/PhilippeWeidmann"),
         CreditItem(name: "Paul Hudson", credit: "CodeScanner - MIT", imageURL: "https://avatars.githubusercontent.com/u/190200?v=4", url: "https://github.com/twostraws/CodeScanner"),
         CreditItem(name: "Raphaël Mor", credit: "Polyline - MIT", imageURL: "https://avatars.githubusercontent.com/u/772779?v=4", url: "https://github.com/raphaelmor/Polyline"),

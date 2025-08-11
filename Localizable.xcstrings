@@ -467,6 +467,16 @@
         }
       }
     },
+    "Afficher l'écran de bienvenue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show welcome screen"
+          }
+        }
+      }
+    },
     "Afficher le retard exact" : {
       "localizations" : {
         "en" : {
@@ -739,6 +749,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scheduled arrival : %@"
+          }
+        }
+      }
+    },
+    "Assistant intuitivité et design" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intuitivity and design advisor"
           }
         }
       }
@@ -3393,6 +3413,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reports sent!"
+          }
+        }
+      }
+    },
+    "Réaffiche l'écran initial visible lors de la première ouverture de l'app" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Redisplays the initial screen visible on first launch"
           }
         }
       }
