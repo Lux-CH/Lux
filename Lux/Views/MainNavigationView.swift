@@ -417,7 +417,7 @@ struct MainNavigationView: View {
                 }
             }
             .onEnded { value in
-                if value.translation.height < -200 {
+                if value.translation.height < -50 {
                     exitSearchMode()
                 } else {
                     searchDragOffset = 0
