@@ -753,16 +753,6 @@
         }
       }
     },
-    "Assistant intuitivité et design" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intuitivity and design advisor"
-          }
-        }
-      }
-    },
     "Astuces" : {
       "localizations" : {
         "en" : {
@@ -1391,6 +1381,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Configure LuxPass"
+          }
+        }
+      }
+    },
+    "Conseiller intuitivité et design" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intuitivity and design advisor"
           }
         }
       }
