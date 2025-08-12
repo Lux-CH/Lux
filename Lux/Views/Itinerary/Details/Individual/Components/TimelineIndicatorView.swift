@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TimelineIndicatorView: View {
     let legColor: Color
+    let accentColor: Color
     let isFirstStop: Bool
     let isLastStop: Bool
     let isDepartureStop: Bool
@@ -73,7 +74,7 @@ struct TimelineIndicatorView: View {
     private var currentStopView: some View {
         Circle()
             .fill(legColor)
-            .stroke(Color.accentColor, lineWidth: 2.5)
+            .stroke(accentColor, lineWidth: 2)
             .frame(width: 18, height: 18)
     }
     
@@ -99,7 +100,7 @@ struct TimelineIndicatorView: View {
     }
     
     private var lineColor: Color {
-        isCurrentStop ? .accentColor : legColor
+        isCurrentStop ? accentColor : legColor
     }
     
     private var backgroundCircleColor: Color {
