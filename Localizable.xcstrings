@@ -2041,6 +2041,16 @@
         }
       }
     },
+    "Frais" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fresh"
+          }
+        }
+      }
+    },
     "Froid" : {
       "localizations" : {
         "en" : {
@@ -4073,16 +4083,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Very strong"
-          }
-        }
-      }
-    },
-    "Très froid" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Very cold"
           }
         }
       }
