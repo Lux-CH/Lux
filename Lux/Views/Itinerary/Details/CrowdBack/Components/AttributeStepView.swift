@@ -142,8 +142,8 @@ struct AttributeStepView: View {
             }
         case .heat:
             switch selectedLevel {
-            case 1: return String(localized: "Très froid")
-            case 2: return String(localized: "Froid")
+            case 1: return String(localized: "Froid")
+            case 2: return String(localized: "Frais")
             case 3: return String(localized: "Tempéré")
             case 4: return String(localized: "Chaud")
             case 5: return String(localized: "Très chaud")
