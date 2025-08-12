@@ -12,6 +12,7 @@ struct ItineraryStopTimeView: View {
     let stop: Place
     let stopStatus: StopStatus
     let legColor: Color
+    let accentColor: Color
     let isDepartureStop: Bool
     let isArrivalStop: Bool
     
@@ -28,7 +29,7 @@ struct ItineraryStopTimeView: View {
                     
                     Text(stopStatus.timeUntil)
                         .font(.subheadline)
-                        .foregroundColor(stopStatus.isCurrentStop ? .accentColor : legColor)
+                        .foregroundColor(stopStatus.isCurrentStop ? accentColor : legColor)
                         .fontWeight(stopStatus.isCurrentStop ? .semibold : .regular)
                 }
             }
