@@ -1034,7 +1034,17 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Blue Ice Tea"
+            "value" : "Ice Tea Blue"
+          }
+        }
+      }
+    },
+    "Bleu Léman" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leman Aqua"
           }
         }
       }
@@ -2342,7 +2352,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Yellow Mouettes"
+            "value" : "Mouettes Yellow"
           }
         }
       }
@@ -4227,6 +4237,16 @@
         }
       }
     },
+    "Vert Bastions" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bastions Green"
+          }
+        }
+      }
+    },
     "Vert CGTE" : {
       "localizations" : {
         "en" : {
@@ -4243,6 +4263,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Empty"
+          }
+        }
+      }
+    },
+    "Violet SCNF" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "SNCF Purple"
           }
         }
       }
