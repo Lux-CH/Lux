@@ -11,6 +11,7 @@ import LuxCom
 struct ItineraryStopTimelineView: View {
     let stops: [Place]
     let legColor: Color
+    let accentColor: Color
     let fromStop: Place
     let toStop: Place
     let isMultipleLeg: Bool
@@ -38,6 +39,7 @@ struct ItineraryStopTimelineView: View {
                     ItineraryStopTimelineRowView(
                         stop: stop,
                         legColor: legColor,
+                        accentColor: accentColor,
                         isFirstStop: actualIndex == 0,
                         isLastStop: actualIndex == stops.count - 1,
                         isDepartureStop: stop.name == fromStop.name,
@@ -119,6 +121,7 @@ struct IntermediateStopsButton: View {
 struct ItineraryStopTimelineRowView: View {
     let stop: Place
     let legColor: Color
+    let accentColor: Color
     let isFirstStop: Bool
     let isLastStop: Bool
     let isDepartureStop: Bool
@@ -154,6 +157,7 @@ struct ItineraryStopTimelineRowView: View {
             HStack(alignment: .center, spacing: 0) {
                 TimelineIndicatorView(
                     legColor: legColor,
+                    accentColor: accentColor,
                     isFirstStop: isFirstStop,
                     isLastStop: isLastStop,
                     isDepartureStop: isDepartureStop,

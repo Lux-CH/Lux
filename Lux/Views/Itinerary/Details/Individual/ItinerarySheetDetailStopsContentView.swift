@@ -9,6 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct ItinerarySheetDetailStopsContentView: View {
+    @ObservedObject var accentColorManager = AccentColorManager.shared
     let stops: [Place]
     let legColor: Color
     let fromStop: Place
@@ -48,6 +49,7 @@ struct ItinerarySheetDetailStopsContentView: View {
                 ItineraryStopTimelineView(
                     stops: stops,
                     legColor: legColor,
+                    accentColor: accentColorManager.selectedAccentColor,
                     fromStop: fromStop,
                     toStop: toStop,
                     isMultipleLeg: isMultipleLeg
