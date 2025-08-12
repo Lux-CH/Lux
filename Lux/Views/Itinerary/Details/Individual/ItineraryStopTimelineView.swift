@@ -187,6 +187,7 @@ struct ItineraryStopTimelineRowView: View {
                         stop: stop,
                         stopStatus: stopStatus,
                         legColor: legColor,
+                        accentColor: accentColor,
                         isDepartureStop: isDepartureStop,
                         isArrivalStop: isArrivalStop
                     )
