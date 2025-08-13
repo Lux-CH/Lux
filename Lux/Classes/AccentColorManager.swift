@@ -19,7 +19,7 @@ class AccentColorManager: ObservableObject {
         (String(localized: "Orange TPG"), Color(hex: "FC5412"), "tpg"),
         (String(localized: "Orange Lux"), .orange, nil),
         (String(localized: "Jaune Mouettes"), .yellow, nil),
-        (String(localized: "Vert Bastions"), .green, "cgte"),
+        (String(localized: "Vert Vaudois"), .green, "cgte"),
         (String(localized: "Vert CGTE"), Color(hex: "2D8859"), "cgte"),
         (String(localized: "Bleu Léman"), Color(hex: "2EFEDA"), "icetea"),
         (String(localized: "Bleu Ice Tea"), Color(hex: "3182DB"), "icetea"),
