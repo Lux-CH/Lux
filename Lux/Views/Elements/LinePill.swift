@@ -41,11 +41,18 @@ struct LinePill: View {
         line.hasPrefix("RL") ? String(line.dropFirst(1)) : line
     }
     
-    private var lineColor: Color {
+    private var baseLineColor: Color {
         if isSquared && LineColors.color(for: line) == nil {
             return Color(hex: "EA0706")
         }
         return LineColors.color(for: line) ?? .accent
+    }
+    
+    private var lineColor: Color {
+        if isDarkColor() {
+            return lightenColor(baseLineColor)
+        }
+        return baseLineColor
     }
     
     var body: some View {
@@ -67,6 +74,36 @@ struct LinePill: View {
                 .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: line) : (lineColor == .black ? .white : lineColor))
                 .multilineTextAlignment(.center)
         }
+    }
+    
+    private func isDarkColor() -> Bool {
+        let uiColor = UIColor(baseLineColor)
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        
+        // ITU-R BT.709, https://stackoverflow.com/a/596243
+        let luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+        
+        return luminance < 0.35
+    }
+    
+    private func lightenColor(_ color: Color, by factor: Double = 0.25) -> Color {
+        let uiColor = UIColor(color)
+        var hue: CGFloat = 0
+        var saturation: CGFloat = 0
+        var brightness: CGFloat = 0
+        var alpha: CGFloat = 0
+        
+        uiColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+        
+        let newBrightness = min(1.0, brightness + CGFloat(factor))
+        let newSaturation = max(0.3, saturation * 0.8)
+        
+        return Color(hue: Double(hue), saturation: Double(newSaturation), brightness: Double(newBrightness))
     }
 }
 
