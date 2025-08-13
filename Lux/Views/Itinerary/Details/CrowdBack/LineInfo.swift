@@ -123,21 +123,21 @@ enum AttributeType: String, CaseIterable {
             
         case .clean:
             switch level {
-            case 0.0..<1.5: return intermediaryRedColor
+            case 0.0..<1.5: return vividRed
             case 1.5..<2.5: return .red
             case 2.5..<3.5: return .yellow
             case 3.5..<4.5: return .green
-            case 4.5...5.0: return intermediaryGreenColor
+            case 4.5...5.0: return vividGreen
             default: return .red
             }
             
         case .crowd, .noise, .smell:
             switch level {
-            case 0.0..<1.5: return intermediaryGreenColor
+            case 0.0..<1.5: return vividGreen
             case 1.5..<2.5: return .green
             case 2.5..<3.5: return .yellow
             case 3.5..<4.5: return .red
-            case 4.5...5.0: return intermediaryRedColor
+            case 4.5...5.0: return vividRed
             default: return .green
             }
         }

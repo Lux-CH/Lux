@@ -183,25 +183,25 @@ struct AttributeStepView: View {
             }
         case .clean:
             switch level {
-            case 1: return intermediaryRedColor
+            case 1: return vividRed
             case 2: return .red
             case 3: return .yellow
             case 4: return .green
-            case 5: return intermediaryGreenColor
+            case 5: return vividGreen
             default: return .red
             }
         case .crowd, .noise, .smell:
             switch level {
-            case 1: return intermediaryGreenColor
+            case 1: return vividGreen
             case 2: return .green
             case 3: return .yellow
             case 4: return .red
-            case 5: return intermediaryRedColor
+            case 5: return vividRed
             default: return .green
             }
         }
     }
 }
 
-let intermediaryRedColor = Color(red: 1.0, green: 0.27, blue: 0.0)
-let intermediaryGreenColor = Color(red: 0.0, green: 0.8, blue: 0.4)
+let vividRed = Color(red: 1.0, green: 0.1, blue: 0.0)
+let vividGreen = Color(red: 0.0, green: 0.9, blue: 0.2)
