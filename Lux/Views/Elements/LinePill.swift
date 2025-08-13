@@ -77,6 +77,9 @@ struct LinePill: View {
     }
     
     private func isDarkColor() -> Bool {
+        guard !settings.highContrastButAccurateLinePill else {
+            return false
+        }
         let uiColor = UIColor(baseLineColor)
         var red: CGFloat = 0
         var green: CGFloat = 0
