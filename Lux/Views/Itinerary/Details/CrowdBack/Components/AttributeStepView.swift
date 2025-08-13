@@ -171,31 +171,37 @@ struct AttributeStepView: View {
     }
     
     private func colorForLevel(_ level: Int) -> Color {
-        let progress = Double(level - 1) / 4.0
-        
         switch attribute {
         case .heat:
-            return Color(
-                red: progress * 0.9,
-                green: 0.1 * (1.0 - progress),
-                blue: (1.0 - progress) * 0.9 + 0.1
-            )
+            switch level {
+            case 1: return .cyan
+            case 2: return .blue
+            case 3: return .indigo
+            case 4: return .purple
+            case 5: return .red
+            default: return .blue
+            }
         case .clean:
-            let redComponent = (1.0 - progress) * 0.9
-            let greenComponent = progress * 0.8 + 0.1
-            return Color(
-                red: redComponent,
-                green: greenComponent,
-                blue: 0.1
-            )
+            switch level {
+            case 1: return intermediaryRedColor
+            case 2: return .red
+            case 3: return .yellow
+            case 4: return .green
+            case 5: return intermediaryGreenColor
+            default: return .red
+            }
         case .crowd, .noise, .smell:
-            let redComponent = progress * 0.9
-            let greenComponent = (1.0 - progress) * 0.8 + 0.1
-            return Color(
-                red: redComponent,
-                green: greenComponent,
-                blue: 0.1
-            )
+            switch level {
+            case 1: return intermediaryGreenColor
+            case 2: return .green
+            case 3: return .yellow
+            case 4: return .red
+            case 5: return intermediaryRedColor
+            default: return .green
+            }
         }
     }
 }
+
+let intermediaryRedColor = Color(red: 1.0, green: 0.27, blue: 0.0)
+let intermediaryGreenColor = Color(red: 0.0, green: 0.8, blue: 0.4)
