@@ -49,7 +49,7 @@ struct LinePill: View {
     }
     
     private var lineColor: Color {
-        if isDarkColor() {
+        if isDarkColor(baseLineColor) && !settings.highContrastButAccurateLinePill {
             return lightenColor(baseLineColor)
         }
         return baseLineColor
@@ -74,39 +74,6 @@ struct LinePill: View {
                 .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: line) : (baseLineColor == .black ? .white : lineColor))
                 .multilineTextAlignment(.center)
         }
-    }
-    
-    private func isDarkColor() -> Bool {
-        guard !settings.highContrastButAccurateLinePill else {
-            return false
-        }
-        let uiColor = UIColor(baseLineColor)
-        var red: CGFloat = 0
-        var green: CGFloat = 0
-        var blue: CGFloat = 0
-        var alpha: CGFloat = 0
-        
-        uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
-        
-        // ITU-R BT.709, https://stackoverflow.com/a/596243
-        let luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
-        
-        return luminance < 0.35
-    }
-    
-    private func lightenColor(_ color: Color, by factor: Double = 0.25) -> Color {
-        let uiColor = UIColor(color)
-        var hue: CGFloat = 0
-        var saturation: CGFloat = 0
-        var brightness: CGFloat = 0
-        var alpha: CGFloat = 0
-        
-        uiColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
-        
-        let newBrightness = min(1.0, brightness + CGFloat(factor))
-        let newSaturation = max(0.3, saturation * 0.8)
-        
-        return Color(hue: Double(hue), saturation: Double(newSaturation), brightness: Double(newBrightness))
     }
 }
 

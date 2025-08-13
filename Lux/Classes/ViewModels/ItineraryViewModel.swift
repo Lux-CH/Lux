@@ -381,9 +381,11 @@ func getLegColor(_ leg: Leg) -> Color {
     case .bike, .car:
         return .gray
     default:
+        var baseColor: Color
+        
         if let routeName = leg.routeShortName {
             if let color = LineColors.color(for: routeName) {
-                return color
+                baseColor = color
             } else {
                 let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR") ||
                                     routeName.hasPrefix("RE") || routeName.hasPrefix("IC") || routeName == "R"
@@ -395,18 +397,53 @@ func getLegColor(_ leg: Leg) -> Color {
                 
                 let isSquared = squaredModes.contains(leg.mode) || isTrainDetected
                 if isSquared {
-                    return Color(hex: "EA0706")
+                    baseColor = Color(hex: "EA0706")
                 } else {
-                    return Color.accent
+                    baseColor = Color.accent
                 }
             }
         } else {
             if leg.mode == .rail || leg.mode == .highSpeedRail ||
                leg.mode == .regionalRail || leg.mode == .regionalFastRail {
-                return Color(hex: "EA0706")
+                baseColor = Color(hex: "EA0706")
             } else {
-                return .accent
+                baseColor = .accent
             }
         }
+        
+        if isDarkColor(baseColor) {
+            return lightenColor(baseColor)
+        }
+        return baseColor
     }
+}
+
+func isDarkColor(_ color: Color) -> Bool {
+    let uiColor = UIColor(color)
+    var red: CGFloat = 0
+    var green: CGFloat = 0
+    var blue: CGFloat = 0
+    var alpha: CGFloat = 0
+    
+    uiColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+    
+    // ITU-R BT.709, https://stackoverflow.com/a/596243
+    let luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
+    
+    return luminance < 0.35
+}
+    
+func lightenColor(_ color: Color, by factor: Double = 0.25) -> Color {
+    let uiColor = UIColor(color)
+    var hue: CGFloat = 0
+    var saturation: CGFloat = 0
+    var brightness: CGFloat = 0
+    var alpha: CGFloat = 0
+    
+    uiColor.getHue(&hue, saturation: &saturation, brightness: &brightness, alpha: &alpha)
+    
+    let newBrightness = min(1.0, brightness + CGFloat(factor))
+    let newSaturation = max(0.3, saturation * 0.8)
+    
+    return Color(hue: Double(hue), saturation: Double(newSaturation), brightness: Double(newBrightness))
 }
