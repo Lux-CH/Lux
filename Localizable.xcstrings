@@ -4237,22 +4237,22 @@
         }
       }
     },
-    "Vert Bastions" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bastions Green"
-          }
-        }
-      }
-    },
     "Vert CGTE" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "CGTE Green"
+          }
+        }
+      }
+    },
+    "Vert Vaudois" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vaud Green"
           }
         }
       }
