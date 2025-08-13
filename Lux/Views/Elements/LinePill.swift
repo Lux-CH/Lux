@@ -71,7 +71,7 @@ struct LinePill: View {
             
             Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
-                .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: line) : (lineColor == .black ? .white : lineColor))
+                .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: line) : (baseLineColor == .black ? .white : lineColor))
                 .multilineTextAlignment(.center)
         }
     }

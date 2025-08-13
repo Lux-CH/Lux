@@ -63,7 +63,7 @@ struct LinePill: View {
             
             Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
-                .foregroundColor(lineColor == .black ? .white : lineColor)
+                .foregroundColor(baseLineColor == .black ? .white : lineColor)
                 .multilineTextAlignment(.center)
         }
     }
