@@ -47,7 +47,7 @@ struct AttributeIndicator: View {
     }
     
     var body: some View {
-        if let data = attributeData, data.trustLevel >= 3.0 {
+        if let data = attributeData, data.trustLevel >= 2.0 {
             HStack(spacing: 2) {
                 Image(systemName: type.iconName)
                     .font(.system(size: 11))
@@ -59,7 +59,7 @@ struct AttributeIndicator: View {
                         Circle()
                             .fill(level <= Int(data.level.rounded()) ?
                                   type.color(for: data.level) :
-                                  Color.gray.opacity(0.3))
+                                  Color.secondary.opacity(0.3))
                             .frame(width: 3, height: 3)
                     }
                 }
@@ -82,7 +82,7 @@ struct AttributeIndicator: View {
             }
             .padding(.horizontal, 4)
             .padding(.vertical, 2)
-            .background(Color.gray.opacity(0.1))
+            .background(Color.secondary.opacity(0.1))
             .cornerRadius(6)
         }
     }
@@ -109,33 +109,37 @@ enum AttributeType: String, CaseIterable {
             return "speaker.wave.2.fill"
         }
     }
-    
     func color(for level: Double) -> Color {
-        let normalizedLevel = max(0.0, min(5.0, level))
-        let progress = (normalizedLevel - 1.0) / 4.0
-        let clampedProgress = max(0.0, min(1.0, progress))
-        
         switch self {
         case .heat:
-            return Color(
-                red: 0.2 + clampedProgress * 0.8,
-                green: 0.3 * (1.0 - clampedProgress),
-                blue: 0.9 * (1.0 - clampedProgress)
-            )
+            switch level {
+            case 0.0..<1.5: return .cyan
+            case 1.5..<2.5: return .blue
+            case 2.5..<3.5: return .indigo
+            case 3.5..<4.5: return .purple
+            case 4.5...5.0: return .red
+            default: return .blue
+            }
             
         case .clean:
-            return Color(
-                red: 0.2 + (1.0 - clampedProgress) * 0.7,
-                green: 0.8 * clampedProgress + 0.1,
-                blue: 0.15
-            )
+            switch level {
+            case 0.0..<1.5: return intermediaryRedColor
+            case 1.5..<2.5: return .red
+            case 2.5..<3.5: return .yellow
+            case 3.5..<4.5: return .green
+            case 4.5...5.0: return intermediaryGreenColor
+            default: return .red
+            }
             
         case .crowd, .noise, .smell:
-            return Color(
-                red: 0.2 + clampedProgress * 0.7,
-                green: 0.8 * (1.0 - clampedProgress) + 0.1,
-                blue: 0.15
-            )
+            switch level {
+            case 0.0..<1.5: return intermediaryGreenColor
+            case 1.5..<2.5: return .green
+            case 2.5..<3.5: return .yellow
+            case 3.5..<4.5: return .red
+            case 4.5...5.0: return intermediaryRedColor
+            default: return .green
+            }
         }
     }
 }
