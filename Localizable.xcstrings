@@ -1591,6 +1591,36 @@
         }
       }
     },
+    "Définissez le nombre de changements de transport maximal à effectuer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Define the number of maximum transfers"
+          }
+        }
+      }
+    },
+    "Définissez le temps maximal que vous êtes prêt à marcher" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Define the maximum time you are able to walk"
+          }
+        }
+      }
+    },
+    "Définissez le temps minimum d'attente à chaque transfert, pour vous assurer de parvenir à temps à votre connexion" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Define the waiting time at each transfer, to ensure you make your connection on time"
+          }
+        }
+      }
+    },
     "Demain, %@" : {
       "localizations" : {
         "en" : {
@@ -2862,7 +2892,7 @@
         }
       }
     },
-    "Nombre maximum" : {
+    "Nombre maximal" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3923,6 +3953,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Mild"
+          }
+        }
+      }
+    },
+    "Temps de marche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking time"
+          }
+        }
+      }
+    },
+    "Temps de marche maximal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Max walking time"
           }
         }
       }

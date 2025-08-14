@@ -14,12 +14,14 @@ struct RouteOptionsView: View {
     @AppStorage("routeOptionsMinTransferTime") private var storedMinTransferTime: Int = 0
     @AppStorage("routeOptionsPedestrianProfile") private var storedPedestrianProfile: String = PedestrianProfile.foot.rawValue
     @AppStorage("routeOptionsTransportModes") private var storedTransportModes: Data = Data()
+    @AppStorage("routeOptionsMaxWalkingTime") private var storedMaxWalkingTime: Int = 900
     @ObservedObject var accentColorManager = AccentColorManager.shared
     
     @State private var maxTransfers: Int
     @State private var minTransferTime: Int
     @State private var pedestrianProfile: PedestrianProfile
     @State private var selectedTransportModes: Set<TransportationMode>
+    @State private var maxWalkingTime: Int
     @State private var showResetConfirmation = false
     
     private let availableTransportModes: [TransportationMode] = [.bus, .tram, .rail, .ferry]
@@ -30,6 +32,7 @@ struct RouteOptionsView: View {
     private let defaultMinTransferTime = 0
     private let defaultPedestrianProfile = PedestrianProfile.foot
     private let defaultTransportModes: Set<TransportationMode> = []
+    private let defaultMaxWalkingTime = 900
     
     init(routeOptions: RouteOptions, onSave: @escaping (RouteOptions) -> Void) {
         self.routeOptions = routeOptions
@@ -41,6 +44,9 @@ struct RouteOptionsView: View {
         
         let modes = routeOptions.transitModes ?? []
         _selectedTransportModes = State(initialValue: Set(modes))
+        
+        let walkingTime = routeOptions.maxPreTransitTime ?? 900
+        _maxWalkingTime = State(initialValue: walkingTime)
     }
     
     var body: some View {
@@ -52,6 +58,7 @@ struct RouteOptionsView: View {
                     
                     VStack(spacing: 24) {
                         transfersSection
+                        walkingTimeSection
                         accessibilitySection
 //                        transportModesSection
                         resetSection
@@ -144,10 +151,16 @@ struct RouteOptionsView: View {
             ModernCard {
                 VStack(spacing: 20) {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Nombre maximum")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.primary)
-                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Nombre maximal")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            
+                            Text("Définissez le nombre de changements de transport maximal à effectuer")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
                         HStack(spacing: 8) {
                             ForEach(0...5, id: \.self) { number in
                                 TransferCountButton(
@@ -169,9 +182,16 @@ struct RouteOptionsView: View {
                         .opacity(0.5)
                     
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("Temps minimum entre transferts")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.primary)
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Temps minimum entre transferts")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            
+                            Text("Définissez le temps minimum d'attente à chaque transfert, pour vous assurer de parvenir à temps à votre connexion")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
                         
                         TransferTimeSelector(
                             selectedTime: $minTransferTime,
@@ -180,6 +200,34 @@ struct RouteOptionsView: View {
                             }
                         )
                     }
+                }
+            }
+        }
+    }
+    
+    private var walkingTimeSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            OptionHeader(title: String(localized: "Temps de marche"), icon: "figure.walk")
+            
+            ModernCard {
+                VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Temps de marche maximal")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.primary)
+                        
+                        Text("Définissez le temps maximal que vous êtes prêt à marcher")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                    }
+                    
+                    WalkingTimeSelector(
+                        selectedTime: $maxWalkingTime,
+                        onTimeChanged: { newTime in
+                            storedMaxWalkingTime = newTime
+                        }
+                    )
                 }
             }
         }
@@ -297,6 +345,7 @@ struct RouteOptionsView: View {
     private func loadStoredPreferences() {
         maxTransfers = storedMaxTransfers
         minTransferTime = storedMinTransferTime
+        maxWalkingTime = storedMaxWalkingTime
         
         if let profile = PedestrianProfile(rawValue: storedPedestrianProfile) {
             pedestrianProfile = profile
@@ -333,15 +382,19 @@ struct RouteOptionsView: View {
             minTransferTime = defaultMinTransferTime
             pedestrianProfile = defaultPedestrianProfile
             selectedTransportModes = defaultTransportModes
+            maxWalkingTime = defaultMaxWalkingTime
             
             storedMaxTransfers = defaultMaxTransfers
             storedMinTransferTime = defaultMinTransferTime
             storedPedestrianProfile = defaultPedestrianProfile.rawValue
+            storedMaxWalkingTime = defaultMaxWalkingTime
             saveTransportModesToStorage()
         }
     }
     
     private func saveOptions() {
+        let walkingTime = maxWalkingTime == 900 ? nil : maxWalkingTime
+        
         let newOptions = RouteOptions(
             from: routeOptions.from,
             to: routeOptions.to,
@@ -356,8 +409,8 @@ struct RouteOptionsView: View {
             numItineraries: routeOptions.numItineraries,
             pageCursor: routeOptions.pageCursor,
             timetableView: routeOptions.timetableView,
-            maxPreTransitTime: routeOptions.maxPreTransitTime,
-            maxPostTransitTime: routeOptions.maxPostTransitTime
+            maxPreTransitTime: walkingTime,
+            maxPostTransitTime: walkingTime
         )
         
         onSave(newOptions)
@@ -541,6 +594,67 @@ struct TransferTimeSelector: View {
                     )
                 }
                 .buttonStyle(ScaleButtonStyle())
+            }
+        }
+    }
+}
+
+struct WalkingTimeSelector: View {
+    @Binding var selectedTime: Int
+    let onTimeChanged: (Int) -> Void
+    private let walkingTimeOptions = [300, 600, 900, 1200]
+    @ObservedObject var accentColorManager = AccentColorManager.shared
+
+    private func formatWalkingTime(_ seconds: Int) -> String {
+        let minutes = seconds / 60
+        return "\(minutes)m"
+    }
+    
+    private func getWalkingDescription(_ seconds: Int) -> String {
+        switch seconds {
+        case 300:
+            return "Courte"
+        case 600:
+            return "Normale"
+        case 900:
+            return "Standard"
+        case 1200:
+            return "Longue"
+        default:
+            return "Standard"
+        }
+    }
+    
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 8) {
+                ForEach(walkingTimeOptions, id: \.self) { seconds in
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3)) {
+                            selectedTime = seconds
+                            onTimeChanged(seconds)
+                            HapticFeedback.lightImpact()
+                        }
+                    }) {
+                        VStack(spacing: 4) {
+                            Text(formatWalkingTime(seconds))
+                                .font(.system(size: 15, weight: selectedTime == seconds ? .semibold : .regular))
+                                .foregroundColor(selectedTime == seconds ? .white : .primary)
+                            
+                            Text(getWalkingDescription(seconds))
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(selectedTime == seconds ? .white.opacity(0.9) : .secondary)
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 12, style: .continuous)
+                                .fill(selectedTime == seconds ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
+                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                        )
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                }
             }
         }
     }
