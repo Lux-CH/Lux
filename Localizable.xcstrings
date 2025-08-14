@@ -2041,7 +2041,7 @@
         }
       }
     },
-    "Fixez le temps d’attente minimal entre deux correspondances pour vous assurer de réaliser vos connections dans les temps" : {
+    "Fixez le temps d'attente minimal entre deux correspondances pour vous assurer de réaliser vos connections dans les temps" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {

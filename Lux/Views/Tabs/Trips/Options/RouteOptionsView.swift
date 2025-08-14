@@ -10,11 +10,6 @@ import LuxCom
 
 struct RouteOptionsView: View {
     @Environment(\.dismiss) private var dismiss
-    @AppStorage("routeOptionsMaxTransfers") private var storedMaxTransfers: Int = 5
-    @AppStorage("routeOptionsMinTransferTime") private var storedMinTransferTime: Int = 0
-    @AppStorage("routeOptionsPedestrianProfile") private var storedPedestrianProfile: String = PedestrianProfile.foot.rawValue
-    @AppStorage("routeOptionsTransportModes") private var storedTransportModes: Data = Data()
-    @AppStorage("routeOptionsMaxWalkingTime") private var storedMaxWalkingTime: Int = 900
     @ObservedObject var accentColorManager = AccentColorManager.shared
     
     @State private var maxTransfers: Int
@@ -97,8 +92,6 @@ struct RouteOptionsView: View {
                     .foregroundStyle(accentColorManager.selectedAccentColor)
                 }
             }
-            .onAppear {
-                loadStoredPreferences()            }
             .confirmationDialog(
                 "Rétablir les valeurs par défaut",
                 isPresented: $showResetConfirmation,
@@ -171,7 +164,6 @@ struct RouteOptionsView: View {
                                     onTap: {
                                         withAnimation(.spring(response: 0.3)) {
                                             maxTransfers = number
-                                            storedMaxTransfers = number
                                             HapticFeedback.lightImpact()
                                         }
                                     }
@@ -189,17 +181,14 @@ struct RouteOptionsView: View {
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(.primary)
                             
-                            Text("Fixez le temps d’attente minimal entre deux correspondances pour vous assurer de réaliser vos connections dans les temps")
+                            Text("Fixez le temps d'attente minimal entre deux correspondances pour vous assurer de réaliser vos connections dans les temps")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
                         }
                         
                         TransferTimeSelector(
-                            selectedTime: $minTransferTime,
-                            onTimeChanged: { newTime in
-                                storedMinTransferTime = newTime
-                            }
+                            selectedTime: $minTransferTime
                         )
                     }
                 }
@@ -225,10 +214,7 @@ struct RouteOptionsView: View {
                     }
                     
                     WalkingTimeSelector(
-                        selectedTime: $maxWalkingTime,
-                        onTimeChanged: { newTime in
-                            storedMaxWalkingTime = newTime
-                        }
+                        selectedTime: $maxWalkingTime
                     )
                 }
             }
@@ -253,7 +239,6 @@ struct RouteOptionsView: View {
                             action: {
                                 withAnimation(.spring(response: 0.3)) {
                                     pedestrianProfile = .foot
-                                    storedPedestrianProfile = PedestrianProfile.foot.rawValue
                                     HapticFeedback.lightImpact()
                                 }
                             }
@@ -266,7 +251,6 @@ struct RouteOptionsView: View {
                             action: {
                                 withAnimation(.spring(response: 0.3)) {
                                     pedestrianProfile = .wheelchair
-                                    storedPedestrianProfile = PedestrianProfile.wheelchair.rawValue
                                     HapticFeedback.lightImpact()
                                 }
                             }
@@ -344,27 +328,6 @@ struct RouteOptionsView: View {
         .buttonStyle(ScaleButtonStyle())
     }
     
-    private func loadStoredPreferences() {
-        maxTransfers = storedMaxTransfers
-        minTransferTime = storedMinTransferTime
-        maxWalkingTime = storedMaxWalkingTime
-        
-        if let profile = PedestrianProfile(rawValue: storedPedestrianProfile) {
-            pedestrianProfile = profile
-        }
-        
-        if let decodedModes = try? JSONDecoder().decode(Set<TransportationMode>.self, from: storedTransportModes),
-           !decodedModes.isEmpty {
-            selectedTransportModes = decodedModes
-        }
-    }
-    
-    private func saveTransportModesToStorage() {
-        if let encodedModes = try? JSONEncoder().encode(selectedTransportModes) {
-            storedTransportModes = encodedModes
-        }
-    }
-    
     private func toggleTransportMode(_ mode: TransportationMode) {
         withAnimation(.spring(response: 0.3)) {
             if selectedTransportModes.contains(mode) {
@@ -374,7 +337,6 @@ struct RouteOptionsView: View {
             } else {
                 selectedTransportModes.insert(mode)
             }
-            saveTransportModesToStorage()
         }
     }
     
@@ -385,12 +347,6 @@ struct RouteOptionsView: View {
             pedestrianProfile = defaultPedestrianProfile
             selectedTransportModes = defaultTransportModes
             maxWalkingTime = defaultMaxWalkingTime
-            
-            storedMaxTransfers = defaultMaxTransfers
-            storedMinTransferTime = defaultMinTransferTime
-            storedPedestrianProfile = defaultPedestrianProfile.rawValue
-            storedMaxWalkingTime = defaultMaxWalkingTime
-            saveTransportModesToStorage()
         }
     }
     
@@ -567,7 +523,6 @@ struct TransportModeToggle: View {
 
 struct TransferTimeSelector: View {
     @Binding var selectedTime: Int
-    let onTimeChanged: (Int) -> Void
     private let timeOptions = [0, 2, 5, 7, 10]
     @ObservedObject var accentColorManager = AccentColorManager.shared
 
@@ -578,7 +533,6 @@ struct TransferTimeSelector: View {
                 Button(action: {
                     withAnimation(.spring(response: 0.3)) {
                         selectedTime = minutes
-                        onTimeChanged(minutes)
                         HapticFeedback.lightImpact()
                     }
                 }) {
@@ -603,7 +557,6 @@ struct TransferTimeSelector: View {
 
 struct WalkingTimeSelector: View {
     @Binding var selectedTime: Int
-    let onTimeChanged: (Int) -> Void
     private let walkingTimeOptions = [300, 900, 1200, 1800]
     @ObservedObject var accentColorManager = AccentColorManager.shared
 
@@ -634,7 +587,6 @@ struct WalkingTimeSelector: View {
                     Button(action: {
                         withAnimation(.spring(response: 0.3)) {
                             selectedTime = seconds
-                            onTimeChanged(seconds)
                             HapticFeedback.lightImpact()
                         }
                     }) {
