@@ -171,8 +171,15 @@ struct TripsSearchHeaderView: View {
             viewModel.showSettings = true
         }) {
             HStack(spacing: 6) {
-                Image(systemName: "slider.horizontal.3")
-                    .font(.system(size: 14, weight: .semibold))
+                if viewModel.hasCustomSettings {
+                    Image("toggled.slider.horizontal.3.badge.checkmark")
+                        .font(.system(size: 14, weight: .semibold))
+                        .symbolRenderingMode(.palette)
+                        .foregroundStyle(Color.green, Color.accentColor)
+                } else {
+                    Image(systemName: "slider.horizontal.3")
+                        .font(.system(size: 14, weight: .semibold))
+                }
             }
             .foregroundColor(.accentColor)
             .frame(maxHeight: 15)
