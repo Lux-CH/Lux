@@ -150,16 +150,18 @@ struct RouteOptionsView: View {
             
             ModernCard {
                 VStack(spacing: 20) {
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(spacing: 12) {
                         VStack(alignment: .leading, spacing: 8) {
                             Text("Nombre maximal")
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(.primary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                             
                             Text("Définissez le nombre de changements de transport maximal à effectuer")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
+                                .frame(maxWidth: .infinity, alignment: .leading)
                         }
                         HStack(spacing: 8) {
                             ForEach(0...5, id: \.self) { number in
