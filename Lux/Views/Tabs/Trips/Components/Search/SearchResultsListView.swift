@@ -204,7 +204,7 @@ struct NoResultsView: View {
                 .font(.headline)
                 .foregroundColor(.secondary)
                 
-            Text("Essayez de modifier vos critères de recherche ou l'heure de départ.")
+            Text("Essayez de modifier vos critères de recherche, vos options ou l'heure de départ.")
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)

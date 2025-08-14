@@ -1941,12 +1941,12 @@
         }
       }
     },
-    "Essayez de modifier vos critères de recherche ou l'heure de départ." : {
+    "Essayez de modifier vos critères de recherche, vos options ou l'heure de départ." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Try adjusting your search criteria or departure time."
+            "value" : "Try adjusting your search criteria, your options or departure time."
           }
         }
       }
