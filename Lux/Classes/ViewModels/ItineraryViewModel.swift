@@ -374,7 +374,7 @@ final class ItineraryViewModel: ObservableObject {
     }
 }
 
-func getLegColor(_ leg: Leg) -> Color {
+func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
     switch leg.mode {
     case .walk:
         return .blue
@@ -411,7 +411,7 @@ func getLegColor(_ leg: Leg) -> Color {
             }
         }
         
-        if isDarkColor(baseColor) {
+        if brightIt && isDarkColor(baseColor) {
             return lightenColor(baseColor)
         }
         return baseColor

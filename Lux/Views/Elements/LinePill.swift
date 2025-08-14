@@ -58,7 +58,7 @@ struct LinePill: View {
     var body: some View {
         let fillColor: Color = settings.easyOnTheEyes ?
             .clear :
-            (settings.highContrastButAccurateLinePill ? lineColor : lineColor.opacity(0.25))
+            (settings.highContrastButAccurateLinePill ? lineColor : baseLineColor.opacity(0.25))
 
         let strokeColor: Color = settings.easyOnTheEyes ?
             lineColor :
