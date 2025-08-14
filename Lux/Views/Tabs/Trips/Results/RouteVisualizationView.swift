@@ -170,7 +170,7 @@ struct LegSegmentView: View {
                 } else if let routeName = leg.routeShortName {
                     Text(routeName)
                         .font(.custom("NimbusSansBeckerPBla", size: 14))
-                        .foregroundColor(getLegColor(leg))
+                        .foregroundColor(getLegColor(leg, brightIt: true))
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                         .padding(.horizontal, 4)
