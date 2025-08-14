@@ -110,7 +110,7 @@ struct RouteOptionsView: View {
                 }
                 Button("Annuler", role: .cancel) { }
             } message: {
-                Text("Cette action rétablira toutes les options aux valeurs par défaut. Cette action ne peut pas être annulée.")
+                Text("Toutes les options seront réinitialisées aux paramètres par défaut. Cette action est irréversible.")
             }
         }
     }
@@ -152,12 +152,12 @@ struct RouteOptionsView: View {
                 VStack(spacing: 20) {
                     VStack(spacing: 12) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Nombre maximal")
+                            Text("Nombre maximal de correspondances")
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(.primary)
                                 .frame(maxWidth: .infinity, alignment: .leading)
                             
-                            Text("Définissez le nombre de changements de transport maximal à effectuer")
+                            Text("Fixez le nombre maximum de correspondances autorisées")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
@@ -185,11 +185,11 @@ struct RouteOptionsView: View {
                     
                     VStack(alignment: .leading, spacing: 12) {
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("Temps minimum entre transferts")
+                            Text("Temps minimum entre correspondances")
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(.primary)
                             
-                            Text("Définissez le temps minimum d'attente à chaque transfert, pour vous assurer de parvenir à temps à votre connexion")
+                            Text("Fixez le temps d’attente minimal entre deux correspondances pour vous assurer de réaliser vos connections dans les temps")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
@@ -214,11 +214,11 @@ struct RouteOptionsView: View {
             ModernCard {
                 VStack(alignment: .leading, spacing: 16) {
                     VStack(alignment: .leading, spacing: 8) {
-                        Text("Temps de marche maximal")
+                        Text("Durée maximale de marche")
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(.primary)
                         
-                        Text("Définissez le temps maximal que vous êtes prêt à marcher")
+                        Text("Fixez la durée maximale que vous acceptez de parcourir à pied")
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.leading)
@@ -241,7 +241,7 @@ struct RouteOptionsView: View {
             
             ModernCard {
                 VStack(alignment: .leading, spacing: 16) {
-                    Text("Profil de déplacement")
+                    Text("Mode de déplacement à pied")
                         .font(.subheadline.weight(.medium))
                         .foregroundStyle(.primary)
                     
@@ -260,7 +260,7 @@ struct RouteOptionsView: View {
                         )
                         
                         AccessibilityProfileButton(
-                            title: String(localized:"Fauteuil roulant"),
+                            title: String(localized:"En fauteuil roulant"),
                             iconName: "figure.roll",
                             isSelected: pedestrianProfile == .wheelchair,
                             action: {

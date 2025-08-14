@@ -1142,16 +1142,6 @@
         }
       }
     },
-    "Cette action rétablira toutes les options aux valeurs par défaut. Cette action ne peut pas être annulée." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This action will reset all options to their default values. This action cannot be undone."
-          }
-        }
-      }
-    },
     "Cette application n’est ni affiliée ni approuvée par SwissPass ou les SBB CFF." : {
       "localizations" : {
         "en" : {
@@ -1591,36 +1581,6 @@
         }
       }
     },
-    "Définissez le nombre de changements de transport maximal à effectuer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Define the number of maximum transfers"
-          }
-        }
-      }
-    },
-    "Définissez le temps maximal que vous êtes prêt à marcher" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Define the maximum time you are able to walk"
-          }
-        }
-      }
-    },
-    "Définissez le temps minimum d'attente à chaque transfert, pour vous assurer de parvenir à temps à votre connexion" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Define the waiting time at each transfer, to ensure you make your connection on time"
-          }
-        }
-      }
-    },
     "Demain, %@" : {
       "localizations" : {
         "en" : {
@@ -1831,6 +1791,16 @@
         }
       }
     },
+    "Durée maximale de marche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maximum walking time"
+          }
+        }
+      }
+    },
     "Effectuer des changements n'est pas recommandé" : {
       "localizations" : {
         "en" : {
@@ -1857,6 +1827,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "By setting up a programmation, Lux will suggest the shortcut on the home screen based on the time of day.\nFor example, if you use a shortcut every day at 8 AM, Lux will highlight it around that time."
+          }
+        }
+      }
+    },
+    "En fauteuil roulant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wheelchair"
           }
         }
       }
@@ -2031,12 +2011,32 @@
         }
       }
     },
-    "Fauteuil roulant" : {
+    "Fixez la durée maximale que vous acceptez de parcourir à pied" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Wheelchair"
+            "value" : "Set the maximum time you are willing to walk"
+          }
+        }
+      }
+    },
+    "Fixez le nombre maximum de correspondances autorisées" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set the maximum number of transfers for your route"
+          }
+        }
+      }
+    },
+    "Fixez le temps d’attente minimal entre deux correspondances pour vous assurer de réaliser vos connections dans les temps" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set the minimum waiting time between transfers to ensure you reach your connections on time"
           }
         }
       }
@@ -2839,6 +2839,16 @@
         }
       }
     },
+    "Mode de déplacement à pied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Travel profile"
+          }
+        }
+      }
+    },
     "Modéré" : {
       "localizations" : {
         "en" : {
@@ -2892,12 +2902,12 @@
         }
       }
     },
-    "Nombre maximal" : {
+    "Nombre maximal de correspondances" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Maximum number"
+            "value" : "Maximum number of transfers"
           }
         }
       }
@@ -3333,16 +3343,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Next stops"
-          }
-        }
-      }
-    },
-    "Profil de déplacement" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mobility profile"
           }
         }
       }
@@ -3967,22 +3967,12 @@
         }
       }
     },
-    "Temps de marche maximal" : {
+    "Temps minimum entre correspondances" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Max walking time"
-          }
-        }
-      }
-    },
-    "Temps minimum entre transferts" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Minimum time between transfers"
+            "value" : "Minimum transfer time"
           }
         }
       }
@@ -4043,6 +4033,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Everything is ready !"
+          }
+        }
+      }
+    },
+    "Toutes les options seront réinitialisées aux paramètres par défaut. Cette action est irréversible." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This will reset all options to their default values. This action cannot be undone."
           }
         }
       }
