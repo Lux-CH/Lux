@@ -1495,6 +1495,16 @@
         }
       }
     },
+    "Courte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Short"
+          }
+        }
+      }
+    },
     "Crédits" : {
       "localizations" : {
         "en" : {
@@ -2647,6 +2657,16 @@
         }
       }
     },
+    "Longue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Long"
+          }
+        }
+      }
+    },
     "Lun" : {
       "localizations" : {
         "en" : {
@@ -2850,6 +2870,16 @@
       }
     },
     "Modéré" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Moderate"
+          }
+        }
+      }
+    },
+    "Modérée" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3853,6 +3883,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dark"
+          }
+        }
+      }
+    },
+    "Standard" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
           }
         }
       }
