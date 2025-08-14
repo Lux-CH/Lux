@@ -94,6 +94,8 @@ class TripsSearchViewModel: ObservableObject {
     @Published var departureType: DepartureType = .leaveAt
     @Published var selectedDate: Date? = nil
     
+    @Published var hasCustomSettings = false
+    
     enum SearchField {
         case from, to, none
     }
@@ -101,11 +103,76 @@ class TripsSearchViewModel: ObservableObject {
     private var backgroundRefreshTask: Task<Void, Never>? = nil
     private var locationManager: LocationManager?
     
+    private let defaultMaxTransfers = 5
+    private let defaultMinTransferTime = 0
+    private let defaultPedestrianProfile = PedestrianProfile.foot
+    private let defaultTransportModes: Set<TransportationMode> = []
+    private let defaultMaxWalkingTime = 900
+    
+    @AppStorage("routeOptionsMaxTransfers") private var storedMaxTransfers: Int = 5
+    @AppStorage("routeOptionsMinTransferTime") private var storedMinTransferTime: Int = 0
+    @AppStorage("routeOptionsPedestrianProfile") private var storedPedestrianProfile: String = PedestrianProfile.foot.rawValue
+    @AppStorage("routeOptionsTransportModes") private var storedTransportModes: Data = Data()
+    @AppStorage("routeOptionsMaxWalkingTime") private var storedMaxWalkingTime: Int = 900
+    
+    init() {
+        fetchRouteOptionsPreferences()
+    }
+    
     var isSearchActive: Bool {
         return activeSearchField != .none &&
         (fromQuery.count >= 3 || toQuery.count >= 3 ||
          !searchResults.isEmpty || showMinCharactersMessage)
     }
+    
+    func fetchRouteOptionsPreferences() {
+        let maxTransfers = storedMaxTransfers
+        let minTransferTime = storedMinTransferTime
+        let maxWalkingTime = storedMaxWalkingTime
+        
+        var pedestrianProfile = PedestrianProfile.foot
+        if let profile = PedestrianProfile(rawValue: storedPedestrianProfile) {
+            pedestrianProfile = profile
+        }
+        
+        var transportModes: [TransportationMode]? = nil
+        if let decodedModes = try? JSONDecoder().decode(Set<TransportationMode>.self, from: storedTransportModes),
+           !decodedModes.isEmpty {
+            transportModes = Array(decodedModes)
+        }
+        
+        routeOptions = RouteOptions(
+            from: routeOptions.from,
+            to: routeOptions.to,
+            via: routeOptions.via,
+            viaMinimumStay: routeOptions.viaMinimumStay,
+            time: routeOptions.time,
+            arriveBy: routeOptions.arriveBy,
+            maxTransfers: maxTransfers,
+            minTransferTime: minTransferTime,
+            pedestrianProfile: pedestrianProfile,
+            transitModes: transportModes,
+            numItineraries: routeOptions.numItineraries,
+            pageCursor: routeOptions.pageCursor,
+            timetableView: routeOptions.timetableView,
+            maxPreTransitTime: maxWalkingTime == defaultMaxWalkingTime ? nil : maxWalkingTime,
+            maxPostTransitTime: maxWalkingTime == defaultMaxWalkingTime ? nil : maxWalkingTime
+        )
+        
+        checkIfSettingsDifferFromDefaults()
+    }
+    
+    private func checkIfSettingsDifferFromDefaults() {
+        let transportModesSet = Set(routeOptions.transitModes ?? [])
+        let maxWalkingTime = routeOptions.maxPreTransitTime ?? defaultMaxWalkingTime
+        
+        hasCustomSettings = routeOptions.maxTransfers != defaultMaxTransfers ||
+                           routeOptions.minTransferTime != defaultMinTransferTime ||
+                           routeOptions.pedestrianProfile != defaultPedestrianProfile ||
+                           !transportModesSet.isEmpty ||
+                           maxWalkingTime != defaultMaxWalkingTime
+    }
+    
     func resetSearch() {
         isLoading = false
         if activeSearchField == .from {
@@ -453,6 +520,7 @@ class TripsSearchViewModel: ObservableObject {
     
     func updateRouteOptions(_ options: RouteOptions) {
         self.routeOptions = options
+        checkIfSettingsDifferFromDefaults()
         if selectedFrom != nil && selectedTo != nil {
             searchTrips()
         }
