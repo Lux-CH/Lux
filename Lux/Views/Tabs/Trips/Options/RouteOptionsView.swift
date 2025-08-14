@@ -151,7 +151,7 @@ struct RouteOptionsView: View {
             ModernCard {
                 VStack(spacing: 20) {
                     VStack(spacing: 12) {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 3) {
                             Text("Nombre maximal de correspondances")
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(.primary)
@@ -184,7 +184,7 @@ struct RouteOptionsView: View {
                         .opacity(0.5)
                     
                     VStack(alignment: .leading, spacing: 12) {
-                        VStack(alignment: .leading, spacing: 8) {
+                        VStack(alignment: .leading, spacing: 3) {
                             Text("Temps minimum entre correspondances")
                                 .font(.subheadline.weight(.medium))
                                 .foregroundStyle(.primary)
@@ -213,7 +213,7 @@ struct RouteOptionsView: View {
             
             ModernCard {
                 VStack(alignment: .leading, spacing: 16) {
-                    VStack(alignment: .leading, spacing: 8) {
+                    VStack(alignment: .leading, spacing: 3) {
                         Text("Durée maximale de marche")
                             .font(.subheadline.weight(.medium))
                             .foregroundStyle(.primary)
