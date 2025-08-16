@@ -1591,6 +1591,16 @@
         }
       }
     },
+    "Début" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
     "Demain, %@" : {
       "localizations" : {
         "en" : {
@@ -2017,6 +2027,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Make Lux yours"
+          }
+        }
+      }
+    },
+    "Fin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End"
           }
         }
       }

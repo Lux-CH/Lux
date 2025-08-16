@@ -19,15 +19,13 @@ struct StopAnnotation: Identifiable {
     
     init(place: Place, color: Color, isTerminal: Bool = false, isIntermediate: Bool = false) {
         var modifiedPlace = place
-        if Locale.current.language.languageCode?.identifier != "en" {
-            switch place.name {
-            case "START":
-                modifiedPlace.name = "Début"
-            case "END":
-                modifiedPlace.name = "Fin"
-            default:
-                break
-            }
+        switch place.name {
+        case "START":
+            modifiedPlace.name = String(localized: "Début")
+        case "END":
+            modifiedPlace.name = String(localized: "Fin")
+        default:
+            break
         }
         
         self.place = modifiedPlace
