@@ -520,9 +520,30 @@ class TripsSearchViewModel: ObservableObject {
     
     func updateRouteOptions(_ options: RouteOptions) {
         self.routeOptions = options
+        
+        savePreferencesToStorage(options)
+        
         checkIfSettingsDifferFromDefaults()
         if selectedFrom != nil && selectedTo != nil {
             searchTrips()
+        }
+    }
+    
+    private func savePreferencesToStorage(_ options: RouteOptions) {
+        storedMaxTransfers = options.maxTransfers
+        storedMinTransferTime = options.minTransferTime
+        storedPedestrianProfile = options.pedestrianProfile.rawValue
+        
+        let walkingTime = options.maxPreTransitTime ?? defaultMaxWalkingTime
+        storedMaxWalkingTime = walkingTime
+        
+        if let transportModes = options.transitModes, !transportModes.isEmpty {
+            let transportModesSet = Set(transportModes)
+            if let encodedModes = try? JSONEncoder().encode(transportModesSet) {
+                storedTransportModes = encodedModes
+            }
+        } else {
+            storedTransportModes = Data()
         }
     }
     
