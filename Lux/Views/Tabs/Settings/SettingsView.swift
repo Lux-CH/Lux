@@ -14,6 +14,7 @@ struct SettingsView: View {
     @ObservedObject var settings = Settings.shared
     @ObservedObject var accentColorManager = AccentColorManager.shared
     @State private var showWelcome: Bool = false
+    @State private var displayMode: Int = 0
     
     var body: some View {
         NavigationStack {
@@ -132,21 +133,39 @@ struct SettingsView: View {
                     )
                 }
                 
-                SettingsToggle(
+                SettingsPicker(
                     icon: "lightspectrum.horizontal",
-                    title: String(localized: "Contraste plus important"),
-                    subtitle: settings.easyOnTheEyes ? String(localized: "Cette option est indisponible lorsque \"Mode confort\" est activée.") : String(localized: "Augmente la lisibilité de l'interface"),
-                    isOn: $settings.highContrastButAccurateLinePill
+                    title: String(localized: "Affichage des lignes"),
+                    subtitle: String(localized: "Choisissez comment les lignes sont affichées dans l'application"),
+                    selection: $displayMode,
+                    options: [
+                        (0, String(localized: "Standard")),
+                        (2, String(localized: "Confort")),
+                        (1, String(localized: "Réaliste"))
+                    ]
                 )
-                .disabled(settings.easyOnTheEyes)
-                
-                SettingsToggle(
-                    icon: "eyeglasses",
-                    title: String(localized: "Mode confort"),
-                    subtitle: settings.highContrastButAccurateLinePill ? String(localized: "Cette option est indisponible lorsque \"Contraste plus important\" est activé.") : String(localized: "Réduit la variété de couleurs dans l'application."),
-                    isOn: $settings.easyOnTheEyes
-                )
-                .disabled(settings.highContrastButAccurateLinePill)
+                .onChange(of: displayMode) {
+                    switch displayMode {
+                    case 1:
+                        settings.highContrastButAccurateLinePill = true
+                        settings.easyOnTheEyes = false
+                    case 2:
+                        settings.highContrastButAccurateLinePill = false
+                        settings.easyOnTheEyes = true
+                    default:
+                        settings.highContrastButAccurateLinePill = false
+                        settings.easyOnTheEyes = false
+                    }
+                }
+                .onAppear {
+                    if settings.highContrastButAccurateLinePill {
+                        displayMode = 1
+                    } else if settings.easyOnTheEyes {
+                        displayMode = 2
+                    } else {
+                        displayMode = 0
+                    }
+                }
                 
                 NavigationLink(destination: AccentColorCustomizerView()) {
                     SettingsRow(
@@ -221,12 +240,6 @@ struct SettingsView: View {
                     title: String(localized: "Contribuer à CrowdBack"),
                     subtitle: String(localized: "Consultez et partagez des informations en temps réel sur les transports."),
                     isOn: $settings.crowdbackAllowed
-                )
-                SettingsToggle(
-                    icon: "figure.walk",
-                    title: String(localized: "Obtenir les instructions"),
-                    subtitle: String(localized: "Calculer les instructions de marche via MKDirection"),
-                    isOn: $settings.fetchWalkingDirectionsUsingMKDirections
                 )
                 SettingsPicker(
                     icon: { if #available(iOS 17.2, *) { "square.and.arrow.up.badge.clock" } else { "square.and.arrow.up" } }(),

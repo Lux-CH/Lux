@@ -437,6 +437,16 @@
         }
       }
     },
+    "Affichage des lignes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Line Display"
+          }
+        }
+      }
+    },
     "Affiche le nom des raccourcis" : {
       "localizations" : {
         "en" : {
@@ -909,16 +919,6 @@
         }
       }
     },
-    "Augmente la lisibilité de l'interface" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Increase interface readability"
-          }
-        }
-      }
-    },
     "Aujourd'hui %@" : {
       "localizations" : {
         "en" : {
@@ -1099,16 +1099,6 @@
         }
       }
     },
-    "Calculer les instructions de marche via MKDirection" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calculate walking directions using MKDirection"
-          }
-        }
-      }
-    },
     "Calendrier" : {
       "localizations" : {
         "en" : {
@@ -1158,26 +1148,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This feature isn’t compatible with current trip options."
-          }
-        }
-      }
-    },
-    "Cette option est indisponible lorsque \"Contraste plus important\" est activé." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This option is unavailable when « Higher contrast » is enabled."
-          }
-        }
-      }
-    },
-    "Cette option est indisponible lorsque \"Mode confort\" est activée." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This option is unavailable when « Comfort mode » is enabled."
           }
         }
       }
@@ -1251,6 +1221,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose how long a shared route remains accessible"
+          }
+        }
+      }
+    },
+    "Choisissez comment les lignes sont affichées dans l'application" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose how lines are displayed in the app"
           }
         }
       }
@@ -1385,6 +1365,16 @@
         }
       }
     },
+    "Confort" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comfort"
+          }
+        }
+      }
+    },
     "Conseiller intuitivité et design" : {
       "localizations" : {
         "en" : {
@@ -1411,16 +1401,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Read the privacy policy on the web"
-          }
-        }
-      }
-    },
-    "Contraste plus important" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Higher contrast"
           }
         }
       }
@@ -2859,16 +2839,6 @@
         }
       }
     },
-    "Mode confort" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Comfort mode"
-          }
-        }
-      }
-    },
     "Mode d'affichage" : {
       "localizations" : {
         "en" : {
@@ -2978,16 +2948,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Line number"
-          }
-        }
-      }
-    },
-    "Obtenir les instructions" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Obtain instructions"
           }
         }
       }
@@ -3527,6 +3487,16 @@
         }
       }
     },
+    "Réaliste" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Realist"
+          }
+        }
+      }
+    },
     "Recherche d'itinéraires..." : {
       "localizations" : {
         "en" : {
@@ -3593,16 +3563,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reduce spacing in stops tab"
-          }
-        }
-      }
-    },
-    "Réduit la variété de couleurs dans l'application." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reduce color variety in the app."
           }
         }
       }
