@@ -429,8 +429,7 @@ func isDarkColor(_ color: Color) -> Bool {
     
     // ITU-R BT.709, https://stackoverflow.com/a/596243
     let luminance = 0.2126 * red + 0.7152 * green + 0.0722 * blue
-    
-    return luminance < 0.35
+    return luminance < 0.4
 }
     
 func lightenColor(_ color: Color, by factor: Double = 0.25) -> Color {
