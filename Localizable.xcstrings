@@ -1801,16 +1801,6 @@
         }
       }
     },
-    "Effectuer des changements n'est pas recommandé" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Making changes is not recommended"
-          }
-        }
-      }
-    },
     "En attente de votre position..." : {
       "localizations" : {
         "en" : {
@@ -2051,12 +2041,12 @@
         }
       }
     },
-    "Fonctionnalités expérimentales" : {
+    "Fonctionnalités avancées" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Experimental features"
+            "value" : "Advanced features"
           }
         }
       }
@@ -3007,6 +2997,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Itinerary options"
+          }
+        }
+      }
+    },
+    "Options pour les utilisateurs expérimentés" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options for experimented users"
           }
         }
       }
