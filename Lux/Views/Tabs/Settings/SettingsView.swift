@@ -281,7 +281,7 @@ struct SettingsView: View {
             Section {
                 NavigationLink(destination: CreditsView()) {
                     SettingsRow(
-                        icon: "heart.fill",
+                        icon: "heart",
                         title: String(localized: "Crédits"),
                         subtitle: String(localized: "Liste des modules utilisés dans l'application"),
                         showChevron: true
