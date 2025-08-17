@@ -254,12 +254,23 @@ struct SettingsView: View {
                         (8760, String(localized: "1 an"))
                     ]
                 )
+                SettingsRow(
+                    icon: "hand.wave",
+                    title: String(localized: "Afficher l'écran de bienvenue"),
+                    subtitle: String(localized: "Réaffiche l'écran initial visible lors de la première ouverture de l'app"),
+                    showChevron: true)
+                .onTapGesture {
+                    showWelcome = true
+                }
+                .fullScreenCover(isPresented: $showWelcome) {
+                    WelcomeView()
+                }
             } header: {
                 SectionHeader(
                     icon: "flask.fill",
                     iconColor: .purple,
-                    title: String(localized: "Fonctionnalités expérimentales"),
-                    subtitle: "⚠️ " + String(localized: "Effectuer des changements n'est pas recommandé")
+                    title: String(localized: "Fonctionnalités avancées"),
+                    subtitle: String(localized: "Options pour les utilisateurs expérimentés")
                 )
             }
         }
@@ -300,17 +311,6 @@ struct SettingsView: View {
                     if let url = URL(string:"mailto:lux-help@cclerc.ch?body=\n\n---\nVeuillez ne pas supprimer le texte ci-dessous\nv\((Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "UNKNOWN"))") {
                         UIApplication.shared.open(url)
                     }
-                }
-                SettingsRow(
-                    icon: "hand.wave",
-                    title: String(localized: "Afficher l'écran de bienvenue"),
-                    subtitle: String(localized: "Réaffiche l'écran initial visible lors de la première ouverture de l'app"),
-                    showChevron: true)
-                .onTapGesture {
-                    showWelcome = true
-                }
-                .fullScreenCover(isPresented: $showWelcome) {
-                    WelcomeView()
                 }
                 
                 SettingsRow(
