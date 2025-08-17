@@ -28,7 +28,7 @@ final class DisruptionManager: ObservableObject {
             let fetchedDisruptions = try await getDisruptions()
             
             await MainActor.run {
-                self.disruptions = fetchedDisruptions
+                self.disruptions = Array(Set(fetchedDisruptions))
             }
         } catch {
             print(error)
