@@ -59,6 +59,10 @@ struct CompactStopView: View {
                         .accessibilityAddTraits(.isHeader)
                     
                     Spacer()
+                    Image(systemName: "chevron.forward")
+                        .font(.caption)
+                        .foregroundColor(Color(.tertiaryLabel))
+                        .accessibilityHidden(true)
                 }
                 .padding(.horizontal, 25)
                 .padding(.bottom, 12)
