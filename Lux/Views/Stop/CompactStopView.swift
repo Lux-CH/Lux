@@ -11,7 +11,6 @@ import LuxCom
 struct CompactStopView: View {
     @Environment(\.colorScheme) var colorScheme
     @StateObject private var viewModel: StopViewModel
-    @ObservedObject var settings = Settings.shared
 
     let maxGroupsToShow: Int
     let dontShowLastDivider: Bool
