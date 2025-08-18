@@ -14,6 +14,7 @@ struct SettingsRow: View {
     let title: String
     let subtitle: String
     let showChevron: Bool
+    @State var external: Bool = false
     
     var body: some View {
         HStack(spacing: 12) {
@@ -35,7 +36,7 @@ struct SettingsRow: View {
             Spacer()
             
             if showChevron {
-                Image(systemName: "chevron.right")
+                Image(systemName: external ? "arrow.up.right.square" : "chevron.right")
                     .font(.caption)
                     .foregroundColor(.secondary)
             }
