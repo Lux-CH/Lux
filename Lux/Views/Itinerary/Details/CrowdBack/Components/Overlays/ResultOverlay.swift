@@ -57,9 +57,7 @@ struct ErrorOverlay: View {
     }
 }
 
-struct SuccessOverlay: View {
-    let reportCount: Int
-    
+struct SuccessOverlay: View {    
     var body: some View {
         VStack(spacing: 16) {
             ZStack {

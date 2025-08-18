@@ -72,8 +72,6 @@ struct ReportView: View {
                     AttributeStepView(
                         attribute: attributes[currentStep],
                         selectedLevel: attributeValues[attributes[currentStep]] ?? 3,
-                        stepNumber: currentStep + 1,
-                        totalSteps: attributes.count
                     ) { level in
                         attributeValues[attributes[currentStep]] = level
                     }
@@ -133,9 +131,7 @@ struct ReportView: View {
             }
             
             if showSuccess {
-                SuccessOverlay(
-                    reportCount: attributeValues.count
-                )
+                SuccessOverlay()
                 .transition(.asymmetric(
                     insertion: .scale.combined(with: .opacity),
                     removal: .opacity

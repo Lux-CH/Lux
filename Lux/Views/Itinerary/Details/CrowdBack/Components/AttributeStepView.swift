@@ -11,8 +11,6 @@ import LuxCom
 struct AttributeStepView: View {
     let attribute: ReportAttribute
     let selectedLevel: Int
-    let stepNumber: Int
-    let totalSteps: Int
     let onLevelChange: (Int) -> Void
     
     var body: some View {
