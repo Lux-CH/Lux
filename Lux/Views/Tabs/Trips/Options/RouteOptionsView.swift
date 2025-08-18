@@ -348,9 +348,10 @@ struct RouteOptionsView: View {
             selectedTransportModes = defaultTransportModes
             maxWalkingTime = defaultMaxWalkingTime
         }
+        saveOptions(shouldDismiss: false)
     }
     
-    private func saveOptions() {
+    private func saveOptions(shouldDismiss: Bool = true) {
         let walkingTime = maxWalkingTime == 900 ? nil : maxWalkingTime
         
         let newOptions = RouteOptions(
@@ -372,7 +373,9 @@ struct RouteOptionsView: View {
         )
         
         onSave(newOptions)
-        dismiss()
+        if shouldDismiss {
+            dismiss()
+        }
     }
 }
 
