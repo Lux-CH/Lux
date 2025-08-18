@@ -12,7 +12,6 @@ import Combine
 class StopViewModel: ObservableObject {
     @Published var stopTimes: StopTimes?
     @Published var routeGroups: [String: [GroupedStopTime]] = [:]
-    @Published var connections: [String] = []
     @Published var isLoading = false
     @Published var routeNames: [String] = []
     @Published var currentPages: [String: Int] = [:]
@@ -32,14 +31,6 @@ class StopViewModel: ObservableObject {
     init(stop: SearchResult, fromStops: Bool) {
         self.stop = stop
         self.fromStops = fromStops
-        loadConnections()
-    }
-    
-    private func loadConnections() {
-        ConnectionService.shared.getConnections(for: stop.id) { [weak self] connections in
-            guard let self = self else { return }
-            self.connections = connections
-        }
     }
     
     func startMonitoring() {
