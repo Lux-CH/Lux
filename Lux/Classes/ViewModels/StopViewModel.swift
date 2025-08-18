@@ -22,7 +22,6 @@ class StopViewModel: ObservableObject {
     
     let stop: SearchResult
     
-    private var routeOrder: [String: Int] = [:]
     private var refreshTimer: AnyCancellable?
     private var departureCheckTimer: AnyCancellable?
     private var backgroundRefreshTask: Task<Void, Never>?
@@ -284,9 +283,7 @@ class StopViewModel: ObservableObject {
             let previousRouteNames = Set(routeNames)
             
             if currentRouteNames != previousRouteNames {
-                self.routeNames = Array(currentRouteNames).sorted { routeA, routeB in
-                    routeOrder[routeA] ?? Int.max < routeOrder[routeB] ?? Int.max
-                }
+                self.routeNames = lineScoreManager.getSortedRouteNames(Array(currentRouteNames))
             }
             
             for routeName in currentRouteNames {
@@ -355,12 +352,10 @@ class StopViewModel: ObservableObject {
         }
         
         let sortedRouteNames = lineScoreManager.getSortedRouteNames(Array(routeGroups.keys))
-        let newRouteOrder = Dictionary(uniqueKeysWithValues: sortedRouteNames.enumerated().map { ($1, $0) })
         
         self.routeNames = sortedRouteNames
         self.routeGroups = result
         self.currentPages = newCurrentPages
-        self.routeOrder = newRouteOrder
     }
     
     
