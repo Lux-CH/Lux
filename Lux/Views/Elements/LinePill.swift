@@ -73,7 +73,7 @@ struct LinePill: View {
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
                 .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: line) : (baseLineColor == .black ? .white : lineColor))
                 .multilineTextAlignment(.center)
-                .shadow(color: Color.black.opacity(settings.highContrastButAccurateLinePill ? 0.0 : 0.3), radius: 1, x: 0, y: 1)
+                .shadow(color: Color.black.opacity(0.3), radius: 1, x: 0, y: 1)
         }
     }
 }
@@ -102,3 +102,42 @@ struct MorePill: View {
     }
 }
 
+
+struct SamplePill: View {
+    var line: String = "18"
+    let isEasyOnTheEyes: Bool
+    let isRealistic: Bool
+    
+    private var baseLineColor: Color {
+        return LineColors.color(for: line) ?? .accent
+    }
+    
+    private var lineColor: Color {
+        if isDarkColor(baseLineColor) && !isRealistic {
+            return lightenColor(baseLineColor)
+        }
+        return baseLineColor
+    }
+    
+    var body: some View {
+        let fillColor: Color = isEasyOnTheEyes ?
+            .clear :
+            (isRealistic ? lineColor : baseLineColor.opacity(0.25))
+
+        let strokeColor: Color = isEasyOnTheEyes ?
+            lineColor :
+            Color.primary.opacity(0.1)
+        ZStack {
+            RoundedRectangle(cornerRadius: line == "RL4" ? 2 : 50)
+                .fill(fillColor)
+                .stroke(strokeColor, lineWidth: 0.5)
+                .frame(width: 30, height: 20)
+            
+            Text(line.replacingOccurrences(of: "RL4", with: "L4"))
+                .font(.custom("NimbusSansBeckerPBla", size: 11))
+                .foregroundColor(isRealistic ? LineColors.textColor(for: line) : (baseLineColor == .black ? .white : lineColor))
+                .multilineTextAlignment(.center)
+                .shadow(color: Color.black.opacity(0.3), radius: 1, x: 0, y: 1)
+        }
+    }
+}
