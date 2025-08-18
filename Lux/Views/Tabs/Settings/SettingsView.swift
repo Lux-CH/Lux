@@ -133,7 +133,7 @@ struct SettingsView: View {
                     )
                 }
                 
-                SettingsPicker(
+                LineStylePicker(
                     icon: "lightspectrum.horizontal",
                     title: String(localized: "Affichage des lignes"),
                     subtitle: String(localized: "Choisissez comment les lignes sont affichées dans l'application"),
