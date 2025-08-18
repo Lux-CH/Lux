@@ -73,6 +73,7 @@ struct LinePill: View {
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
                 .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: line) : (baseLineColor == .black ? .white : lineColor))
                 .multilineTextAlignment(.center)
+                .shadow(color: Color.black.opacity(settings.highContrastButAccurateLinePill ? 0.0 : 0.3), radius: 1, x: 0, y: 1)
         }
     }
 }
