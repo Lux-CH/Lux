@@ -46,8 +46,6 @@ struct MainNavigationView: View {
     @State private var selectedShortcut: UserShortcut? = nil
     @State private var showTripSearch: Bool = false
     @Environment(\.colorScheme) private var colorScheme
-        
-    @GestureState private var dragTranslation: CGSize = .zero
     
     @State private var lastLocationUpdateTime: Date = Date.distantPast
     private let locationUpdateThrottleInterval: TimeInterval = 2.5
@@ -94,7 +92,8 @@ struct MainNavigationView: View {
                     )
                     .ignoresSafeArea()
                     .animation(ultraSmoothSpring, value: colorScheme)
-                    .gesture(viewMode == .search ? searchModeDragGesture : nil)
+                    .gesture(viewMode == .search ? searchModeDragGesture : nil) // replacing nil by mainNavGesture doesnt seem to work and the compiler can't figure it out
+                    .simultaneousGesture(mainNavGesture)
                     
                     VStack(spacing: compactSize()) {
                         ZStack(alignment: .top) {
@@ -305,28 +304,7 @@ struct MainNavigationView: View {
                         }
                         .offset(y: max(0, -(searchDragOffset)))
                         .ignoresSafeArea(edges: .bottom)
-                        .simultaneousGesture(
-                            viewMode != .search ?
-                            DragGesture(minimumDistance: 5, coordinateSpace: .local)
-                                .updating($dragTranslation) { value, state, _ in
-                                    state = value.translation
-                                }
-                                .onEnded { value in
-                                    let vertical = value.translation.height
-                                    let horizontal = abs(value.translation.width)
-                                    
-                                    if horizontal < 100 {
-                                        if viewMode == .home && vertical < -50 {
-                                            switchToStopsMode()
-                                        } else if viewMode == .home && vertical > 100 {
-                                            transitionToSearchMode()
-                                        } else if viewMode == .stops && vertical > 150 {
-                                            toggleViewMode(.home)
-                                        }
-                                    }
-                                }
-                            : nil
-                        )
+                        .simultaneousGesture(mainNavGesture)
                     }
                     
                     if viewMode != .search {
@@ -423,6 +401,26 @@ struct MainNavigationView: View {
                     searchDragOffset = 0
                 }
             }
+    }
+    
+    private var mainNavGesture: some Gesture {
+        viewMode != .search ?
+        DragGesture(minimumDistance: 5, coordinateSpace: .local)
+            .onEnded { value in
+                let vertical = value.translation.height
+                let horizontal = abs(value.translation.width)
+                
+                if horizontal < 100 {
+                    if viewMode == .home && vertical < -50 {
+                        switchToStopsMode()
+                    } else if viewMode == .home && vertical > 100 {
+                        transitionToSearchMode()
+                    } else if viewMode == .stops && vertical > 150 {
+                        toggleViewMode(.home)
+                    }
+                }
+            }
+        : nil
     }
     
     private var shortcutsRow: some View {
