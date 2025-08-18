@@ -43,12 +43,9 @@ struct MainNavigationView: View {
     @StateObject private var stopsViewModel = StopsViewModel()
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var shortcutManager: ShortcutManager
-    @State private var selectedShortcut: UserShortcut? = nil
-    @State private var showTripSearch: Bool = false
     @Environment(\.colorScheme) private var colorScheme
     
     @State private var lastLocationUpdateTime: Date = Date.distantPast
-    private let locationUpdateThrottleInterval: TimeInterval = 2.5
     
     @State private var initialScreenSize: CGSize = .zero
     @State private var hasInitializedScreenSize = false
@@ -67,7 +64,6 @@ struct MainNavigationView: View {
         removal: .opacity.combined(with: .move(edge: .bottom)).combined(with: .scale(scale: 0.97, anchor: .top))
     )
     
-    @State private var toQuery: String = ""
     @State private var isSearchTransitioning: Bool = false
     @State private var searchViewModel = TripsSearchViewModel()
     @FocusState private var isFromFocused: Bool
@@ -346,7 +342,7 @@ struct MainNavigationView: View {
         .onChange(of: locationManager.location) {
             let now = Date()
             
-            if now.timeIntervalSince(lastLocationUpdateTime) >= locationUpdateThrottleInterval {
+            if now.timeIntervalSince(lastLocationUpdateTime) >= 2.5 {
                 lastLocationUpdateTime = now
                 updateShortcutsWithCurrentLocation()
             }
@@ -373,16 +369,6 @@ struct MainNavigationView: View {
         .onReceive(stopsViewModel.refreshTimer) { _ in
             if viewMode == .stops && !stopsViewModel.isSearchMode {
                 stopsViewModel.refreshNearbyStopsInBackground()
-            }
-        }
-        .fullScreenCover(isPresented: $showTripSearch) {
-            if let shortcut = selectedShortcut {
-                TripsSearchView(
-                    initialSearchResult: shortcut.toSearchResult(),
-                    initialTargetField: .to
-                )
-            } else {
-                TripsSearchView()
             }
         }
     }
@@ -458,7 +444,6 @@ struct MainNavigationView: View {
                         symbol: firstShortcut.symbol,
                         name: firstShortcut.name
                     ) {
-                        selectedShortcut = firstShortcut
                         transitionToSearchModeWithShortcut(firstShortcut)
                     }
                     .accessibilityLabel("Raccourcis \(firstShortcut.name)")
@@ -516,7 +501,6 @@ struct MainNavigationView: View {
                         symbol: secondShortcut.symbol,
                         name: secondShortcut.name
                     ) {
-                        selectedShortcut = secondShortcut
                         transitionToSearchModeWithShortcut(secondShortcut)
                     }
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
@@ -543,7 +527,6 @@ struct MainNavigationView: View {
         
         isSearchTransitioning = true
         
-        toQuery = searchText
         searchViewModel.toQuery = searchText
 
         withAnimation(searchTransitionSpring) {
