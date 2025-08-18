@@ -627,16 +627,6 @@
         }
       }
     },
-    "Ajustez le style de Lux selon vos préférences" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tail Lux’s appearance to your preference"
-          }
-        }
-      }
-    },
     "Ajustez votre recherche d'itinéraires" : {
       "localizations" : {
         "en" : {
