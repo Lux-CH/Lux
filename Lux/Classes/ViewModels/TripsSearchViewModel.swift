@@ -106,7 +106,6 @@ class TripsSearchViewModel: ObservableObject {
     private let defaultMaxTransfers = 5
     private let defaultMinTransferTime = 0
     private let defaultPedestrianProfile = PedestrianProfile.foot
-    private let defaultTransportModes: Set<TransportationMode> = []
     private let defaultMaxWalkingTime = 900
     
     @AppStorage("routeOptionsMaxTransfers") private var storedMaxTransfers: Int = 5
