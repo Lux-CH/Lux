@@ -44,8 +44,7 @@ struct CreditsView: View {
                         WebCreditCell(
                             name: item.name,
                             credit: item.credit,
-                            imageURL: item.imageURL,
-                            url: item.url
+                            imageURL: item.imageURL
                         )
                     }
                     .buttonStyle(.plain)
@@ -79,7 +78,6 @@ struct WebCreditCell: View {
     var name: String
     var credit: String
     var imageURL: String
-    var url: String
     
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
