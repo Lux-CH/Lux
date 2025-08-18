@@ -12,7 +12,7 @@ import Polyline
 
 @MainActor
 final class ItineraryViewModel: ObservableObject {
-    private var tripId: String
+    @Published var tripId: String
     private let zoomThreshold: CLLocationDistance = 50000
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
     private var vehicleUpdateTask: Task<Void, Never>?
@@ -30,10 +30,6 @@ final class ItineraryViewModel: ObservableObject {
     @Published var error: String?
     @Published var walkingDirections: [String: [MKRoute.Step]] = [:]
     @ObservedObject var settings = Settings.shared
-    
-    var currentTripId: String {
-        return tripId
-    }
         
     init(tripId: String) {
         self.tripId = tripId

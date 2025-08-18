@@ -167,7 +167,7 @@ struct ItineraryView: View {
                         if otherItineraries.count > 1 {
                             Menu {
                                 ForEach(otherItineraries) { tripOption in
-                                    if tripOption.id == viewModel.currentTripId {
+                                    if tripOption.id == viewModel.tripId {
                                         Button(
                                             getExactTime(from: tripOption.startTime),
                                             systemImage: "checkmark"
