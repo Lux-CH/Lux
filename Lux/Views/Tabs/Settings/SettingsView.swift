@@ -258,7 +258,8 @@ struct SettingsView: View {
                     icon: "hand.wave",
                     title: String(localized: "Afficher l'écran de bienvenue"),
                     subtitle: String(localized: "Réaffiche l'écran initial visible lors de la première ouverture de l'app"),
-                    showChevron: true)
+                    showChevron: true,
+                    external: true)
                 .onTapGesture {
                     showWelcome = true
                 }
@@ -292,7 +293,8 @@ struct SettingsView: View {
                     icon: "lock.shield",
                     title: String(localized: "Politique de confidentialité"),
                     subtitle: String(localized: "Consultez la politique de confidentialité en ligne"),
-                    showChevron: true
+                    showChevron: true,
+                    external: true
                 )
                 .onTapGesture {
                     if Locale.current.language.languageCode == "fr", let url = URL(string: "https://lux.cclerc.ch/privacy/fr.html") {
@@ -305,7 +307,8 @@ struct SettingsView: View {
                     icon: "questionmark.circle",
                     title: String(localized: "Aide"),
                     subtitle: String(localized: "Une question, un bug ou une suggestion ? Cliquez ici."),
-                    showChevron: true
+                    showChevron: true,
+                    external: true
                 )
                 .onTapGesture {
                     if let url = URL(string:"mailto:lux-help@cclerc.ch?body=\n\n---\nVeuillez ne pas supprimer le texte ci-dessous\nv\((Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "UNKNOWN"))") {
