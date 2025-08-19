@@ -2277,6 +2277,16 @@
         }
       }
     },
+    "Impossible d'envoyer le SMS" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to send the SMS"
+          }
+        }
+      }
+    },
     "Impossible d'envoyer les rapports. Veuillez réessayer plus tard." : {
       "localizations" : {
         "en" : {
@@ -2912,7 +2922,7 @@
         }
       }
     },
-    "Note : Les tickets ci-dessous seront achetés via un SMS envoyé au service officiel des TPG suite à votre confirmation. Des frais SMS standard peuvent s’appliquer.\nLes tickets ne sont pas gérés par Lux et leurs tarifs peuvent évoluer à tout moment sans préavis." : {
+    "Note : Les tickets ci-dessous seront achetés via un SMS envoyé au service officiel des TPG suite à votre confirmation. Des frais SMS standard peuvent s'appliquer.\nLes tickets ne sont pas gérés par Lux et leurs tarifs peuvent évoluer à tout moment sans préavis." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4372,7 +4382,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Your device is not able to send SMS."
+            "value" : "Your device is not able to send text messages."
           }
         }
       }

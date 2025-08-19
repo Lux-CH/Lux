@@ -7,7 +7,7 @@
 
 import SwiftUI
 import LuxCom
-import SwiftUIMessage
+import MessageUI
 
 struct TicketsView: View {
     @State private var ticketsInfo = TicketsInfo()
@@ -103,7 +103,7 @@ struct UserTypeSelector: View {
                 .pickerStyle(.segmented)
                 .padding(.horizontal, 20)
                 
-                Text("Note : Les tickets ci-dessous seront achetés via un SMS envoyé au service officiel des TPG suite à votre confirmation. Des frais SMS standard peuvent s’appliquer.\nLes tickets ne sont pas gérés par Lux et leurs tarifs peuvent évoluer à tout moment sans préavis.")
+                Text("Note : Les tickets ci-dessous seront achetés via un SMS envoyé au service officiel des TPG suite à votre confirmation. Des frais SMS standard peuvent s'appliquer.\nLes tickets ne sont pas gérés par Lux et leurs tarifs peuvent évoluer à tout moment sans préavis.")
                     .font(.caption)
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 20)
@@ -213,7 +213,9 @@ struct CategoryHeader: View {
 
 struct TicketRow: View {
     let ticket: TicketInfo
-    @State private var isPurchasing = false
+    @State private var showingMessageComposer = false
+    @State private var messageResult: MessageSendResult?
+    @State private var uncompatibleAlert: Bool = false
     
     private var durationText: String {
         let totalSeconds = ticket.duration.components.seconds
@@ -232,7 +234,13 @@ struct TicketRow: View {
     }
     
     var body: some View {
-        Button(action: {isPurchasing.toggle()}) {
+        Button(action: {
+            if MFMessageComposeViewController.canSendText() {
+                showingMessageComposer = true
+            } else {
+                uncompatibleAlert = true
+            }
+        }) {
             HStack(spacing: 16) {
                 VStack(alignment: .center) {
                     Text(durationText)
@@ -263,33 +271,28 @@ struct TicketRow: View {
                 
                 Spacer()
                 
-                if isPurchasing {
-                    ProgressView()
-                        .scaleEffect(0.8)
-                        .tint(.accentColor)
-                } else {
-                    Image(systemName: "arrow.right.circle.fill")
-                        .font(.title2)
-                        .foregroundColor(.accentColor)
-                }
+                Image(systemName: "arrow.up.right.square")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
             }
             .padding(.horizontal, 20)
             .padding(.vertical, 16)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .disabled(isPurchasing)
-        .sheet(isPresented: $isPurchasing) {
-            if MessageComposeView.canSendText() {
-                MessageComposeView(
-                    .init(recipients: ["788"],
-                          body: ticket.smsCode)
-                )
-                .ignoresSafeArea()
-            } else {
-                Text("Votre appareil n'est pas en mesure d'envoyer des SMS.")
-                    .presentationDetents([.medium])
-            }
+        .sheet(isPresented: $showingMessageComposer) {
+            MessageComposerView(
+                recipients: ["788"],
+                messageBody: ticket.smsCode,
+                onResult: { result in
+                    messageResult = result
+                }
+            )
+        }
+        .alert("Impossible d'envoyer le SMS", isPresented: $uncompatibleAlert) {
+                    Button("OK") { }
+        } message: {
+            Text("Votre appareil n'est pas en mesure d'envoyer des SMS.")
         }
     }
 }
