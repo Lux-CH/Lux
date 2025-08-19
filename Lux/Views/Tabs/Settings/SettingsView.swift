@@ -18,6 +18,7 @@ struct SettingsView: View {
     
     @State private var showSafari = false
     @State private var safariURL: URL?
+    @State private var showMailComposer = false
     
     var body: some View {
         NavigationStack {
@@ -57,6 +58,13 @@ struct SettingsView: View {
                     SafariView(url: url)
                         .ignoresSafeArea()
                 }
+            }
+            .sheet(isPresented: $showMailComposer) {
+                MailComposerView(
+                    recipients: ["lux-help@cclerc.ch"],
+                    subject: "Aide Lux",
+                    messageBody: "\n\n---\nVeuillez ne pas supprimer le texte ci-dessous\nv\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "UNKNOWN")"
+                )
             }
         }
     }
@@ -317,6 +325,8 @@ struct SettingsView: View {
                         openInSafari(url)
                     }
                 }
+                
+                // Modified help row to use MailComposerView instead of mailto
                 SettingsRow(
                     icon: "questionmark.circle",
                     title: String(localized: "Aide"),
@@ -325,9 +335,7 @@ struct SettingsView: View {
                     external: true
                 )
                 .onTapGesture {
-                    if let url = URL(string:"mailto:lux-help@cclerc.ch?body=\n\n---\nVeuillez ne pas supprimer le texte ci-dessous\nv\((Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "UNKNOWN"))") {
-                        UIApplication.shared.open(url)
-                    }
+                    showMailComposer = true
                 }
                 
                 SettingsRow(
