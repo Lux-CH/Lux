@@ -95,6 +95,7 @@ struct SettingsView: View {
         .background(
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(.secondarySystemGroupedBackground))
+                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
         )
         .padding(.horizontal)
     }
