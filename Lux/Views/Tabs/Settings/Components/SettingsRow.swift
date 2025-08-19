@@ -37,7 +37,7 @@ struct SettingsRow: View {
             
             if showChevron {
                 Image(systemName: external ? "arrow.up.right.square" : "chevron.right")
-                    .font(.caption)
+                    .font(external ? .footnote : .caption)
                     .foregroundColor(.secondary)
             }
         }

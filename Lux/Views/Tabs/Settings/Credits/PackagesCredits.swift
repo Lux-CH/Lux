@@ -102,8 +102,8 @@ struct WebCreditCell: View {
             Spacer()
             
             Image(systemName: "arrow.up.right.square")
-                .font(.title3)
-                .foregroundColor(.accentColor)
+                .font(.footnote)
+                .foregroundColor(.secondary)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)
