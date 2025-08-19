@@ -213,8 +213,9 @@ struct CategoryHeader: View {
 
 struct TicketRow: View {
     let ticket: TicketInfo
+    @ObservedObject private var luxPassManager = LuxPassManager.shared
+    
     @State private var showingMessageComposer = false
-    @State private var messageResult: MessageSendResult?
     @State private var uncompatibleAlert: Bool = false
     
     private var durationText: String {
@@ -285,7 +286,9 @@ struct TicketRow: View {
                 recipients: ["788"],
                 messageBody: ticket.smsCode,
                 onResult: { result in
-                    messageResult = result
+                    if result == .sent {
+                        luxPassManager.addTicket(ticketName: ticket.title, duration: TimeInterval(ticket.duration.components.seconds))
+                    }
                 }
             )
             .ignoresSafeArea()
