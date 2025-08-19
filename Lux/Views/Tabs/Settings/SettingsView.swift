@@ -301,6 +301,15 @@ struct SettingsView: View {
                 .fullScreenCover(isPresented: $showWelcome) {
                     WelcomeView()
                 }
+                SettingsRow(
+                    icon: "map",
+                    title: String(localized: "Afficher le plan"),
+                    subtitle: String(localized: "Ouvrir la carte du réseau officiel des tpg"),
+                    showChevron: true,
+                    external: true)
+                .onTapGesture {
+                    openInSafari(URL(string: "https://www.tpg.ch/sites/default/files/2025-08/Geneve%20TPG%20Plan%20Schematique%202025-08-18.pdf")!)
+                }
             } header: {
                 SectionHeader(
                     icon: "flask.fill",
