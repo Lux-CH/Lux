@@ -8,6 +8,12 @@
 import Foundation
 import Security
 
+struct PurchasedTicket: Codable, Identifiable {
+    var id = UUID()
+    var ticketName: String
+    var expiry: Date
+}
+
 class LuxPassManager: ObservableObject {
     static let shared = LuxPassManager()
     
@@ -147,5 +153,34 @@ class LuxPassManager: ObservableObject {
         ]
         
         SecItemDelete(query as CFDictionary)
+    }
+    
+    func loadTickets() -> [PurchasedTicket] {
+        guard let data = UserDefaults.standard.data(forKey: "purchasedTickets"),
+              let tickets = try? JSONDecoder().decode([PurchasedTicket].self, from: data) else {
+            return []
+        }
+        return tickets
+    }
+        
+    func saveTickets(_ tickets: [PurchasedTicket]) {
+        if let data = try? JSONEncoder().encode(tickets) {
+            UserDefaults.standard.set(data, forKey: "purchasedTickets")
+        }
+    }
+    
+    func addTicket(ticketName: String, duration: TimeInterval) {
+        var tickets = loadTickets()
+        tickets.append(PurchasedTicket(ticketName: ticketName, expiry: Date().addingTimeInterval(duration)))
+        saveTickets(tickets)
+    }
+    
+    func removeExpiredTickets() {
+        saveTickets(loadTickets().filter { $0.expiry > Date() })
+    }
+    
+    func validTickets() -> [PurchasedTicket] {
+        removeExpiredTickets()
+        return loadTickets()
     }
 }
