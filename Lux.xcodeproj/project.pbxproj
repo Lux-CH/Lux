@@ -11,7 +11,6 @@
 		790749EC2DEE598E0010D818 /* GlowGetter in Frameworks */ = {isa = PBXBuildFile; productRef = 790749EB2DEE598E0010D818 /* GlowGetter */; };
 		791994C72DE374CF00B2080C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 791994C62DE374CF00B2080C /* Localizable.xcstrings */; };
 		791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SymbolPicker */; };
-		796432242DEED1A1004498A7 /* SwiftUIMessage in Frameworks */ = {isa = PBXBuildFile; productRef = 796432232DEED1A1004498A7 /* SwiftUIMessage */; };
 		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
 		7981C7A72E48052500246701 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 7981C7A62E48052500246701 /* InfoPlist.xcstrings */; };
 		7986885A2E3FEE15003FE496 /* SearchStopIntent.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 798688512E3FEE15003FE496 /* SearchStopIntent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -159,7 +158,6 @@
 				79E806FC2E10CAFF004CA0A0 /* LuxCom in Frameworks */,
 				79E806F92E10CAAB004CA0A0 /* LuxCom in Frameworks */,
 				790749EC2DEE598E0010D818 /* GlowGetter in Frameworks */,
-				796432242DEED1A1004498A7 /* SwiftUIMessage in Frameworks */,
 				79A2CC3A2E0EDCF80071DD44 /* LuxCom in Frameworks */,
 				796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */,
 				79C64D402DB930DC00C01B89 /* Polyline in Frameworks */,
@@ -268,7 +266,6 @@
 				796BC9042DEBC6B800D0FC4A /* MessagePacker */,
 				790749E12DEE45A50010D818 /* CodeScanner */,
 				790749EB2DEE598E0010D818 /* GlowGetter */,
-				796432232DEED1A1004498A7 /* SwiftUIMessage */,
 				79A2CC392E0EDCF80071DD44 /* LuxCom */,
 				79E806F52E10CA8E004CA0A0 /* LuxCom */,
 				79E806F82E10CAAB004CA0A0 /* LuxCom */,
@@ -338,7 +335,6 @@
 				796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */,
 				790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */,
-				796432222DEED1A1004498A7 /* XCRemoteSwiftPackageReference "SwiftUIMessage" */,
 				79E806FA2E10CAFF004CA0A0 /* XCRemoteSwiftPackageReference "LuxCom" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -810,14 +806,6 @@
 				minimumVersion = 1.6.2;
 			};
 		};
-		796432222DEED1A1004498A7 /* XCRemoteSwiftPackageReference "SwiftUIMessage" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/edonv/SwiftUIMessage";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.0.4;
-			};
-		};
 		796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/hirotakan/MessagePacker";
@@ -859,11 +847,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
 			productName = SymbolPicker;
-		};
-		796432232DEED1A1004498A7 /* SwiftUIMessage */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 796432222DEED1A1004498A7 /* XCRemoteSwiftPackageReference "SwiftUIMessage" */;
-			productName = SwiftUIMessage;
 		};
 		796BC9042DEBC6B800D0FC4A /* MessagePacker */ = {
 			isa = XCSwiftPackageProductDependency;
