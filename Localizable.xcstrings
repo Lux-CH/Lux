@@ -2527,12 +2527,12 @@
         }
       }
     },
-    "Les deux premiers raccourcis seront affichés sur l'écran d'accueil." : {
+    "Les deux premiers raccourcis seront affichés sur l'écran d'accueil.\nRéalisez un appui prolongé sur un raccourci puis déplacez le pour le réordonner dans la liste." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The first two shortcuts will be shown on the home screen."
+            "value" : "The first two shortcuts will be shown on the home screen.\nLong press a shortcut and drag it to reorder it in the list."
           }
         }
       }

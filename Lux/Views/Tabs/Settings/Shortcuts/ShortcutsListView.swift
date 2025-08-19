@@ -128,7 +128,7 @@ struct ShortcutsListView: View {
                 if !shortcutManager.shortcuts.isEmpty {
                     Text(settings.useTimeBasedRelevance ?
                          "Les raccourcis seront triés par pertinence temporelle. Les plus proches en termes d'horaire et de jour seront affichés en premier, sauf si vous êtes très proche de la destination." :
-                         "Les deux premiers raccourcis seront affichés sur l'écran d'accueil.")
+                         "Les deux premiers raccourcis seront affichés sur l'écran d'accueil.\nRéalisez un appui prolongé sur un raccourci puis déplacez le pour le réordonner dans la liste.")
                         .font(.footnote)
                         .foregroundColor(.secondary)
                         .padding(.horizontal, 20)
