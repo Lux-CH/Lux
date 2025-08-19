@@ -487,6 +487,16 @@
         }
       }
     },
+    "Afficher le plan" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show plan"
+          }
+        }
+      }
+    },
     "Afficher le retard exact" : {
       "localizations" : {
         "en" : {
@@ -3037,6 +3047,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open"
+          }
+        }
+      }
+    },
+    "Ouvrir la carte du réseau officiel des tpg" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show the official network map from tpg"
           }
         }
       }
