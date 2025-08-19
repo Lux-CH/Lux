@@ -597,6 +597,16 @@
         }
       }
     },
+    "Ajouter un SwissPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a SwissPass"
+          }
+        }
+      }
+    },
     "Ajouter une ligne" : {
       "localizations" : {
         "en" : {
@@ -1132,7 +1142,7 @@
         }
       }
     },
-    "Cette application n’est ni affiliée ni approuvée par SwissPass ou les SBB CFF." : {
+    "Cette application n'est ni affiliée ni approuvée par SwissPass ou les SBB CFF." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1271,6 +1281,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chronological"
+          }
+        }
+      }
+    },
+    "Ci-dessous les tickets que vous avez récemment achetés via l'application et leur durée de validité restante." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The tickets you recently purchased via the app and their duration before expiration."
           }
         }
       }
@@ -2447,7 +2467,7 @@
         }
       }
     },
-    "L’affichage du code SwissPass depuis cette application ne garantit pas sa reconnaissance par les contrôleurs.\n\nLux décline toute responsabilité en cas de refus, d’amende ou de tout autre problème. Veuillez toujours avoir votre SwissPass physique ou l'application officielle avec vous." : {
+    "L'affichage du code SwissPass depuis cette application ne garantit pas sa reconnaissance par les contrôleurs.\n\nLux décline toute responsabilité en cas de refus, d'amende ou de tout autre problème. Veuillez toujours avoir votre SwissPass physique ou l'application officielle avec vous." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -3787,6 +3807,16 @@
         }
       }
     },
+    "Scannez votre SwissPass pour l'ajouter à LuxPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan your SwissPass to add it to LuxPass"
+          }
+        }
+      }
+    },
     "Scannez votre SwissPass pour y accéder en toute sécurité depuis Lux." : {
       "localizations" : {
         "en" : {
@@ -4043,6 +4073,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tickets"
+          }
+        }
+      }
+    },
+    "Tickets achetés" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purchased tickets"
           }
         }
       }
