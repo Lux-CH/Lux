@@ -158,7 +158,7 @@ struct SettingsView: View {
                 }
                 
                 LineStylePicker(
-                    icon: "lightspectrum.horizontal",
+                    icon: { if #available(iOS 18, *) { "capsule.on.capsule" } else { "inset.filled.capsule " } }(),
                     title: String(localized: "Affichage des lignes"),
                     subtitle: String(localized: "Choisissez comment les lignes sont affichées dans l'application"),
                     selection: $displayMode,
