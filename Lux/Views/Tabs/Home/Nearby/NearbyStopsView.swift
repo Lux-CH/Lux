@@ -24,6 +24,7 @@ struct NearbyStopsView: View {
     @State private var isUserConnectedToInternet: Bool = false
     @State private var maintenanceStatus: MaintenanceStatus? = nil
     @State private var showingSuggestion: Bool = false
+    @State private var showSafari: Bool = false
     
     private let significantDistance: CLLocationDistance = 100.0
     
@@ -132,8 +133,10 @@ struct NearbyStopsView: View {
                                     await checkMaintenanceStatus()
                                 }
                             }
-                            Link("État des serveurs", destination: URL(string: "https://lux.cronitorstatus.com")!)
-                                .foregroundColor(.accentColor)
+                            Button("État des serveurs") {
+                                showSafari = true
+                            }
+                            .foregroundColor(.accentColor)
                         }
                         .padding(.top, 8)
 
@@ -146,8 +149,10 @@ struct NearbyStopsView: View {
                     Text("Aucun arrêt à proximité trouvé.")
                         .foregroundColor(.gray)
                         .padding()
-                    Link("État des serveurs", destination: URL(string: "https://lux.cronitorstatus.com")!)
-                        .foregroundColor(.accentColor)
+                    Button("État des serveurs") {
+                        showSafari = true
+                    }
+                    .foregroundColor(.accentColor)
                 }
             } else {
                 VStack(spacing: 8) {
@@ -194,6 +199,10 @@ struct NearbyStopsView: View {
                     }
                 }
             }
+        }
+        .sheet(isPresented: $showSafari) {
+            SafariView(url: URL(string: "https://lux.cronitorstatus.com")!)
+                .ignoresSafeArea()
         }
         .onAppear {
             monitorNetwork()
