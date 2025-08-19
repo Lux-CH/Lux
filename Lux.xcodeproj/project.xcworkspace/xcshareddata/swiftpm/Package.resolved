@@ -1,5 +1,5 @@
 {
-  "originHash" : "ee79048c3c1159fca1d5d323662e487b9c2188b761159373b49f1e272c2f81ec",
+  "originHash" : "a33f94ec505a25008820b8cb69f431928fb1a6b163b8258b9c0c460f5a29174b",
   "pins" : [
     {
       "identity" : "codescanner",
@@ -44,15 +44,6 @@
       "state" : {
         "branch" : "master",
         "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23"
-      }
-    },
-    {
-      "identity" : "swiftuimessage",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/edonv/SwiftUIMessage",
-      "state" : {
-        "revision" : "17027d2151f0d6961eb48abd934341ea1794efd1",
-        "version" : "0.0.4"
       }
     },
     {
