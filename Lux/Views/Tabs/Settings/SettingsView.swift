@@ -65,6 +65,7 @@ struct SettingsView: View {
                     subject: "Aide Lux",
                     messageBody: "\n\n---\nVeuillez ne pas supprimer le texte ci-dessous\nv\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "UNKNOWN")"
                 )
+                .ignoresSafeArea()
             }
         }
     }
