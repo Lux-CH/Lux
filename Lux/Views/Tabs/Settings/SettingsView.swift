@@ -245,6 +245,17 @@ struct SettingsView: View {
                     )
                 }
                 .buttonStyle(.plain)
+#if DEBUG
+                NavigationLink(destination: StatsView()) {
+                    SettingsRow(
+                        icon: "chart.bar.doc.horizontal",
+                        title: "Statistiques",
+                        subtitle: "Consultez les statistiques de votre usage de l'application (dev only)",
+                        showChevron: true
+                    )
+                }
+                .buttonStyle(.plain)
+#endif
             } header: {
                 SectionHeader(
                     icon: "chart.line.uptrend.xyaxis",
