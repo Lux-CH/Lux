@@ -288,6 +288,7 @@ struct TicketRow: View {
                     messageResult = result
                 }
             )
+            .ignoresSafeArea()
         }
         .alert("Impossible d'envoyer le SMS", isPresented: $uncompatibleAlert) {
                     Button("OK") { }
