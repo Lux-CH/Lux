@@ -34,7 +34,7 @@ struct StatsView: View {
                             icon: "gearshape.2",
                             iconColor: .purple,
                             title: "settingsDomain",
-                            subtitle: "Les paramètres ci-dessous sont issues du domaine \"settings\"."
+                            subtitle: "Les paramètres ci-dessous sont issus du domaine \"settings\"."
                         )
                     }
                 }
@@ -48,7 +48,7 @@ struct StatsView: View {
                             icon: "trophy",
                             iconColor: .purple,
                             title: "progressDomain",
-                            subtitle: "Les paramètres ci-dessous sont issues du domaine \"progress\"."
+                            subtitle: "Les paramètres ci-dessous sont issus du domaine \"progress\"."
                         )
                     }
                 }
@@ -60,7 +60,7 @@ struct StatsView: View {
                             icon: "lightbulb",
                             iconColor: .purple,
                             title: "tipsDomain",
-                            subtitle: "Les paramètres ci-dessous sont issues du domaine \"tips\"."
+                            subtitle: "Les paramètres ci-dessous sont issus du domaine \"tips\"."
                         )
                     }
                 }
