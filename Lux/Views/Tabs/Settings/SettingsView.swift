@@ -16,6 +16,9 @@ struct SettingsView: View {
     @State private var showWelcome: Bool = false
     @State private var displayMode: Int = 0
     
+    @State private var showSafari = false
+    @State private var safariURL: URL?
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -49,7 +52,18 @@ struct SettingsView: View {
             .background(Color(.systemGroupedBackground))
             .navigationTitle("Paramètres")
             .navigationBarTitleDisplayMode(.large)
+            .sheet(isPresented: $showSafari) {
+                if let url = safariURL {
+                    SafariView(url: url)
+                        .ignoresSafeArea()
+                }
+            }
         }
+    }
+    
+    private func openInSafari(_ url: URL) {
+        safariURL = url
+        showSafari = true
     }
     
     private var headerCard: some View {
@@ -298,9 +312,9 @@ struct SettingsView: View {
                 )
                 .onTapGesture {
                     if Locale.current.language.languageCode == "fr", let url = URL(string: "https://lux.cclerc.ch/privacy/fr.html") {
-                        UIApplication.shared.open(url)
+                        openInSafari(url)
                     } else if let url = URL(string: "https://lux.cclerc.ch/privacy/en.html") {
-                        UIApplication.shared.open(url)
+                        openInSafari(url)
                     }
                 }
                 SettingsRow(
