@@ -9,12 +9,11 @@ import SwiftUI
 
 struct PurchasedTicketView: View {
     let ticket: PurchasedTicket
-    
-    @State private var timeRemaining: Int = 0
-    @State private var timer: Timer?
-    
+    let currentDate: Date
+
     private var countdownText: String {
-        let minutes = max(0, timeRemaining / 60)
+        let remaining = ticket.expiry.timeIntervalSince(currentDate)
+        let minutes = max(0, Int(remaining) / 60)
         return "\(minutes)'"
     }
     
@@ -52,14 +51,5 @@ struct PurchasedTicketView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .onAppear {
-            let now = Date()
-            let remaining = ticket.expiry.timeIntervalSince(now)
-            timeRemaining = max(0, Int(remaining))
-            
-            if timeRemaining <= 0 {
-                timer?.invalidate()
-            }
-        }
     }
 }
