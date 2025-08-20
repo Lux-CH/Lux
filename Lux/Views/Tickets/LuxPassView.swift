@@ -153,8 +153,10 @@ struct LuxPassView: View {
     private func ticketsSectionView(_ tickets: [PurchasedTicket]) -> some View {
         SettingsCard {
             Section {
-                ForEach(tickets) { ticket in
-                    PurchasedTicketView(ticket: ticket)
+                TimelineView(.periodic(from: .now, by: 30)) { context in
+                    ForEach(tickets) { ticket in
+                        PurchasedTicketView(ticket: ticket, currentDate: context.date)
+                    }
                 }
             } header: {
                 SectionHeader(
