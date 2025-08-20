@@ -16,10 +16,10 @@ struct DepartureTimeRow: View {
     let index: Int
     
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 5)) { _ in
+        TimelineView(.periodic(from: .now, by: 5)) { context in
             HStack {
                 if let departure = stopTime.place.departure ?? stopTime.place.arrival, let scheduledDeparture = stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival {
-                    let isNextDay = !calendar.isDate(departure, inSameDayAs: Date())
+                    let isNextDay = !calendar.isDate(departure, inSameDayAs: context.date)
                     let scheduledDifference = calendar.dateComponents([.minute], from: stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival ?? Date(), to: stopTime.place.departure ?? stopTime.place.arrival ?? Date()).minute ?? 0
                     HStack(spacing:6) {
                         Text(settings.showDelayInsteadOfDirectTime ? formatTime(scheduledDeparture) : formatTime(departure))
@@ -47,7 +47,7 @@ struct DepartureTimeRow: View {
                 
                 Spacer()
                 
-                Text(relativeTime(for: stopTime.place.departure ?? stopTime.place.arrival))
+                Text(relativeTime(for: stopTime.place.departure ?? stopTime.place.arrival, from: context.date))
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                     .contentTransition(.numericText())
@@ -81,12 +81,11 @@ struct DepartureTimeRow: View {
         }
     }
     
-    private func relativeTime(for date: Date?) -> String {
+    private func relativeTime(for date: Date?, from currentTime: Date) -> String {
         guard let date = date else { return String(localized: "N/A") }
         
-        let now = Date()
-        let components = Calendar.current.dateComponents([.minute], from: now, to: date)
-        let secs = Calendar.current.dateComponents([.second], from: now, to: date)
+        let components = Calendar.current.dateComponents([.minute], from: currentTime, to: date)
+        let secs = Calendar.current.dateComponents([.second], from: currentTime, to: date)
         if let minutes = components.minute {
             if minutes < 0 {
                 return String(localized: "Passé")
