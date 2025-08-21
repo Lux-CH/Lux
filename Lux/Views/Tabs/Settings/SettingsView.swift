@@ -245,17 +245,6 @@ struct SettingsView: View {
                     )
                 }
                 .buttonStyle(.plain)
-#if DEBUG
-                NavigationLink(destination: StatsView()) {
-                    SettingsRow(
-                        icon: "chart.bar.doc.horizontal",
-                        title: "Statistiques",
-                        subtitle: "Consultez les statistiques de votre usage de l'application (dev only)",
-                        showChevron: true
-                    )
-                }
-                .buttonStyle(.plain)
-#endif
             } header: {
                 SectionHeader(
                     icon: "chart.line.uptrend.xyaxis",
@@ -270,53 +259,80 @@ struct SettingsView: View {
     private var experimentalCard: some View {
         SettingsCard {
             Section {
-                SettingsToggle(
-                    icon: "exclamationmark.bubble",
-                    title: String(localized: "Contribuer à CrowdBack"),
-                    subtitle: String(localized: "Consultez et partagez des informations en temps réel sur les transports."),
-                    isOn: $settings.crowdbackAllowed
-                )
-                SettingsPicker(
-                    icon: { if #available(iOS 17.2, *) { "square.and.arrow.up.badge.clock" } else { "square.and.arrow.up" } }(),
-                    title: String(localized: "Durée de partage d'itinéraire"),
-                    subtitle: String(localized: "Choisissez combien de temps un itinéraire partagé reste accessible") + (settings.luxTripShareExpiryTimeH >= 4320 ? "\n⚠︎ " + String(localized: "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention.") : ""),
-                    selection: $settings.luxTripShareExpiryTimeH,
-                    options: [
-                        (24, String(localized: "1 jour")),
-                        (168, String(localized: "7 jours")),
-                        (720, String(localized: "1 mois")),
-                        (4320, String(localized: "6 mois")),
-                        (8760, String(localized: "1 an"))
-                    ]
-                )
-                SettingsRow(
-                    icon: "hand.wave",
-                    title: String(localized: "Afficher l'écran de bienvenue"),
-                    subtitle: String(localized: "Réaffiche l'écran initial visible lors de la première ouverture de l'app"),
-                    showChevron: true,
-                    external: true)
-                .onTapGesture {
-                    showWelcome = true
+                NavigationLink(destination: {
+                    SettingsCard {
+                        Section {
+                            SettingsToggle(
+                                icon: "exclamationmark.bubble",
+                                title: String(localized: "Contribuer à CrowdBack"),
+                                subtitle: String(localized: "Consultez et partagez des informations en temps réel sur les transports."),
+                                isOn: $settings.crowdbackAllowed
+                            )
+                            SettingsPicker(
+                                icon: { if #available(iOS 17.2, *) { "square.and.arrow.up.badge.clock" } else { "square.and.arrow.up" } }(),
+                                title: String(localized: "Durée de partage d'itinéraire"),
+                                subtitle: String(localized: "Choisissez combien de temps un itinéraire partagé reste accessible") + (settings.luxTripShareExpiryTimeH >= 4320 ? "\n⚠︎ " + String(localized: "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention.") : ""),
+                                selection: $settings.luxTripShareExpiryTimeH,
+                                options: [
+                                    (24, String(localized: "1 jour")),
+                                    (168, String(localized: "7 jours")),
+                                    (720, String(localized: "1 mois")),
+                                    (4320, String(localized: "6 mois")),
+                                    (8760, String(localized: "1 an"))
+                                ]
+                            )
+                            SettingsRow(
+                                icon: "hand.wave",
+                                title: String(localized: "Afficher l'écran de bienvenue"),
+                                subtitle: String(localized: "Réaffiche l'écran initial visible lors de la première ouverture de l'app"),
+                                showChevron: true,
+                                external: true)
+                            .onTapGesture {
+                                showWelcome = true
+                            }
+                            .fullScreenCover(isPresented: $showWelcome) {
+                                WelcomeView()
+                            }
+                            SettingsRow(
+                                icon: "map",
+                                title: String(localized: "Afficher le plan"),
+                                subtitle: String(localized: "Ouvrir la carte du réseau officiel des tpg"),
+                                showChevron: true,
+                                external: true)
+                            .onTapGesture {
+                                openInSafari(URL(string: "https://www.tpg.ch/sites/default/files/2025-08/Geneve%20TPG%20Plan%20Schematique%202025-08-18.pdf")!)
+                            }
+#if DEBUG
+                        NavigationLink(destination: StatsView()) {
+                            SettingsRow(
+                                icon: "chart.bar.doc.horizontal",
+                                title: "Statistiques",
+                                subtitle: "Consultez les statistiques de votre usage de l'application (dev only)",
+                                showChevron: true
+                            )
+                        }
+                        .buttonStyle(.plain)
+#endif
+                        }  header: {
+                            SectionHeader(
+                                icon: "flask.fill",
+                                iconColor: .purple,
+                                title: String(localized: "Fonctionnalités avancées"),
+                                subtitle: String(localized: "Options pour les utilisateurs expérimentés")
+                            )
+                        }
+                    }
+                    .padding(.horizontal)
+                    Spacer()
+                }) {
+                    SettingsRow(
+                        icon: "flask.fill",
+                        title: String(localized: "Fonctionnalités avancées"),
+                        subtitle: String(localized: "Options pour les utilisateurs expérimentés"),
+                        showChevron: true
+                    )
                 }
-                .fullScreenCover(isPresented: $showWelcome) {
-                    WelcomeView()
-                }
-                SettingsRow(
-                    icon: "map",
-                    title: String(localized: "Afficher le plan"),
-                    subtitle: String(localized: "Ouvrir la carte du réseau officiel des tpg"),
-                    showChevron: true,
-                    external: true)
-                .onTapGesture {
-                    openInSafari(URL(string: "https://www.tpg.ch/sites/default/files/2025-08/Geneve%20TPG%20Plan%20Schematique%202025-08-18.pdf")!)
-                }
-            } header: {
-                SectionHeader(
-                    icon: "flask.fill",
-                    iconColor: .purple,
-                    title: String(localized: "Fonctionnalités avancées"),
-                    subtitle: String(localized: "Options pour les utilisateurs expérimentés")
-                )
+                .buttonStyle(.plain)
             }
         }
     }
