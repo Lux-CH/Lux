@@ -12,9 +12,9 @@ class ConnectionExtractor: ObservableObject {
     
     private var mappedData: Data?
     
-    init(fromBundle filename: String = "connections") throws {
-        guard let url = Bundle.main.url(forResource: filename, withExtension: "plist") else {
-            throw BinaryPlistError.fileNotFound(filename: "\(filename).plist")
+    init() throws {
+        guard let url = Bundle.main.url(forResource: "connections", withExtension: "plist") else {
+            throw BinaryPlistError.fileNotFound
         }
         self.url = url
         try mapFile()
@@ -34,9 +34,7 @@ class ConnectionExtractor: ObservableObject {
         stream.open()
         defer { stream.close() }
         
-        guard let plist = try PropertyListSerialization.propertyList(with: stream,
-                                                                     options: .mutableContainersAndLeaves,
-                                                                     format: nil) as? [String: Any] else {
+        guard let plist = try PropertyListSerialization.propertyList(with: stream, options: .mutableContainersAndLeaves, format: nil) as? [String: Any] else {
             throw BinaryPlistError.invalidPlistFormat
         }
         
@@ -48,7 +46,7 @@ class ConnectionExtractor: ObservableObject {
     }
     
     enum BinaryPlistError: Error {
-        case fileNotFound(filename: String)
+        case fileNotFound
         case dataNotLoaded
         case invalidPlistFormat
     }
