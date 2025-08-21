@@ -21,7 +21,7 @@ class ConnectionService: ObservableObject {
         do {
             self.extractor = try ConnectionExtractor()
         } catch {
-            print("Failed to initialize ConnectionExtractor: \(error)")
+            print(error)
         }
     }
     
@@ -50,7 +50,7 @@ class ConnectionService: ObservableObject {
                         promise(.success([]))
                     }
                 } catch {
-                    print("error loading connections for \(cleanStopId): \(error)")
+                    print("\(cleanStopId) \(error)")
                     promise(.success([]))
                 }
             }
