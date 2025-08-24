@@ -103,7 +103,7 @@ struct ItineraryView: View {
                         }
                     }
                 }
-                .mapStyle(.standard)
+                .mapStyle(.standard(pointsOfInterest: .excludingAll))
                 .mapControls {
 //                    MapScaleView()
                     MapCompass()
