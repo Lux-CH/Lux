@@ -662,7 +662,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Go to…"
+            "value" : "Where to?"
           }
         }
       }
@@ -3057,6 +3057,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "TPG Orange"
+          }
+        }
+      }
+    },
+    "Où souhaitez-vous aller ?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Where to?"
           }
         }
       }
