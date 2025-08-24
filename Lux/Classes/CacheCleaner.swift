@@ -24,7 +24,6 @@ struct CacheCleaner {
         let fm = FileManager.default
         
         guard fm.fileExists(atPath: url.path) else {
-            print("\(url.path)")
             return
         }
         
