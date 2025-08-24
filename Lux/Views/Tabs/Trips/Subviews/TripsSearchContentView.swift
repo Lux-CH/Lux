@@ -169,6 +169,7 @@ struct EmptyStateContent: View {
                     showingSuggestion = true
                 }
                 .padding(.top, 20)
+                Spacer()
             }
             Image(systemName: "map")
                 .font(.system(size: 40, weight: .light))
