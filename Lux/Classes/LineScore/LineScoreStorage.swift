@@ -40,7 +40,7 @@ class LineScoreStorage: LineScoreStorageProtocol {
     }
     
 //    private var sharedDefaults: UserDefaults? {
-//        UserDefaults(suiteName: "group.ch.lmetral.lux.shareddata")
+//        UserDefaults(suiteName: "group.ch.cclerc.luxapp.shared)
 //    }
     
     init() {

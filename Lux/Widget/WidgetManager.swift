@@ -10,7 +10,7 @@ import WidgetKit
 
 class WidgetManager {
     static let shared = WidgetManager()
-    private let groupIdentifier = "group.ch.lmetral.lux.shareddata"
+    private let groupIdentifier = "group.ch.cclerc.luxapp.shared"
     
     private var sharedDefaults: UserDefaults? {
         return UserDefaults(suiteName: groupIdentifier)
