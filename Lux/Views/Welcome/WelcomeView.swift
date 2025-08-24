@@ -13,6 +13,7 @@ struct WelcomeView: View {
     @Environment(\.dismiss) var dismiss
     @ObservedObject var settings = Settings.shared
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var locationManager: LocationManager
     
     @State private var showShortcuts = false
     @State private var showLineScore = false
@@ -20,7 +21,7 @@ struct WelcomeView: View {
     
     @State private var cardStyleIsSubtle: Bool = true
 
-    private let totalPages = 4
+    private let totalPages = 5
     
     var body: some View {
         ZStack {
@@ -35,12 +36,14 @@ struct WelcomeView: View {
                     TabView(selection: $currentPage) {
                         welcomePage
                             .tag(0)
-                        transportGuidePage
+                        locationPermissionPage
                             .tag(1)
-                        stopsPage
+                        transportGuidePage
                             .tag(2)
-                        finalPage
+                        stopsPage
                             .tag(3)
+                        finalPage
+                            .tag(4)
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                     .animation(.easeInOut(duration: 0.3), value: currentPage)
@@ -90,9 +93,9 @@ struct WelcomeView: View {
     private var navigationButton: some View {
         Button(action: handleNextTap) {
             HStack(spacing: 8) {
-                Image(systemName: isLastPage ? "flag.checkered" : "arrow.right")
+                Image(systemName: getNavigationIcon())
                     .font(.system(size: 16, weight: .medium))
-                Text(isLastPage ? "Commencer" : "Suivant")
+                Text(getNavigationText())
                     .font(.system(size: 16, weight: .medium))
             }
             .foregroundStyle(.background)
@@ -100,11 +103,66 @@ struct WelcomeView: View {
             .padding(.vertical, 14)
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.primary)
+                    .fill(getNavigationColor())
             )
             .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
         }
         .animation(.easeInOut(duration: 0.2), value: currentPage)
+        .animation(.easeInOut(duration: 0.2), value: locationManager.authorizationStatus)
+    }
+    
+    private func getNavigationIcon() -> String {
+        if currentPage == 1 {
+            switch locationManager.authorizationStatus {
+            case .notDetermined:
+                return "location"
+            case .denied, .restricted:
+                return "gear"
+            case .authorizedWhenInUse, .authorizedAlways:
+                return "arrow.right"
+            @unknown default:
+                return "arrow.right"
+            }
+        } else if isLastPage {
+            return "flag.checkered"
+        } else {
+            return "arrow.right"
+        }
+    }
+    
+    private func getNavigationText() -> String {
+        if currentPage == 1 {
+            switch locationManager.authorizationStatus {
+            case .notDetermined:
+                return String(localized: "Autoriser")
+            case .denied, .restricted:
+                return String(localized: "Ouvrir Réglages")
+            case .authorizedWhenInUse, .authorizedAlways:
+                return String(localized: "Suivant")
+            @unknown default:
+                return String(localized: "Suivant")
+            }
+        } else if isLastPage {
+            return "Commencer"
+        } else {
+            return "Suivant"
+        }
+    }
+    
+    private func getNavigationColor() -> Color {
+        if currentPage == 1 {
+            switch locationManager.authorizationStatus {
+            case .notDetermined:
+                return .accentColor
+            case .denied, .restricted:
+                return .orange
+            case .authorizedWhenInUse, .authorizedAlways:
+                return Color.primary
+            @unknown default:
+                return Color.primary
+            }
+        }
+        return Color.primary
     }
     
     private var isLastPage: Bool {
@@ -362,6 +420,198 @@ struct WelcomeView: View {
         }
     }
     
+    private var locationPermissionPage: some View {
+        VStack(spacing: 36) {
+            locationPageHeader
+            locationCard
+        }
+        .padding(.horizontal, 24)
+        .padding(.bottom, 40)
+    }
+    
+    private var locationPageHeader: some View {
+        VStack(spacing: 16) {
+            VStack(spacing: 12) {
+                ZStack {
+                    Circle()
+                        .fill(getLocationIconColor().opacity(0.1))
+                        .frame(width: 80, height: 80)
+                    
+                    Image(systemName: getLocationIcon())
+                        .font(.system(size: 32, weight: .medium))
+                        .foregroundColor(getLocationIconColor())
+                }
+                
+                Text(getLocationTitle())
+                    .font(.title)
+                    .fontWeight(.bold)
+                    .foregroundColor(.primary)
+                    .multilineTextAlignment(.center)
+            }
+            
+            Text(getLocationSubtitle())
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.top, 20)
+    }
+    
+    private var locationCard: some View {
+        ModernCard(style: cardStyleIsSubtle ? .subtle : .normal) {
+            VStack(spacing: 24) {
+                locationCardHeader
+                locationFeatures
+                locationStatusMessage
+            }
+        }
+    }
+    
+    private var locationCardHeader: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "location.fill")
+                .font(.system(size: 20))
+                .foregroundColor(.accentColor)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(String(localized: "Localisation"))
+                    .font(.headline)
+                    .fontWeight(.bold)
+                
+                Text(String(localized: "Autorisez Lux à accéder à votre position"))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+        }
+    }
+    
+    private var locationFeatures: some View {
+        VStack(spacing: 16) {
+            LocationFeatureItem(
+                icon: "mappin.and.ellipse",
+                title: String(localized: "Arrêts à proximité"),
+                description: String(localized: "Trouvez rapidement les arrêts les plus proches"),
+                color: .blue
+            )
+            
+            Divider().opacity(0.3)
+            
+            LocationFeatureItem(
+                icon: "arrow.triangle.turn.up.right.diamond",
+                title: String(localized: "Itinéraires"),
+                description: String(localized: "Obtenez les meilleurs trajets depuis votre position"),
+                color: .green
+            )
+            
+            Divider().opacity(0.3)
+            
+            LocationFeatureItem(
+                icon: "clock.arrow.circlepath",
+                title: String(localized: "Suggestions en temps réel"),
+                description: String(localized: "Recevez des informations basées sur votre position"),
+                color: .indigo
+            )
+        }
+    }
+    
+    @ViewBuilder
+    private var locationStatusMessage: some View {
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            EmptyView()
+        case .denied, .restricted:
+            ModernCard(style: cardStyleIsSubtle ? .normal : .subtle) {
+                VStack(spacing: 12) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.orange)
+                        Text(String(localized: "Localisation désactivée"))
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.orange)
+                        Spacer()
+                    }
+                    
+                    Text(String(localized: "Vous pouvez activer la localisation dans les réglages de votre appareil pour profiter pleinement de Lux."))
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
+            }
+        case .authorizedWhenInUse, .authorizedAlways:
+            ModernCard(style: cardStyleIsSubtle ? .normal : .subtle) {
+                HStack(spacing: 12) {
+                    Image(systemName: "checkmark.circle.fill")
+                        .foregroundColor(.green)
+                        .font(.system(size: 16))
+                    
+                    Text(String(localized: "Localisation activée"))
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(.green)
+                    
+                    Spacer()
+                }
+            }
+        @unknown default:
+            EmptyView()
+        }
+    }
+    
+    private func getLocationIcon() -> String {
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            return "location"
+        case .denied, .restricted:
+            return "location.slash"
+        case .authorizedWhenInUse, .authorizedAlways:
+            return "location.fill"
+        @unknown default:
+            return "location"
+        }
+    }
+    
+    private func getLocationIconColor() -> Color {
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            return .accentColor
+        case .denied, .restricted:
+            return .orange
+        case .authorizedWhenInUse, .authorizedAlways:
+            return .green
+        @unknown default:
+            return .accentColor
+        }
+    }
+    
+    private func getLocationTitle() -> String {
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            return String(localized: "Autoriser la localisation")
+        case .denied, .restricted:
+            return String(localized: "Localisation désactivée")
+        case .authorizedWhenInUse, .authorizedAlways:
+            return String(localized: "Localisation activée")
+        @unknown default:
+            return String(localized: "Autoriser la localisation")
+        }
+    }
+    
+    private func getLocationSubtitle() -> String {
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            return String(localized: "Lux utilise votre position pour vous proposer les arrêts à proximité et les meilleurs itinéraires.")
+        case .denied, .restricted:
+            return String(localized: "Vous pouvez continuer à utiliser Lux, mais certaines fonctionnalités seront limitées.")
+        case .authorizedWhenInUse, .authorizedAlways:
+            return String(localized: "Parfait ! Vous pouvez maintenant profiter pleinement de toutes les fonctionnalités de Lux.")
+        @unknown default:
+            return String(localized: "Lux utilise votre position pour vous proposer les arrêts à proximité et les meilleurs itinéraires.")
+        }
+    }
+    
     private var finalPage: some View {
         VStack(spacing: 36) {
             pageHeader(
@@ -469,6 +719,19 @@ struct WelcomeView: View {
         let impactFeedback = UIImpactFeedbackGenerator(style: .medium)
         impactFeedback.impactOccurred()
         
+        if currentPage == 1 {
+            switch locationManager.authorizationStatus {
+            case .notDetermined:
+                locationManager.requestLoc()
+                return
+            case .denied, .restricted:
+                openAppSettings()
+                return
+            default:
+                break
+            }
+        }
+        
         withAnimation(.easeInOut(duration: 0.3)) {
             if currentPage < totalPages - 1 {
                 currentPage += 1
@@ -476,6 +739,12 @@ struct WelcomeView: View {
             } else {
                 handleWelcomeCompletion()
             }
+        }
+    }
+    
+    private func openAppSettings() {
+        if let settingsUrl = URL(string: UIApplication.openSettingsURLString) {
+            UIApplication.shared.open(settingsUrl)
         }
     }
     
@@ -487,7 +756,36 @@ struct WelcomeView: View {
     }
 }
 
-// New button component without navigation destination
+struct LocationFeatureItem: View {
+    let icon: String
+    let title: String
+    let description: String
+    let color: Color
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.system(size: 20, weight: .medium))
+                .foregroundColor(color)
+                .frame(width: 24)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Text(description)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            
+            Spacer()
+        }
+    }
+}
+
 struct CustomisationExplainationButton: View {
     let title: String
     let description: String

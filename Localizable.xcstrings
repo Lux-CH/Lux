@@ -737,6 +737,16 @@
         }
       }
     },
+    "Arrêts à proximité" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nearby stops"
+          }
+        }
+      }
+    },
     "Arrivée" : {
       "localizations" : {
         "en" : {
@@ -955,6 +965,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Auto"
+          }
+        }
+      }
+    },
+    "Autoriser" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow"
+          }
+        }
+      }
+    },
+    "Autoriser la localisation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow location access"
+          }
+        }
+      }
+    },
+    "Autorisez Lux à accéder à votre position" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Lux to access your location"
           }
         }
       }
@@ -1331,16 +1371,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tap on a line to see it’s details"
-          }
-        }
-      }
-    },
-    "Commencer" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Start"
           }
         }
       }
@@ -2407,6 +2437,16 @@
         }
       }
     },
+    "Itinéraires" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trips"
+          }
+        }
+      }
+    },
     "J" : {
       "localizations" : {
         "en" : {
@@ -2667,6 +2707,26 @@
         }
       }
     },
+    "Localisation activée" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location enabled"
+          }
+        }
+      }
+    },
+    "Localisation désactivée" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location disabled"
+          }
+        }
+      }
+    },
     "Location" : {
       "localizations" : {
         "en" : {
@@ -2703,6 +2763,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lux"
+          }
+        }
+      }
+    },
+    "Lux utilise votre position pour vous proposer les arrêts à proximité et les meilleurs itinéraires." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux uses your position to show nearby stops and optimised itineraries"
           }
         }
       }
@@ -2972,6 +3042,16 @@
         }
       }
     },
+    "Obtenez les meilleurs trajets depuis votre position" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtain the best itineraries from your position"
+          }
+        }
+      }
+    },
     "Occupé" : {
       "localizations" : {
         "en" : {
@@ -3101,6 +3181,16 @@
         }
       }
     },
+    "Ouvrir Réglages" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        }
+      }
+    },
     "Par Défaut" : {
       "localizations" : {
         "en" : {
@@ -3117,6 +3207,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Settings"
+          }
+        }
+      }
+    },
+    "Parfait ! Vous pouvez maintenant profiter pleinement de toutes les fonctionnalités de Lux." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perfect! You can now fully enjoy all of Lux's features"
           }
         }
       }
@@ -3547,6 +3647,16 @@
         }
       }
     },
+    "Recevez des informations basées sur votre position" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Receive information based on your location"
+          }
+        }
+      }
+    },
     "Recherche d'itinéraires..." : {
       "localizations" : {
         "en" : {
@@ -3947,6 +4057,16 @@
         }
       }
     },
+    "Suggestions en temps réel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Real time suggestions"
+          }
+        }
+      }
+    },
     "Suit les réglages système" : {
       "localizations" : {
         "en" : {
@@ -4257,6 +4377,16 @@
         }
       }
     },
+    "Trouvez rapidement les arrêts les plus proches" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Find nearby stops faster"
+          }
+        }
+      }
+    },
     "Type" : {
       "localizations" : {
         "en" : {
@@ -4483,6 +4613,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You are now ready to use Lux."
+          }
+        }
+      }
+    },
+    "Vous pouvez activer la localisation dans les réglages de votre appareil pour profiter pleinement de Lux." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can allow location access in your device’s settings to fully enjoy Lux’s features."
+          }
+        }
+      }
+    },
+    "Vous pouvez continuer à utiliser Lux, mais certaines fonctionnalités seront limitées." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You can continue using Lux, but some features will be limited."
           }
         }
       }
