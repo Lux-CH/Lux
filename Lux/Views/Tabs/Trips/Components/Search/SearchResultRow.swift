@@ -6,9 +6,11 @@
 //
 
 import SwiftUI
+import CoreLocation
 import LuxCom
 
 struct SearchResultRow: View {
+    @EnvironmentObject var locationManager: LocationManager
     let result: SearchResult
     
     private func getIconForType(_ type: LocationType)-> (String, Color) {
@@ -95,9 +97,17 @@ struct SearchResultRow: View {
             
             Spacer()
             
-            Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .medium))
-                .foregroundColor(.secondary.opacity(0.7))
+            HStack {
+                if let currentLoc = locationManager.location {
+                    let distance = currentLoc.distance(from: CLLocation(latitude: result.lat, longitude: result.lon))
+                    Text(formatDistance(distance))
+                        .font(.caption)
+                        .foregroundColor(.secondary.opacity(0.7))
+                }
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundColor(.secondary.opacity(0.7))
+            }
         }
         .contentShape(Rectangle())
     }
