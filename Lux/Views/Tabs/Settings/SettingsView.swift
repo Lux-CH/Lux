@@ -380,7 +380,7 @@ struct SettingsView: View {
                     icon: "app.badge",
                     title: String(localized: "Version"),
                     // MARK: CHANGE THAT WHEN IN PROD
-                    subtitle: "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? String(localized: "Inconnue")) Beta \(Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? String(localized: "Inconnue"))",
+                    subtitle: "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? String(localized: "Inconnue"))",
                     showChevron: false
                 )
             } header: {
