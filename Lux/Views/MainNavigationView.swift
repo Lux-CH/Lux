@@ -164,7 +164,11 @@ struct MainNavigationView: View {
                                         
                                         AnimatedSearchBar(
                                             searchText: viewMode == .home ? $searchText : $stopsViewModel.searchQuery,
-                                            placeholderText: viewMode == .home ? String(localized: "Aller à...") : String(localized: "Rechercher un arrêt..."),
+                                            placeholderText: viewMode == .home ?
+                                            (progress.numOfTimesTripViewWasOpened <= 1 ?
+                                                String(localized: "Où souhaitez-vous aller ?") :
+                                                String(localized: "Aller à...")) :
+                                            String(localized: "Rechercher un arrêt..."),
                                             onSearch: {
                                                 if viewMode == .stops {
                                                     withAnimation(ultraSmoothSpring) {
