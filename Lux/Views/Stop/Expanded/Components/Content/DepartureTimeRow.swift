@@ -39,7 +39,7 @@ struct DepartureTimeRow: View {
                             Text("\(scheduledDifference >= 0 ? "+" : "")\(scheduledDifference)'")
                                 .font(.system(.subheadline, design: .monospaced))
                                 .fontWeight(.bold)
-                                .foregroundColor(scheduledDifference == 0 ? .green : .red)
+                                .foregroundColor(scheduledDifference == 0 ? .green : .yellow)
                                 .contentTransition(.numericText())
                         }
                     }
@@ -77,7 +77,7 @@ struct DepartureTimeRow: View {
         } else if scheduledDifference < 2 && scheduledDifference >= -1 {
             return .green
         } else {
-            return .red
+            return .yellow
         }
     }
     

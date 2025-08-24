@@ -120,7 +120,7 @@ struct ArrivalMinuteView: View {
         } else if scheduledDifference < 2 && scheduledDifference >= -1 {
             return .green
         } else {
-            return .red
+            return .yellow
         }
     }
     
