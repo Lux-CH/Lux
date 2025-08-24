@@ -210,6 +210,7 @@ struct EmptyStateContent: View {
                         .foregroundColor(.accentColor)
                     }
                     .buttonStyle(ScaleButtonStyle())
+                    .padding(.top, shortcutManager.shortcuts.isEmpty ? 5 : 0)
                 }
                 
                 if !shortcutManager.shortcuts.isEmpty {
@@ -273,6 +274,9 @@ struct EmptyStateContent: View {
                             .frame(height: 20)
                         }
                     )
+                }
+                else {
+                    Spacer()
                 }
             }
             .padding(.top, 16)
