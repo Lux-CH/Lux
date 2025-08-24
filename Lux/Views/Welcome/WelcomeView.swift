@@ -155,7 +155,7 @@ struct WelcomeView: View {
             case .notDetermined:
                 return .accentColor
             case .denied, .restricted:
-                return .orange
+                return .yellow
             case .authorizedWhenInUse, .authorizedAlways:
                 return Color.primary
             @unknown default:
