@@ -126,15 +126,6 @@ struct MultipleItineraryDetailView: View {
         }
     }
     
-    private func formatDistance(_ meters: Double) -> String {
-        if meters < 1000 {
-            return "\(Int(meters)) m"
-        } else {
-            let kilometers = meters / 1000
-            return String(format: "%.1f km", kilometers)
-        }
-    }
-    
     private func getInstructionText(for step: MKRoute.Step) -> String {
         if !step.instructions.isEmpty {
             return step.instructions

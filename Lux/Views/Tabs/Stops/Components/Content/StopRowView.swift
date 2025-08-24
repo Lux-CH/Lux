@@ -92,15 +92,6 @@ struct StopRowView: View {
         return userLocation.distance(from: stopLocation)
     }
     
-    private func formatDistance(_ distance: Double) -> String {
-        if distance >= 1000 {
-            let km = distance / 1000
-            return "\(Int(km))km"
-        } else {
-            return "\(Int(distance))m"
-        }
-    }
-    
     private func calculateRelativeAngle(userLat: Double, userLon: Double, stopLat: Double, stopLon: Double, deviceHeading: Double) -> Double {
         let lat1 = userLat * .pi / 180
         let lat2 = stopLat * .pi / 180
@@ -129,5 +120,14 @@ struct StopRowView: View {
             stopLon: stop.lon,
             deviceHeading: deviceHeading
         )
+    }
+}
+
+func formatDistance(_ distance: Double) -> String {
+    if distance >= 1000 {
+        let km = distance / 1000
+        return "\(Int(km))km"
+    } else {
+        return "\(Int(distance))m"
     }
 }
