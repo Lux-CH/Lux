@@ -326,6 +326,15 @@ struct WelcomeView: View {
                     .font(.headline)
                     .fontWeight(.semibold)
                 stopPreviewCard
+                    .clipShape(
+                        UnevenRoundedRectangle(
+                            topLeadingRadius: 38,
+                            bottomLeadingRadius: 24,
+                            bottomTrailingRadius: 24,
+                            topTrailingRadius: 38,
+                            style: .continuous
+                        )
+                    )
                     .overlay(
                         UnevenRoundedRectangle(
                             topLeadingRadius: 38,
@@ -336,6 +345,7 @@ struct WelcomeView: View {
                         )
                         .stroke(Color.primary.opacity(0.1), lineWidth: 1)
                     )
+                
                 tipCard
             }
         }
@@ -352,7 +362,7 @@ struct WelcomeView: View {
             level: 0.0,
             areas: [],
             score: 0.0
-        ), maxGroupsToShow: 3, fromStops: false, dontShowLastDivider: true)
+        ), maxGroupsToShow: 3, fromStops: false, dontShowLastDivider: true, isLastStopOverall: true)
         .padding(.bottom, 7.5)
         .background(Color(.systemBackground).clipShape(
             UnevenRoundedRectangle(
@@ -371,12 +381,12 @@ struct WelcomeView: View {
                 HStack(spacing: 8) {
                     Image(systemName: "lightbulb.fill")
                         .font(.system(size: 14))
-                        .foregroundColor(.blue)
+                        .foregroundColor(.yellow)
                     
                     Text("Astuces")
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundColor(.blue)
+                        .foregroundColor(.yellow)
                     
                     Spacer()
                 }
@@ -400,6 +410,10 @@ struct WelcomeView: View {
                         text: Text("Cliquez sur une ligne pour voir ses détails"),
                         color: .blue
                     )
+                    tipItem(
+                        icon: "square",
+                        text: Text("Les quais sont indiqués dans les cases"),
+                        color: .purple)
                 }
             }
         }
