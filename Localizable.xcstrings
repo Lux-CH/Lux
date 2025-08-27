@@ -2600,6 +2600,16 @@
         }
       }
     },
+    "Les quais sont indiqués dans les cases" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platforms are indicated in the boxes"
+          }
+        }
+      }
+    },
     "Les raccourcis seront triés par pertinence temporelle. Les plus proches en termes d'horaire et de jour seront affichés en premier, sauf si vous êtes très proche de la destination." : {
       "localizations" : {
         "en" : {
