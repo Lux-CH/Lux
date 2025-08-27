@@ -13,12 +13,13 @@ struct StopView: View {
     let maxGroupsToShow: Int
     let fromStops: Bool
     @State var dontShowLastDivider: Bool = true
+    @State var isLastStopOverall: Bool = false
     
     var body: some View {
         if fromStops {
             ExpandedStopView(viewModel: StopViewModel(stop: stop, fromStops: true), maxGroupsToShow: maxGroupsToShow)
         } else {
-            CompactStopView(stop: stop, maxGroupsToShow: maxGroupsToShow, dontShowLastDivider: dontShowLastDivider)
+            CompactStopView(stop: stop, maxGroupsToShow: maxGroupsToShow, dontShowLastDivider: dontShowLastDivider, isLastStopOverall: isLastStopOverall)
         }
     }
 }

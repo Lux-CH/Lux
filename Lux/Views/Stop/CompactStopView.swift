@@ -14,14 +14,16 @@ struct CompactStopView: View {
 
     let maxGroupsToShow: Int
     let dontShowLastDivider: Bool
+    let isLastStopOverall: Bool
     
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
-    init(stop: SearchResult, maxGroupsToShow: Int, dontShowLastDivider: Bool) {
+    init(stop: SearchResult, maxGroupsToShow: Int, dontShowLastDivider: Bool, isLastStopOverall: Bool) {
         self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: false))
         self.maxGroupsToShow = maxGroupsToShow
         self.dontShowLastDivider = dontShowLastDivider
+        self.isLastStopOverall = isLastStopOverall
     }
     
     var body: some View {
@@ -137,6 +139,8 @@ struct CompactStopView: View {
         let color = LineColors.color(for: groups.first?.routeShortName ?? "") ?? Color(hex: "EA0706")
         let lineColor = isDarkColor(color) ? lightenColor(color) : color
         
+        let isLastRoute = dontShowLastDivider && routeName == viewModel.routeNames.prefix(maxGroupsToShow).last
+        
         return VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .bottom) {
                 TabView(selection: Binding(
@@ -169,7 +173,7 @@ struct CompactStopView: View {
                 .accessibilityHidden(true)
             }
             
-            if !(dontShowLastDivider && routeName == viewModel.routeNames.prefix(maxGroupsToShow).last) {
+            if !isLastRoute {
                 Divider()
                     .padding(.horizontal)
                     .accessibilityHidden(true)
@@ -177,6 +181,7 @@ struct CompactStopView: View {
         }
         .background(
             LinearGradient(colors: [lineColor.opacity(0.05), lineColor.opacity(0.01)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .padding(.bottom, isLastRoute ? (isLastStopOverall ? -4 : -55) : 0)
         )
     }
     
