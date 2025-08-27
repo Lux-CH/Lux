@@ -134,7 +134,10 @@ struct CompactStopView: View {
     }
     
     private func routeGroupView(for routeName: String, groups: [GroupedStopTime]) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
+        let color = LineColors.color(for: groups.first?.routeShortName ?? "") ?? Color(hex: "EA0706")
+        let lineColor = isDarkColor(color) ? lightenColor(color) : color
+        
+        return VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .bottom) {
                 TabView(selection: Binding(
                     get: { viewModel.currentPages[routeName] ?? 0 },
@@ -172,6 +175,9 @@ struct CompactStopView: View {
                     .accessibilityHidden(true)
             }
         }
+        .background(
+            LinearGradient(colors: [lineColor.opacity(0.05), lineColor.opacity(0.01)], startPoint: .topLeading, endPoint: .bottomTrailing)
+        )
     }
     
     private func groupAccessibilityLabel(for group: GroupedStopTime) -> String {
@@ -215,3 +221,4 @@ struct CompactStopView: View {
         return label
     }
 }
+

@@ -37,23 +37,6 @@
     "%.2f €" : {
       "shouldTranslate" : false
     },
-    "%@ • %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ • %2$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ • %2$@"
-          }
-        }
-      },
-      "shouldTranslate" : false
-    },
     "%@%lld'" : {
       "localizations" : {
         "fr" : {
