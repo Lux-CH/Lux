@@ -65,11 +65,11 @@ struct IncomingBusView: View {
                                     Text(displayTrack)
                                         .font(.system(size: 8))
                                         .multilineTextAlignment(.center)
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.secondary.opacity(0.8))
                                         .frame(width: 11, height: 11)
                                         .background(
                                             RoundedRectangle(cornerRadius: 3)
-                                                .stroke(Color.secondary, lineWidth: 0.5)
+                                                .stroke(Color.secondary.opacity(0.8), lineWidth: 0.5)
                                         )
                                 }
                             } else {
@@ -85,11 +85,11 @@ struct IncomingBusView: View {
                                     Text(displayTrack)
                                         .font(.system(size: 8))
                                         .multilineTextAlignment(.center)
-                                        .foregroundColor(.secondary)
+                                        .foregroundColor(.secondary.opacity(0.8))
                                         .frame(width: 11, height: 11)
                                         .background(
                                             RoundedRectangle(cornerRadius: 3)
-                                                .stroke(Color.secondary, lineWidth: 0.5)
+                                                .stroke(Color.secondary.opacity(0.8), lineWidth: 0.5)
                                         )
                                 }
                             }
