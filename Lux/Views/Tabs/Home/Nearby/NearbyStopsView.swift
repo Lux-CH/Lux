@@ -158,8 +158,9 @@ struct NearbyStopsView: View {
                 VStack(spacing: 8) {
                     VStack(spacing: 2.5) {
                         ForEach(Array(searchResults.prefix(2).enumerated()), id: \.element.id) { index, result in
+                            let isLastStop = index == min(1, searchResults.count - 1)
                             ZStack {
-                                StopView(stop: result, maxGroupsToShow: index == 0 ? 3 : (showingSuggestion ? 1 : 2), fromStops: false)
+                                StopView(stop: result, maxGroupsToShow: index == 0 ? 3 : (showingSuggestion ? 1 : 2), fromStops: false, isLastStopOverall: isLastStop)
                             }
                             .frame(maxWidth: .infinity)
                         }
