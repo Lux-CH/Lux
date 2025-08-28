@@ -79,7 +79,7 @@ struct IncomingBusView: View {
                                 
                                 HStack(spacing: 8) {
                                     Text(parsedStopName.location.capitalized)
-                                        .font(.system(size: 17, weight: .medium ))
+                                        .font(.system(size: 17, weight: .medium))
                                         .foregroundColor(.primary)
                                     
                                     Text(displayTrack)
@@ -91,6 +91,7 @@ struct IncomingBusView: View {
                                             RoundedRectangle(cornerRadius: 3)
                                                 .stroke(Color.secondary.opacity(0.8), lineWidth: 0.5)
                                         )
+                                        .padding(.top, 2.25)
                                 }
                             }
                         }
