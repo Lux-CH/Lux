@@ -14,6 +14,7 @@ struct TripsSearchHeaderView: View {
     @Environment(\.colorScheme) private var colorScheme
     @State private var isSwapping = false
     @State private var showTimePicker = false
+    @State private var showWarningOvertimeAlert = false
     @State var isFromStop: Bool = false
     @State private var headerOffset: CGFloat = -100
     @State private var contentOpacity: Double = 0
@@ -110,6 +111,14 @@ struct TripsSearchHeaderView: View {
             
             Spacer()
             
+            if viewModel.selectedDate ?? Date() < Date().addingTimeInterval(-10 * 60) {
+                warningTimeChip
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8)),
+                        removal: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8))
+                    ))
+            }
+            
             timeChip
                 .transition(.asymmetric(
                     insertion: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8)),
@@ -161,6 +170,36 @@ struct TripsSearchHeaderView: View {
                 viewModel.changeDepartureType(viewModel.departureType)
             }
             .presentationCompactAdaptation(.popover)
+        }
+    }
+    
+    @ViewBuilder
+    private var warningTimeChip: some View {
+        Button(action: {
+            HapticFeedback.lightImpact()
+            showWarningOvertimeAlert = true
+        }) {
+            HStack(spacing: 6) {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.system(size: 14, weight: .semibold))
+            }
+            .foregroundColor(.yellow)
+            .frame(maxHeight: 15)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 14)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(Color.yellow.opacity(0.12))
+                    .stroke(Color.yellow.opacity(0.35), lineWidth: 0.5)
+            )
+        }
+        .buttonStyle(ScaleButtonStyle())
+        .accessibilityLabel("Avertissement")
+        .alert("Date potentiellement incorrecte", isPresented: $showWarningOvertimeAlert) {
+            Button("OK", role: .cancel) { }
+            Button("Réinitialiser", role: .destructive) {viewModel.selectedDate = nil}
+        } message: {
+            Text("La date séléctionnée est antérieure à l'heure actuelle")
         }
     }
     
