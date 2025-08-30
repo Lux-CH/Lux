@@ -59,6 +59,14 @@ struct ItineraryView: View {
         }
     }
     
+    var detents: (CGFloat, CGFloat) {
+        if #available(iOS 26, *) {
+            return (0.1374, 68.5)
+        } else {
+            return (0.1, 72.5)
+        }
+    }
+    
     var body: some View {
         ZStack {
             if viewModel.isLoading {
@@ -110,7 +118,7 @@ struct ItineraryView: View {
                     
                 }
                 .safeAreaInset(edge: .bottom) {
-                    Spacer().frame(height: isSingle ? 72.5 : 165)
+                    Spacer().frame(height: isSingle ? detents.1 : 165)
                 }
                 .onMapCameraChange { context in
                     viewModel.updateZoomLevel(distance: context.camera.distance)
@@ -202,7 +210,7 @@ struct ItineraryView: View {
                     // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
                     .sheet(isPresented: $showDetails) {
                         ItineraryDetailSheet(viewModel: viewModel, isSingle: isSingle)
-                            .presentationDetents([isSingle ? .fraction(0.1) : .fraction(0.225), .medium, .large])
+                            .presentationDetents([isSingle ? .fraction(detents.0) : .fraction(0.225), .medium, .large])
                             .presentationDragIndicator(.visible)
                             .presentationCornerRadius(38)
                             .presentationBackgroundInteraction(.enabled)
