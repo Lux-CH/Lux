@@ -50,9 +50,9 @@ struct IncomingBusView: View {
         }) {
             HStack {
                 VStack(alignment: .leading) {
-                    let displayTrack = group.stopTimes.first {
+                    let displayTrack: String? = group.stopTimes.first {
                         $0.place.track != nil || $0.place.scheduledTrack != nil
-                    }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? ""
+                    }?.place.track ?? group.stopTimes.first?.place.scheduledTrack
                     
                     HStack(spacing: 12) {
                         LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus, width: 45, height: 30, fontSize: 16.5)
@@ -62,15 +62,17 @@ struct IncomingBusView: View {
                                     Text(group.headsign)
                                         .font(.system(size: 17, weight: .medium))
                                         .foregroundColor(.primary)
-                                    Text(displayTrack)
-                                        .font(.system(size: 8))
-                                        .multilineTextAlignment(.center)
-                                        .foregroundColor(.secondary.opacity(0.8))
-                                        .frame(width: 11, height: 11)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 3)
-                                                .stroke(Color.secondary.opacity(0.8), lineWidth: 0.5)
-                                        )
+                                    if let track = displayTrack, !track.isEmpty {
+                                        Text(track)
+                                            .font(.system(size: 8))
+                                            .multilineTextAlignment(.center)
+                                            .foregroundColor(.secondary.opacity(0.8))
+                                            .frame(width: 11, height: 11)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 3)
+                                                    .stroke(Color.secondary.opacity(0.8), lineWidth: 0.5)
+                                            )
+                                    }
                                 }
                             } else {
                                 Text(parsedStopName.city)
@@ -81,17 +83,18 @@ struct IncomingBusView: View {
                                     Text(parsedStopName.location.capitalized)
                                         .font(.system(size: 17, weight: .medium))
                                         .foregroundColor(.primary)
-                                    
-                                    Text(displayTrack)
-                                        .font(.system(size: 8))
-                                        .multilineTextAlignment(.center)
-                                        .foregroundColor(.secondary.opacity(0.8))
-                                        .frame(width: 11, height: 11)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 3)
-                                                .stroke(Color.secondary.opacity(0.8), lineWidth: 0.5)
-                                        )
-                                        .padding(.top, 2.25)
+                                    if let track = displayTrack, !track.isEmpty {
+                                        Text(track)
+                                            .font(.system(size: 8))
+                                            .multilineTextAlignment(.center)
+                                            .foregroundColor(.secondary.opacity(0.8))
+                                            .frame(width: 11, height: 11)
+                                            .background(
+                                                RoundedRectangle(cornerRadius: 3)
+                                                    .stroke(Color.secondary.opacity(0.8), lineWidth: 0.5)
+                                            )
+                                            .padding(.top, 2.25)
+                                    }
                                 }
                             }
                         }
