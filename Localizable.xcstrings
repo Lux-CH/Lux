@@ -37,6 +37,16 @@
     "%.2f €" : {
       "shouldTranslate" : false
     },
+    "%@ Couleur Sombre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Dark Color"
+          }
+        }
+      }
+    },
     "%@%lld'" : {
       "localizations" : {
         "fr" : {
@@ -189,16 +199,6 @@
         }
       },
       "shouldTranslate" : false
-    },
-    "⚠︎ Couleur Sombre" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "⚠︎ Dark Color"
-          }
-        }
-      }
     },
     "1 an" : {
       "localizations" : {
@@ -1012,6 +1012,16 @@
         }
       }
     },
+    "Avertissement" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Warning"
+          }
+        }
+      }
+    },
     "Avion" : {
       "localizations" : {
         "en" : {
@@ -1590,6 +1600,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Dans %1$lldh %2$lldmin"
+          }
+        }
+      }
+    },
+    "Date potentiellement incorrecte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Potentially incorrect date"
           }
         }
       }
@@ -2536,6 +2556,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The selected color is not quite visible in dark mode. Consider switching to light mode in « Display mode » settings"
+          }
+        }
+      }
+    },
+    "La date séléctionnée est antérieure à l'heure actuelle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected date has already passed"
           }
         }
       }
@@ -3726,6 +3756,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Try again"
+          }
+        }
+      }
+    },
+    "Réinitialiser" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reset"
           }
         }
       }
