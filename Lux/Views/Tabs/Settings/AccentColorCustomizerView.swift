@@ -64,7 +64,7 @@ struct AccentColorCustomizerView: View {
                             Spacer()
                             if accentColorManager.selectedAccentColor == Color(hex: "2d327d") && colorScheme == .dark {
                                 Button {showDarkColorAlert = true} label: {
-                                    Text("⚠︎ Couleur Sombre")
+                                    Text("\(Image(systemName: "exclamationmark.triangle")) Couleur Sombre")
                                         .font(.caption)
                                         .padding(.horizontal, 12)
                                         .padding(.vertical, 4)
