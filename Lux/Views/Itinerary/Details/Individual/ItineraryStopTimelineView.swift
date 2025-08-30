@@ -178,7 +178,7 @@ struct ItineraryStopTimelineRowView: View {
                             .font(.system(size: 11, weight: isCityReleavant ? .heavy : fontWeight))
                             .foregroundColor(.secondary)
                         
-                        Text(parsedStopName.location.capitalized)
+                        Text(parsedStopName.location.shortnameCapitalize)
                             .font(.system(size: 17, weight: fontWeight))
                             .foregroundColor(.primary)
                     }
