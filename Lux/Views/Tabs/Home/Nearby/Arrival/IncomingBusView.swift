@@ -80,7 +80,7 @@ struct IncomingBusView: View {
                                     .foregroundColor(.secondary)
                                 
                                 HStack(spacing: 8) {
-                                    Text(parsedStopName.location.capitalized)
+                                    Text(parsedStopName.location.shortnameCapitalize)
                                         .font(.system(size: 17, weight: .medium))
                                         .foregroundColor(.primary)
                                     if let track = displayTrack, !track.isEmpty {
@@ -148,3 +148,8 @@ extension TransportationMode {
     }
 }
 
+extension String {
+    var shortnameCapitalize: String {
+        return self.uppercased() == self ? self : self.capitalized
+    }
+}
