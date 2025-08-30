@@ -23,7 +23,7 @@ struct ItineraryStopTimeView: View {
                     .font(.subheadline)
                     .foregroundColor(.secondary)
                 
-                if !stopStatus.timeUntil.isEmpty {
+                if !stopStatus.timeUntil.isEmpty && time < Date().addingTimeInterval(10800) {
                     Text("•")
                         .foregroundColor(.secondary.opacity(0.5))
                     
