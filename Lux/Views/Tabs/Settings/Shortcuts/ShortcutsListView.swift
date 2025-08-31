@@ -62,12 +62,12 @@ struct ShortcutsListView: View {
     }
     
     private var frameOffset: CGFloat {
-        var offset = 0
+        var offset = 0.0
         for shortcut in shortcutManager.shortcuts {
             if shortcut.timeSchedule == nil {
-                offset+=70
+                offset+=64.2
             } else {
-                offset+=90
+                offset+=85.5
             }
         }
         return CGFloat(offset)
@@ -135,7 +135,7 @@ struct ShortcutsListView: View {
                 }
                 .listStyle(.plain)
                 .scrollDisabled(true)
-                .frame(height: frameOffset + (shortcutManager.shortcuts.isEmpty ? 50 : 37.5))
+                .frame(height: frameOffset + (shortcutManager.shortcuts.isEmpty ? 50 : 40))
                 
                 if !shortcutManager.shortcuts.isEmpty {
                     Text(settings.useTimeBasedRelevance ?
