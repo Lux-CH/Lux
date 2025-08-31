@@ -369,6 +369,9 @@ struct ShortcutEditorView: View {
                 
                 Toggle("", isOn: $hasTimeSchedule)
                     .toggleStyle(ModernToggleStyle())
+                    .onChange(of: hasTimeSchedule) {
+                        HapticFeedback.lightImpact()
+                    }
             }
             
             if hasTimeSchedule {
