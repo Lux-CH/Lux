@@ -61,13 +61,25 @@ struct ShortcutsListView: View {
         .padding(.horizontal)
     }
     
+    private var frameOffset: CGFloat {
+        var offset = 0
+        for shortcut in shortcutManager.shortcuts {
+            if shortcut.timeSchedule == nil {
+                offset+=70
+            } else {
+                offset+=90
+            }
+        }
+        return CGFloat(offset)
+    }
+    
     private var shortcutsCard: some View {
         SettingsCard {
             VStack(alignment: .leading, spacing: 0) {
                 SectionHeader(
                     icon: "list.star",
                     iconColor: .blue,
-                    title: "Raccourcis",
+                    title: String(localized: "Raccourcis"),
                     subtitle: shortcutManager.shortcuts.isEmpty ?
                     String(localized: "Aucun raccourci configuré") :
                         String(localized: "\(shortcutManager.visibleShortcuts.count)/\(shortcutManager.shortcuts.count) affichés")
@@ -112,7 +124,7 @@ struct ShortcutsListView: View {
                                 .foregroundColor(accentColorManager.selectedAccentColor)
                         }
                         .padding(.vertical, 10)
-                        .padding(.leading, 10)
+                        .padding(.leading, 5)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal, 20)
                     }
@@ -123,7 +135,7 @@ struct ShortcutsListView: View {
                 }
                 .listStyle(.plain)
                 .scrollDisabled(true)
-                .frame(height: shortcutManager.shortcuts.isEmpty ? 50 : CGFloat(shortcutManager.shortcuts.count) * 70 + 95)
+                .frame(height: frameOffset + (shortcutManager.shortcuts.isEmpty ? 50 : 37.5))
                 
                 if !shortcutManager.shortcuts.isEmpty {
                     Text(settings.useTimeBasedRelevance ?
