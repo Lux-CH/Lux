@@ -23,6 +23,7 @@ struct NearbyStopsView: View {
     @State private var backgroundRefreshTask: Task<Void, Never>? = nil
     @State private var isUserConnectedToInternet: Bool = false
     @State private var maintenanceStatus: MaintenanceStatus? = nil
+    @State private var warningMessage: WarningMessage? = nil
     @State private var showingSuggestion: Bool = false
     @State private var showSafari: Bool = false
     
@@ -197,6 +198,19 @@ struct NearbyStopsView: View {
                             showingSuggestion = true
                         }
                         .padding(.top, 14)
+                    } else if let message = warningMessage, message.show {
+                        HintIndicatorView(
+                            icon: message.icon,
+                            message: message.message,
+                            delay: 0.25,
+                            duration: 10
+                        ) {
+                            showingSuggestion = false
+                        }
+                        .onAppear {
+                            showingSuggestion = true
+                        }
+                        .padding(.top, 14)
                     }
                 }
             }
@@ -207,6 +221,9 @@ struct NearbyStopsView: View {
         }
         .onAppear {
             monitorNetwork()
+            Task.detached() {
+                await checkMessage()
+            }
             if locationManager.location == nil && !isAuthorizationNotAllowed {
                 isWaitingForLocation = true
             } else if searchResults.isEmpty && !isAuthorizationNotAllowed {
@@ -362,6 +379,23 @@ struct NearbyStopsView: View {
         }
     }
     
+    func checkMessage() async {
+        let url = URL(string: "https://cclerc.ch/lux-status/message.json?t=\(Date().timeIntervalSince1970)")!
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let message = try JSONDecoder().decode(WarningMessage.self, from: data)
+            
+            await MainActor.run {
+                self.warningMessage = message
+            }
+        } catch {
+            print("error fetching error \(error)")
+            await MainActor.run {
+                self.warningMessage = nil
+            }
+        }
+    }
+    
     private func formatDate(_ dateString: String) -> String {
         let formatter = ISO8601DateFormatter()
         guard let date = formatter.date(from: dateString) else {
@@ -382,4 +416,10 @@ struct MaintenanceStatus: Codable {
     let message: String
     let estimatedDateOfResolution: String?
     let isMaintenance: Bool
+}
+
+struct WarningMessage: Codable {
+    let message: String
+    let icon: String
+    let show: Bool
 }
