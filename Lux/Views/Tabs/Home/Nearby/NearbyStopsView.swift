@@ -226,6 +226,9 @@ struct NearbyStopsView: View {
             }
             if locationManager.location == nil && !isAuthorizationNotAllowed {
                 isWaitingForLocation = true
+                if locationManager.authorizationStatus == .notDetermined && !settings.firstLaunch {
+                    locationManager.requestLoc()
+                }
             } else if searchResults.isEmpty && !isAuthorizationNotAllowed {
                 loadNearbyStops(showLoading: true)
             } else if !isAuthorizationNotAllowed {
