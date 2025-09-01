@@ -1368,6 +1368,16 @@
         }
       }
     },
+    "Commencer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start"
+          }
+        }
+      }
+    },
     "Commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis" : {
       "localizations" : {
         "en" : {

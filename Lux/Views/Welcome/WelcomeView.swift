@@ -143,9 +143,9 @@ struct WelcomeView: View {
                 return String(localized: "Suivant")
             }
         } else if isLastPage {
-            return "Commencer"
+            return String(localized: "Commencer")
         } else {
-            return "Suivant"
+            return String(localized: "Suivant")
         }
     }
     
