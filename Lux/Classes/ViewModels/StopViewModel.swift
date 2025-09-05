@@ -198,7 +198,7 @@ class StopViewModel: ObservableObject {
             }
             return 60.0
         default:
-            return 40.0
+            return 50.0
         }
     }
     
