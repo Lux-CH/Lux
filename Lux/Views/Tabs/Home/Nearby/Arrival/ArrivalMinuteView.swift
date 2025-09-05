@@ -14,7 +14,7 @@ struct ArrivalMinuteView: View {
     @State var shouldAutoRefresh: Bool = false
     @StateObject private var blinkManager = BlinkManager.shared
     @State private var now = Date()
-    @State private var bufferTime: TimeInterval = 40.0
+    @State private var bufferTime: TimeInterval = 50.0
         
     private static let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -96,7 +96,7 @@ struct ArrivalMinuteView: View {
             }
             return 60.0
         default:
-            return 40.0
+            return 50.0
         }
     }
     
