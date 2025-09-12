@@ -44,6 +44,12 @@
             "state" : "translated",
             "value" : "Lux Itinerary"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinéraire Lux"
+          }
         }
       }
     },

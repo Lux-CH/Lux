@@ -19,25 +19,43 @@
             "state" : "translated",
             "value" : "Stop"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêt"
+          }
         }
       }
     },
-    "Aucun arrêt trouvé pour \"%@\"." : {
+    "Aucun arrêt trouvé pour \"%@\".": {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No stop found for «%@»"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun arrêt trouvé pour \"%@\"."
+          }
         }
       }
     },
-    "Aucun départ trouvé pour l'arrêt \"%@\"." : {
+    "Aucun départ trouvé pour l'arrêt \"%@\".": {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No departures found for stop «%@»"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun départ trouvé pour l'arrêt \"%@\"."
           }
         }
       }
@@ -49,6 +67,12 @@
             "state" : "translated",
             "value" : "Departures"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Départs"
+          }
         }
       }
     },
@@ -58,6 +82,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Get next departures"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtenir les prochains départs"
           }
         }
       }

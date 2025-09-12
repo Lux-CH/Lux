@@ -19,6 +19,12 @@
             "state" : "translated",
             "value" : "Refresh the departures of the Widgets"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualiser les départs des Widgets"
+          }
         }
       }
     },
@@ -28,6 +34,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show departures from a stop. Configurable in the app settings."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher les départs d'un arrêt. Configurable dans les paramètres de l'app."
           }
         }
       }
@@ -39,6 +51,12 @@
             "state" : "translated",
             "value" : "No upcoming departures"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun départ ulterieur"
+          }
         }
       }
     },
@@ -48,6 +66,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Departures"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Départs"
           }
         }
       }
@@ -59,6 +83,12 @@
             "state" : "translated",
             "value" : "Fictitious data"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Données fictives"
+          }
         }
       }
     },
@@ -68,6 +98,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unknown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inconnu"
           }
         }
       }
@@ -79,6 +115,12 @@
             "state" : "translated",
             "value" : "Updated at %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mis à jour à %@"
+          }
         }
       }
     },
@@ -89,6 +131,12 @@
             "state" : "translated",
             "value" : "An error occured"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur s'est produite"
+          }
         }
       }
     },
@@ -98,6 +146,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stop widget"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget des arrêts"
           }
         }
       }

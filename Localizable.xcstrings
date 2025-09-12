@@ -8,14 +8,36 @@
             "state" : "translated",
             "value" : ""
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ""
+          }
         }
       },
       "shouldTranslate" : false
     },
     "-" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "-"
+          }
+        }
+      },
       "shouldTranslate" : false
     },
     "*" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "*"
+          }
+        }
+      },
       "shouldTranslate" : false
     },
     "**Glissez horizontalement** pour changer de direction" : {
@@ -25,16 +47,46 @@
             "state" : "translated",
             "value" : "**Slide horizontally** to see other directions"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "**Glissez horizontalement** pour changer de direction"
+          }
         }
       }
     },
     "/ %.2f €" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/ %.2f €"
+          }
+        }
+      },
       "shouldTranslate" : false
     },
     "/ CHF %.2f" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "/ CHF %.2f"
+          }
+        }
+      },
       "shouldTranslate" : false
     },
     "%.2f €" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%.2f €"
+          }
+        }
+      },
       "shouldTranslate" : false
     },
     "%@ Couleur Sombre" : {
@@ -43,6 +95,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ Dark Color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ Couleur Sombre"
           }
         }
       }
@@ -61,6 +119,12 @@
     "%lld" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld"
@@ -92,12 +156,24 @@
             "state" : "translated",
             "value" : "%lld stops"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld arrêts"
+          }
         }
       }
     },
     "%lld min" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld min"
@@ -111,6 +187,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld report(s) could not be sent. The others were transmitted successfully."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld rapport(s) n'ont pas pu être envoyés. Les autres ont été transmis avec succès."
           }
         }
       }
@@ -154,6 +236,12 @@
             "state" : "translated",
             "value" : "%lld/5"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld/5"
+          }
         }
       }
     },
@@ -165,12 +253,24 @@
             "state" : "translated",
             "value" : "%lldh"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldh"
+          }
         }
       }
     },
     "%lldm" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldm"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lldm"
@@ -186,12 +286,24 @@
             "state" : "translated",
             "value" : "%lldmin"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lldmin"
+          }
         }
       }
     },
     "•" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "•"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "•"
@@ -207,6 +319,12 @@
             "state" : "translated",
             "value" : "1 year"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 an"
+          }
         }
       }
     },
@@ -216,6 +334,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 day"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 jour"
           }
         }
       }
@@ -227,6 +351,12 @@
             "state" : "translated",
             "value" : "1 month"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 mois"
+          }
         }
       }
     },
@@ -236,6 +366,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "6 months"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "6 mois"
           }
         }
       }
@@ -247,6 +383,12 @@
             "state" : "translated",
             "value" : "7 days"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "7 jours"
+          }
         }
       }
     },
@@ -256,6 +398,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "To"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À"
           }
         }
       }
@@ -267,6 +415,12 @@
             "state" : "translated",
             "value" : "to platform"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "à la voie"
+          }
         }
       }
     },
@@ -276,6 +430,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Walking"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À pied"
           }
         }
       }
@@ -287,6 +447,12 @@
             "state" : "translated",
             "value" : "About"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À propos"
+          }
         }
       }
     },
@@ -296,6 +462,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nearby"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "À proximité"
           }
         }
       }
@@ -307,6 +479,12 @@
             "state" : "translated",
             "value" : "Quickly access to your favorite places"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accédez rapidement à vos destinations préférées"
+          }
         }
       }
     },
@@ -316,6 +494,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Quickly access your favorite destinations based on the weather, your location, and your habits."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accédez rapidement à vos destinations préférées en fonction du temps, de votre position, et de vos habitudes"
           }
         }
       }
@@ -327,6 +511,12 @@
             "state" : "translated",
             "value" : "Location Access Denied"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accès à la localisation refusé"
+          }
         }
       }
     },
@@ -336,6 +526,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Offline access to your pass"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accès hors ligne à votre carte"
           }
         }
       }
@@ -347,6 +543,12 @@
             "state" : "translated",
             "value" : "Quick access to your destinations"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accès rapide à vos destinations"
+          }
         }
       }
     },
@@ -356,6 +558,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Accessibility"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accessibilité"
           }
         }
       }
@@ -367,6 +575,12 @@
             "state" : "translated",
             "value" : "Home"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accueil"
+          }
         }
       }
     },
@@ -376,6 +590,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Buy your tickets or add your SwissPass to Lux."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Achetez vos tickets ou ajoutez votre SwissPass à Lux."
           }
         }
       }
@@ -387,6 +607,12 @@
             "state" : "translated",
             "value" : "Quick actions"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actions rapides"
+          }
         }
       }
     },
@@ -396,6 +622,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Refresh"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Actualiser"
           }
         }
       }
@@ -407,6 +639,12 @@
             "state" : "translated",
             "value" : "Adapt the interface to your preferences"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adaptez l'interface à vos préférences"
+          }
         }
       }
     },
@@ -416,6 +654,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adress, place, stop…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Adresse, lieu, arrêt..."
           }
         }
       }
@@ -427,6 +671,12 @@
             "state" : "translated",
             "value" : "Line Display"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affichage des lignes"
+          }
         }
       }
     },
@@ -436,6 +686,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Display shortcut names"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche le nom des raccourcis"
           }
         }
       }
@@ -447,6 +703,12 @@
             "state" : "translated",
             "value" : "Show delay next to scheduled time (otherwise, included in time)"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche le retard à côté de l'heure prévue (sinon, inclus dans l'heure)"
+          }
         }
       }
     },
@@ -456,6 +718,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show the most relevant shortcuts first"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affiche les raccourcis les plus pertinents en premier"
           }
         }
       }
@@ -467,6 +735,12 @@
             "state" : "translated",
             "value" : "Show welcome screen"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher l'écran de bienvenue"
+          }
         }
       }
     },
@@ -476,6 +750,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show plan"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher le plan"
           }
         }
       }
@@ -487,6 +767,12 @@
             "state" : "translated",
             "value" : "Show exact delay"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher le retard exact"
+          }
         }
       }
     },
@@ -496,6 +782,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Show titles"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher les titres"
           }
         }
       }
@@ -507,6 +799,12 @@
             "state" : "translated",
             "value" : "Show LuxPass on home screen"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Afficher LuxPass sur l'écran d'accueil"
+          }
         }
       }
     },
@@ -516,6 +814,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Crowd"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Affluence"
           }
         }
       }
@@ -527,6 +831,12 @@
             "state" : "translated",
             "value" : "Help"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aide"
+          }
         }
       }
     },
@@ -536,6 +846,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Automatically added"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutées automatiquement"
           }
         }
       }
@@ -547,6 +863,12 @@
             "state" : "translated",
             "value" : "Add"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter"
+          }
         }
       }
     },
@@ -556,6 +878,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add shortcuts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter des raccourcis"
           }
         }
       }
@@ -567,6 +895,12 @@
             "state" : "translated",
             "value" : "Add a quick access to your SwissPass by replacing a shortcut"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un accès rapide à votre SwissPass en remplacant un raccourcis"
+          }
         }
       }
     },
@@ -576,6 +910,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add a shortcut"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un raccourci"
           }
         }
       }
@@ -587,6 +927,12 @@
             "state" : "translated",
             "value" : "Add a SwissPass"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter un SwissPass"
+          }
         }
       }
     },
@@ -596,6 +942,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add a line"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajouter une ligne"
           }
         }
       }
@@ -607,6 +959,12 @@
             "state" : "translated",
             "value" : "Add lines for them to be shown before others"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez des lignes pour qu'elles soient mises en avant."
+          }
         }
       }
     },
@@ -616,6 +974,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add shortucts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez des raccourcis"
           }
         }
       }
@@ -627,6 +991,12 @@
             "state" : "translated",
             "value" : "Add your SwissPass to Lux"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajoutez votre SwissPass à Lux"
+          }
         }
       }
     },
@@ -636,6 +1006,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Adjust your itineraries to your needs"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ajustez votre recherche d'itinéraires"
           }
         }
       }
@@ -647,6 +1023,12 @@
             "state" : "translated",
             "value" : "Where to?"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aller à..."
+          }
         }
       }
     },
@@ -656,6 +1038,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cancel"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Annuler"
           }
         }
       }
@@ -667,6 +1055,12 @@
             "state" : "translated",
             "value" : "Itinerary Preview"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aperçu de l'itinéraire"
+          }
         }
       }
     },
@@ -676,6 +1070,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Apply"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Appliquer"
           }
         }
       }
@@ -687,6 +1087,12 @@
             "state" : "translated",
             "value" : "Learn how to read information in real time"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Apprenez à lire les informations en temps réel"
+          }
         }
       }
     },
@@ -696,6 +1102,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stop"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêt"
           }
         }
       }
@@ -707,6 +1119,12 @@
             "state" : "translated",
             "value" : "Stop %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêt %@"
+          }
         }
       }
     },
@@ -716,6 +1134,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Stops"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêts"
           }
         }
       }
@@ -727,6 +1151,12 @@
             "state" : "translated",
             "value" : "Nearby stops"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrêts à proximité"
+          }
         }
       }
     },
@@ -736,6 +1166,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arrival"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrivée"
           }
         }
       }
@@ -763,6 +1199,12 @@
             "state" : "translated",
             "value" : "Scheduled arrival : %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrivée prévue : %@"
+          }
         }
       }
     },
@@ -772,6 +1214,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tips"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Astuces"
           }
         }
       }
@@ -799,6 +1247,12 @@
             "state" : "translated",
             "value" : "to track"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "au quai"
+          }
         }
       }
     },
@@ -808,6 +1262,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No stop found nearby."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun arrêt à proximité trouvé."
           }
         }
       }
@@ -819,6 +1279,12 @@
             "state" : "translated",
             "value" : "No stop scheduled"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun arrêt prévu"
+          }
         }
       }
     },
@@ -828,6 +1294,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No stop selected"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun arrêt sélectionné"
           }
         }
       }
@@ -839,6 +1311,12 @@
             "state" : "translated",
             "value" : "No upcoming departure."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun départ à venir."
+          }
         }
       }
     },
@@ -848,6 +1326,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No route found"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun itinéraire trouvé"
           }
         }
       }
@@ -859,6 +1343,12 @@
             "state" : "translated",
             "value" : "No shortcuts configured"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun raccourci configuré"
+          }
         }
       }
     },
@@ -868,6 +1358,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No result found for %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun résultat trouvé pour %@"
           }
         }
       }
@@ -879,6 +1375,12 @@
             "state" : "translated",
             "value" : "No result found."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucun résultat trouvé."
+          }
         }
       }
     },
@@ -888,6 +1390,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No Internet connection."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune connexion à Internet."
           }
         }
       }
@@ -899,6 +1407,12 @@
             "state" : "translated",
             "value" : "No real time information available"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune information en temps réel disponible"
+          }
         }
       }
     },
@@ -908,6 +1422,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "No line added"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune ligne ajoutée"
           }
         }
       }
@@ -919,6 +1439,12 @@
             "state" : "translated",
             "value" : "No line saved"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aucune ligne enregistrée"
+          }
         }
       }
     },
@@ -928,6 +1454,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Today %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aujourd'hui %@"
           }
         }
       }
@@ -939,6 +1471,12 @@
             "state" : "translated",
             "value" : "Coach"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autocar"
+          }
         }
       }
     },
@@ -948,6 +1486,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Auto"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Automatique"
           }
         }
       }
@@ -959,6 +1503,12 @@
             "state" : "translated",
             "value" : "Allow"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autoriser"
+          }
         }
       }
     },
@@ -968,6 +1518,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Allow location access"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autoriser la localisation"
           }
         }
       }
@@ -979,6 +1535,12 @@
             "state" : "translated",
             "value" : "Allow Lux to access your location"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autorisez Lux à accéder à votre position"
+          }
         }
       }
     },
@@ -988,6 +1550,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Other"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autre"
           }
         }
       }
@@ -999,6 +1567,12 @@
             "state" : "translated",
             "value" : "Other day"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autre jour"
+          }
         }
       }
     },
@@ -1008,6 +1582,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Other departures"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Autres départs"
           }
         }
       }
@@ -1019,6 +1599,12 @@
             "state" : "translated",
             "value" : "Warning"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avertissement"
+          }
         }
       }
     },
@@ -1028,6 +1614,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Plane"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avion"
           }
         }
       }
@@ -1039,6 +1631,12 @@
             "state" : "translated",
             "value" : "Swipe left or right to change direction. Double-tap for more details about the next departure."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Balayez vers la gauche ou la droite pour changer de direction. Double-cliquez pour obtenir plus de détails sur le prochain départ."
+          }
         }
       }
     },
@@ -1048,6 +1646,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Based on time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Basé sur l'heure"
           }
         }
       }
@@ -1059,6 +1663,12 @@
             "state" : "translated",
             "value" : "Welcome in LuxPass"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenue dans LuxPass"
+          }
         }
       }
     },
@@ -1068,6 +1678,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Welcome on"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bienvenue sur"
           }
         }
       }
@@ -1079,6 +1695,12 @@
             "state" : "translated",
             "value" : "Ice Tea Blue"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bleu Ice Tea"
+          }
         }
       }
     },
@@ -1088,6 +1710,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Leman Aqua"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bleu Léman"
           }
         }
       }
@@ -1099,6 +1727,12 @@
             "state" : "translated",
             "value" : "SBB CFF Blue"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bleu SBB CFF"
+          }
         }
       }
     },
@@ -1108,6 +1742,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Crowded"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bondé"
           }
         }
       }
@@ -1119,6 +1759,12 @@
             "state" : "translated",
             "value" : "Noise"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bruit"
+          }
         }
       }
     },
@@ -1129,12 +1775,24 @@
             "state" : "translated",
             "value" : "Noisy"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bruyant"
+          }
         }
       }
     },
     "Bus" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bus"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bus"
@@ -1149,6 +1807,12 @@
             "state" : "translated",
             "value" : "Calendar"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calendrier"
+          }
         }
       }
     },
@@ -1159,10 +1823,24 @@
             "state" : "translated",
             "value" : "Calm"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Calme"
+          }
         }
       }
     },
     "cclerc.ch" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "cclerc.ch"
+          }
+        }
+      },
       "shouldTranslate" : false
     },
     "Cet itinéraire vous a été partagé. Assurez-vous qu'il provient d'une source fiable." : {
@@ -1171,6 +1849,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You were shared this trip. Ensure it is from a trustable source."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cet itinéraire vous a été partagé. Assurez-vous qu'il provient d'une source fiable."
           }
         }
       }
@@ -1182,6 +1866,12 @@
             "state" : "translated",
             "value" : "This application is neither affiliated with nor endorsed by SwissPass or SBB CFF."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette application n'est ni affiliée ni approuvée par SwissPass ou les SBB CFF."
+          }
         }
       }
     },
@@ -1191,6 +1881,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This feature isn’t compatible with current trip options."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cette fonctionnalité n'est pas compatible avec l'itinéraire sélectionné."
           }
         }
       }
@@ -1202,6 +1898,12 @@
             "state" : "translated",
             "value" : "Loading route"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chargement de l'itinéraire..."
+          }
         }
       }
     },
@@ -1211,6 +1913,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading your SwissPass…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chargement de votre SwissPass..."
           }
         }
       }
@@ -1222,6 +1930,12 @@
             "state" : "translated",
             "value" : "Loading nearby stops…"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chargement des arrêts à proximité..."
+          }
         }
       }
     },
@@ -1231,6 +1945,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading departures…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chargement des départs..."
           }
         }
       }
@@ -1242,10 +1962,24 @@
             "state" : "translated",
             "value" : "Hot"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chaud"
+          }
         }
       }
     },
     "CHF %.2f" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CHF %.2f"
+          }
+        }
+      },
       "shouldTranslate" : false
     },
     "Choisir un symbole" : {
@@ -1254,6 +1988,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose a symbol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisir un symbole"
           }
         }
       }
@@ -1265,6 +2005,12 @@
             "state" : "translated",
             "value" : "Choose how long a shared route remains accessible"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez combien de temps un itinéraire partagé reste accessible"
+          }
         }
       }
     },
@@ -1274,6 +2020,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose how lines are displayed in the app"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez comment les lignes sont affichées dans l'application"
           }
         }
       }
@@ -1285,6 +2037,12 @@
             "state" : "translated",
             "value" : "Chose how you want to share this trip.\nThe sharing of the whole trip requires the user receiving it to have the app installed on their device."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez comment vous souhaitez partager cet itinéraire.\nLe partage de l'ensemble de l'itinéraire requiert que son receveur ait l'app."
+          }
         }
       }
     },
@@ -1294,6 +2052,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Choose app’s display mode"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choisissez le mode d'affichage de l'app"
           }
         }
       }
@@ -1305,6 +2069,12 @@
             "state" : "translated",
             "value" : "Choose the app's display mode (light, dark, auto...)"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chosissez la mode d'affichage de l'app (clair, sombre, auto..)"
+          }
         }
       }
     },
@@ -1314,6 +2084,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Chronological"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Chronologique"
           }
         }
       }
@@ -1325,6 +2101,12 @@
             "state" : "translated",
             "value" : "The tickets you recently purchased via the app and their duration before expiration."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci-dessous les tickets que vous avez récemment achetés via l'application et leur durée de validité restante."
+          }
         }
       }
     },
@@ -1334,6 +2116,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Below is a list of the application's credits, including the various other modules used by Lux."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ci-dessous une liste des crédits de l'application, notamment des différents autres modules utilisés par Lux."
           }
         }
       }
@@ -1345,15 +2133,27 @@
             "state" : "translated",
             "value" : "Light"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clair"
+          }
         }
       }
     },
-    "Cliquez sur \"%@Bel Air\" pour plus de départs" : {
+    "Cliquez sur \"%@Bel Air\" pour plus de départs": {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tap on «%@ Bel Air» for more departures"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cliquez sur \"%@Bel Air\" pour plus de départs"
           }
         }
       }
@@ -1365,6 +2165,12 @@
             "state" : "translated",
             "value" : "Tap on a line to see it’s details"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cliquez sur une ligne pour voir ses détails"
+          }
         }
       }
     },
@@ -1374,6 +2180,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Start"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencer"
           }
         }
       }
@@ -1385,6 +2197,12 @@
             "state" : "translated",
             "value" : "Start typing to search for a stop.\nA minimum of 3 characters is required."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis"
+          }
         }
       }
     },
@@ -1394,6 +2212,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Understand transport state"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Comprenez l'état de vos transports"
           }
         }
       }
@@ -1405,6 +2229,12 @@
             "state" : "translated",
             "value" : "configured"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "configuré"
+          }
         }
       }
     },
@@ -1414,6 +2244,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Configure LuxPass"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Configurez LuxPass"
           }
         }
       }
@@ -1425,6 +2261,12 @@
             "state" : "translated",
             "value" : "Comfort"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Confort"
+          }
         }
       }
     },
@@ -1434,6 +2276,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Intuitivity and design advisor"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Conseiller intuitivité et design"
           }
         }
       }
@@ -1445,6 +2293,12 @@
             "state" : "translated",
             "value" : "View and share real-time transport information."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consultez et partagez des informations en temps réel sur les transports."
+          }
         }
       }
     },
@@ -1454,6 +2308,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Read the privacy policy on the web"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Consultez la politique de confidentialité en ligne"
           }
         }
       }
@@ -1465,6 +2325,12 @@
             "state" : "translated",
             "value" : "Contribute to CrowdBack"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contribuer à CrowdBack"
+          }
         }
       }
     },
@@ -1474,6 +2340,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Acceptable"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correct"
           }
         }
       }
@@ -1485,6 +2357,12 @@
             "state" : "translated",
             "value" : "Transfer at %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correspondance à %@"
+          }
         }
       }
     },
@@ -1494,6 +2372,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Risky connection"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Correspondance risquée"
           }
         }
       }
@@ -1505,6 +2389,12 @@
             "state" : "translated",
             "value" : "App color"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur de l'app"
+          }
         }
       }
     },
@@ -1514,6 +2404,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dark Color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleur Sombre"
           }
         }
       }
@@ -1525,6 +2421,12 @@
             "state" : "translated",
             "value" : "Available colors"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couleurs disponibles"
+          }
         }
       }
     },
@@ -1534,6 +2436,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Short"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Courte"
           }
         }
       }
@@ -1545,6 +2453,12 @@
             "state" : "translated",
             "value" : "Credits"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Crédits"
+          }
         }
       }
     },
@@ -1554,6 +2468,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Create a shortcut"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Créer un raccourci"
           }
         }
       }
@@ -1565,6 +2485,12 @@
             "state" : "translated",
             "value" : "S"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "D"
+          }
         }
       }
     },
@@ -1574,6 +2500,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In %lld day"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans %lld jour"
           }
         }
       }
@@ -1585,6 +2517,12 @@
             "state" : "translated",
             "value" : "In %lld min"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans %lld min"
+          }
         }
       }
     },
@@ -1594,6 +2532,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "In %lldh"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dans %lldh"
           }
         }
       }
@@ -1621,6 +2565,12 @@
             "state" : "translated",
             "value" : "Potentially incorrect date"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date potentiellement incorrecte"
+          }
         }
       }
     },
@@ -1630,6 +2580,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "from platform"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "de la voie"
           }
         }
       }
@@ -1641,6 +2597,12 @@
             "state" : "translated",
             "value" : "Start"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Début"
+          }
         }
       }
     },
@@ -1650,6 +2612,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tomorrow, %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Demain, %@"
           }
         }
       }
@@ -1661,6 +2629,12 @@
             "state" : "translated",
             "value" : "Departure"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Départ"
+          }
         }
       }
     },
@@ -1670,6 +2644,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Departure at : %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Départ à : %@"
           }
         }
       }
@@ -1681,6 +2661,12 @@
             "state" : "translated",
             "value" : "Travel easily in Geneva."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Déplacez-vous facilement dans Genève"
+          }
         }
       }
     },
@@ -1690,6 +2676,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "From"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Depuis"
           }
         }
       }
@@ -1701,12 +2693,24 @@
             "state" : "translated",
             "value" : "Last update: %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dernière mise à jour : %@"
+          }
         }
       }
     },
     "Destination" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destination"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Destination"
@@ -1721,6 +2725,12 @@
             "state" : "translated",
             "value" : "Selected destination"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Destination sélectionnée"
+          }
         }
       }
     },
@@ -1730,6 +2740,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Details"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Détails"
           }
         }
       }
@@ -1741,6 +2757,12 @@
             "state" : "translated",
             "value" : "Main Developer"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Développeur Principal"
+          }
         }
       }
     },
@@ -1751,12 +2773,24 @@
             "state" : "translated",
             "value" : "Sun"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dim"
+          }
         }
       }
     },
     "Direct" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direct"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Direct"
@@ -1771,6 +2805,12 @@
             "state" : "translated",
             "value" : "Disruptions data"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Données des perturbations"
+          }
         }
       }
     },
@@ -1780,6 +2820,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Double-tap for more details about the next departure."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-cliquez pour obtenir plus de détails sur le prochain départ."
           }
         }
       }
@@ -1791,6 +2837,12 @@
             "state" : "translated",
             "value" : "Double-tap to change tab"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tapez pour changer d'onglet"
+          }
         }
       }
     },
@@ -1800,6 +2852,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Double-tap to open itinerary search"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tapez pour ouvrir la recherche d'itinéraires"
           }
         }
       }
@@ -1811,6 +2869,12 @@
             "state" : "translated",
             "value" : "Double-tap to open app’s settings"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tapez pour ouvrir les paramètres de l'application"
+          }
         }
       }
     },
@@ -1820,6 +2884,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Double-tap to see all departures at this stop"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tapez pour voir tous les départs à cet arrêt"
           }
         }
       }
@@ -1831,6 +2901,12 @@
             "state" : "translated",
             "value" : "Double-tap to list every departures at this stop"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tappez pour lister les départs de cet arrêt"
+          }
         }
       }
     },
@@ -1840,6 +2916,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "from track"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "du quai"
           }
         }
       }
@@ -1851,6 +2933,12 @@
             "state" : "translated",
             "value" : "Route sharing duration"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée de partage d'itinéraire"
+          }
         }
       }
     },
@@ -1860,6 +2948,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Maximum walking time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Durée maximale de marche"
           }
         }
       }
@@ -1871,6 +2965,12 @@
             "state" : "translated",
             "value" : "Waiting for your position…"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En attente de votre position..."
+          }
         }
       }
     },
@@ -1880,6 +2980,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "By setting up a programmation, Lux will suggest the shortcut on the home screen based on the time of day.\nFor example, if you use a shortcut every day at 8 AM, Lux will highlight it around that time."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En définissant une programmation, Lux vous suggérera le raccourci sur l'écran d'accueil, en fonction du moment de la journée.\nPar exemple, si vous utilisez un raccourci tous les jours à 8h, Lux le mettra en avant autour de cette heure."
           }
         }
       }
@@ -1891,6 +2997,12 @@
             "state" : "translated",
             "value" : "Wheelchair"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "En fauteuil roulant"
+          }
         }
       }
     },
@@ -1900,6 +3012,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Saving…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrement..."
           }
         }
       }
@@ -1911,6 +3029,12 @@
             "state" : "translated",
             "value" : "Save"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer"
+          }
         }
       }
     },
@@ -1920,6 +3044,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save in Calendar"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enregistrer dans Calendrier"
           }
         }
       }
@@ -1931,6 +3061,12 @@
             "state" : "translated",
             "value" : "Enter at least 3 characters to search"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrez au moins 3 caractères pour rechercher"
+          }
         }
       }
     },
@@ -1940,6 +3076,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter the line that you want to add in your favorites"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrez le numéro de ligne que vous souhaitez ajouter aux favoris"
           }
         }
       }
@@ -1951,6 +3093,12 @@
             "state" : "translated",
             "value" : "Enter a starting point and a destination"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entrez un point de départ et une destination"
+          }
         }
       }
     },
@@ -1960,6 +3108,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Report error"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreur de rapport"
           }
         }
       }
@@ -1971,6 +3125,12 @@
             "state" : "translated",
             "value" : "Scan error"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreur de scan"
+          }
         }
       }
     },
@@ -1980,6 +3140,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An error occurred while saving : %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erreur lors de l'enregistrement : %@"
           }
         }
       }
@@ -1991,6 +3157,12 @@
             "state" : "translated",
             "value" : "Try adjusting your search criteria, your options or departure time."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Essayez de modifier vos critères de recherche, vos options ou l'heure de départ."
+          }
         }
       }
     },
@@ -2000,6 +3172,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Server status"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "État des serveurs"
           }
         }
       }
@@ -2011,6 +3189,12 @@
             "state" : "translated",
             "value" : "Are you sure you want to open this trip ?"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Êtes-vous sûr de vouloir ouvrir cet itinéraire ?"
+          }
         }
       }
     },
@@ -2020,6 +3204,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Are you sure you want to delete your SwissPass ? This action cannot be canceled."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Êtes-vous sûr de vouloir supprimer votre SwissPass ? Cette action ne peut pas être annulée."
           }
         }
       }
@@ -2031,6 +3221,12 @@
             "state" : "translated",
             "value" : "Rate the current level"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Évaluez le niveau actuel"
+          }
         }
       }
     },
@@ -2040,6 +3236,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "E.g. Home, Work, School"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ex: Maison, Travail, École..."
           }
         }
       }
@@ -2051,6 +3253,12 @@
             "state" : "translated",
             "value" : "Stop example"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exemple d'arrêt"
+          }
         }
       }
     },
@@ -2060,6 +3268,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Make Lux yours"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faites de Lux le votre"
           }
         }
       }
@@ -2071,6 +3285,12 @@
             "state" : "translated",
             "value" : "End"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fin"
+          }
         }
       }
     },
@@ -2080,6 +3300,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Set the maximum time you are willing to walk"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fixez la durée maximale que vous acceptez de parcourir à pied"
           }
         }
       }
@@ -2091,6 +3317,12 @@
             "state" : "translated",
             "value" : "Set the maximum number of transfers for your route"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fixez le nombre maximum de correspondances autorisées"
+          }
         }
       }
     },
@@ -2100,6 +3332,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Set the minimum waiting time between transfers to ensure you reach your connections on time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fixez le temps d'attente minimal entre deux correspondances pour vous assurer de réaliser vos connections dans les temps"
           }
         }
       }
@@ -2111,6 +3349,12 @@
             "state" : "translated",
             "value" : "Advanced features"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fonctionnalités avancées"
+          }
         }
       }
     },
@@ -2120,6 +3364,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Strong"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forte"
           }
         }
       }
@@ -2131,6 +3381,12 @@
             "state" : "translated",
             "value" : "Strong smell"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Forte odeur"
+          }
         }
       }
     },
@@ -2140,6 +3396,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fresh"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frais"
           }
         }
       }
@@ -2151,6 +3413,12 @@
             "state" : "translated",
             "value" : "Cold"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Froid"
+          }
         }
       }
     },
@@ -2160,6 +3428,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Manage shortcuts"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gérer les raccourcis"
           }
         }
       }
@@ -2171,6 +3445,12 @@
             "state" : "translated",
             "value" : "Manage the lines you use more often."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gérez les lignes que vous fréquentez le plus souvent."
+          }
         }
       }
     },
@@ -2180,6 +3460,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Manage your lines and their score"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gérez vos lignes et leurs scores"
           }
         }
       }
@@ -2191,6 +3477,12 @@
             "state" : "translated",
             "value" : "Manage your tickets and add your SwissPass to Lux"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gérez vos tickets et ajoutez votre SwissPass à Lux."
+          }
         }
       }
     },
@@ -2200,6 +3492,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Global management of scores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestion globale des scores"
           }
         }
       }
@@ -2211,6 +3509,12 @@
             "state" : "translated",
             "value" : "Slide down to plan an itinerary or obtain directions"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glissez vers le bas pour planifier un itinéraire ou obtenir des directions"
+          }
         }
       }
     },
@@ -2220,6 +3524,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Slide down to go back to home screen"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glissez vers le bas pour retourner sur l'écran d'accueil"
           }
         }
       }
@@ -2231,6 +3541,12 @@
             "state" : "translated",
             "value" : "Slide up to go back to home screen"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glissez vers le haut pour retourner sur l'écran d'accueil"
+          }
         }
       }
     },
@@ -2240,6 +3556,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Slide up to see more nearby stops"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glissez vers le haut pour voir plus d'arrêts à proximité"
           }
         }
       }
@@ -2251,6 +3573,12 @@
             "state" : "translated",
             "value" : "Grouped"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Groupé"
+          }
         }
       }
     },
@@ -2261,12 +3589,24 @@
             "state" : "translated",
             "value" : "Transports guide"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guide des transports"
+          }
         }
       }
     },
     "Hello, World!" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hello, World!"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Hello, World!"
@@ -2297,6 +3637,12 @@
             "state" : "translated",
             "value" : "Usual time"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Heure habituelle"
+          }
         }
       }
     },
@@ -2306,6 +3652,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schedule for a different day"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horaire d'un jour différent"
           }
         }
       }
@@ -2317,6 +3669,12 @@
             "state" : "translated",
             "value" : "Planned schedule"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horaire théorique"
+          }
         }
       }
     },
@@ -2326,6 +3684,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Schedule"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Horaires"
           }
         }
       }
@@ -2337,6 +3701,12 @@
             "state" : "translated",
             "value" : "Icon"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Icône"
+          }
         }
       }
     },
@@ -2346,6 +3716,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The server might be actually unavailable."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Il est possible que le serveur soit actuellement indisponible."
           }
         }
       }
@@ -2357,6 +3733,12 @@
             "state" : "translated",
             "value" : "Unable to send the SMS"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'envoyer le SMS"
+          }
         }
       }
     },
@@ -2366,6 +3748,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unable to send reports. Please try again later."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impossible d'envoyer les rapports. Veuillez réessayer plus tard."
           }
         }
       }
@@ -2377,6 +3765,12 @@
             "state" : "translated",
             "value" : "unknown"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "inconnu"
+          }
         }
       }
     },
@@ -2386,6 +3780,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unknown"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inconnue"
           }
         }
       }
@@ -2397,6 +3797,12 @@
             "state" : "translated",
             "value" : "Select the lines you use most often to highlight them in Lux. If you don't, they will be added automatically."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Indiquez les lignes que vous fréquentez le plus souvent pour les mettre en avant dans Lux. Si vous ne le faites pas, elles seront automatiquement ajoutées."
+          }
         }
       }
     },
@@ -2406,6 +3812,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Accurate and up-to-date information"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Information précise et actualisée"
           }
         }
       }
@@ -2417,6 +3829,12 @@
             "state" : "translated",
             "value" : "App infos"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Informations sur l'application"
+          }
         }
       }
     },
@@ -2426,6 +3844,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Compact interface"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Interface compacte"
           }
         }
       }
@@ -2437,6 +3861,12 @@
             "state" : "translated",
             "value" : "Invert « From » field and « To » field"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inverser le champ De et le champ À"
+          }
         }
       }
     },
@@ -2446,6 +3876,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Route unavailable"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinéraire indisponible"
           }
         }
       }
@@ -2457,6 +3893,12 @@
             "state" : "translated",
             "value" : "Trips"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinéraires"
+          }
         }
       }
     },
@@ -2466,6 +3908,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "T"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "J"
           }
         }
       }
@@ -2477,6 +3925,12 @@
             "state" : "translated",
             "value" : "Mouettes Yellow"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jaune Mouettes"
+          }
         }
       }
     },
@@ -2486,6 +3940,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Thu"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jeu"
           }
         }
       }
@@ -2497,6 +3957,12 @@
             "state" : "translated",
             "value" : "Days of the week"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jours de la semaine"
+          }
         }
       }
     },
@@ -2506,6 +3972,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "M"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L"
           }
         }
       }
@@ -2517,6 +3989,12 @@
             "state" : "translated",
             "value" : "Calendar access is required to save the itinerary. Please allow it in Settings."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'accès au calendrier est requis pour enregistrer l'itinéraire. Veuillez autoriser l'accès dans les Réglages."
+          }
         }
       }
     },
@@ -2526,6 +4004,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Displaying the SwissPass barcode using this application does not guarantee its acceptance by fare inspectors.\n\nLux disclaims all liability for any denial of validity, fines, or other issues arising from the use of this feature. Users are solely responsible for ensuring they carry their official SwissPass card or use an authorized application."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'affichage du code SwissPass depuis cette application ne garantit pas sa reconnaissance par les contrôleurs.\n\nLux décline toute responsabilité en cas de refus, d'amende ou de tout autre problème. Veuillez toujours avoir votre SwissPass physique ou l'application officielle avec vous."
           }
         }
       }
@@ -2537,6 +4021,12 @@
             "state" : "translated",
             "value" : "The stop is at"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'arrêt est à"
+          }
         }
       }
     },
@@ -2546,6 +4036,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The itinerary was successfully saved in your calendar !"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'itinéraire a bien été enregistré dans votre calendrier !"
           }
         }
       }
@@ -2557,15 +4053,27 @@
             "state" : "translated",
             "value" : "The trip could not be opened."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "L'itinéraire n'a pas pu être ouvert."
+          }
         }
       }
     },
-    "La couleur séléctionnée n'est pas bien visible en mode sombre. Pensez à passer en mode clair dans les paramètres \"Mode d'Affichage\"" : {
+    "La couleur séléctionnée n'est pas bien visible en mode sombre. Pensez à passer en mode clair dans les paramètres \"Mode d'Affichage\"": {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "The selected color is not quite visible in dark mode. Consider switching to light mode in « Display mode » settings"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La couleur séléctionnée n'est pas bien visible en mode sombre. Pensez à passer en mode clair dans les paramètres \"Mode d'Affichage\""
           }
         }
       }
@@ -2577,6 +4085,12 @@
             "state" : "translated",
             "value" : "The selected date has already passed"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "La date séléctionnée est antérieure à l'heure actuelle"
+          }
         }
       }
     },
@@ -2586,6 +4100,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The selected expiration time is high. Lux cannot guarantee such a retention period."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention."
           }
         }
       }
@@ -2597,6 +4117,12 @@
             "state" : "translated",
             "value" : "Color legend"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Légende des couleurs"
+          }
         }
       }
     },
@@ -2606,6 +4132,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Light"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Légère"
           }
         }
       }
@@ -2617,6 +4149,12 @@
             "state" : "translated",
             "value" : "Stops are represented by the %@ icon"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les arrêts sont représentés par l'icône %@"
+          }
         }
       }
     },
@@ -2626,6 +4164,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The first two shortcuts will be shown on the home screen.\nLong press a shortcut and drag it to reorder it in the list."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les deux premiers raccourcis seront affichés sur l'écran d'accueil.\nRéalisez un appui prolongé sur un raccourci puis déplacez le pour le réordonner dans la liste."
           }
         }
       }
@@ -2637,6 +4181,12 @@
             "state" : "translated",
             "value" : "Route informations aren’t available for now. Please try again later."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les informations de l'itinéraire ne sont pas disponibles pour le moment."
+          }
         }
       }
     },
@@ -2646,6 +4196,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Platforms are indicated in the boxes"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les quais sont indiqués dans les cases"
           }
         }
       }
@@ -2657,6 +4213,12 @@
             "state" : "translated",
             "value" : "Shortcuts are sorted by time relevance. Those closest in schedule and day appear first; unless you’re very close to your destination."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Les raccourcis seront triés par pertinence temporelle. Les plus proches en termes d'horaire et de jour seront affichés en premier, sauf si vous êtes très proche de la destination."
+          }
         }
       }
     },
@@ -2666,6 +4228,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "line"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ligne"
           }
         }
       }
@@ -2677,6 +4245,12 @@
             "state" : "translated",
             "value" : "Line %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ligne %@"
+          }
         }
       }
     },
@@ -2686,6 +4260,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lines"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes"
           }
         }
       }
@@ -2697,6 +4277,12 @@
             "state" : "translated",
             "value" : "Preferred lines"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lignes préférées"
+          }
         }
       }
     },
@@ -2706,6 +4292,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "List of nearby stops"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liste des arrêts à proximité"
           }
         }
       }
@@ -2717,6 +4309,12 @@
             "state" : "translated",
             "value" : "List of modules used in the app"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liste des modules utilisés dans l'application"
+          }
         }
       }
     },
@@ -2727,12 +4325,24 @@
             "state" : "translated",
             "value" : "List of search results"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Liste des résultats de recherche"
+          }
         }
       }
     },
     "Localisation" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Localisation"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Localisation"
@@ -2747,6 +4357,12 @@
             "state" : "translated",
             "value" : "Location enabled"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Localisation activée"
+          }
         }
       }
     },
@@ -2756,6 +4372,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Location disabled"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Localisation désactivée"
           }
         }
       }
@@ -2767,6 +4389,12 @@
             "state" : "translated",
             "value" : "Rental"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Location"
+          }
         }
       }
     },
@@ -2776,6 +4404,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Long"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Longue"
           }
         }
       }
@@ -2787,12 +4421,24 @@
             "state" : "translated",
             "value" : "Mon"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lun"
+          }
         }
       }
     },
     "Lux" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lux"
@@ -2807,6 +4453,12 @@
             "state" : "translated",
             "value" : "Lux uses your position to show nearby stops and optimised itineraries"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux utilise votre position pour vous proposer les arrêts à proximité et les meilleurs itinéraires."
+          }
         }
       }
     },
@@ -2817,12 +4469,24 @@
             "state" : "translated",
             "value" : "Lux will suggest this shortcut at this time"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux vous suggérera ce raccourci à cette heure"
+          }
         }
       }
     },
     "LuxPass" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "LuxPass"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "LuxPass"
@@ -2837,6 +4501,12 @@
             "state" : "translated",
             "value" : "T"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ma"
+          }
         }
       }
     },
@@ -2846,6 +4516,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Maintenance in progress"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenance en cours"
           }
         }
       }
@@ -2857,6 +4533,12 @@
             "state" : "translated",
             "value" : "Now"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Maintenant"
+          }
         }
       }
     },
@@ -2866,6 +4548,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tue"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mar"
           }
         }
       }
@@ -2909,6 +4597,12 @@
             "state" : "translated",
             "value" : "Walk towards your destination"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marchez vers votre destination"
+          }
         }
       }
     },
@@ -2918,6 +4612,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "W"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Me"
           }
         }
       }
@@ -2929,6 +4629,12 @@
             "state" : "translated",
             "value" : "Wed"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mer"
+          }
         }
       }
     },
@@ -2938,6 +4644,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "My lines"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mes lignes"
           }
         }
       }
@@ -2949,6 +4661,12 @@
             "state" : "translated",
             "value" : "Metro"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Métro"
+          }
         }
       }
     },
@@ -2958,6 +4676,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prioritize the lines you use most."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mettez en avant les lignes que vous fréquentez le plus."
           }
         }
       }
@@ -2969,6 +4693,12 @@
             "state" : "translated",
             "value" : "Display mode"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mode d'affichage"
+          }
         }
       }
     },
@@ -2978,6 +4708,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Travel profile"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mode de déplacement à pied"
           }
         }
       }
@@ -2989,6 +4725,12 @@
             "state" : "translated",
             "value" : "Moderate"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modéré"
+          }
         }
       }
     },
@@ -2998,6 +4740,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Moderate"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modérée"
           }
         }
       }
@@ -3009,6 +4757,12 @@
             "state" : "translated",
             "value" : "Transportation modes"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Modes de transport"
+          }
         }
       }
     },
@@ -3019,15 +4773,35 @@
             "state" : "translated",
             "value" : "Board at %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Montez à %@"
+          }
         }
       }
     },
     "Mouette" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mouette"
+          }
+        }
+      },
       "shouldTranslate" : false
     },
     "N/A" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "N/A"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "N/A"
@@ -3042,6 +4816,12 @@
             "state" : "translated",
             "value" : "Shortcut name"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nom du raccourci"
+          }
         }
       }
     },
@@ -3051,6 +4831,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Maximum number of transfers"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nombre maximal de correspondances"
           }
         }
       }
@@ -3062,6 +4848,12 @@
             "state" : "translated",
             "value" : "Note: The tickets below will be purchased via an SMS sent to the official TPG service after your confirmation. Standard SMS fees may apply.\nThe tickets are not managed by Lux, and prices may change at any time without notice."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note : Les tickets ci-dessous seront achetés via un SMS envoyé au service officiel des TPG suite à votre confirmation. Des frais SMS standard peuvent s'appliquer.\nLes tickets ne sont pas gérés par Lux et leurs tarifs peuvent évoluer à tout moment sans préavis."
+          }
         }
       }
     },
@@ -3071,6 +4863,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Line number"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Numéro de ligne"
           }
         }
       }
@@ -3082,6 +4880,12 @@
             "state" : "translated",
             "value" : "Obtain the best itineraries from your position"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtenez les meilleurs trajets depuis votre position"
+          }
         }
       }
     },
@@ -3091,6 +4895,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Occupied"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Occupé"
           }
         }
       }
@@ -3102,15 +4912,35 @@
             "state" : "translated",
             "value" : "Smell"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Odeur"
+          }
         }
       }
     },
     "ODM" : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ODM"
+          }
+        }
+      },
       "shouldTranslate" : false
     },
     "OK" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "OK"
@@ -3141,6 +4971,12 @@
             "state" : "translated",
             "value" : "Itinerary options"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options d'itinéraire"
+          }
         }
       }
     },
@@ -3150,6 +4986,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Options for experimented users"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Options pour les utilisateurs expérimentés"
           }
         }
       }
@@ -3161,6 +5003,12 @@
             "state" : "translated",
             "value" : "Lux Orange"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orange Lux"
+          }
         }
       }
     },
@@ -3170,6 +5018,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "TPG Orange"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orange TPG"
           }
         }
       }
@@ -3181,6 +5035,12 @@
             "state" : "translated",
             "value" : "Where to?"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Où souhaitez-vous aller ?"
+          }
         }
       }
     },
@@ -3190,6 +5050,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir"
           }
         }
       }
@@ -3201,6 +5067,12 @@
             "state" : "translated",
             "value" : "Show the official network map from tpg"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir la carte du réseau officiel des tpg"
+          }
         }
       }
     },
@@ -3210,6 +5082,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Open Settings"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir les Réglages"
           }
         }
       }
@@ -3221,6 +5099,12 @@
             "state" : "translated",
             "value" : "Open Settings"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ouvrir Réglages"
+          }
         }
       }
     },
@@ -3230,6 +5114,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Default"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Par Défaut"
           }
         }
       }
@@ -3241,6 +5131,12 @@
             "state" : "translated",
             "value" : "Settings"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Paramètres"
+          }
         }
       }
     },
@@ -3251,12 +5147,24 @@
             "state" : "translated",
             "value" : "Perfect! You can now fully enjoy all of Lux's features"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parfait ! Vous pouvez maintenant profiter pleinement de toutes les fonctionnalités de Lux."
+          }
         }
       }
     },
     "Parking" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parking"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Parking"
@@ -3271,6 +5179,12 @@
             "state" : "translated",
             "value" : "Sharing…"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partage..."
+          }
         }
       }
     },
@@ -3280,6 +5194,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Share"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager"
           }
         }
       }
@@ -3291,6 +5211,12 @@
             "state" : "translated",
             "value" : "Share preview as image"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager l'aperçu en tant qu'image"
+          }
         }
       }
     },
@@ -3300,6 +5226,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Share entirety"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager l'entiereté"
           }
         }
       }
@@ -3311,6 +5243,12 @@
             "state" : "translated",
             "value" : "Share trip"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Partager l'itinéraire"
+          }
         }
       }
     },
@@ -3321,6 +5259,12 @@
             "state" : "translated",
             "value" : "No smell"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pas d'odeur"
+          }
         }
       }
     },
@@ -3330,6 +5274,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Past"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passé"
           }
         }
       }
@@ -3357,6 +5307,12 @@
             "state" : "translated",
             "value" : "Noticeable"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perceptible"
+          }
         }
       }
     },
@@ -3366,6 +5322,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Customization"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personnalisation"
           }
         }
       }
@@ -3377,6 +5339,12 @@
             "state" : "translated",
             "value" : "Customise the apps appearance"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personnalisez l'apparence de l'application"
+          }
         }
       }
     },
@@ -3386,6 +5354,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Customize the app's Widget by selecting a stop to display"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personnalisez le Widget de l'app en sélectionnant un arrêt à afficher"
           }
         }
       }
@@ -3397,6 +5371,12 @@
             "state" : "translated",
             "value" : "Customize Lux to suit your needs and preferences."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personnalisez Lux pour l'adapter à vos besoins et préférences"
+          }
         }
       }
     },
@@ -3406,6 +5386,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Customize your Lux experience"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Personnalisez votre expérience Lux"
           }
         }
       }
@@ -3417,6 +5403,12 @@
             "state" : "translated",
             "value" : "Disruptions (%lld)"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Perturbations (%lld)"
+          }
         }
       }
     },
@@ -3426,6 +5418,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lightly occupied"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Peu occupé"
           }
         }
       }
@@ -3437,6 +5435,12 @@
             "state" : "translated",
             "value" : "No more stops scheduled on this line."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus d'arrêts prévus sur cette ligne."
+          }
         }
       }
     },
@@ -3446,6 +5450,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Later"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus tard"
           }
         }
       }
@@ -3457,6 +5467,12 @@
             "state" : "translated",
             "value" : "Earlier"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Plus tôt"
+          }
         }
       }
     },
@@ -3466,6 +5482,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Privacy policy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Politique de confidentialité"
           }
         }
       }
@@ -3477,6 +5499,12 @@
             "state" : "translated",
             "value" : "Current location"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Position actuelle"
+          }
         }
       }
     },
@@ -3486,6 +5514,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Current Location"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Position Actuelle"
           }
         }
       }
@@ -3497,6 +5531,12 @@
             "state" : "translated",
             "value" : "Place the back of your SwissPass card in the frame to add it to LuxPass"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Positionnez l'arrière de votre carte SwissPass dans le cadre pour l'ajouter à LuxPass"
+          }
         }
       }
     },
@@ -3506,6 +5546,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "To display nearby stops, please allow location access in Settings."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pour afficher les arrêts à proximité, veuillez autoriser l'accès à votre position dans les réglages."
           }
         }
       }
@@ -3517,6 +5563,12 @@
             "state" : "translated",
             "value" : "Back"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Précédent"
+          }
         }
       }
     },
@@ -3526,6 +5578,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Next: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prochain: %@"
           }
         }
       }
@@ -3537,12 +5595,24 @@
             "state" : "translated",
             "value" : "Next stops"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prochains arrêts"
+          }
         }
       }
     },
     "Programmation" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Programmation"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Programmation"
@@ -3557,6 +5627,12 @@
             "state" : "translated",
             "value" : "Clean"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Propre"
+          }
         }
       }
     },
@@ -3566,6 +5642,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cleanliness"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Propreté"
           }
         }
       }
@@ -3577,6 +5659,12 @@
             "state" : "translated",
             "value" : "Track %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quai %@"
+          }
         }
       }
     },
@@ -3586,6 +5674,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "shortcut"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "raccourci"
           }
         }
       }
@@ -3597,6 +5691,12 @@
             "state" : "translated",
             "value" : "Shortcuts"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raccourcis"
+          }
         }
       }
     },
@@ -3606,6 +5706,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Shortcuts %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raccourcis %@"
           }
         }
       }
@@ -3617,6 +5723,12 @@
             "state" : "translated",
             "value" : "SwissPass shortcut"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raccourcis SwissPass"
+          }
         }
       }
     },
@@ -3626,6 +5738,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reporting…"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapport en cours..."
           }
         }
       }
@@ -3637,6 +5755,12 @@
             "state" : "translated",
             "value" : "Partial report"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapport partiel"
+          }
         }
       }
     },
@@ -3646,6 +5770,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Report: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapport: %@"
           }
         }
       }
@@ -3657,6 +5787,12 @@
             "state" : "translated",
             "value" : "Reports sent!"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rapports envoyés !"
+          }
         }
       }
     },
@@ -3666,6 +5802,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Redisplays the initial screen visible on first launch"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réaffiche l'écran initial visible lors de la première ouverture de l'app"
           }
         }
       }
@@ -3677,6 +5819,12 @@
             "state" : "translated",
             "value" : "Realist"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réaliste"
+          }
         }
       }
     },
@@ -3686,6 +5834,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Receive information based on your location"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recevez des informations basées sur votre position"
           }
         }
       }
@@ -3697,6 +5851,12 @@
             "state" : "translated",
             "value" : "Searching for routes…"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche d'itinéraires..."
+          }
         }
       }
     },
@@ -3706,6 +5866,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Destination search"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche de destination"
           }
         }
       }
@@ -3717,6 +5883,12 @@
             "state" : "translated",
             "value" : "Searching…"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherche en cours..."
+          }
         }
       }
     },
@@ -3726,6 +5898,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher"
           }
         }
       }
@@ -3737,6 +5915,12 @@
             "state" : "translated",
             "value" : "Search a stop…"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rechercher un arrêt..."
+          }
         }
       }
     },
@@ -3746,6 +5930,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search a place or an address"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Recherchez un lieu ou une adresse"
           }
         }
       }
@@ -3757,6 +5947,12 @@
             "state" : "translated",
             "value" : "Reduce spacing in stops tab"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réduire l'espacement dans l'onglet des arrêts"
+          }
         }
       }
     },
@@ -3766,6 +5962,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Try again"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réessayer"
           }
         }
       }
@@ -3777,6 +5979,12 @@
             "state" : "translated",
             "value" : "Reset"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réinitialiser"
+          }
         }
       }
     },
@@ -3786,6 +5994,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reset all scores"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Réinitialiser tous les scores"
           }
         }
       }
@@ -3797,6 +6011,12 @@
             "state" : "translated",
             "value" : "Reset every line’s score to 0"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remet à zéro tous les scores des lignes"
+          }
         }
       }
     },
@@ -3806,6 +6026,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estimated fix time: %@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résolution prévue : %@"
           }
         }
       }
@@ -3817,6 +6043,12 @@
             "state" : "translated",
             "value" : "Results"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résultats"
+          }
         }
       }
     },
@@ -3826,6 +6058,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Search results"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Résultats de recherche"
           }
         }
       }
@@ -3837,6 +6075,12 @@
             "state" : "translated",
             "value" : "Reset"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rétablir"
+          }
         }
       }
     },
@@ -3846,6 +6090,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Restore default settings"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rétablir les valeurs par défaut"
           }
         }
       }
@@ -3857,6 +6107,12 @@
             "state" : "translated",
             "value" : "Late/Early"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Retard/Avance"
+          }
         }
       }
     },
@@ -3866,6 +6122,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Risky"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Risqué"
           }
         }
       }
@@ -3877,6 +6139,12 @@
             "state" : "translated",
             "value" : "UNIGE Pink"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rose UNIGE"
+          }
         }
       }
     },
@@ -3886,6 +6154,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Garnet Red"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rouge Grenat"
           }
         }
       }
@@ -3897,12 +6171,24 @@
             "state" : "translated",
             "value" : "SBB CFF Red"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rouge SBB CFF"
+          }
         }
       }
     },
     "s" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "s"
@@ -3917,6 +6203,12 @@
             "state" : "translated",
             "value" : "S"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "S"
+          }
         }
       }
     },
@@ -3926,6 +6218,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter at least 3 characters to search"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Saisissez au moins 3 caractères pour rechercher"
           }
         }
       }
@@ -3937,6 +6235,12 @@
             "state" : "translated",
             "value" : "Dirty"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sale"
+          }
         }
       }
     },
@@ -3946,6 +6250,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sat"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sam"
           }
         }
       }
@@ -3957,6 +6267,12 @@
             "state" : "translated",
             "value" : "Scan my SwissPass"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanner mon SwissPass"
+          }
         }
       }
     },
@@ -3966,6 +6282,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Scan your SwissPass"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scannez votre SwissPass"
           }
         }
       }
@@ -3977,6 +6299,12 @@
             "state" : "translated",
             "value" : "Scan your SwissPass to add it to LuxPass"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scannez votre SwissPass pour l'ajouter à LuxPass"
+          }
         }
       }
     },
@@ -3987,12 +6315,24 @@
             "state" : "translated",
             "value" : "Scan your SwissPass to access it security from Lux."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scannez votre SwissPass pour y accéder en toute sécurité depuis Lux."
+          }
         }
       }
     },
     "Score: %@" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Score: %@"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Score: %@"
@@ -4007,6 +6347,12 @@
             "state" : "translated",
             "value" : "Select"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sélectionner"
+          }
         }
       }
     },
@@ -4016,6 +6362,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Select a stop"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sélectionner un arrêt"
           }
         }
       }
@@ -4027,6 +6379,12 @@
             "state" : "translated",
             "value" : "Select a date and an hour"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sélectionner une date et heure"
+          }
         }
       }
     },
@@ -4036,6 +6394,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Select the app and icon color"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Séléctionnez la couleur de l'application et de l'icône"
           }
         }
       }
@@ -4047,6 +6411,12 @@
             "state" : "translated",
             "value" : "Select your fare category"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sélectionnez votre catégorie tarifaire"
+          }
         }
       }
     },
@@ -4056,6 +6426,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Report a situation"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signaler une situation"
           }
         }
       }
@@ -4067,6 +6443,12 @@
             "state" : "translated",
             "value" : "Silent"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Silencieux"
+          }
         }
       }
     },
@@ -4077,12 +6459,24 @@
             "state" : "translated",
             "value" : "Dark"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sombre"
+          }
         }
       }
     },
     "Standard" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standard"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Standard"
@@ -4097,6 +6491,12 @@
             "state" : "translated",
             "value" : "Secured storage on your device"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stockage sécurisé sur votre appareil"
+          }
         }
       }
     },
@@ -4106,6 +6506,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Real time suggestions"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestions en temps réel"
           }
         }
       }
@@ -4117,6 +6523,12 @@
             "state" : "translated",
             "value" : "Follows system settings"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suit les réglages système"
+          }
         }
       }
     },
@@ -4126,6 +6538,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Next"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suivant"
           }
         }
       }
@@ -4137,6 +6555,12 @@
             "state" : "translated",
             "value" : "Delete"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer"
+          }
         }
       }
     },
@@ -4146,6 +6570,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete the SwissPass"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Supprimer le SwissPass"
           }
         }
       }
@@ -4157,6 +6587,12 @@
             "state" : "translated",
             "value" : "out of"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "sur"
+          }
         }
       }
     },
@@ -4166,6 +6602,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Selected symbol"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Symbole sélectionné"
           }
         }
       }
@@ -4177,6 +6619,12 @@
             "state" : "translated",
             "value" : "System"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Système"
+          }
         }
       }
     },
@@ -4186,6 +6634,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Temperature"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Température"
           }
         }
       }
@@ -4197,6 +6651,12 @@
             "state" : "translated",
             "value" : "Mild"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tempéré"
+          }
         }
       }
     },
@@ -4206,6 +6666,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Walking time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps de marche"
           }
         }
       }
@@ -4217,6 +6683,12 @@
             "state" : "translated",
             "value" : "Minimum transfer time"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps minimum entre correspondances"
+          }
         }
       }
     },
@@ -4226,6 +6698,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Real time"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Temps réel"
           }
         }
       }
@@ -4237,12 +6715,24 @@
             "state" : "translated",
             "value" : "Done"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Terminer"
+          }
         }
       }
     },
     "Tickets" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tickets"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tickets"
@@ -4257,6 +6747,12 @@
             "state" : "translated",
             "value" : "Purchased tickets"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tickets achetés"
+          }
         }
       }
     },
@@ -4266,6 +6762,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Always in light mode"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toujours en mode clair"
           }
         }
       }
@@ -4277,6 +6779,12 @@
             "state" : "translated",
             "value" : "Always in dark mode"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toujours en mode sombre"
+          }
         }
       }
     },
@@ -4286,6 +6794,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Everything is ready !"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tout est prêt !"
           }
         }
       }
@@ -4297,12 +6811,24 @@
             "state" : "translated",
             "value" : "This will reset all options to their default values. This action cannot be undone."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Toutes les options seront réinitialisées aux paramètres par défaut. Cette action est irréversible."
+          }
         }
       }
     },
     "Train" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Train"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Train"
@@ -4317,12 +6843,24 @@
             "state" : "translated",
             "value" : "Processing…"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Traitement..."
+          }
         }
       }
     },
     "Tram" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tram"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tram"
@@ -4337,6 +6875,12 @@
             "state" : "translated",
             "value" : "Transfers"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transferts"
+          }
         }
       }
     },
@@ -4346,6 +6890,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Public transport"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transport en commun"
           }
         }
       }
@@ -4357,6 +6907,12 @@
             "state" : "translated",
             "value" : "Transport delayed or early"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transport en retard ou en avance"
+          }
         }
       }
     },
@@ -4366,6 +6922,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Very noisy"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Très bruyant"
           }
         }
       }
@@ -4377,6 +6939,12 @@
             "state" : "translated",
             "value" : "Very hot"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Très chaud"
+          }
         }
       }
     },
@@ -4386,6 +6954,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Very strong"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Très forte"
           }
         }
       }
@@ -4397,6 +6971,12 @@
             "state" : "translated",
             "value" : "Very clean"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Très propre"
+          }
         }
       }
     },
@@ -4406,6 +6986,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Very dirty"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Très sale"
           }
         }
       }
@@ -4417,6 +7003,12 @@
             "state" : "translated",
             "value" : "Sort by relevance"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tri par pertinence"
+          }
         }
       }
     },
@@ -4427,12 +7019,24 @@
             "state" : "translated",
             "value" : "Find nearby stops faster"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Trouvez rapidement les arrêts les plus proches"
+          }
         }
       }
     },
     "Type" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Type"
@@ -4447,6 +7051,12 @@
             "state" : "translated",
             "value" : "User type"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type d'utilisateur"
+          }
         }
       }
     },
@@ -4456,6 +7066,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Rate type"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type de tarif"
           }
         }
       }
@@ -4467,6 +7083,12 @@
             "state" : "translated",
             "value" : "An error occurred while loading the itinerary"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une erreur est survenue lors du chargement de l'itinéraire."
+          }
         }
       }
     },
@@ -4476,6 +7098,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Have a question, found a bug, or have a suggestion? Click here."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Une question, un bug ou une suggestion ? Cliquez ici."
           }
         }
       }
@@ -4487,6 +7115,12 @@
             "state" : "translated",
             "value" : "Unofficial use"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utilisation non officielle"
+          }
         }
       }
     },
@@ -4496,6 +7130,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Use my current location"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Utiliser ma position actuelle"
           }
         }
       }
@@ -4507,6 +7147,12 @@
             "state" : "translated",
             "value" : "F"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "V"
+          }
         }
       }
     },
@@ -4516,6 +7162,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bike"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vélo"
           }
         }
       }
@@ -4527,6 +7179,12 @@
             "state" : "translated",
             "value" : "Fri"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ven"
+          }
         }
       }
     },
@@ -4537,12 +7195,24 @@
             "state" : "translated",
             "value" : "Please check your mobile data or your Wi-Fi connection and try again."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vérifiez vos données mobile ou votre connexion Wi-Fi et réessayez."
+          }
         }
       }
     },
     "Version" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Version"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Version"
@@ -4557,6 +7227,12 @@
             "state" : "translated",
             "value" : "CGTE Green"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vert CGTE"
+          }
         }
       }
     },
@@ -4566,6 +7242,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vaud Green"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vert Vaudoise"
           }
         }
       }
@@ -4577,6 +7259,12 @@
             "state" : "translated",
             "value" : "Empty"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vide"
+          }
         }
       }
     },
@@ -4586,6 +7274,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SNCF Purple"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Violet SCNF"
           }
         }
       }
@@ -4597,6 +7291,12 @@
             "state" : "translated",
             "value" : "Platform %@"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voie %@"
+          }
         }
       }
     },
@@ -4606,6 +7306,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Car"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Voiture"
           }
         }
       }
@@ -4617,6 +7323,12 @@
             "state" : "translated",
             "value" : "Your reports were transmitted successfully.\nThank you for your contribution!"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vos rapports ont été transmis avec succès.\nMerci pour votre contribution !"
+          }
         }
       }
     },
@@ -4626,6 +7338,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your device is not able to send text messages."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre appareil n'est pas en mesure d'envoyer des SMS."
           }
         }
       }
@@ -4637,6 +7355,12 @@
             "state" : "translated",
             "value" : "Your SwissPass"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Votre SwissPass"
+          }
         }
       }
     },
@@ -4646,6 +7370,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You arrived at destination"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous êtes arrivé à destination"
           }
         }
       }
@@ -4657,6 +7387,12 @@
             "state" : "translated",
             "value" : "You are now ready to use Lux."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous êtes désormais prêt à utiliser Lux."
+          }
         }
       }
     },
@@ -4666,6 +7402,12 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You can allow location access in your device’s settings to fully enjoy Lux’s features."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous pouvez activer la localisation dans les réglages de votre appareil pour profiter pleinement de Lux."
           }
         }
       }
@@ -4677,6 +7419,12 @@
             "state" : "translated",
             "value" : "You can continue using Lux, but some features will be limited."
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vous pouvez continuer à utiliser Lux, mais certaines fonctionnalités seront limitées."
+          }
         }
       }
     },
@@ -4687,12 +7435,24 @@
             "state" : "translated",
             "value" : "Widget"
           }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Widget"
+          }
         }
       }
     },
     "XX" : {
       "localizations" : {
         "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "XX"
+          }
+        },
+        "fr" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "XX"
