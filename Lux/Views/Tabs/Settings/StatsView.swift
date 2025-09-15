@@ -99,7 +99,7 @@ struct StatsView: View {
         HStack {
             Text(varName)
             Spacer()
-            Text("\(value)")
+            Text(String(describing: value))
                 .fontDesign(.monospaced)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
