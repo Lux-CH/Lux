@@ -37,6 +37,9 @@
     "%.2f €" : {
       "shouldTranslate" : false
     },
+    "%@" : {
+      "shouldTranslate" : false
+    },
     "%@ Couleur Sombre" : {
       "localizations" : {
         "en" : {
