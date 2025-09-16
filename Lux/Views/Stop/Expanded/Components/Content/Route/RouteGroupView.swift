@@ -36,7 +36,7 @@ struct RouteGroupView: View {
                             .tag(index)
                     }
                 }
-                .frame(height: 160)
+                .frame(height: 175)
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 
                 PaginationDotsView(
