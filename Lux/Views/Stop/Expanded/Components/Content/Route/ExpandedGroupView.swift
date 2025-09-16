@@ -29,14 +29,13 @@ struct ExpandedGroupView: View {
                 HStack {
                     let displayTrack = group.stopTimes.first {
                         $0.place.track != nil || $0.place.scheduledTrack != nil
-                    }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? String(localized: "inconnu")
+                    }?.place.track ?? group.stopTimes.first?.place.scheduledTrack
                     
-                    Text(getTrackType(displayTrack))
-                        .font(.caption)
-                        .foregroundStyle(Color.secondary.opacity(0.7))
-                    Image(systemName: "chevron.right")
-                        .font(.caption)
-                        .foregroundStyle(Color.secondary.opacity(0.6))
+                    if let track = displayTrack {
+                        Text(getTrackType(track))
+                            .font(.caption)
+                            .foregroundStyle(Color.secondary.opacity(0.7))
+                    }
                 }
             }
             
