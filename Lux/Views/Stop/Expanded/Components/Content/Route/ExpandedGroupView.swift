@@ -16,52 +16,69 @@ struct ExpandedGroupView: View {
     var animation: Namespace.ID
     
     var body: some View {
-        NavigationLink(destination: {
-            if let tripId = group.stopTimes.first?.tripId {
-                let otherTripOptions = group.stopTimes.prefix(10).map { stopTime in
-                    TripOption(
-                        id: stopTime.tripId,
-                        startTime: stopTime.place.departure ?? stopTime.place.scheduledDeparture ?? stopTime.place.arrival ?? stopTime.place.scheduledArrival ?? Date()
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus)
+                    .matchedGeometryEffect(id: "pill_\(group.id)", in: animation)
+                Text(group.headsign)
+                    .font(.headline)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .foregroundStyle(colorScheme == .dark ? Color.white: Color.black)
+                Spacer()
+                HStack {
+                    let displayTrack = group.stopTimes.first {
+                        $0.place.track != nil || $0.place.scheduledTrack != nil
+                    }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? String(localized: "inconnu")
+                    
+                    Text(getTrackType(displayTrack))
+                        .font(.caption)
+                        .foregroundStyle(Color.secondary.opacity(0.7))
+                    Image(systemName: "chevron.right")
+                        .font(.caption)
+                        .foregroundStyle(Color.secondary.opacity(0.6))
+                }
+            }
+            
+            gridView()
+        }
+    }
+    
+    @ViewBuilder
+    private func gridView() -> some View {
+        let stopTimes = Array(group.stopTimes.prefix(4))
+        let reorderedIndices = getReorderedIndices(for: stopTimes.count)
+        
+        LazyVGrid(columns: [
+            GridItem(.flexible(), spacing: 8),
+            GridItem(.flexible(), spacing: 8)
+        ], spacing: 8) {
+            ForEach(reorderedIndices, id: \.self) { originalIndex in
+                if originalIndex < stopTimes.count {
+                    DepartureTimeRow(
+                        stopTime: stopTimes[originalIndex],
+                        animateIn: $animateIn,
+                        index: originalIndex,
+                        group: group,
+                        viewModel: viewModel
                     )
                 }
-                
-                ItineraryView(tripId: tripId, fromNearby: false, otherTripOptions: otherTripOptions)
-                    .toolbarBackground(.hidden, for: .navigationBar)
-                    .navigationBarBackButtonHidden(true)
-                    .onAppear {
-                        viewModel.userSelectedLine(group.routeShortName)
-                    }
             }
-        }) {
-            VStack(alignment: .leading, spacing: 5) {
-                HStack {
-                    LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus)
-                        .matchedGeometryEffect(id: "pill_\(group.id)", in: animation)
-                    Text(group.headsign)
-                        .font(.headline)
-                        .lineLimit(1)
-                        .foregroundStyle(colorScheme == .dark ? Color.white: Color.black)
-                    Spacer()
-                    HStack {
-                        let displayTrack = group.stopTimes.first {
-                            $0.place.track != nil || $0.place.scheduledTrack != nil
-                        }?.place.track ?? group.stopTimes.first?.place.scheduledTrack ?? String(localized: "inconnu")
-                        
-                        Text(getTrackType(displayTrack))
-                            .font(.caption)
-                            .foregroundStyle(Color.secondary.opacity(0.7))
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(Color.secondary.opacity(0.6))
-                    }
-                }
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(Array(group.stopTimes.prefix(4).enumerated()), id: \.element.id) { index, stopTime in
-                        DepartureTimeRow(stopTime: stopTime, animateIn: $animateIn, index: index)
-                    }
-                }
-            }
+        }
+    }
+    
+    private func getReorderedIndices(for count: Int) -> [Int] {
+        switch count {
+        case 1:
+            return [0]
+        case 2:
+            return [0, 1]
+        case 3:
+            return [0, 2, 1]
+        case 4:
+            return [0, 2, 1, 3]
+        default:
+            return Array(0..<count)
         }
     }
 }
