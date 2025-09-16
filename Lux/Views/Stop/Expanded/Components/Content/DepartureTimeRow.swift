@@ -141,30 +141,30 @@ struct DepartureTimeRow: View {
         let secs = Calendar.current.dateComponents([.second], from: currentTime, to: date)
         if let minutes = components.minute {
             if minutes < 0 {
-                return String(localized: "Passé")
+                return String(localized: "passé")
             } else if minutes == 0 {
-                return String(localized: "Maintenant")
+                return String(localized: "maintenant")
             } else if minutes < 60 {
                 if let sec = secs.second {
-                    return String(localized: "Dans \(Int(ceil(Double(sec) / 60.0))) min")
+                    return String(localized: "dans \(Int(ceil(Double(sec) / 60.0))) min")
                 }
                 else {
-                    return String(localized: "Dans \(minutes) min")
+                    return String(localized: "dans \(minutes) min")
                 }
             } else {
                 let hours = minutes / 60
                 let remainingMinutes = minutes % 60
                 if hours < 24 {
                     if remainingMinutes == 0 {
-                        return String(localized: "Dans \(hours)h")
+                        return String(localized: "dans \(hours)h")
                     } else {
-                        return String(localized: "Dans \(hours)h \(remainingMinutes)min")
+                        return String(localized: "dans \(hours)h \(remainingMinutes)min")
                     }
                 } else {
                     let days = hours / 24
                     let remainingHours = hours % 24
                     let plural = days > 1 ? String(localized: "s") : ""
-                    var result = String(localized: "Dans \(days) jour") + plural
+                    var result = String(localized: "dans \(days) jour") + plural
                     if remainingHours > 0 {
                         result += " " + String(localized: "\(remainingHours)h")
                     }
