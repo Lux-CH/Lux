@@ -46,38 +46,20 @@ struct ExpandedGroupView: View {
     @ViewBuilder
     private func gridView() -> some View {
         let stopTimes = Array(group.stopTimes.prefix(4))
-        let reorderedIndices = getReorderedIndices(for: stopTimes.count)
         
         LazyVGrid(columns: [
             GridItem(.flexible(), spacing: 8),
             GridItem(.flexible(), spacing: 8)
         ], spacing: 8) {
-            ForEach(reorderedIndices, id: \.self) { originalIndex in
-                if originalIndex < stopTimes.count {
-                    DepartureTimeRow(
-                        stopTime: stopTimes[originalIndex],
-                        animateIn: $animateIn,
-                        index: originalIndex,
-                        group: group,
-                        viewModel: viewModel
-                    )
-                }
+            ForEach(Array(stopTimes.enumerated()), id: \.offset) { index, stopTime in
+                DepartureTimeRow(
+                    stopTime: stopTime,
+                    animateIn: $animateIn,
+                    index: index,
+                    group: group,
+                    viewModel: viewModel
+                )
             }
-        }
-    }
-    
-    private func getReorderedIndices(for count: Int) -> [Int] {
-        switch count {
-        case 1:
-            return [0]
-        case 2:
-            return [0, 1]
-        case 3:
-            return [0, 2, 1]
-        case 4:
-            return [0, 2, 1, 3]
-        default:
-            return Array(0..<count)
         }
     }
 }
