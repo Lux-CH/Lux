@@ -17,6 +17,7 @@ struct RouteOptionsView: View {
     @State private var pedestrianProfile: PedestrianProfile
     @State private var selectedTransportModes: Set<TransportationMode>
     @State private var maxWalkingTime: Int
+    @State private var pedestrianSpeed: Double
     @State private var showResetConfirmation = false
     
     private let availableTransportModes: [TransportationMode] = [.bus, .tram, .rail, .ferry]
@@ -28,6 +29,7 @@ struct RouteOptionsView: View {
     private let defaultPedestrianProfile = PedestrianProfile.foot
     private let defaultTransportModes: Set<TransportationMode> = []
     private let defaultMaxWalkingTime = 900
+    private let defaultPedestrianSpeed: Double = 1.2
     
     init(routeOptions: RouteOptions, onSave: @escaping (RouteOptions) -> Void) {
         self.routeOptions = routeOptions
@@ -42,6 +44,9 @@ struct RouteOptionsView: View {
         
         let walkingTime = routeOptions.maxPreTransitTime ?? 900
         _maxWalkingTime = State(initialValue: walkingTime)
+        
+        let speed = routeOptions.pedestrianSpeed ?? 1.2
+        _pedestrianSpeed = State(initialValue: speed)
     }
     
     var body: some View {
@@ -54,6 +59,7 @@ struct RouteOptionsView: View {
                     VStack(spacing: 24) {
                         transfersSection
                         walkingTimeSection
+                        pedestrianSpeedSection
                         accessibilitySection
 //                        transportModesSection
                         resetSection
@@ -221,6 +227,31 @@ struct RouteOptionsView: View {
         }
     }
     
+    private var pedestrianSpeedSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            OptionHeader(title: String(localized: "Vitesse de marche"), icon: "speedometer")
+            
+            ModernCard {
+                VStack(alignment: .leading, spacing: 16) {
+                    VStack(alignment: .leading, spacing: 3) {
+                        Text("Rythme de marche")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(.primary)
+                        
+                        Text("Choisissez votre rythme de marche habituel pour des estimations plus précises")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.leading)
+                    }
+                    
+                    PedestrianSpeedSelector(
+                        selectedSpeed: $pedestrianSpeed
+                    )
+                }
+            }
+        }
+    }
+    
     private var accessibilitySection: some View {
         VStack(alignment: .leading, spacing: 12) {
             OptionHeader(title: String(localized: "Accessibilité"), icon: "figure.roll")
@@ -347,12 +378,14 @@ struct RouteOptionsView: View {
             pedestrianProfile = defaultPedestrianProfile
             selectedTransportModes = defaultTransportModes
             maxWalkingTime = defaultMaxWalkingTime
+            pedestrianSpeed = defaultPedestrianSpeed
         }
         saveOptions(shouldDismiss: false)
     }
     
     private func saveOptions(shouldDismiss: Bool = true) {
         let walkingTime = maxWalkingTime == 900 ? nil : maxWalkingTime
+        let speed = pedestrianSpeed == defaultPedestrianSpeed ? nil : pedestrianSpeed
         
         let newOptions = RouteOptions(
             from: routeOptions.from,
@@ -364,6 +397,7 @@ struct RouteOptionsView: View {
             maxTransfers: maxTransfers,
             minTransferTime: minTransferTime,
             pedestrianProfile: pedestrianProfile,
+            pedestrianSpeed: speed,
             transitModes: selectedTransportModes.isEmpty ? nil : Array(selectedTransportModes),
             numItineraries: routeOptions.numItineraries,
             pageCursor: routeOptions.pageCursor,
@@ -612,6 +646,80 @@ struct WalkingTimeSelector: View {
                     }
                     .buttonStyle(ScaleButtonStyle())
                 }
+            }
+        }
+    }
+}
+
+struct PedestrianSpeedSelector: View {
+    @Binding var selectedSpeed: Double
+    private let speedOptions: [Double] = [1.0, 1.2, 1.4, 1.6, 1.8]
+    @ObservedObject var accentColorManager = AccentColorManager.shared
+    
+    private func getSpeedDescription(_ speed: Double) -> String {
+        switch speed {
+        case 1.0:
+            return String(localized: "Lent")
+        case 1.2:
+            return String(localized: "Normal")
+        case 1.4:
+            return String(localized: "Vif")
+        case 1.6:
+            return String(localized: "Rapide")
+        case 1.8:
+            return String(localized: "Très rapide")
+        default:
+            return String(localized: "Fulgurant")
+        }
+    }
+    
+    private func getSpeedIcon(_ speed: Double) -> String {
+        switch speed {
+        case 1.0:
+            return "tortoise.fill"
+        case 1.2:
+            return "figure.walk"
+        case 1.4:
+            return "figure.walk.motion"
+        case 1.6:
+            return "figure.run"
+        case 1.8:
+            return "hare.fill"
+        default:
+            return "figure.walk"
+        }
+    }
+    
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(speedOptions, id: \.self) { speed in
+                Button(action: {
+                    withAnimation(.spring(response: 0.3)) {
+                        selectedSpeed = speed
+                        HapticFeedback.lightImpact()
+                    }
+                }) {
+                    VStack(spacing: 8) {
+                        ZStack {
+                            Circle()
+                                .fill(selectedSpeed == speed ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
+                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                .frame(width: 44, height: 44)
+                            
+                            Image(systemName: getSpeedIcon(speed))
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundColor(selectedSpeed == speed ? .white : .primary)
+                        }
+                        
+                        Text(getSpeedDescription(speed))
+                            .font(.system(size: 11, weight: selectedSpeed == speed ? .semibold : .medium))
+                            .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor : .secondary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                }
+                .buttonStyle(ScaleButtonStyle())
             }
         }
     }
