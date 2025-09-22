@@ -83,7 +83,6 @@ class TripsSearchViewModel: ObservableObject {
         maxTransfers: 5,
         minTransferTime: 0,
         pedestrianProfile: .foot,
-        pedestrianSpeed: nil,
         transitModes: nil,
         numItineraries: 5,
         pageCursor: nil,
@@ -108,14 +107,12 @@ class TripsSearchViewModel: ObservableObject {
     private let defaultMinTransferTime = 0
     private let defaultPedestrianProfile = PedestrianProfile.foot
     private let defaultMaxWalkingTime = 900
-    private let defaultPedestrianSpeed: Double = 1.2
     
     @AppStorage("routeOptionsMaxTransfers") private var storedMaxTransfers: Int = 5
     @AppStorage("routeOptionsMinTransferTime") private var storedMinTransferTime: Int = 0
     @AppStorage("routeOptionsPedestrianProfile") private var storedPedestrianProfile: String = PedestrianProfile.foot.rawValue
     @AppStorage("routeOptionsTransportModes") private var storedTransportModes: Data = Data()
     @AppStorage("routeOptionsMaxWalkingTime") private var storedMaxWalkingTime: Int = 900
-    @AppStorage("routeOptionsPedestrianSpeed") private var storedPedestrianSpeed: Double = 1.2
     
     init() {
         fetchRouteOptionsPreferences()
@@ -131,7 +128,6 @@ class TripsSearchViewModel: ObservableObject {
         let maxTransfers = storedMaxTransfers
         let minTransferTime = storedMinTransferTime
         let maxWalkingTime = storedMaxWalkingTime
-        let pedestrianSpeed = storedPedestrianSpeed
         
         var pedestrianProfile = PedestrianProfile.foot
         if let profile = PedestrianProfile(rawValue: storedPedestrianProfile) {
@@ -154,7 +150,6 @@ class TripsSearchViewModel: ObservableObject {
             maxTransfers: maxTransfers,
             minTransferTime: minTransferTime,
             pedestrianProfile: pedestrianProfile,
-            pedestrianSpeed: pedestrianSpeed == defaultPedestrianSpeed ? nil : pedestrianSpeed,
             transitModes: transportModes,
             numItineraries: routeOptions.numItineraries,
             pageCursor: routeOptions.pageCursor,
@@ -169,14 +164,12 @@ class TripsSearchViewModel: ObservableObject {
     private func checkIfSettingsDifferFromDefaults() {
         let transportModesSet = Set(routeOptions.transitModes ?? [])
         let maxWalkingTime = routeOptions.maxPreTransitTime ?? defaultMaxWalkingTime
-        let pedestrianSpeed = routeOptions.pedestrianSpeed ?? defaultPedestrianSpeed
         
         hasCustomSettings = routeOptions.maxTransfers != defaultMaxTransfers ||
                            routeOptions.minTransferTime != defaultMinTransferTime ||
                            routeOptions.pedestrianProfile != defaultPedestrianProfile ||
                            !transportModesSet.isEmpty ||
-                           maxWalkingTime != defaultMaxWalkingTime ||
-                           pedestrianSpeed != defaultPedestrianSpeed
+                           maxWalkingTime != defaultMaxWalkingTime
     }
     
     func resetSearch() {
@@ -392,7 +385,6 @@ class TripsSearchViewModel: ObservableObject {
             maxTransfers: routeOptions.maxTransfers,
             minTransferTime: routeOptions.minTransferTime,
             pedestrianProfile: routeOptions.pedestrianProfile,
-            pedestrianSpeed: routeOptions.pedestrianSpeed,
             transitModes: routeOptions.transitModes,
             numItineraries: 5,
             pageCursor: pageCursor,
@@ -543,9 +535,6 @@ class TripsSearchViewModel: ObservableObject {
         
         let walkingTime = options.maxPreTransitTime ?? defaultMaxWalkingTime
         storedMaxWalkingTime = walkingTime
-        
-        let pedestrianSpeed = options.pedestrianSpeed ?? defaultPedestrianSpeed
-        storedPedestrianSpeed = pedestrianSpeed
         
         if let transportModes = options.transitModes, !transportModes.isEmpty {
             let transportModesSet = Set(transportModes)

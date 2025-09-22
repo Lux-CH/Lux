@@ -1298,16 +1298,6 @@
         }
       }
     },
-    "Choisissez votre rythme de marche habituel pour des estimations plus précises" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose your usual walking rhythm for more accurate estimations"
-          }
-        }
-      }
-    },
     "Chosissez la mode d'affichage de l'app (clair, sombre, auto..)" : {
       "localizations" : {
         "en" : {
@@ -2164,16 +2154,6 @@
         }
       }
     },
-    "Fulgurant" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blazing"
-          }
-        }
-      }
-    },
     "Gérer les raccourcis" : {
       "localizations" : {
         "en" : {
@@ -2630,16 +2610,6 @@
         }
       }
     },
-    "Lent" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Slow"
-          }
-        }
-      }
-    },
     "Les arrêts sont représentés par l'icône %@" : {
       "localizations" : {
         "en" : {
@@ -3091,16 +3061,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Maximum number of transfers"
-          }
-        }
-      }
-    },
-    "Normal" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Normal"
           }
         }
       }
@@ -3670,16 +3630,6 @@
         }
       }
     },
-    "Rapide" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Fast"
-          }
-        }
-      }
-    },
     "Rapport en cours..." : {
       "localizations" : {
         "en" : {
@@ -3956,16 +3906,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SBB CFF Red"
-          }
-        }
-      }
-    },
-    "Rythme de marche" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Walking Rhythm"
           }
         }
       }
@@ -4470,16 +4410,6 @@
         }
       }
     },
-    "Très rapide" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lively"
-          }
-        }
-      }
-    },
     "Très sale" : {
       "localizations" : {
         "en" : {
@@ -4660,32 +4590,12 @@
         }
       }
     },
-    "Vif" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Brisky"
-          }
-        }
-      }
-    },
     "Violet SCNF" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SNCF Purple"
-          }
-        }
-      }
-    },
-    "Vitesse de marche" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Walking speed"
           }
         }
       }
