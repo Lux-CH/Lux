@@ -58,8 +58,7 @@ struct RouteOptionsView: View {
                     
                     VStack(spacing: 24) {
                         transfersSection
-                        walkingTimeSection
-                        pedestrianSpeedSection
+                        walkOptionsSection
                         accessibilitySection
 //                        transportModesSection
                         resetSection
@@ -202,51 +201,48 @@ struct RouteOptionsView: View {
         }
     }
     
-    private var walkingTimeSection: some View {
+    private var walkOptionsSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            OptionHeader(title: String(localized: "Temps de marche"), icon: "figure.walk")
+            OptionHeader(title: String(localized: "Options de marche"), icon: "figure.walk")
             
             ModernCard {
-                VStack(alignment: .leading, spacing: 16) {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Durée maximale de marche")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.primary)
+                VStack(spacing: 20) {
+                    VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Durée maximale de marche")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            
+                            Text("Fixez la durée maximale que vous acceptez de parcourir à pied")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
                         
-                        Text("Fixez la durée maximale que vous acceptez de parcourir à pied")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.leading)
+                        WalkingTimeSelector(
+                            selectedTime: $maxWalkingTime
+                        )
                     }
                     
-                    WalkingTimeSelector(
-                        selectedTime: $maxWalkingTime
-                    )
-                }
-            }
-        }
-    }
-    
-    private var pedestrianSpeedSection: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            OptionHeader(title: String(localized: "Vitesse de marche"), icon: "speedometer")
-            
-            ModernCard {
-                VStack(alignment: .leading, spacing: 16) {
-                    VStack(alignment: .leading, spacing: 3) {
-                        Text("Rythme de marche")
-                            .font(.subheadline.weight(.medium))
-                            .foregroundStyle(.primary)
-                        
-                        Text("Choisissez votre rythme de marche habituel pour des estimations plus précises")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.leading)
-                    }
+                    Divider()
+                        .opacity(0.5)
                     
-                    PedestrianSpeedSelector(
-                        selectedSpeed: $pedestrianSpeed
-                    )
+                    VStack(alignment: .leading, spacing: 12) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text("Rythme de marche")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            
+                            Text("Choisissez votre rythme de marche habituel pour des estimations plus précises")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
+                        
+                        PedestrianSpeedSelector(
+                            selectedSpeed: $pedestrianSpeed
+                        )
+                    }
                 }
             }
         }
