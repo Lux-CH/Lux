@@ -3194,6 +3194,16 @@
         }
       }
     },
+    "Options de marche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking options"
+          }
+        }
+      }
+    },
     "Options pour les utilisateurs expérimentés" : {
       "localizations" : {
         "en" : {
@@ -4270,16 +4280,6 @@
         }
       }
     },
-    "Temps de marche" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Walking time"
-          }
-        }
-      }
-    },
     "Temps minimum entre correspondances" : {
       "localizations" : {
         "en" : {
@@ -4666,16 +4666,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SNCF Purple"
-          }
-        }
-      }
-    },
-    "Vitesse de marche" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Walking speed"
           }
         }
       }
