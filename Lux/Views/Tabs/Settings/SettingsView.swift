@@ -108,7 +108,7 @@ struct SettingsView: View {
                     SettingsRow(
                         icon: "list.star",
                         title: String(localized: "Gérer les raccourcis"),
-                        subtitle: "\(shortcutManager.shortcuts.count) \(String(localized: "raccourci"))\(plural) \(String(localized: "configuré"))\(plural)",
+                        subtitle: "\(shortcutManager.shortcuts.count) \(String(localized: "raccourci"))\(plural) \(String(localized: "configuré"))\(Locale.current.language.languageCode == "fr" ? plural : "")",
                         showChevron: true
                     )
                 }
