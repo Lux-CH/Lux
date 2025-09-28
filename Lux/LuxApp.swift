@@ -64,6 +64,10 @@ struct LuxApp: App {
                             .environmentObject(disruptionManager)
                             .tint(accentColorManager.selectedAccentColor)
                             .accentColor(accentColorManager.selectedAccentColor)
+                    } else {
+                        ProgressView("Chargement de l'itinéraire...")
+                            .progressViewStyle(CircularProgressViewStyle())
+                            .foregroundStyle(.primary)
                     }
                 }
                 .fullScreenCover(isPresented: $showStopSheet) {
