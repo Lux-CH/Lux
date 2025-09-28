@@ -103,7 +103,8 @@ struct SettingsView: View {
     private var shortcutsCard: some View {
         SettingsCard {
             Section {
-                let plural = shortcutManager.shortcuts.count > 1 ? "s" : ""
+                let count = shortcutManager?.shortcuts.count ?? 0
+                let plural = count > 1 ? "s" : ""
                 NavigationLink(destination: ShortcutsListView()) {
                     SettingsRow(
                         icon: "list.star",
