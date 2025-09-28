@@ -1538,6 +1538,16 @@
         }
       }
     },
+    "Course" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Run"
+          }
+        }
+      }
+    },
     "Courte" : {
       "localizations" : {
         "en" : {
@@ -2160,16 +2170,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cold"
-          }
-        }
-      }
-    },
-    "Fulgurant" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Blazing"
           }
         }
       }
@@ -4160,6 +4160,16 @@
         }
       }
     },
+    "Sprint" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sprint"
+          }
+        }
+      }
+    },
     "Standard" : {
       "localizations" : {
         "en" : {
@@ -4646,16 +4656,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Empty"
-          }
-        }
-      }
-    },
-    "Vif" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Brisk"
           }
         }
       }
