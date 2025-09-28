@@ -89,7 +89,7 @@ class CalendarManager: ObservableObject {
         
         switch uploadResult {
         case .success(let identifier):
-            event.url = URL(string: "https://lux.cclerc.ch/share#\(identifier)")
+            event.url = URL(string: "https://lux.cclerc.ch/share.html#\(identifier)")
         case .failure:
             print("error while uploading !")
         }
