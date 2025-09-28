@@ -145,6 +145,7 @@ struct MainNavigationView: View {
                                             }
                                             .sheet(isPresented: $showSettings) {
                                                 SettingsView()
+                                                    .environmentObject(shortcutManager)
                                             }
                                             .sheet(isPresented: $showShortcutsSettings) {
                                                 NavigationStack {
