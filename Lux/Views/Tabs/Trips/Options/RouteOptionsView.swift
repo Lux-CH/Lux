@@ -686,9 +686,9 @@ struct PedestrianSpeedSelector: View {
         }
     }
     
-    private func formatSpeedInKmh(_ speedInMps: Double) -> String {
-        let kmh = speedInMps * 3.6
-        return String(format: "%.1f km/h", kmh)
+    private func formatSpeedInKmh(_ speed: Double) -> String {
+        let kmh = ceil(speed * 3.6)
+        return String(format: "%.0f km/h", kmh)
     }
     
     var body: some View {
@@ -712,10 +712,17 @@ struct PedestrianSpeedSelector: View {
                                 .foregroundColor(selectedSpeed == speed ? .white : .primary)
                         }
                         
-                        Text(getSpeedDescription(speed))
-                            .font(.system(size: 11, weight: selectedSpeed == speed ? .semibold : .medium))
-                            .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor : .secondary)
-                            .multilineTextAlignment(.center)
+                        VStack(spacing: 2) {
+                            Text(getSpeedDescription(speed))
+                                .font(.system(size: 11, weight: selectedSpeed == speed ? .semibold : .medium))
+                                .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor : .secondary)
+                                .multilineTextAlignment(.center)
+                            
+                            Text(formatSpeedInKmh(speed))
+                                .font(.system(size: 9, weight: .regular))
+                                .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor.opacity(0.8) : Color(.tertiaryLabel))
+                                .multilineTextAlignment(.center)
+                        }
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 8)
