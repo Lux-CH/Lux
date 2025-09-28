@@ -93,7 +93,7 @@ struct ShareButtonView: View {
                 
                 switch result {
                 case .success(let identifier):
-                    uploadedURL = "https://lux.cclerc.ch/share#\(identifier)"
+                    uploadedURL = "https://lux.cclerc.ch/share.html#\(identifier)"
                     showingShareSheet = true
                 case .failure(let error):
                     print("upload failed !! \(error)")
