@@ -1298,6 +1298,16 @@
         }
       }
     },
+    "Choisissez votre rythme de marche habituel pour des estimations plus précises" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose your usual walking pace for more accurate estimates"
+          }
+        }
+      }
+    },
     "Chosissez la mode d'affichage de l'app (clair, sombre, auto..)" : {
       "localizations" : {
         "en" : {
@@ -2154,6 +2164,16 @@
         }
       }
     },
+    "Fulgurant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blazing"
+          }
+        }
+      }
+    },
     "Gérer les raccourcis" : {
       "localizations" : {
         "en" : {
@@ -2610,6 +2630,16 @@
         }
       }
     },
+    "Lent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Slow"
+          }
+        }
+      }
+    },
     "Les arrêts sont représentés par l'icône %@" : {
       "localizations" : {
         "en" : {
@@ -3061,6 +3091,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Maximum number of transfers"
+          }
+        }
+      }
+    },
+    "Normal" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Normal"
           }
         }
       }
@@ -3630,6 +3670,16 @@
         }
       }
     },
+    "Rapide" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fast"
+          }
+        }
+      }
+    },
     "Rapport en cours..." : {
       "localizations" : {
         "en" : {
@@ -3906,6 +3956,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SBB CFF Red"
+          }
+        }
+      }
+    },
+    "Rythme de marche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking pace"
           }
         }
       }
@@ -4590,12 +4650,32 @@
         }
       }
     },
+    "Vif" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brisk"
+          }
+        }
+      }
+    },
     "Violet SCNF" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "SNCF Purple"
+          }
+        }
+      }
+    },
+    "Vitesse de marche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking speed"
           }
         }
       }
