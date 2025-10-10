@@ -1724,6 +1724,16 @@
         }
       }
     },
+    "Désactiver cette option peut faire gagner du temps lors du chargement des itinéraires." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disabling this option can make you win some time when loading itineraries."
+          }
+        }
+      }
+    },
     "Destination" : {
       "localizations" : {
         "en" : {
@@ -3131,6 +3141,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obtain the best itineraries from your position"
+          }
+        }
+      }
+    },
+    "Obtenir les instructions de marche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Obtain walking directions"
           }
         }
       }
