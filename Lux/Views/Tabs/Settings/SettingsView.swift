@@ -268,6 +268,12 @@ struct SettingsView: View {
                                 subtitle: String(localized: "Consultez et partagez des informations en temps réel sur les transports."),
                                 isOn: $settings.crowdbackAllowed
                             )
+                            SettingsToggle(
+                                icon: "figure.walk",
+                                title: String(localized: "Obtenir les instructions de marche"),
+                                subtitle: String(localized: "Désactiver cette option peut faire gagner du temps lors du chargement des itinéraires."),
+                                isOn: $settings.fetchWalkingDirectionsUsingMKDirections
+                            )
                             SettingsPicker(
                                 icon: { if #available(iOS 17.2, *) { "square.and.arrow.up.badge.clock" } else { "square.and.arrow.up" } }(),
                                 title: String(localized: "Durée de partage d'itinéraire"),
