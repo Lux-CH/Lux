@@ -1,0 +1,46 @@
+{
+  "fill" : {
+    "linear-gradient" : [
+      "display-p3:0.86426,0.37207,0.58301,1.00000",
+      "display-p3:0.78027,0.16553,0.36816,1.00000"
+    ]
+  },
+  "groups" : [
+    {
+      "layers" : [
+        {
+          "blend-mode-specializations" : [
+            {
+              "appearance" : "tinted",
+              "value" : "normal"
+            }
+          ],
+          "hidden" : false,
+          "image-name" : "idk 5.svg",
+          "name" : "Icon",
+          "position" : {
+            "scale" : 1,
+            "translation-in-points" : [
+              64.7,
+              16
+            ]
+          }
+        }
+      ],
+      "shadow" : {
+        "kind" : "neutral",
+        "opacity" : 0.5
+      },
+      "translucency" : {
+        "enabled" : true,
+        "value" : 0.5
+      }
+    }
+  ],
+  "supported-platforms" : {
+    "circles" : [
+      "watchOS"
+    ],
+    "squares" : "shared"
+  }
+}
