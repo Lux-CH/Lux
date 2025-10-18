@@ -550,6 +550,16 @@
         }
       }
     },
+    "Ajouter cette ligne" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add this line"
+          }
+        }
+      }
+    },
     "Ajouter des raccourcis" : {
       "localizations" : {
         "en" : {
@@ -1964,12 +1974,12 @@
         }
       }
     },
-    "Entrez le numéro de ligne que vous souhaitez ajouter aux favoris" : {
+    "Entrez le numéro de la ligne à ajouter aux favoris" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enter the line that you want to add in your favorites"
+            "value" : "Enter the line that you want to add in your favorites bellow"
           }
         }
       }

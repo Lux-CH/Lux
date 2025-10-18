@@ -217,6 +217,11 @@ struct ShortcutEditorView: View {
                         Image(systemName: "plus.circle.fill")
                             .font(.title)
                             .foregroundStyle(accentColorManager.selectedAccentColor)
+                            .onTapGesture {
+                                if canSave {
+                                    saveShortcut()
+                                }
+                            }
                     }
                 }
                 .opacity(showContent ? 1 : 0)

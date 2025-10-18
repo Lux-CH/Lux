@@ -335,6 +335,7 @@ struct EditableLinePill: View {
 struct AddLineScoreView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var lineScoreManager = LineScoreManager.shared
+    @ObservedObject private var accentColorManager = AccentColorManager.shared
 
     @State private var lineNumber = ""
     @State private var selectedMode: TransportationMode = .bus
@@ -349,49 +350,67 @@ struct AddLineScoreView: View {
                 Spacer()
                 
                 VStack(spacing: 16) {
-                    Image(systemName: "plus.circle.fill")
-                        .font(.system(size: 50))
-                        .foregroundColor(.accentColor)
-                    
                     Text("Ajouter une ligne")
                         .font(.title2)
                         .fontWeight(.bold)
                     
-                    Text("Entrez le numéro de ligne que vous souhaitez ajouter aux favoris")
+                    Text("Entrez le numéro de la ligne à ajouter aux favoris")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                 }
+                .padding(.top, 20)
                 
-                VStack(spacing: 12) {
-                    Text("Numéro de ligne")
-                        .font(.headline)
-                        .foregroundColor(.primary)
-                    
-                    EditableLinePill(
-                        lineNumber: $lineNumber,
-                        mode: selectedMode
-                    )
+                ModernCard(style: .normal) {
+                    VStack(spacing: 20) {
+                        VStack(spacing: 8) {
+                            Text("Numéro de ligne")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                                .textCase(.uppercase)
+                            
+                            EditableLinePill(
+                                lineNumber: $lineNumber,
+                                mode: selectedMode
+                            )
+                        }
+                    }
+                    .padding(.vertical, 10)
+                    .frame(maxWidth: .infinity)
                 }
+                .padding(.horizontal)
                 
                 Spacer()
+                
+                Button {
+                    addLine()
+                } label: {
+                    ModernCard(style: .accent, optionalColor: accentColorManager.selectedAccentColor) {
+                        HStack(spacing: 12) {
+                            Spacer()
+                            Image(systemName: "plus")
+                                .font(.headline.weight(.medium))
+                                .foregroundStyle(accentColorManager.selectedAccentColor)
+                            
+                            Text("Ajouter cette ligne")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(accentColorManager.selectedAccentColor)
+                            Spacer()
+                        }
+                    }
+                }
+                .disabled(!isValidLine)
+                .padding(.horizontal)
+                .padding(.bottom)
             }
-            .padding()
+            .background(Color(.systemGroupedBackground))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Annuler") {
                         dismiss()
                     }
-                }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Ajouter") {
-                        addLine()
-                    }
-                    .disabled(!isValidLine)
-                    .fontWeight(.semibold)
                 }
             }
         }
