@@ -132,7 +132,7 @@ struct CustomSegmentedPicker: View {
         .padding(2)
         .overlay(
             Capsule(style: .continuous)
-                .stroke(Color.accentColor.opacity(0.35), lineWidth: colorScheme == .dark ? 0.5 : 0.75)
+                .stroke(Color.accentColor.opacity(0.2), lineWidth: colorScheme == .dark ? 0.5 : 0.75)
         )
         .frame(height: 28)
     }
