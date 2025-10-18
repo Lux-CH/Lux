@@ -16,6 +16,7 @@ struct SettingsView: View {
     @ObservedObject var accentColorManager = AccentColorManager.shared
     @State private var showWelcome: Bool = false
     @State private var displayMode: Int = 0
+    @State private var debugCount: Int = 0
     
     @State private var showSafari = false
     @State private var safariURL: URL?
@@ -310,17 +311,17 @@ struct SettingsView: View {
                                 .onTapGesture {
                                     openInSafari(URL(string: "https://www.tpg.ch/sites/default/files/2025-08/Geneve%20TPG%20Plan%20Schematique%202025-08-18.pdf")!)
                                 }
-#if DEBUG
-                                NavigationLink(destination: StatsView()) {
-                                    SettingsRow(
-                                        icon: "chart.bar.doc.horizontal",
-                                        title: "Statistiques",
-                                        subtitle: "Consultez les statistiques de votre usage de l'application (dev only)",
-                                        showChevron: true
-                                    )
+                                if settings.showDebug {
+                                    NavigationLink(destination: StatsView()) {
+                                        SettingsRow(
+                                            icon: "chart.bar.doc.horizontal",
+                                            title: "Statistiques",
+                                            subtitle: "Consultez les statistiques de votre usage de l'application (dev only)",
+                                            showChevron: true
+                                        )
+                                    }
+                                    .buttonStyle(.plain)
                                 }
-                                .buttonStyle(.plain)
-#endif
                             }  header: {
                                 SectionHeader(
                                     icon: "flask.fill",
@@ -389,10 +390,16 @@ struct SettingsView: View {
                 SettingsRow(
                     icon: "app.badge",
                     title: String(localized: "Version"),
-                    // MARK: CHANGE THAT WHEN IN PROD
                     subtitle: "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? String(localized: "Inconnue"))",
                     showChevron: false
                 )
+                .onTapGesture {
+                    if debugCount == 5 {
+                        settings.showDebug.toggle()
+                        debugCount = 0
+                    }
+                    debugCount+=1
+                }
             } header: {
                 SectionHeader(
                     icon: "info.circle.fill",

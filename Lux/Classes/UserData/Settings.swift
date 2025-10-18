@@ -32,4 +32,5 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("luxTripShareExpiryTimeH") var luxTripShareExpiryTimeH: Int = 24
     @AppStorage("crowdbackAllowed") var crowdbackAllowed: Bool = true
     @AppStorage("swisspassOnHome") var swisspassOnHome: Bool = false
+    @AppStorage("showDebug") var showDebug: Bool = false
 }
