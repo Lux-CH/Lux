@@ -12,6 +12,7 @@ import LuxCom
 enum URLHandlerResult {
     case itinerary(Itinerary)
     case stopDetail(stopId: String, name: String)
+    case stopPlace(name: String, stopId: String)
     case confirmationRequired(URL)
     case error(URLHandlerError)
 }
@@ -47,6 +48,10 @@ struct URLHandler {
             return .confirmationRequired(url)
         }
         
+        if (url.scheme == "lux" && url.host == "place"), let placeDetail = parsePlaceDetailURL(url) {
+            return .stopPlace(name: placeDetail.name, stopId: placeDetail.stopId)
+        }
+        
         if let stopDetail = parseStopDetailURL(url) {
             return .stopDetail(stopId: stopDetail.stopId, name: stopDetail.name)
         }
@@ -75,6 +80,29 @@ struct URLHandler {
         }
         
         return (stopId: components[0], name: decodedName)
+    }
+    
+    private static func parsePlaceDetailURL(_ url: URL) -> (stopId: String, name: String)? {
+        guard let urlStr = url.absoluteString.components(separatedBy: "://").last else {
+            return nil
+        }
+        
+        let cleanedStr = urlStr.replacingOccurrences(of: "place/", with: "")
+        
+        guard let lastHyphenIndex = cleanedStr.lastIndex(of: "-") else {
+            return nil
+        }
+        
+        let encodedName = cleanedStr[..<lastHyphenIndex]
+        let stopIdSuffix = cleanedStr[cleanedStr.index(after: lastHyphenIndex)...]
+        
+        guard let decodedName = encodedName.removingPercentEncoding,
+              !decodedName.isEmpty,
+              !stopIdSuffix.isEmpty else {
+            return nil
+        }
+        
+        return (stopId: "ch_Parent\(stopIdSuffix)", name: decodedName)
     }
     
     private static func handleRemoteItinerary(_ url: URL) async -> URLHandlerResult {
