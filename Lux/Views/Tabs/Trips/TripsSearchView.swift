@@ -46,7 +46,7 @@ struct TripsSearchView: View {
                         .ignoresSafeArea(.keyboard)
                         
                         TripsSearchContentView(viewModel: viewModel)
-                        .offset(y: max(0, dragOffset))
+                        .offset(y: max(0, -(dragOffset)))
                         .animation(.interactiveSpring(), value: dragOffset)
                         .gesture(dragGesture)
                         .ignoresSafeArea(.keyboard)
@@ -86,10 +86,12 @@ struct TripsSearchView: View {
     var dragGesture: some Gesture {
         DragGesture(minimumDistance: 0)
             .onChanged { value in
-                dragOffset = max(0, value.translation.height)
+                withAnimation(.interactiveSpring(response: 0.1, dampingFraction: 1.0)) {
+                    dragOffset = min(0, value.translation.height)
+                }
             }
             .onEnded { value in
-                if value.translation.height > 200 {
+                if value.translation.height < -50 {
                     dismiss()
                 } else {
                     dragOffset = 0
