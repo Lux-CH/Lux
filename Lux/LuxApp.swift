@@ -125,14 +125,23 @@ struct LuxApp: App {
             
         case .stopPlace(let name, let stopId):
             sharedStopDetail = (stopId, name)
+            showItinerarySheet = false
+            showTripPlaceSheet = false
+            showStopSheet = false
             showTripPlaceSheet = true
             
         case .stopDetail(let stopId, let name):
             sharedStopDetail = (stopId, name)
+            showItinerarySheet = false
+            showTripPlaceSheet = false
+            showStopSheet = false
             showStopSheet = true
             
         case .itinerary(let itinerary):
             sharedItinerary = itinerary
+            showItinerarySheet = false
+            showTripPlaceSheet = false
+            showStopSheet = false
             showItinerarySheet = true
             
         case .error(let error):
@@ -148,6 +157,9 @@ struct LuxApp: App {
         switch result {
         case .itinerary(let itinerary):
             sharedItinerary = itinerary
+            showItinerarySheet = false
+            showTripPlaceSheet = false
+            showStopSheet = false
             showItinerarySheet = true
             
         case .error(let error):
