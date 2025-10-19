@@ -17,6 +17,7 @@ struct LuxApp: App {
     
     @State private var showItinerarySheet: Bool = false
     @State private var showStopSheet: Bool = false
+    @State private var showTripPlaceSheet: Bool = false
     @State private var showConfirmation: Bool = false
     @State private var showItineraryProcessingError: Bool = false
     @State private var pendingURL: URL?
@@ -78,6 +79,19 @@ struct LuxApp: App {
                         .tint(accentColorManager.selectedAccentColor)
                         .accentColor(accentColorManager.selectedAccentColor)
                 }
+                .fullScreenCover(isPresented: $showTripPlaceSheet) {
+                    if let place = sharedStopDetail {
+                        TripsSearchView(
+                            initialSearchResult: SearchResult(type: .stop, tokens: [], name: place.1, id: place.0, lat: 0.0, lon: 0.0, areas: [], score: 0.0),
+                            initialTargetField: .to
+                        )
+                        .environmentObject(locationManager)
+                        .environmentObject(shortcutManager)
+                        .environmentObject(disruptionManager)
+                        .tint(accentColorManager.selectedAccentColor)
+                        .accentColor(accentColorManager.selectedAccentColor)
+                    }
+                }
                 .alert("Êtes-vous sûr de vouloir ouvrir cet itinéraire ?", isPresented: $showConfirmation) {
                     Button("Ouvrir") {
                         if let url = pendingURL {
@@ -108,6 +122,10 @@ struct LuxApp: App {
         case .confirmationRequired(let url):
             pendingURL = url
             showConfirmation = true
+            
+        case .stopPlace(let name, let stopId):
+            sharedStopDetail = (stopId, name)
+            showTripPlaceSheet = true
             
         case .stopDetail(let stopId, let name):
             sharedStopDetail = (stopId, name)
