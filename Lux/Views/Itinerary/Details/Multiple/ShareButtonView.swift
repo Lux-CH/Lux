@@ -63,6 +63,7 @@ struct ShareButtonView: View {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.headline)
                                 .foregroundColor(.accentColor)
+                                .offset(y: -1)
                         }
                     }
                     .frame(width: 45, height: 45)
