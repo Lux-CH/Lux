@@ -11,14 +11,15 @@ import LuxCom
 
 struct ItineraryDetailSheet: View {
     let viewModel: ItineraryViewModel
+    let itinerarySharer: ItinerarySharer
     let isSingle: Bool
     
     var body: some View {
         if let itinerary = viewModel.itinerary {
             if isSingle {
-                IndividualItineraryDetailView(itinerary: itinerary, isMultipleLeg: false)
+                IndividualItineraryDetailView(itinerary: itinerary, isMultipleLeg: false, itineraarySharer: itinerarySharer)
             } else {
-                MultipleItineraryDetailView(itinerary: itinerary, viewModel: viewModel)
+                MultipleItineraryDetailView(itinerary: itinerary, viewModel: viewModel, itineraarySharer: itinerarySharer)
             }
         } else {
             ContentUnavailableView {

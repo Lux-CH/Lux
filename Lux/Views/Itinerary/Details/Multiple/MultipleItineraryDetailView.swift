@@ -15,6 +15,7 @@ struct MultipleItineraryDetailView: View {
     @State private var showingTightConnectionAlert = false
     @State private var selectedTightConnection: (from: String, to: String)?
     let viewModel: ItineraryViewModel
+    let itineraarySharer: ItinerarySharer
     
     private func calculateUpcomingStops(leg: Leg) -> [Place] {
         guard let intermediateStops = leg.intermediateStops else { return [] }
@@ -350,7 +351,6 @@ struct MultipleItineraryDetailView: View {
                 }
                 .padding(.bottom, 20)
                 
-                let itineraarySharer = ItinerarySharer()
                 ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
             }
             .offset(y: 7.5)
