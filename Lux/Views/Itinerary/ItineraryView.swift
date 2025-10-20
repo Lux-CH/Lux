@@ -213,6 +213,15 @@ struct ItineraryView: View {
                     }
                     .padding(.leading, 16)
                 }
+                .overlay(alignment: .trailing) {
+                    VStack(spacing: 12) {
+                        if let itinerary = viewModel.itinerary {
+                            ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer, compact: true)
+                        }
+                        Spacer()
+                    }
+                    .padding(.trailing, 16)
+                }
                 // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
                 .sheet(isPresented: $showDetails) {
                     ItineraryDetailSheet(viewModel: viewModel, itinerarySharer: itineraarySharer, isSingle: isSingle)

@@ -12,6 +12,7 @@ import LuxCom
 struct ShareButtonView: View {
     let itinerary: Itinerary
     let itineraarySharer: ItinerarySharer
+    let compact: Bool
     
     @State private var showingShareDialog = false
     @State private var renderedImage: Image?
@@ -21,50 +22,98 @@ struct ShareButtonView: View {
     @State private var showingShareSheet = false
     @State private var showingCalendarAlert = false
     @State private var calendarAlertMessage = ""
+    @State private var showCheckmark = false
     @Environment(\.displayScale) var displayScale
     
     var body: some View {
-        Button(action: {
-            showingShareDialog = true
-        }) {
-            HStack {
-                if isUploading || isSavingToCalendar {
-                    ProgressView()
-                        .scaleEffect(0.8)
-                } else {
-                    Image(systemName: "square.and.arrow.up")
+        Group {
+            if compact {
+                Menu {
+                    Button {
+                        uploadItinerary()
+                    } label: {
+                        Label("Partager l'entiereté", systemImage: "link")
+                    }
+                    
+                    if let image = renderedImage {
+                        ShareLink(item: image, preview: SharePreview("Aperçu de l'itinéraire", image: image)) {
+                            Label("Partager l'aperçu en tant qu'image", systemImage: "photo")
+                        }
+                    }
+                    
+                    Button {
+                        saveToCalendar()
+                    } label: {
+                        Label("Enregistrer dans Calendrier", systemImage: "calendar.badge.plus")
+                    }
+                } label: {
+                    HStack {
+                        if isUploading || isSavingToCalendar {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else if showCheckmark {
+                            Image(systemName: "checkmark")
+                                .font(.headline)
+                                .foregroundColor(.green)
+                        } else {
+                            Image(systemName: "square.and.arrow.up")
+                                .font(.headline)
+                                .foregroundColor(.accentColor)
+                        }
+                    }
+                    .frame(width: 45, height: 45)
+                    .background(.ultraThickMaterial)
+                    .clipShape(Circle())
+                    .overlay(
+                        Circle()
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                    )
+                    .shadow(radius: 2)
                 }
-                Text(isUploading ? "Partage..." : isSavingToCalendar ? "Enregistrement..." : "Partager")
+                .disabled(isUploading || isSavingToCalendar)
+            } else {
+                Button(action: {
+                    showingShareDialog = true
+                }) {
+                    HStack {
+                        if isUploading || isSavingToCalendar {
+                            ProgressView()
+                                .scaleEffect(0.8)
+                        } else {
+                            Image(systemName: "square.and.arrow.up")
+                        }
+                        Text(isUploading ? "Partage..." : isSavingToCalendar ? "Enregistrement..." : "Partager")
+                    }
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundStyle(.primary)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 10)
+                    .background(
+                        Capsule(style: .continuous)
+                            .fill(.ultraThinMaterial)
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
+                    )
+                }
+                .disabled(isUploading || isSavingToCalendar)
+                .confirmationDialog("Partager l'itinéraire", isPresented: $showingShareDialog, titleVisibility: .visible) {
+                    Button("Partager l'entiereté") {
+                        uploadItinerary()
+                    }
+                    
+                    if let image = renderedImage {
+                        ShareLink("Partager l'aperçu en tant qu'image", item: image, preview: SharePreview("Aperçu de l'itinéraire", image: image))
+                    }
+                    
+                    Button("Enregistrer dans Calendrier") {
+                        saveToCalendar()
+                    }
+                    
+                    Button("Annuler", role: .cancel) { }
+                } message: {
+                    Text("Choisissez comment vous souhaitez partager cet itinéraire.\nLe partage de l'ensemble de l'itinéraire requiert que son receveur ait l'app.")
+                }
             }
-            .font(.system(size: 16, weight: .medium))
-            .foregroundStyle(.primary)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(.ultraThinMaterial)
-                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                    .shadow(color: .black.opacity(0.1), radius: 2, x: 0, y: 1)
-            )
-        }
-        .disabled(isUploading || isSavingToCalendar)
-        .confirmationDialog("Partager l'itinéraire", isPresented: $showingShareDialog, titleVisibility: .visible) {
-            Button("Partager l'entiereté") {
-                uploadItinerary()
-            }
-            
-            if let image = renderedImage {
-                ShareLink("Partager l'aperçu en tant qu'image", item: image, preview: SharePreview("Aperçu de l'itinéraire", image: image))
-            }
-            
-            
-            Button("Enregistrer dans Calendrier") {
-                saveToCalendar()
-            }
-            
-            Button("Annuler", role: .cancel) { }
-        } message: {
-            Text("Choisissez comment vous souhaitez partager cet itinéraire.\nLe partage de l'ensemble de l'itinéraire requiert que son receveur ait l'app.")
         }
         .sheet(isPresented: $showingShareSheet) {
             if let url = uploadedURL {
@@ -113,8 +162,13 @@ struct ShareButtonView: View {
                 if !granted {
                     await MainActor.run {
                         isSavingToCalendar = false
-                        calendarAlertMessage = String(localized: "L'accès au calendrier est requis pour enregistrer l'itinéraire. Veuillez autoriser l'accès dans les Réglages.")
-                        showingCalendarAlert = true
+                        if compact {
+                            calendarAlertMessage = String(localized: "L'accès au calendrier est requis pour enregistrer l'itinéraire. Veuillez autoriser l'accès dans les Réglages.")
+                            showingCalendarAlert = true
+                        } else {
+                            calendarAlertMessage = String(localized: "L'accès au calendrier est requis pour enregistrer l'itinéraire. Veuillez autoriser l'accès dans les Réglages.")
+                            showingCalendarAlert = true
+                        }
                     }
                     return
                 }
@@ -127,8 +181,18 @@ struct ShareButtonView: View {
                 
                 switch result {
                 case .success(_):
-                    calendarAlertMessage = String(localized: "L'itinéraire a bien été enregistré dans votre calendrier !")
-                    showingCalendarAlert = true
+                    if compact {
+                        showCheckmark = true
+                        Task {
+                            try? await Task.sleep(nanoseconds: 2_000_000_000)
+                            withAnimation {
+                                showCheckmark = false
+                            }
+                        }
+                    } else {
+                        calendarAlertMessage = String(localized: "L'itinéraire a bien été enregistré dans votre calendrier !")
+                        showingCalendarAlert = true
+                    }
                 case .failure(let error):
                     calendarAlertMessage = String(localized: "Erreur lors de l'enregistrement : \(error.localizedDescription)")
                     showingCalendarAlert = true

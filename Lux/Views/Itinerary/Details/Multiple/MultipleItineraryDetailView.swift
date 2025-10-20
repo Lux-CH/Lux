@@ -351,7 +351,7 @@ struct MultipleItineraryDetailView: View {
                 }
                 .padding(.bottom, 20)
                 
-                ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
+                ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer, compact: false)
             }
             .offset(y: 7.5)
         }
