@@ -117,11 +117,6 @@ struct ItineraryView: View {
                     }
                 }
                 .mapStyle(.standard(pointsOfInterest: .excludingAll))
-                .mapControls {
-//                    MapScaleView()
-                    MapCompass()
-                    
-                }
                 .safeAreaInset(edge: .bottom) {
                     Spacer().frame(height: isSingle ? detents.1 : 165)
                 }
