@@ -32,6 +32,7 @@ struct ItineraryView: View {
     @State var otherItineraries: [TripOption] = []
     @State private var isSingle: Bool
     let fromNearby: Bool
+    let itineraarySharer = ItinerarySharer()
     
     @State private var trackingMode: MapTrackingMode = .none
 

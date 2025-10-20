@@ -18,8 +18,9 @@ struct IndividualItineraryDetailView: View {
     
     private let upcomingStops: [Place]
     private let nextStop: Place?
+    let itineraarySharer: ItinerarySharer
     
-    init(itinerary: Itinerary, isMultipleLeg: Bool) {
+    init(itinerary: Itinerary, isMultipleLeg: Bool, itineraarySharer: ItinerarySharer) {
         self.itinerary = itinerary
         self.mainLeg = itinerary.legs.first
         self.legColor = mainLeg.flatMap { getLegColor($0) } ?? .black
@@ -31,6 +32,7 @@ struct IndividualItineraryDetailView: View {
             self.nextStop = nil
         }
         self.isMultipleLeg = isMultipleLeg
+        self.itineraarySharer = itineraarySharer
     }
     
     private var backgroundColor: Color {
@@ -105,7 +107,6 @@ struct IndividualItineraryDetailView: View {
                                 .padding(.horizontal, 20)
                                 .padding(.bottom, 10)
                                 .frame(minHeight: 1)
-                            let itineraarySharer = ItinerarySharer()
                             ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
                         }
                     }
