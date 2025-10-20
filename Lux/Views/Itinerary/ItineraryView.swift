@@ -208,19 +208,19 @@ struct ItineraryView: View {
                                     .shadow(radius: 2)
                             }
                         }
-
+                        
                         Spacer()
                     }
                     .padding(.leading, 16)
-                    // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
-                    .sheet(isPresented: $showDetails) {
-                        ItineraryDetailSheet(viewModel: viewModel, isSingle: isSingle)
-                            .presentationDetents([isSingle ? .fraction(detents.0) : .fraction(0.225), .medium, .large])
-                            .presentationDragIndicator(.visible)
-                            .presentationCornerRadius(38)
-                            .presentationBackgroundInteraction(.enabled)
-                            .interactiveDismissDisabled()
-                    }
+                }
+                // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
+                .sheet(isPresented: $showDetails) {
+                    ItineraryDetailSheet(viewModel: viewModel, itinerarySharer: itineraarySharer, isSingle: isSingle)
+                        .presentationDetents([isSingle ? .fraction(detents.0) : .fraction(0.225), .medium, .large])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(38)
+                        .presentationBackgroundInteraction(.enabled)
+                        .interactiveDismissDisabled()
                 }
             }
         }
