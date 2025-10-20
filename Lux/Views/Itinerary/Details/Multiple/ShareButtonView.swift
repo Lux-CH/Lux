@@ -16,10 +16,12 @@ struct ShareButtonView: View {
     
     @State private var showingShareDialog = false
     @State private var renderedImage: Image?
+    @State private var renderedUIImage: UIImage?
     @State private var isUploading = false
     @State private var isSavingToCalendar = false
     @State private var uploadedURL: String?
     @State private var showingShareSheet = false
+    @State private var showingImageShareSheet = false
     @State private var showingCalendarAlert = false
     @State private var calendarAlertMessage = ""
     @State private var showCheckmark = false
@@ -35,8 +37,10 @@ struct ShareButtonView: View {
                         Label("Partager l'entiereté", systemImage: "link")
                     }
                     
-                    if let image = renderedImage {
-                        ShareLink(item: image, preview: SharePreview("Aperçu de l'itinéraire", image: image)) {
+                    if renderedUIImage != nil {
+                        Button {
+                            showingImageShareSheet = true
+                        } label: {
                             Label("Partager l'aperçu en tant qu'image", systemImage: "photo")
                         }
                     }
@@ -118,6 +122,11 @@ struct ShareButtonView: View {
         .sheet(isPresented: $showingShareSheet) {
             if let url = uploadedURL {
                 ShareSheet(items: [url])
+            }
+        }
+        .sheet(isPresented: $showingImageShareSheet) {
+            if let uiImage = renderedUIImage {
+                ShareSheet(items: [uiImage])
             }
         }
         .alert("Calendrier", isPresented: $showingCalendarAlert) {
@@ -209,6 +218,7 @@ struct ShareButtonView: View {
         renderer.scale = displayScale
         
         if let uiImage = renderer.uiImage {
+            renderedUIImage = uiImage
             renderedImage = Image(uiImage: uiImage)
         }
     }
