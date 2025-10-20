@@ -107,7 +107,7 @@ struct IndividualItineraryDetailView: View {
                                 .padding(.horizontal, 20)
                                 .padding(.bottom, 10)
                                 .frame(minHeight: 1)
-                            ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer)
+                            ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer, compact: false)
                         }
                     }
                 }
