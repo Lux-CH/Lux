@@ -520,6 +520,16 @@
         }
       }
     },
+    "Afin de partager un lieu via Lux, vous devez entrer son nom. Le lieu sera partagé pour l'arrêt ouvert." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To share a place via Lux, you need to input its name. The place will be shared for the opened stop."
+          }
+        }
+      }
+    },
     "Aide" : {
       "localizations" : {
         "en" : {
@@ -1488,6 +1498,16 @@
         }
       }
     },
+    "Copier le lien dans la presse-papier" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Copy link in clipboard"
+          }
+        }
+      }
+    },
     "Correct" : {
       "localizations" : {
         "en" : {
@@ -1970,6 +1990,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter at least 3 characters to search"
+          }
+        }
+      }
+    },
+    "Entrez le nom du lieu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter place name"
           }
         }
       }
