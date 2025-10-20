@@ -34,6 +34,20 @@ struct StopHeaderView: View {
                             }
                         }
                     }
+                    .safeAreaInset(edge: .trailing) {
+                        Spacer().frame(height: 15)
+                    }
+                    .mask(
+                        HStack(spacing: 0) {
+                            Rectangle()
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color.black, Color.clear]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            .frame(width: 30)
+                        }
+                    )
                 }
             }
             .onAppear {
