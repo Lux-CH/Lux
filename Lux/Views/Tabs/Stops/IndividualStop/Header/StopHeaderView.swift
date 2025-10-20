@@ -12,6 +12,9 @@ struct StopHeaderView: View {
     @State var stop: SearchResult
     @State private var showTripSearch: Bool = false
     @State private var connections: [String] = []
+    @State private var showAlert: Bool = false
+    @State private var name = ""
+    @ObservedObject var settings = Settings.shared
     
     var body: some View {
         HStack {
@@ -40,6 +43,22 @@ struct StopHeaderView: View {
             }
             Spacer()
             HStack {
+                if settings.showDebug {
+                    Button {
+                        showAlert = true
+                    } label: {
+                        Image(systemName: "link")
+                            .foregroundColor(Color.accentColor)
+                            .font(.system(size: 13.3))
+                            .frame(width: 40.5, height: 35)
+                            .background(Color(.secondarySystemFill).opacity(0.5))
+                            .clipShape(Circle())
+                            .overlay(
+                                Circle()
+                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            )
+                    }
+                }
                 Button {
                     showTripSearch.toggle()
                 } label: {
@@ -63,6 +82,17 @@ struct StopHeaderView: View {
             )
             .toolbarBackground(.hidden, for: .navigationBar)
             .navigationBarBackButtonHidden(true)
+        }
+        .alert("Entrez le nom du lieu", isPresented: $showAlert) {
+            TextField("", text: $name)
+            Button("Copier le lien dans la presse-papier", action: {
+                if let encodedName = name.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed) {
+                    UIPasteboard.general.string = "https://lux.cclerc.ch/place.html#\(encodedName)-\(stop.id.replacingOccurrences(of: "ch_Parent", with: "").replacingOccurrences(of: "ch_", with: ""))"
+                }
+            })
+            Button("Annuler", role: .cancel) {}
+        } message: {
+            Text("Afin de partager un lieu via Lux, vous devez entrer son nom. Le lieu sera partagé pour l'arrêt ouvert.")
         }
     }
 }
