@@ -375,7 +375,6 @@ struct SettingsView: View {
                     }
                 }
                 
-                // Modified help row to use MailComposerView instead of mailto
                 SettingsRow(
                     icon: "questionmark.circle",
                     title: String(localized: "Aide"),
@@ -396,6 +395,7 @@ struct SettingsView: View {
                 .onTapGesture {
                     if debugCount == 5 {
                         settings.showDebug.toggle()
+                        HapticFeedback.notification(type: .warning)
                         debugCount = 0
                     }
                     debugCount+=1
