@@ -14,7 +14,7 @@ struct MaskedImageView: View {
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image(randomImageName.isEmpty ? "Mountain1" : randomImageName)
+                Image(randomImageName.isEmpty ? "Chambesy1" : randomImageName)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: geometry.size.width, height: geometry.size.height)
@@ -51,7 +51,7 @@ struct MaskedImageView: View {
     
     func getRandomStopHeaderImage() -> String {
         let stopHeaderImages = ["Mountain1", "Jet1", "Rive1", "Rive2", "Vignes1", "Vignes2", "Champel1", "Chambesy1", "Lancy1", "Rive3"]
-        return stopHeaderImages.randomElement() ?? "Mountain1"
+        return stopHeaderImages.randomElement() ?? "Chambesy1"
     }
 }
 
