@@ -246,15 +246,18 @@ struct WidgetStopSelectorView: View {
                     Text("Position actuelle")
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.primary)
+                        .multilineTextAlignment(.leading)
                     
                     if !isLocationAuthorized {
                         Text("Autorisation requise")
                             .font(.system(size: 14))
                             .foregroundColor(.orange)
+                            .multilineTextAlignment(.leading)
                     } else {
                         Text("Fréquemment mis à jour sur l'arrêt le plus proche")
                             .font(.system(size: 14))
                             .foregroundColor(.secondary)
+                            .multilineTextAlignment(.leading)
                     }
                 }
                 
