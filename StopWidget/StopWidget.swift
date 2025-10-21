@@ -234,6 +234,7 @@ struct StopWidgetEntryView: View {
                     Text("\(Image(systemName: "signpost.right")) \(placeName)")
                         .font(.subheadline)
                         .fontWeight(.bold)
+                        .truncationMode(.middle)
                 }
                 else {
                     Text("Départs")
