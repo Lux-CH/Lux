@@ -10,6 +10,7 @@ import LuxCom
 
 struct WidgetStopSelectorView: View {
     @StateObject private var viewModel = WidgetStopSearchViewModel()
+    @EnvironmentObject var locationManager: LocationManager
     @State private var searchQuery = ""
     @State private var selectedStopId: String?
     
@@ -27,6 +28,11 @@ struct WidgetStopSelectorView: View {
         }
     }
     
+    private var isLocationAuthorized: Bool {
+        locationManager.authorizationStatus == .authorizedWhenInUse ||
+        locationManager.authorizationStatus == .authorizedAlways
+    }
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -37,12 +43,12 @@ struct WidgetStopSelectorView: View {
                         Color(.systemGroupedBackground)
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                         
-                        if viewModel.showMinCharactersMessage {
-                            minCharactersMessage
+                        if viewModel.showMinCharactersMessage && searchQuery.isEmpty {
+                            contentWithCurrentLocation
                                 .frame(width: geometry.size.width)
                                 .transition(.opacity)
                         } else if viewModel.searchResults.isEmpty && !searchQuery.isEmpty {
-                            noResultsMessage
+                            noResultsWithCurrentLocation
                                 .frame(width: geometry.size.width)
                                 .transition(.opacity)
                         } else {
@@ -101,6 +107,11 @@ struct WidgetStopSelectorView: View {
     private var searchResultsList: some View {
         ScrollView {
             VStack(spacing: 0) {
+                currentLocationOption
+                
+                Divider()
+                    .padding(.leading)
+                
                 ForEach(uniqueSearchResults) { result in
                     Button {
                         saveSelection(result)
@@ -120,21 +131,183 @@ struct WidgetStopSelectorView: View {
         }
     }
     
+    private var contentWithCurrentLocation: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 0) {
+                    currentLocationOption
+                    
+                    Divider()
+                        .padding(.leading)
+                }
+            }
+            
+            VStack(spacing: 16) {
+                if let currentStopId = selectedStopId {
+                    if currentStopId == "current" {
+                        Image(systemName: "location.fill.viewfinder")
+                            .font(.system(size: 40))
+                            .foregroundColor(.secondary)
+                        Text("Position actuelle sélectionnée")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        Text("Le widget affichera l'arrêt le plus proche de votre position actuelle.\nCommencez à taper pour choisir un arrêt fixe.")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                            .fixedSize(horizontal: false, vertical: true)
+                    } else {
+                        Image(systemName: "signpost.right")
+                            .font(.system(size: 40))
+                            .foregroundColor(.secondary)
+                        Text("Arrêt sélectionné")
+                            .font(.headline)
+                            .foregroundColor(.primary)
+                        
+                        Text("Commencez à taper pour rechercher un autre arrêt.\n3 caractères minimum sont requis")
+                            .font(.subheadline)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                } else {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 40))
+                        .foregroundColor(.secondary)
+                    Text("Aucun arrêt sélectionné")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Text("Choisissez votre position actuelle ou commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                Spacer()
+            }
+            .padding(.top, 20)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .background(Color(.systemGroupedBackground))
+    }
+    
+    private var noResultsWithCurrentLocation: some View {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(spacing: 0) {
+                    currentLocationOption
+                    
+                    Divider()
+                        .padding(.leading)
+                }
+            }
+            
+            VStack(spacing: 12) {
+                Image(systemName: "questionmark")
+                    .font(.system(size: 30))
+                    .foregroundColor(.secondary)
+                
+                Text("Aucun résultat trouvé.")
+                    .multilineTextAlignment(.center)
+                    .foregroundColor(.secondary)
+            }
+            .padding(.top, 20)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .background(Color(.systemGroupedBackground))
+    }
+    
+    private var currentLocationOption: some View {
+        Button {
+            if isLocationAuthorized {
+                saveCurrentLocationSelection()
+            } else {
+                locationManager.requestLoc()
+            }
+        } label: {
+            HStack(spacing: 18) {
+                ZStack {
+                    Circle()
+                        .fill(Color.accentColor.opacity(0.15))
+                        .frame(width: 44, height: 44)
+                    
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 18))
+                        .foregroundColor(.accentColor)
+                        .symbolRenderingMode(.hierarchical)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Position actuelle")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundColor(.primary)
+                    
+                    if !isLocationAuthorized {
+                        Text("Autorisation requise")
+                            .font(.system(size: 14))
+                            .foregroundColor(.orange)
+                    } else {
+                        Text("Fréquemment mis à jour sur l'arrêt le plus proche")
+                            .font(.system(size: 14))
+                            .foregroundColor(.secondary)
+                    }
+                }
+                
+                Spacer()
+                
+                Image(systemName: selectedStopId == "current" ? "checkmark.circle.fill" : "circle")
+                    .font(.system(size: 20, weight: .medium))
+                    .foregroundColor(selectedStopId == "current" ? .accentColor : .secondary.opacity(0.7))
+            }
+            .padding()
+            .background(Color(.secondarySystemBackground))
+        }
+    }
+    
     private var minCharactersMessage: some View {
         VStack(spacing: 16) {
             Image(systemName: "signpost.right")
                 .font(.system(size: 40))
                 .foregroundColor(.secondary)
             
-            Text("Aucun arrêt sélectionné")
-                .font(.headline)
-                .foregroundColor(.primary)
-            
-            Text("Commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis")
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal)
+            if let currentStopId = selectedStopId {
+                if currentStopId == "current" {
+                    Text("Position actuelle sélectionnée")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Text("Le widget affichera l'arrêt le plus proche de votre position actuelle.\nCommencez à taper pour choisir un arrêt fixe.")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                } else {
+                    Text("Arrêt sélectionné")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    
+                    Text("Commencez à taper pour rechercher un autre arrêt.\n3 caractères minimum sont requis")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
+            } else {
+                Text("Aucun arrêt sélectionné")
+                    .font(.headline)
+                    .foregroundColor(.primary)
+                
+                Text("Choisissez votre position actuelle ou commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+            }
         }
         .padding(.top, 60)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -160,6 +333,12 @@ struct WidgetStopSelectorView: View {
         selectedStopId = result.id
         guard let stopId = selectedStopId else { return }
         WidgetManager.shared.setSelectedStopId(stopId)
+        WidgetManager.shared.requestWidgetRefresh()
+    }
+    
+    private func saveCurrentLocationSelection() {
+        selectedStopId = "current"
+        WidgetManager.shared.setSelectedStopId("current")
         WidgetManager.shared.requestWidgetRefresh()
     }
     
