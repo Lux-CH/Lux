@@ -730,6 +730,16 @@
         }
       }
     },
+    "Arrêt sélectionné" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected stop"
+          }
+        }
+      }
+    },
     "Arrêts" : {
       "localizations" : {
         "en" : {
@@ -968,6 +978,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Auto"
+          }
+        }
+      }
+    },
+    "Autorisation requise" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Authorization required"
           }
         }
       }
@@ -1318,6 +1338,16 @@
         }
       }
     },
+    "Choisissez votre position actuelle ou commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose your current location or start typing to search for a stop.\nA minimum of 3 characters is required."
+          }
+        }
+      }
+    },
     "Choisissez votre rythme de marche habituel pour des estimations plus précises" : {
       "localizations" : {
         "en" : {
@@ -1408,12 +1438,12 @@
         }
       }
     },
-    "Commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis" : {
+    "Commencez à taper pour rechercher un autre arrêt.\n3 caractères minimum sont requis" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Start typing to search for a stop.\nA minimum of 3 characters is required."
+            "value" : "Start typing to select a different stop.\nA minimum of 3 characters is required."
           }
         }
       }
@@ -2214,6 +2244,16 @@
         }
       }
     },
+    "Fréquemment mis à jour sur l'arrêt le plus proche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Frequently updates to closest stop"
+          }
+        }
+      }
+    },
     "Froid" : {
       "localizations" : {
         "en" : {
@@ -2656,6 +2696,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The selected expiration time is high. Lux cannot guarantee such a retention period."
+          }
+        }
+      }
+    },
+    "Le widget affichera l'arrêt le plus proche de votre position actuelle.\nCommencez à taper pour choisir un arrêt fixe." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The widget will show the nearest stop from your live current location.\nStart typing to select a specific stop."
           }
         }
       }
@@ -3606,6 +3656,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Current Location"
+          }
+        }
+      }
+    },
+    "Position actuelle sélectionnée" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live current location selected"
           }
         }
       }

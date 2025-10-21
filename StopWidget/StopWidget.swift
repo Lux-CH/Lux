@@ -8,6 +8,7 @@
 import WidgetKit
 import SwiftUI
 import LuxCom
+import CoreLocation
 
 struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> DepartureEntry {
@@ -68,12 +69,48 @@ struct Provider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        let stopId = getStoredStopId()
+        let storedStopId = getStoredStopId()
         
         let numberOfEvents = context.family == .systemLarge ? 9 : 3
         
         Task {
             do {
+                let stopId: String
+                if storedStopId == "current" {
+                    guard let location = await getCurrentLocation() else {
+                        let errorEntry = createErrorEntry(
+                            stopId: storedStopId,
+                            error: "Impossible d'accéder à votre position",
+                            numberOfEvents: numberOfEvents
+                        )
+                        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
+                        let timeline = Timeline(entries: [errorEntry], policy: .after(nextUpdate))
+                        completion(timeline)
+                        return
+                    }
+                    
+                    let nearbyStops = try await reverseGeocode(
+                        place: (location.coordinate.latitude, location.coordinate.longitude),
+                        type: .stop
+                    )
+                    
+                    guard let nearestStop = nearbyStops.first else {
+                        let errorEntry = createErrorEntry(
+                            stopId: storedStopId,
+                            error: "Aucun arrêt trouvé à proximité",
+                            numberOfEvents: numberOfEvents
+                        )
+                        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
+                        let timeline = Timeline(entries: [errorEntry], policy: .after(nextUpdate))
+                        completion(timeline)
+                        return
+                    }
+                    
+                    stopId = nearestStop.id
+                } else {
+                    stopId = storedStopId
+                }
+                
                 let stopTimes = try await getDeparturesForStop(
                     stopId: stopId,
                     time: Date(),
@@ -91,18 +128,16 @@ struct Provider: TimelineProvider {
                     isPreview: false
                 )
                 
-                let nextUpdate = Calendar.current.date(byAdding: .minute, value: 2, to: Date())!
+                let refreshInterval = storedStopId == "current" ? 2 : 5
+                let nextUpdate = Calendar.current.date(byAdding: .minute, value: refreshInterval, to: Date())!
                 let timeline = Timeline(entries: [entry], policy: .after(nextUpdate))
                 completion(timeline)
                 
             } catch {
-                let errorEntry = DepartureEntry(
-                    date: Date(),
-                    stopId: stopId,
-                    departures: [],
-                    lastUpdate: Date(),
+                let errorEntry = createErrorEntry(
+                    stopId: storedStopId,
                     error: error.localizedDescription,
-                    isPreview: false
+                    numberOfEvents: numberOfEvents
                 )
                 
                 let nextUpdate = Calendar.current.date(byAdding: .minute, value: 5, to: Date())!
@@ -117,6 +152,27 @@ struct Provider: TimelineProvider {
             return sharedDefaults.string(forKey: "selectedStopId") ?? "ch_Parent8587057"
         }
         return "ch_Parent8587057"
+    }
+    
+    private func getCurrentLocation() async -> CLLocation? {
+        let locationManager = CLLocationManager()
+        
+        let status = locationManager.authorizationStatus
+        guard status == .authorizedWhenInUse || status == .authorizedAlways else {
+            return nil
+        }
+        return locationManager.location
+    }
+    
+    private func createErrorEntry(stopId: String, error: String, numberOfEvents: Int) -> DepartureEntry {
+        return DepartureEntry(
+            date: Date(),
+            stopId: stopId,
+            departures: [],
+            lastUpdate: Date(),
+            error: error,
+            isPreview: false
+        )
     }
     
     private func prioritizeDeparturesByLineScore(_ departures: [StopTime]) -> [StopTime] {
