@@ -89,6 +89,7 @@ class ItinerarySharer {
             var request = URLRequest(url: url)
             request.httpMethod = "POST"
             request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+            request.setValue("Lux/1.0 (iOS)", forHTTPHeaderField: "User-Agent")
             request.httpBody = body
             
             let (responseData, response) = try await URLSession.shared.data(for: request)
