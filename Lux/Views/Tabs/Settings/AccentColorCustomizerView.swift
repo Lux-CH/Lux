@@ -27,74 +27,77 @@ struct AccentColorCustomizerView: View {
                 )
                 .ignoresSafeArea()
                 
-                VStack(spacing: 32) {
-                    VStack(spacing: 16) {
-                        ZStack {
-                            Circle()
-                                .fill(accentColorManager.selectedAccentColor)
-                                .frame(width: 65, height: 65)
+                ScrollView {
+                    VStack(spacing: 32) {
+                        VStack(spacing: 16) {
+                            ZStack {
+                                Circle()
+                                    .fill(accentColorManager.selectedAccentColor)
+                                    .frame(width: 65, height: 65)
+                                
+                                Image(systemName: "paintpalette")
+                                    .font(.system(size: 24, weight: .medium))
+                                    .foregroundColor(.white)
+                            }
+                            .scaleEffect(selectedColorScale)
+                            .animation(.spring(response: 0.6, dampingFraction: 0.8), value: selectedColorScale)
                             
-                            Image(systemName: "paintpalette")
-                                .font(.system(size: 24, weight: .medium))
-                                .foregroundColor(.white)
+                            VStack(spacing: 8) {
+                                Text("Couleur de l'app")
+                                    .font(.title)
+                                    .fontWeight(.bold)
+                                    .multilineTextAlignment(.center)
+                                
+                                Text("Séléctionnez la couleur de l'application et de l'icône")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .multilineTextAlignment(.center)
+                            }
+                            .padding(.horizontal, 15)
                         }
-                        .scaleEffect(selectedColorScale)
-                        .animation(.spring(response: 0.6, dampingFraction: 0.8), value: selectedColorScale)
+                        .padding(.top, 15)
                         
-                        VStack(spacing: 8) {
-                            Text("Couleur de l'app")
-                                .font(.title)
-                                .fontWeight(.bold)
-                                .multilineTextAlignment(.center)
-                            
-                            Text("Séléctionnez la couleur de l'application et de l'icône")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                                .multilineTextAlignment(.center)
-                        }
-                        .padding(.horizontal, 15)
-                    }
-                    .padding(.top, 15)
-                    
-                    VStack(spacing: 20) {
-                        HStack {
-                            Text("Couleurs disponibles")
-                                .font(.headline)
-                                .fontWeight(.semibold)
-                            Spacer()
-                            if accentColorManager.selectedAccentColor == Color(hex: "2d327d") && colorScheme == .dark {
-                                Button {showDarkColorAlert = true} label: {
-                                    Text("\(Image(systemName: "exclamationmark.triangle")) Couleur Sombre")
-                                        .font(.caption)
-                                        .padding(.horizontal, 12)
-                                        .padding(.vertical, 4)
-                                        .background(Color.secondary.opacity(0.1))
-                                        .clipShape(Capsule(style: .continuous))
-                                        .foregroundStyle(.red)
-                                }
-                                .buttonStyle(PlainButtonStyle())
-                                .alert("Couleur Sombre", isPresented: $showDarkColorAlert) {
-                                    Button("OK", role: .cancel) { }
-                                } message: {
-                                    Text("La couleur séléctionnée n'est pas bien visible en mode sombre. Pensez à passer en mode clair dans les paramètres \"Mode d'Affichage\"")
+                        VStack(spacing: 20) {
+                            HStack {
+                                Text("Couleurs disponibles")
+                                    .font(.headline)
+                                    .fontWeight(.semibold)
+                                Spacer()
+                                if (accentColorManager.selectedAccentColor == Color(hex: "2d327d") || accentColorManager.selectedAccentColor == Color(hex: "6B4423")) && colorScheme == .dark {
+                                    Button {showDarkColorAlert = true} label: {
+                                        Text("\(Image(systemName: "exclamationmark.triangle")) Couleur Sombre")
+                                            .font(.caption)
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 4)
+                                            .background(Color.secondary.opacity(0.1))
+                                            .clipShape(Capsule(style: .continuous))
+                                            .foregroundStyle(.red)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                    .alert("Couleur Sombre", isPresented: $showDarkColorAlert) {
+                                        Button("OK", role: .cancel) { }
+                                    } message: {
+                                        Text("La couleur séléctionnée n'est pas bien visible en mode sombre. Pensez à passer en mode clair dans les paramètres \"Mode d'Affichage\"")
+                                    }
                                 }
                             }
-                        }
-                        .padding(.horizontal, 24)
-                        
-                        LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 3), spacing: 20) {
-                            ForEach(Array(accentColorManager.availableColors.enumerated()), id: \.element.name) { index, colorData in
-                                ModernColorOptionView(
-                                    color: colorData.color,
-                                    name: colorData.name,
-                                    isSelected: colorData.color == accentColorManager.selectedAccentColor,
-                                    index: index
-                                ) {
-                                    selectColor(colorData)
+                            .padding(.horizontal, 24)
+                            
+                            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 3), spacing: 20) {
+                                ForEach(Array(accentColorManager.availableColors.enumerated()), id: \.element.name) { index, colorData in
+                                    ModernColorOptionView(
+                                        color: colorData.color,
+                                        name: colorData.name,
+                                        isSelected: colorData.color == accentColorManager.selectedAccentColor,
+                                        index: index
+                                    ) {
+                                        selectColor(colorData)
+                                    }
                                 }
                             }
+                            .padding(.horizontal, 24)
                         }
-                        .padding(.horizontal, 24)
+                        .padding(.bottom, 20)
                     }
                 }
                 

@@ -1112,6 +1112,26 @@
         }
       }
     },
+    "Blanc Neige" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snow White"
+          }
+        }
+      }
+    },
+    "Bleu Glacier" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glacier Blue"
+          }
+        }
+      }
+    },
     "Bleu Ice Tea" : {
       "localizations" : {
         "en" : {
@@ -1158,6 +1178,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Noise"
+          }
+        }
+      }
+    },
+    "Brun Jura" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Jura Brown"
           }
         }
       }
@@ -2354,6 +2384,16 @@
         }
       }
     },
+    "Gris Alpes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alps Grey"
+          }
+        }
+      }
+    },
     "Groupé" : {
       "localizations" : {
         "en" : {
@@ -3255,6 +3295,16 @@
         }
       }
     },
+    "Ocre Vignes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Vines Ocher"
+          }
+        }
+      }
+    },
     "Odeur" : {
       "localizations" : {
         "en" : {
@@ -3320,6 +3370,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Options for experimented users"
+          }
+        }
+      }
+    },
+    "Or Escalade" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escalade Gold"
           }
         }
       }
@@ -4070,6 +4130,16 @@
         }
       }
     },
+    "Rouge Fête" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feast Red"
+          }
+        }
+      }
+    },
     "Rouge Grenat" : {
       "localizations" : {
         "en" : {
@@ -4086,6 +4156,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "SBB CFF Red"
+          }
+        }
+      }
+    },
+    "Rouille Marronds" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Marronds Rust"
           }
         }
       }
@@ -4756,6 +4836,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CGTE Green"
+          }
+        }
+      }
+    },
+    "Vert Sapin" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fir Green"
           }
         }
       }
