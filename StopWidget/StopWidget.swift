@@ -89,10 +89,8 @@ struct Provider: TimelineProvider {
                         return
                     }
                     
-                    let nearbyStops = try await reverseGeocode(
-                        place: (location.coordinate.latitude, location.coordinate.longitude),
-                        type: .stop
-                    )
+                    let nearbyStops = try await getMapSearchResults(
+                        currentLoc: (location.coordinate.latitude, location.coordinate.longitude))
                     
                     guard let nearestStop = nearbyStops.first else {
                         let errorEntry = createErrorEntry(

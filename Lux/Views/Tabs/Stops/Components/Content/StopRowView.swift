@@ -86,12 +86,6 @@ struct StopRowView: View {
         }
     }
     
-    private func calculateDistance(userLat: Double, userLon: Double, stopLat: Double, stopLon: Double) -> Double {
-        let userLocation = CLLocation(latitude: userLat, longitude: userLon)
-        let stopLocation = CLLocation(latitude: stopLat, longitude: stopLon)
-        return userLocation.distance(from: stopLocation)
-    }
-    
     private func calculateRelativeAngle(userLat: Double, userLon: Double, stopLat: Double, stopLon: Double, deviceHeading: Double) -> Double {
         let lat1 = userLat * .pi / 180
         let lat2 = stopLat * .pi / 180

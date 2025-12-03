@@ -113,10 +113,8 @@ class StopsViewModel: ObservableObject {
             }
             
             do {
-                let results = try await reverseGeocode(
-                    place: (loc.latitude, loc.longitude),
-                    type: .stop
-                )
+                let results = try await getMapSearchResults(
+                    currentLoc: (loc.latitude, loc.longitude))
                 if Task.isCancelled { return }
                 
                 let filteredResults = results.filter { result in
