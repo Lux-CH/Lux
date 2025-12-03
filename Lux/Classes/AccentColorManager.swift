@@ -25,7 +25,18 @@ class AccentColorManager: ObservableObject {
         (String(localized: "Bleu Ice Tea"), Color(hex: "3182DB"), "icetea"),
         (String(localized: "Bleu SBB CFF"), Color(hex: "2d327d"), "SBB-Blue"),
         (String(localized: "Violet SCNF"), .indigo, "sncf"),
-
+        
+        (String(localized: "Brun Jura"), Color(hex: "6B4423"), "SBB-Red"),
+        (String(localized: "Rouille Marronds"), Color(hex: "954535"), "servette"),
+        (String(localized: "Ocre Vignes"), Color(hex: "B8733E"), "tpg"),
+        
+        (String(localized: "Gris Alpes"), Color(hex: "7C8B99"), "SBB-Blue"),
+        (String(localized: "Bleu Glacier"), Color(hex: "5B7C8D"), "leman"),
+        (String(localized: "Blanc Neige"), Color(hex: "A5C9E1"), "leman"),
+        
+        (String(localized: "Rouge Fête"), Color(hex: "8B1E3F"), "servette"),
+        (String(localized: "Vert Sapin"), Color(hex: "4A5D4F"), "cgte"),
+        (String(localized: "Or Escalade"), Color(hex: "C4983C"), "mouette"),
     ]
     
     var selectedAccentColor: Color {
