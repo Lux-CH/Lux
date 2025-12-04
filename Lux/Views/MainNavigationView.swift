@@ -146,11 +146,13 @@ struct MainNavigationView: View {
                                             .sheet(isPresented: $showSettings) {
                                                 SettingsView()
                                                     .environmentObject(shortcutManager)
+                                                    .presentationCornerRadius(36)
                                             }
                                             .sheet(isPresented: $showShortcutsSettings) {
                                                 NavigationStack {
                                                     ShortcutsListView()
                                                         .navigationTitle("Raccourcis")
+                                                        .presentationCornerRadius(36)
                                                 }
                                             }
                                             .sheet(isPresented: $showLuxPass) {

@@ -96,6 +96,7 @@ struct ShortcutEditorView: View {
                     .navigationTitle("Choisir un symbole")
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(38)
             }
             .sheet(isPresented: $isSearchActive) {
                 LocationSearchView(
@@ -108,6 +109,7 @@ struct ShortcutEditorView: View {
                 )
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
+                .presentationCornerRadius(38)
             }
         }
     }

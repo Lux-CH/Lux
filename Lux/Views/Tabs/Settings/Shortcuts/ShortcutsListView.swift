@@ -30,9 +30,11 @@ struct ShortcutsListView: View {
         .background(Color(.systemGroupedBackground))
         .sheet(item: $editingShortcut) { shortcut in
             ShortcutEditorView(shortcutToEdit: shortcut)
+                .presentationCornerRadius(38)
         }
         .sheet(isPresented: $showAddShortcutSheet) {
             ShortcutEditorView(shortcutToEdit: nil)
+                .presentationCornerRadius(38)
         }
     }
     

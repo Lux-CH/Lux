@@ -34,6 +34,7 @@ struct LineScoreView: View {
                 AddLineScoreView()
                     .presentationDetents([.medium])
                     .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(38)
             }
         }
     }
