@@ -53,6 +53,7 @@ struct LuxPassView: View {
             SwissPassScannerView { qrCode, barcode in
                 swissPassManager.saveSwissPass(qrCode: qrCode, barcode: barcode)
             }
+            .presentationCornerRadius(38)
         }
         .alert("Supprimer le SwissPass", isPresented: $showingDeleteAlert) {
             Button("Supprimer", role: .destructive) {
