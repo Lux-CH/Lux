@@ -649,7 +649,7 @@ struct WalkingTimeSelector: View {
 
 struct PedestrianSpeedSelector: View {
     @Binding var selectedSpeed: Double
-    private let speedOptions: [Double] = [1.0, 1.2, 1.9, 3.0, 4.4]
+    private let speedOptions: [Double] = [1.0, 1.2, 1.7, 2.0, 3.0]
     @ObservedObject var accentColorManager = AccentColorManager.shared
     
     private func getSpeedDescription(_ speed: Double) -> String {
@@ -658,11 +658,11 @@ struct PedestrianSpeedSelector: View {
             return String(localized: "Lent")
         case 1.2:
             return String(localized: "Normal")
-        case 1.9:
+        case 1.7:
+            return String(localized: "Active")
+        case 2.0:
             return String(localized: "Rapide")
         case 3.0:
-            return String(localized: "Course")
-        case 4.4:
             return String(localized: "Sprint")
         default:
             return String(localized: "Normal")
@@ -675,11 +675,11 @@ struct PedestrianSpeedSelector: View {
             return "tortoise.fill"
         case 1.2:
             return "figure.walk"
-        case 1.9:
+        case 1.7:
             return "figure.walk.motion"
-        case 3.0:
+        case 2.0:
             return "figure.run"
-        case 4.4:
+        case 3.0:
             return "hare.fill"
         default:
             return "figure.walk"

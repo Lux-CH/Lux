@@ -390,6 +390,16 @@
         }
       }
     },
+    "Active" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Active"
+          }
+        }
+      }
+    },
     "Activer l'option de partage d'arrêt" : {
       "localizations" : {
         "en" : {
@@ -1654,16 +1664,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Available colors"
-          }
-        }
-      }
-    },
-    "Course" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Run"
           }
         }
       }
