@@ -390,6 +390,16 @@
         }
       }
     },
+    "Activer l'option de partage d'arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enable the stop sharing option"
+          }
+        }
+      }
+    },
     "Actualiser" : {
       "localizations" : {
         "en" : {
@@ -586,6 +596,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Add a quick access to your SwissPass by replacing a shortcut"
+          }
+        }
+      }
+    },
+    "Ajouter un bouton vous permettant de partager un arrêt sous forme de lien." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a button allowing you to share a stop as a link."
           }
         }
       }

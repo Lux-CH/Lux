@@ -16,7 +16,6 @@ struct SettingsView: View {
     @ObservedObject var accentColorManager = AccentColorManager.shared
     @State private var showWelcome: Bool = false
     @State private var displayMode: Int = 0
-    @State private var debugCount: Int = 0
     
     @State private var showSafari = false
     @State private var safariURL: URL?
@@ -277,6 +276,12 @@ struct SettingsView: View {
                                     subtitle: String(localized: "Désactiver cette option peut faire gagner du temps lors du chargement des itinéraires."),
                                     isOn: $settings.fetchWalkingDirectionsUsingMKDirections
                                 )
+                                SettingsToggle(
+                                    icon: "link",
+                                    title: String(localized: "Activer l'option de partage d'arrêt"),
+                                    subtitle: String(localized: "Ajouter un bouton vous permettant de partager un arrêt sous forme de lien."),
+                                    isOn: $settings.showDebug
+                                )
                                 SettingsPicker(
                                     icon: { if #available(iOS 17.2, *) { "square.and.arrow.up.badge.clock" } else { "square.and.arrow.up" } }(),
                                     title: String(localized: "Durée de partage d'itinéraire"),
@@ -392,14 +397,6 @@ struct SettingsView: View {
                     subtitle: "\(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? String(localized: "Inconnue"))",
                     showChevron: false
                 )
-                .onTapGesture {
-                    if debugCount == 5 {
-                        settings.showDebug.toggle()
-                        HapticFeedback.notification(type: .warning)
-                        debugCount = 0
-                    }
-                    debugCount+=1
-                }
             } header: {
                 SectionHeader(
                     icon: "info.circle.fill",
