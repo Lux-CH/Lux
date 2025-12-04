@@ -83,6 +83,7 @@ struct StopsContentView: View {
 
 struct SectionTitleView: View {
     let isSearchMode: Bool
+    @State private var showMap: Bool = false
     
     var body: some View {
         HStack {
@@ -92,9 +93,18 @@ struct SectionTitleView: View {
                 .font(.headline)
                 .fontWeight(.bold)
                 .accessibilityLabel(isSearchMode ? "Liste des résultats de recherche" : "Liste des arrêts à proximité")
+            Spacer()
+            Button() {
+                showMap = true
+            } label: {
+                Image(systemName: "map.fill")
+            }
         }
         .padding(.top, 17)
         .padding(.horizontal, 25)
+        .navigationDestination(isPresented: $showMap) {
+            EmptyView()
+        }
         .id("sectionTitle-\(isSearchMode ? "search" : "nearby")")
     }
 }
