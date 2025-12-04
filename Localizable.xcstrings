@@ -1438,12 +1438,12 @@
         }
       }
     },
-    "Ci-dessous une liste des crédits de l'application, notamment des différents autres modules utilisés par Lux." : {
+    "Ci-dessous une liste des crédits de l'application." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Below is a list of the application's credits, including the various other modules used by Lux."
+            "value" : "Below is a list of the application's credits."
           }
         }
       }
@@ -1574,6 +1574,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Contribute to CrowdBack"
+          }
+        }
+      }
+    },
+    "Contributeurs ayant aidé à la création de l'application" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Contributors who helped create the application"
           }
         }
       }
@@ -2896,16 +2906,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "List of nearby stops"
-          }
-        }
-      }
-    },
-    "Liste des modules utilisés dans l'application" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "List of modules used in the app"
           }
         }
       }

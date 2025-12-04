@@ -360,7 +360,7 @@ struct SettingsView: View {
                     SettingsRow(
                         icon: "heart",
                         title: String(localized: "Crédits"),
-                        subtitle: String(localized: "Liste des modules utilisés dans l'application"),
+                        subtitle: String(localized: "Contributeurs ayant aidé à la création de l'application"),
                         showChevron: true
                     )
                 }

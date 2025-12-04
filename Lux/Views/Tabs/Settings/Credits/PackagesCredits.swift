@@ -12,11 +12,6 @@ struct CreditsView: View {
         CreditItem(name: "Constantin Clerc", credit: String(localized: "Développeur Principal"), imageURL: "https://avatars.githubusercontent.com/u/102235607?v=4", url: "https://github.com/c22dev"),
         CreditItem(name: "Valentin Busi Dias", credit: String(localized: "Conseiller intuitivité et design"), imageURL: "https://cclerc.ch/lux-assets/credits/val.png", url: "https://cclerc.ch/val"),
         CreditItem(name: "Philippe Weidmann", credit: String(localized: "Données des perturbations"), imageURL: "https://avatars.githubusercontent.com/u/5843044?v=4", url: "https://github.com/PhilippeWeidmann"),
-        CreditItem(name: "Paul Hudson", credit: "CodeScanner - MIT", imageURL: "https://avatars.githubusercontent.com/u/190200?v=4", url: "https://github.com/twostraws/CodeScanner"),
-        CreditItem(name: "Raphaël Mor", credit: "Polyline - MIT", imageURL: "https://avatars.githubusercontent.com/u/772779?v=4", url: "https://github.com/raphaelmor/Polyline"),
-        CreditItem(name: "Yubo Qin", credit: "SymbolPicker - MIT", imageURL: "https://avatars.githubusercontent.com/u/6781789?v=4", url: "https://github.com/xnth97/SymbolPicker"),
-        CreditItem(name: "Hirotakan", credit: "MessagePacker - MIT", imageURL: "https://avatars.githubusercontent.com/u/2901342?v=4", url: "https://github.com/hirotakan/MessagePacker"),
-        CreditItem(name: "Aether Jones", credit: "GlowGetter - MIT", imageURL: "https://avatars.githubusercontent.com/u/64797587?v=4", url: "https://github.com/Aeastr/GlowGetter")
     ]
     var body: some View {
         NavigationStack {
@@ -59,7 +54,7 @@ struct CreditsView: View {
                     icon: "person.3.fill",
                     iconColor: .blue,
                     title: String(localized: "Crédits"),
-                    subtitle: String(localized: "Ci-dessous une liste des crédits de l'application, notamment des différents autres modules utilisés par Lux.")
+                    subtitle: String(localized: "Ci-dessous une liste des crédits de l'application.")
                 )
             }
         }
