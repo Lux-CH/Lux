@@ -316,8 +316,8 @@ struct SettingsView: View {
                                 .onTapGesture {
                                     openInSafari(URL(string: "https://www.tpg.ch/sites/default/files/2025-08/Geneve%20TPG%20Plan%20Schematique%202025-08-18.pdf")!)
                                 }
-                                if settings.showDebug {
-                                    NavigationLink(destination: StatsView()) {
+#if DEBUG
+                                NavigationLink(destination: StatsView()) {
                                         SettingsRow(
                                             icon: "chart.bar.doc.horizontal",
                                             title: "Statistiques",
@@ -326,7 +326,7 @@ struct SettingsView: View {
                                         )
                                     }
                                     .buttonStyle(.plain)
-                                }
+#endif
                             }  header: {
                                 SectionHeader(
                                     icon: "flask.fill",
