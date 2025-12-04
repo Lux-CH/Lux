@@ -96,9 +96,20 @@ struct SectionTitleView: View {
             Spacer()
             Button() {
                 showMap = true
+                UIImpactFeedbackGenerator(style: .soft).impactOccurred()
             } label: {
                 Image(systemName: "map.fill")
             }
+            .foregroundColor(.accentColor)
+            .font(.system(size: 12))
+            .frame(maxHeight: 7.5)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 20)
+            .background(
+                Capsule(style: .continuous)
+                    .stroke(Color.primary.opacity(0.1))
+                    .fill(Color(.secondarySystemFill).opacity(0.5))
+            )
         }
         .padding(.top, 17)
         .padding(.horizontal, 25)
