@@ -46,6 +46,7 @@ struct TripsSearchHeaderView: View {
                 viewModel.updateRouteOptions(newOptions)
             }
             .presentationDetents([.medium, .large])
+            .presentationCornerRadius(36)
         }
     }
     
