@@ -652,6 +652,10 @@ struct PedestrianSpeedSelector: View {
     private let speedOptions: [Double] = [1.0, 1.2, 1.7, 2.0, 3.0]
     @ObservedObject var accentColorManager = AccentColorManager.shared
     
+    private var isSpeedInvalid: Bool {
+        !speedOptions.contains(selectedSpeed)
+    }
+    
     private func getSpeedDescription(_ speed: Double) -> String {
         switch speed {
         case 1.0:
@@ -691,43 +695,89 @@ struct PedestrianSpeedSelector: View {
         return String(format: "%.0f km/h", kmh)
     }
     
+    private func resetToDefaultSpeed() {
+        withAnimation(.spring(response: 0.3)) {
+            let oldToNewMapping: [Double: Double] = [
+                4.4: 3.0,
+                1.9: 1.75
+            ]
+            
+            if let newSpeed = oldToNewMapping[selectedSpeed] {
+                selectedSpeed = newSpeed
+            }
+            HapticFeedback.lightImpact()
+        }
+    }
+    
     var body: some View {
-        HStack(spacing: 8) {
-            ForEach(speedOptions, id: \.self) { speed in
-                Button(action: {
-                    withAnimation(.spring(response: 0.3)) {
-                        selectedSpeed = speed
-                        HapticFeedback.lightImpact()
-                    }
-                }) {
-                    VStack(spacing: 8) {
-                        ZStack {
-                            Circle()
-                                .fill(selectedSpeed == speed ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
-                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                .frame(width: 44, height: 44)
-                            
-                            Image(systemName: getSpeedIcon(speed))
-                                .font(.system(size: 18, weight: .medium))
-                                .foregroundColor(selectedSpeed == speed ? .white : .primary)
-                        }
+        VStack(spacing: 12) {
+            if isSpeedInvalid {
+                ModernCard(style: .accent, optionalColor: accentColorManager.selectedAccentColor) {
+                    HStack(spacing: 12) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .font(.headline.weight(.medium))
+                            .foregroundStyle(accentColorManager.selectedAccentColor)
                         
-                        VStack(spacing: 2) {
-                            Text(getSpeedDescription(speed))
-                                .font(.system(size: 11, weight: selectedSpeed == speed ? .semibold : .medium))
-                                .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor : .secondary)
-                                .multilineTextAlignment(.center)
-                            
-                            Text(formatSpeedInKmh(speed))
-                                .font(.system(size: 9, weight: .regular))
-                                .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor.opacity(0.8) : Color(.tertiaryLabel))
-                                .multilineTextAlignment(.center)
+                        Text("La vitesse choisie n'est plus sélectionnable.")
+                            .font(.subheadline.weight(.medium))
+                            .foregroundStyle(accentColorManager.selectedAccentColor)
+                        
+                        Spacer()
+                        
+                        Button(action: resetToDefaultSpeed) {
+                            Text("Changer")
+                                .font(.subheadline.weight(.semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(accentColorManager.selectedAccentColor)
+                                .cornerRadius(12)
                         }
                     }
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 8)
                 }
-                .buttonStyle(ScaleButtonStyle())
+                .transition(.asymmetric(
+                    insertion: .scale.combined(with: .opacity),
+                    removal: .scale.combined(with: .opacity)
+                ))
+            }
+            
+            HStack(spacing: 8) {
+                ForEach(speedOptions, id: \.self) { speed in
+                    Button(action: {
+                        withAnimation(.spring(response: 0.3)) {
+                            selectedSpeed = speed
+                            HapticFeedback.lightImpact()
+                        }
+                    }) {
+                        VStack(spacing: 8) {
+                            ZStack {
+                                Circle()
+                                    .fill(selectedSpeed == speed ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
+                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                    .frame(width: 44, height: 44)
+                                
+                                Image(systemName: getSpeedIcon(speed))
+                                    .font(.system(size: 18, weight: .medium))
+                                    .foregroundColor(selectedSpeed == speed ? .white : .primary)
+                            }
+                            
+                            VStack(spacing: 2) {
+                                Text(getSpeedDescription(speed))
+                                    .font(.system(size: 11, weight: selectedSpeed == speed ? .semibold : .medium))
+                                    .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor : .secondary)
+                                    .multilineTextAlignment(.center)
+                                
+                                Text(formatSpeedInKmh(speed))
+                                    .font(.system(size: 9, weight: .regular))
+                                    .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor.opacity(0.8) : Color(.tertiaryLabel))
+                                    .multilineTextAlignment(.center)
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                }
             }
         }
     }

@@ -395,7 +395,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Active"
+            "value" : "Brisk"
           }
         }
       }
@@ -1291,6 +1291,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "This feature isn’t compatible with current trip options."
+          }
+        }
+      }
+    },
+    "Changer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Change"
           }
         }
       }
@@ -2756,6 +2766,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The selected date has already passed"
+          }
+        }
+      }
+    },
+    "La vitesse choisie n'est plus sélectionnable." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The selected speed is no longer selectable."
           }
         }
       }
