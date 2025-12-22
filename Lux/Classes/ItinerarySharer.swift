@@ -19,7 +19,7 @@ class ItinerarySharer {
     }
     
     func downloadItinerary(_ identifier: String) async -> Result<Itinerary, URLHandlerError> {
-        guard let url = URL(string: "https://0x0.st/\(identifier).luxtrip") else {
+        guard let url = URL(string: "https://lux-share.cclerc.ch/\(identifier).luxtrip") else {
             return .failure(.invalidURL)
         }
         
@@ -82,7 +82,7 @@ class ItinerarySharer {
             
             body.append("--\(boundary)--\r\n".data(using: .utf8)!)
             
-            guard let url = URL(string: "https://0x0.st") else {
+            guard let url = URL(string: "https://lux-share.cclerc.ch") else {
                 return .failure(.invalidURL)
             }
             
@@ -104,7 +104,7 @@ class ItinerarySharer {
                 return .failure(.networkError)
             }
             
-            guard responseString.hasPrefix("https://0x0.st/") && responseString.hasSuffix(".luxtrip") else {
+            guard responseString.hasPrefix("https://lux-share.cclerc.ch") && responseString.hasSuffix(".luxtrip") else {
                 return .failure(.networkError)
             }
             
