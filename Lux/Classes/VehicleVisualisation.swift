@@ -196,11 +196,11 @@ enum VehicleVisualisation {
                 
                 if distance <= accelerationDistance && accelerationDistance > 0 {
                     let accelerationProgress = distance / accelerationDistance
-                    let easedProgress = easeInQuad(accelerationProgress)
+                    let easedProgress = easeOutCubic(accelerationProgress)
                     time += accelerationTime * easedProgress
                 } else if distance >= totalDistance - decelerationDistance && decelerationDistance > 0 {
                     let decelerationProgress = (distance - (totalDistance - decelerationDistance)) / decelerationDistance
-                    let easedProgress = easeOutQuad(decelerationProgress)
+                    let easedProgress = easeInCubic(decelerationProgress)
                     time += accelerationTime + cruisingTime + decelerationTime * easedProgress
                 } else if cruisingDistance > 0 {
                     let cruisingProgress = (distance - accelerationDistance) / cruisingDistance
@@ -244,12 +244,12 @@ enum VehicleVisualisation {
     }
     
     // https://easings.net/fr
-    private static func easeInQuad(_ x: Double) -> Double {
-        return x*x
+    private static func easeInCubic(_ x: Double) -> Double {
+        return x * x * x
     }
-    
-    private static func easeOutQuad(_ x: Double) -> Double {
-        return 1 - (1 - x) * (1 - x)
+
+    private static func easeOutCubic(_ x: Double) -> Double {
+        return 1 - pow(1 - x, 3)
     }
     
     private static func findClosestPointIndex(coordinates: [CLLocationCoordinate2D], to target: CLLocationCoordinate2D) -> Int {
@@ -283,27 +283,13 @@ enum VehicleVisualisation {
                 }
                 
                 let segmentDuration = endFrame.time - startFrame.time
+                guard segmentDuration > 0 else { return startFrame.point }
                 let progress = (timestamp - startFrame.time) / segmentDuration
-                
-                if startFrame.point.latitude == endFrame.point.latitude &&
-                   startFrame.point.longitude == endFrame.point.longitude {
-                    return startFrame.point
-                }
-                
-                let easedProgress: Double
-                
-                if startFrame.isStop && !startFrame.isDwelling {
-                    easedProgress = easeInQuad(progress)
-                } else if endFrame.isStop && !startFrame.isDwelling {
-                    easedProgress = easeOutQuad(progress)
-                } else {
-                    easedProgress = progress
-                }
                 
                 return interpolate(
                     from: startFrame.point,
                     to: endFrame.point,
-                    progress: easedProgress
+                    progress: progress
                 )
             }
         }
