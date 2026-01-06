@@ -7,6 +7,7 @@
 
 import SwiftUI
 import LuxCom
+import LuxComHAFAS
 import Combine
 
 class StopViewModel: ObservableObject {
@@ -18,6 +19,7 @@ class StopViewModel: ObservableObject {
     @Published var errorMessage: String?
     
     @ObservedObject var lineScoreManager = LineScoreManager.shared
+    @ObservedObject var settings = Settings.shared
     
     let stop: SearchResult
     
@@ -125,22 +127,32 @@ class StopViewModel: ObservableObject {
     }
     
     private func fetchDeparturesAndArrivals(for time: Date) async throws -> (departures: StopTimes, arrivals: StopTimes) {
-        async let departuresTask = getDeparturesForStop(
+        if settings.dataSource == .luxCom {
+            async let departuresTask = getDeparturesForStop(
+                stopId: stop.id,
+                time: time,
+                arriveBy: false,
+                numberOfEvents: fromStops ? 100 : 50
+            )
+            
+            async let arrivalsTask = getDeparturesForStop(
+                stopId: stop.id,
+                time: time,
+                arriveBy: true,
+                direction: "LATER",
+                numberOfEvents: fromStops ? 100 : 50
+            )
+            return try await (departuresTask, arrivalsTask)
+        }
+        async let departuresTask = citaDepartures(
             stopId: stop.id,
             time: time,
             arriveBy: false,
             numberOfEvents: fromStops ? 100 : 50
         )
+        let emptyArrivals = StopTimes(stopTimes: [], previousPageCursor: "", nextPageCursor: "")
         
-        async let arrivalsTask = getDeparturesForStop(
-            stopId: stop.id,
-            time: time,
-            arriveBy: true,
-            direction: "LATER",
-            numberOfEvents: fromStops ? 100 : 50
-        )
-        
-        return try await (departuresTask, arrivalsTask)
+        return try await (departuresTask, emptyArrivals)
     }
 
     private func refreshDeparturesInBackground() async {

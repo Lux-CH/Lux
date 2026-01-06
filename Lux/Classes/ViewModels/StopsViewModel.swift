@@ -7,6 +7,7 @@
 
 import SwiftUI
 import LuxCom
+import LuxComHAFAS
 import CoreLocation
 
 class StopsViewModel: ObservableObject {
@@ -15,6 +16,7 @@ class StopsViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var isSearchMode = false
     @Published var showMinCharactersMessage = false
+    @ObservedObject var settings = Settings.shared
     
     private var locationManager: LocationManager?
     private var lastFetchedLocation: CLLocation? = nil
@@ -57,7 +59,14 @@ class StopsViewModel: ObservableObject {
         backgroundRefreshTask = Task {
             do {
                 if let coords = locationManager?.location?.coordinate {
-                    let results = try await geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 2)
+                    var results: [SearchResult] = []
+                    if settings.dataSource == .luxCom {
+                        results = try await geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 2)
+                    }
+                    else {
+                        results = try await citaGeocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 2)
+                    }
+                    
                     if !Task.isCancelled {
                         await MainActor.run {
                             self.searchResults = results
@@ -113,8 +122,15 @@ class StopsViewModel: ObservableObject {
             }
             
             do {
-                let results = try await getMapSearchResults(
-                    currentLoc: (loc.latitude, loc.longitude))
+                var results: [SearchResult] = []
+                if settings.dataSource == .luxCom {
+                    results = try await getMapSearchResults(
+                        currentLoc: (loc.latitude, loc.longitude))
+                }
+                else {
+                    results = try await citaReverseGeocode(currentLoc: (loc.latitude, loc.longitude))
+                }
+                
                 if Task.isCancelled { return }
                 
                 let filteredResults = results.filter { result in

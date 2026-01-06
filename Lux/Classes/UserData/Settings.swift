@@ -13,6 +13,7 @@ class Settings: ObservableObject, @unchecked Sendable {
     
     @AppStorage("firstLaunch") var firstLaunch: Bool = true
     @AppStorage("appLaunchCount") var appLaunchCount: Int = 1
+    @AppStorage("dataSource") var dataSource: DataSource = .luxCom
     
     /// Shortcuts
     @AppStorage("showShortcutLabel") var showShortcutLabel: Bool = true
@@ -33,4 +34,9 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("crowdbackAllowed") var crowdbackAllowed: Bool = true
     @AppStorage("swisspassOnHome") var swisspassOnHome: Bool = false
     @AppStorage("showDebug") var showDebug: Bool = false
+}
+
+enum DataSource: String, Codable, Hashable, Sendable {
+   case luxCom = "LC"
+   case cita = "CTA"
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 import LuxCom
+import LuxComHAFAS
 import Polyline
 
 @MainActor
@@ -79,7 +80,12 @@ final class ItineraryViewModel: ObservableObject {
         error = nil
         
         do {
-            itinerary = try await getTrip(tripId: tripId)
+            if settings.dataSource == .luxCom {
+                itinerary = try await getTrip(tripId: tripId)
+            }
+            else {
+                itinerary = try await citaGetTrip(tripId: tripId)
+            }
             if itinerary != nil {
                 await processItinerary()
                 startItineraryRefresh()
@@ -160,8 +166,14 @@ final class ItineraryViewModel: ObservableObject {
         
         do {
             if !dontActuallyFetch {
-                let newItinerary = try await getTrip(tripId: tripId)
-                itinerary = newItinerary
+                if settings.dataSource == .luxCom {
+                    let newItinerary = try await getTrip(tripId: tripId)
+                    itinerary = newItinerary
+                }
+                else {
+                    let newItinerary = try await citaGetTrip(tripId: tripId)
+                    itinerary = newItinerary
+                }
             }
             else {
                 itinerary = itinerary

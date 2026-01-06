@@ -7,6 +7,7 @@
 
 import SwiftUI
 import LuxCom
+import LuxComHAFAS
 import Network
 import CoreLocation
 
@@ -316,8 +317,15 @@ struct NearbyStopsView: View {
             }
             
             do {
-                let results = try await getMapSearchResults(
-                    currentLoc: (loc.latitude, loc.longitude))
+                var results: [SearchResult] = []
+                if settings.dataSource == .luxCom {
+                    results = try await getMapSearchResults(
+                        currentLoc: (loc.latitude, loc.longitude))
+                }
+                else {
+                    results = try await citaReverseGeocode(currentLoc: (loc.latitude, loc.longitude))
+                }
+                
                 if Task.isCancelled { return }
                 
                 let filteredResults = results.filter { result in
