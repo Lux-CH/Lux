@@ -12,6 +12,8 @@ struct SectionHeader: View {
     let iconColor: Color
     let title: String
     let subtitle: String
+    var showInfoButton: Bool = false
+    var infoAction: (() -> Void)?
     
     var body: some View {
         HStack(spacing: 8) {
@@ -33,6 +35,18 @@ struct SectionHeader: View {
             }
             
             Spacer()
+            
+            if showInfoButton {
+                Button(action: {
+                    infoAction?()
+                }) {
+                    Image(systemName: "info.circle")
+                        .font(.callout)
+                        .foregroundColor(.accentColor)
+                        .frame(width: 24, height: 24)
+                }
+                .buttonStyle(.plain)
+            }
         }
         .padding(.horizontal, 20)
         .padding(.top, 16)
