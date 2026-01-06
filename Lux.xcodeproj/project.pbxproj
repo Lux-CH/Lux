@@ -13,8 +13,10 @@
 		791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SymbolPicker */; };
 		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
 		7981C7A72E48052500246701 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 7981C7A62E48052500246701 /* InfoPlist.xcstrings */; };
+		798605782F0DC7C4003C9CC6 /* LuxComHAFAS in Frameworks */ = {isa = PBXBuildFile; productRef = 798605772F0DC7C4003C9CC6 /* LuxComHAFAS */; };
 		7986885A2E3FEE15003FE496 /* SearchStopIntent.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 798688512E3FEE15003FE496 /* SearchStopIntent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		798688612E3FEE7D003FE496 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 798688602E3FEE7D003FE496 /* LuxCom */; };
+		7986FFDD2F0D851F003C9CC6 /* LuxComHAFAS in Frameworks */ = {isa = PBXBuildFile; productRef = 7986FFDC2F0D851F003C9CC6 /* LuxComHAFAS */; };
 		79A2CC3A2E0EDCF80071DD44 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79A2CC392E0EDCF80071DD44 /* LuxCom */; };
 		79ABCC9C2E11AACC00A85D71 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ABCC9B2E11AACC00A85D71 /* WidgetKit.framework */; };
 		79ABCC9E2E11AACC00A85D71 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ABCC9D2E11AACC00A85D71 /* SwiftUI.framework */; };
@@ -163,6 +165,8 @@
 				79C64D402DB930DC00C01B89 /* Polyline in Frameworks */,
 				791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */,
 				790749E22DEE45A50010D818 /* CodeScanner in Frameworks */,
+				798605782F0DC7C4003C9CC6 /* LuxComHAFAS in Frameworks */,
+				7986FFDD2F0D851F003C9CC6 /* LuxComHAFAS in Frameworks */,
 				79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -270,6 +274,8 @@
 				79E806F52E10CA8E004CA0A0 /* LuxCom */,
 				79E806F82E10CAAB004CA0A0 /* LuxCom */,
 				79E806FB2E10CAFF004CA0A0 /* LuxCom */,
+				7986FFDC2F0D851F003C9CC6 /* LuxComHAFAS */,
+				798605772F0DC7C4003C9CC6 /* LuxComHAFAS */,
 			);
 			productName = Lux;
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
@@ -336,6 +342,7 @@
 				790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */,
 				79E806FA2E10CAFF004CA0A0 /* XCRemoteSwiftPackageReference "LuxCom" */,
+				798605762F0DC7C4003C9CC6 /* XCRemoteSwiftPackageReference "LuxComHAFAS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 799D2A682D98ABF80066E9F5 /* Products */;
@@ -816,6 +823,14 @@
 				minimumVersion = 0.4.7;
 			};
 		};
+		798605762F0DC7C4003C9CC6 /* XCRemoteSwiftPackageReference "LuxComHAFAS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Lux-CH/LuxComHAFAS";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		79C64D3E2DB930DC00C01B89 /* XCRemoteSwiftPackageReference "Polyline" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/raphaelmor/Polyline";
@@ -855,10 +870,19 @@
 			package = 796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */;
 			productName = MessagePacker;
 		};
+		798605772F0DC7C4003C9CC6 /* LuxComHAFAS */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 798605762F0DC7C4003C9CC6 /* XCRemoteSwiftPackageReference "LuxComHAFAS" */;
+			productName = LuxComHAFAS;
+		};
 		798688602E3FEE7D003FE496 /* LuxCom */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 79E806FA2E10CAFF004CA0A0 /* XCRemoteSwiftPackageReference "LuxCom" */;
 			productName = LuxCom;
+		};
+		7986FFDC2F0D851F003C9CC6 /* LuxComHAFAS */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = LuxComHAFAS;
 		};
 		79A2CC392E0EDCF80071DD44 /* LuxCom */ = {
 			isa = XCSwiftPackageProductDependency;
