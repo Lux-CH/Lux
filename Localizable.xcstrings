@@ -1275,6 +1275,16 @@
         }
       }
     },
+    "Cette action supprimera tous les éléments de l'historique." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This operation will delete every entry in your history."
+          }
+        }
+      }
+    },
     "Cette application n'est ni affiliée ni approuvée par SwissPass ou les SBB CFF." : {
       "localizations" : {
         "en" : {
@@ -2034,6 +2044,26 @@
         }
       }
     },
+    "Effacer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erase"
+          }
+        }
+      }
+    },
+    "Effacer l'historique ?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Erase history ?"
+          }
+        }
+      }
+    },
     "En attente de votre position..." : {
       "localizations" : {
         "en" : {
@@ -2496,6 +2526,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Usual time"
+          }
+        }
+      }
+    },
+    "Historique" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
           }
         }
       }
@@ -4500,6 +4540,16 @@
         }
       }
     },
+    "Supprimer de l'historique" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete history"
+          }
+        }
+      }
+    },
     "Supprimer le SwissPass" : {
       "localizations" : {
         "en" : {
@@ -4976,6 +5026,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your reports were transmitted successfully.\nThank you for your contribution!"
+          }
+        }
+      }
+    },
+    "Vos recherches récentes apparaîtront ici" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your recent searches will appear here"
           }
         }
       }

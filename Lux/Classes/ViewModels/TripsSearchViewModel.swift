@@ -45,6 +45,10 @@ enum DepartureType: String, CaseIterable, Identifiable {
 }
 
 class TripsSearchViewModel: ObservableObject {
+    @AppStorage("tripSearchHistory") private var storedSearchHistory: Data = Data()
+    @Published var searchHistory: [SearchResult] = []
+    private let maxHistoryItems: Int = 20
+    
     @Published var fromQuery = ""
     @Published var toQuery = ""
     @Published var searchResults: [SearchResult] = []
@@ -119,6 +123,47 @@ class TripsSearchViewModel: ObservableObject {
     
     init() {
         fetchRouteOptionsPreferences()
+        loadSearchHistory()
+    }
+    
+    private func loadSearchHistory() {
+        if storedSearchHistory.isEmpty {
+            searchHistory = []
+            return
+        }
+        if let decoded = try? JSONDecoder().decode([SearchResult].self, from: storedSearchHistory) {
+            searchHistory = decoded
+        } else {
+            searchHistory = []
+        }
+    }
+    
+    private func saveSearchHistory() {
+        if let data = try? JSONEncoder().encode(searchHistory) {
+            storedSearchHistory = data
+        }
+    }
+    
+    func addToHistory(_ result: SearchResult) {
+        // do not store duplicates, move to front
+        if let idx = searchHistory.firstIndex(where: { $0.id == result.id }) {
+            searchHistory.remove(at: idx)
+        }
+        searchHistory.insert(result, at: 0)
+        if searchHistory.count > maxHistoryItems {
+            searchHistory = Array(searchHistory.prefix(maxHistoryItems))
+        }
+        saveSearchHistory()
+    }
+    
+    func removeFromHistory(id: String) {
+        searchHistory.removeAll { $0.id == id }
+        saveSearchHistory()
+    }
+    
+    func clearHistory() {
+        searchHistory = []
+        storedSearchHistory = Data()
     }
     
     var isSearchActive: Bool {
@@ -202,6 +247,7 @@ class TripsSearchViewModel: ObservableObject {
     }
     
     func selectLocation(_ location: SearchResult) {
+        addToHistory(location)
         if activeSearchField == .from {
             selectedFrom = .searchResult(location)
             fromQuery = ""
@@ -565,6 +611,7 @@ class TripsSearchViewModel: ObservableObject {
     }
     @MainActor
     func handleInitialSearchResult(_ result: SearchResult, targetField: SearchField) {
+        addToHistory(result)
         if (targetField == .from && selectedFrom != nil) || (targetField == .to && selectedTo != nil) {
             return
         }
