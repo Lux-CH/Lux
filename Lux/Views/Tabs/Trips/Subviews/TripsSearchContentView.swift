@@ -23,8 +23,15 @@ struct TripsSearchContentView: View {
                         SearchResultsContent(viewModel: viewModel)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     } else {
-                        EmptyStateContent(viewModel: viewModel)
-                            .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                        if (viewModel.activeSearchField == .from || viewModel.activeSearchField == .to) &&
+                            viewModel.fromQuery.isEmpty && viewModel.toQuery.isEmpty &&
+                            viewModel.searchResults.isEmpty && !viewModel.showMinCharactersMessage {
+                            SearchHistoryContent(viewModel: viewModel)
+                                .transition(.opacity.combined(with: .move(edge: .top)))
+                        } else {
+                            EmptyStateContent(viewModel: viewModel)
+                                .transition(.opacity.combined(with: .scale(scale: 0.95)))
+                        }
                     }
                 }
                 .animation(.easeInOut(duration: 0.3), value: viewModel.showMinCharactersMessage)
