@@ -1,5 +1,5 @@
 {
-  "originHash" : "e81cc3257d6995f61afe7f81e5f7de6584f3f8ced065e64980936d0eaba50a50",
+  "originHash" : "ff10e1e0d8f1edbd386807c20014e16016fe36cf85db43f2767f7c7190cbc64f",
   "pins" : [
     {
       "identity" : "codescanner",
@@ -43,7 +43,7 @@
       "location" : "https://github.com/Lux-CH/LuxComHAFAS",
       "state" : {
         "branch" : "main",
-        "revision" : "5974e52ba20987ab1d1ac5fa990cf05f03eba851"
+        "revision" : "f8d7f0806d2c9f3366ae44ff72aed7b7d7e93945"
       }
     },
     {
