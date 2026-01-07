@@ -44,7 +44,8 @@ struct ItineraryStopTimelineView: View {
                         isLastStop: actualIndex == stops.count - 1,
                         isDepartureStop: stop.name == fromStop.name,
                         isArrivalStop: stop.name == toStop.name,
-                        currentDate: timeline.date
+                        currentDate: timeline.date,
+                        isMultiple: isMultipleLeg
                     )
                     .id(stop.stopId)
                     
@@ -127,6 +128,7 @@ struct ItineraryStopTimelineRowView: View {
     let isDepartureStop: Bool
     let isArrivalStop: Bool
     let currentDate: Date
+    let isMultiple: Bool
     @State private var showingStopDetail = false
     
     private var stopStatus: StopStatus {
@@ -218,7 +220,7 @@ struct ItineraryStopTimelineRowView: View {
 //                .padding(.horizontal, 8)
 //        )
         .fullScreenCover(isPresented: $showingStopDetail) {
-            ItineraryStopDetailView(stop: stop)
+            ItineraryStopDetailView(stop: stop, isFromMultiple: isMultiple)
         }
     }
 }
