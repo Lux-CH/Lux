@@ -6,8 +6,10 @@
 //
 
 import Foundation
+import SwiftUI
 
 class ConnectionExtractor: ObservableObject {
+    @ObservedObject var settings = Settings.shared
     private let url: URL
     
     private var mappedData: Data?
@@ -30,6 +32,16 @@ class ConnectionExtractor: ObservableObject {
             throw BinaryPlistError.dataNotLoaded
         }
         
+        var computedKey: String = ""
+        if settings.dataSource == .cita {
+            guard let match = key.firstMatch(of: /L=(\d+)@/) else {
+                return nil
+            }
+            computedKey = "ch_\(match.1)"
+        } else {
+            computedKey = key
+        }
+        
         let stream = InputStream(data: data)
         stream.open()
         defer { stream.close() }
@@ -38,7 +50,7 @@ class ConnectionExtractor: ObservableObject {
             throw BinaryPlistError.invalidPlistFormat
         }
         
-        return plist[key] as? [String]
+        return plist[computedKey] as? [String]
     }
     
     func releaseResources() {
