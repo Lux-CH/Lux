@@ -20,6 +20,7 @@ final class ItineraryViewModel: ObservableObject {
     private var itineraryRefreshTask: Task<Void, Never>?
     
     private var shouldStop = false
+    private var forceLC: Bool = false
     
     @Published var itinerary: Itinerary?
     @Published var position: MapCameraPosition = .automatic
@@ -34,6 +35,11 @@ final class ItineraryViewModel: ObservableObject {
         
     init(tripId: String) {
         self.tripId = tripId
+    }
+    
+    init(tripId: String, forceLC: Bool) {
+        self.tripId = tripId
+        self.forceLC = forceLC
     }
     
     convenience init(itinerary: Itinerary) {
@@ -80,7 +86,7 @@ final class ItineraryViewModel: ObservableObject {
         error = nil
         
         do {
-            if settings.dataSource == .luxCom {
+            if settings.dataSource == .luxCom || forceLC {
                 itinerary = try await getTrip(tripId: tripId)
             }
             else {
@@ -166,7 +172,7 @@ final class ItineraryViewModel: ObservableObject {
         
         do {
             if !dontActuallyFetch {
-                if settings.dataSource == .luxCom {
+                if settings.dataSource == .luxCom || forceLC {
                     let newItinerary = try await getTrip(tripId: tripId)
                     itinerary = newItinerary
                 }

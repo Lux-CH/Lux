@@ -10,10 +10,11 @@ import LuxCom
 
 struct ExpandedDepartureRowView: View {
     let stopTime: StopTime
+    let forceLC: Bool
     var userSelectedLine: (String) -> Void
     var body: some View {
         NavigationLink(destination: {
-            ItineraryView(tripId: stopTime.tripId, fromNearby: false)
+            ItineraryView(tripId: stopTime.tripId, fromNearby: false, forceLC: forceLC)
                 .toolbarBackground(.hidden, for: .navigationBar)
                 .navigationBarBackButtonHidden(true)
                 .onAppear {
