@@ -37,10 +37,14 @@ class StopViewModel: ObservableObject {
         self.shouldLoadViaLC = false
     }
     
-    init(stop: SearchResult, fromStops: Bool, isLC: Bool) {
+    init(stop: SearchResult, fromStops: Bool, isLC: Bool, time: Date?) {
         self.stop = stop
         self.fromStops = fromStops
         self.shouldLoadViaLC = isLC
+        if let selectedTime = time {
+            isCustomTimeSelected = true
+            currentTime = selectedTime
+        }
     }
     
     func startMonitoring() {

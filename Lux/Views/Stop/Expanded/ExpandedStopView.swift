@@ -10,7 +10,7 @@ import LuxCom
 
 struct ExpandedStopView: View {
     @StateObject var viewModel: StopViewModel
-    @State private var selectedDate = Date()
+    @State var selectedDate = Date()
     @State private var showDatePicker = false
     @State private var contentTransitionId = UUID()
     @State private var animateIn = false
