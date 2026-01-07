@@ -87,7 +87,8 @@ struct ItineraryStopDetailView: View {
         )
     }
     private func createExpandedStopView() -> some View {
-        return ExpandedStopView(viewModel: StopViewModel(stop: generateSearchResult(), fromStops: true, isLC: isFromMultiple || forceLC), maxGroupsToShow: 50)
+        let selectedDate = stop.departure ?? stop.arrival ?? Date()
+        return ExpandedStopView(viewModel: StopViewModel(stop: generateSearchResult(), fromStops: true, isLC: isFromMultiple || forceLC, time: selectedDate), selectedDate: selectedDate, maxGroupsToShow: 50)
             .background(Color(.secondarySystemBackground))
     }
 }
