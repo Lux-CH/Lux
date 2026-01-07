@@ -39,6 +39,7 @@ struct StopAnnotation: Identifiable {
 struct StopAnnotationView: View {
     let annotation: StopAnnotation
     let isTerminal: Bool
+    let isMultiple: Bool
     @State private var showPopover = false
     @State private var showExpandedStop = false
     @Binding var showSheet: Bool
@@ -91,7 +92,7 @@ struct StopAnnotationView: View {
             .presentationCompactAdaptation(.popover)
         }
         .fullScreenCover(isPresented: $showExpandedStop) {
-            ItineraryStopDetailView(stop: annotation.place)
+            ItineraryStopDetailView(stop: annotation.place, isFromMultiple: isMultiple)
                 .toolbarBackground(.hidden, for: .navigationBar)
                 .navigationBarBackButtonHidden(true)
         }

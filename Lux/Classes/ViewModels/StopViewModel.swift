@@ -29,10 +29,18 @@ class StopViewModel: ObservableObject {
     private var fromStops: Bool
     private var currentTime: Date = Date()
     private var isCustomTimeSelected: Bool = false
+    private var shouldLoadViaLC: Bool
     
     init(stop: SearchResult, fromStops: Bool) {
         self.stop = stop
         self.fromStops = fromStops
+        self.shouldLoadViaLC = false
+    }
+    
+    init(stop: SearchResult, fromStops: Bool, isLC: Bool) {
+        self.stop = stop
+        self.fromStops = fromStops
+        self.shouldLoadViaLC = isLC
     }
     
     func startMonitoring() {
@@ -127,7 +135,7 @@ class StopViewModel: ObservableObject {
     }
     
     private func fetchDeparturesAndArrivals(for time: Date) async throws -> (departures: StopTimes, arrivals: StopTimes) {
-        if settings.dataSource == .luxCom {
+        if settings.dataSource == .luxCom || shouldLoadViaLC {
             async let departuresTask = getDeparturesForStop(
                 stopId: stop.id,
                 time: time,

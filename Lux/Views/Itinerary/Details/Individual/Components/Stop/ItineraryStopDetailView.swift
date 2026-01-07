@@ -10,6 +10,7 @@ import LuxCom
 
 struct ItineraryStopDetailView: View {
     let stop: Place
+    let isFromMultiple: Bool
     @Environment(\.dismiss) private var dismiss
     @State private var showTripSearch: Bool = false
 
@@ -85,7 +86,7 @@ struct ItineraryStopDetailView: View {
         )
     }
     private func createExpandedStopView() -> some View {
-        return ExpandedStopView(viewModel: StopViewModel(stop: generateSearchResult(), fromStops: true), maxGroupsToShow: 50)
+        return ExpandedStopView(viewModel: StopViewModel(stop: generateSearchResult(), fromStops: true, isLC: isFromMultiple), maxGroupsToShow: 50)
             .background(Color(.secondarySystemBackground))
     }
 }
