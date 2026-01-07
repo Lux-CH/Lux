@@ -13,13 +13,14 @@ struct ItineraryDetailSheet: View {
     let viewModel: ItineraryViewModel
     let itinerarySharer: ItinerarySharer
     let isSingle: Bool
+    let forceLC: Bool
     
     var body: some View {
         if let itinerary = viewModel.itinerary {
             if isSingle {
-                IndividualItineraryDetailView(itinerary: itinerary, isMultipleLeg: false, itineraarySharer: itinerarySharer)
+                IndividualItineraryDetailView(itinerary: itinerary, isMultipleLeg: false, forceLC: forceLC, itineraarySharer: itinerarySharer)
             } else {
-                MultipleItineraryDetailView(itinerary: itinerary, viewModel: viewModel, itineraarySharer: itinerarySharer)
+                MultipleItineraryDetailView(itinerary: itinerary, viewModel: viewModel, itineraarySharer: itinerarySharer, forceLC: forceLC)
             }
         } else {
             ContentUnavailableView {

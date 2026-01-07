@@ -29,7 +29,7 @@ class StopViewModel: ObservableObject {
     private var fromStops: Bool
     private var currentTime: Date = Date()
     private var isCustomTimeSelected: Bool = false
-    private var shouldLoadViaLC: Bool
+    @Published var shouldLoadViaLC: Bool
     
     init(stop: SearchResult, fromStops: Bool) {
         self.stop = stop

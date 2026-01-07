@@ -211,7 +211,7 @@ struct LuxApp: App {
                 scheduledDeparture: nil,
                 scheduledTrack: nil,
                 track: nil,
-                vertexType: .transit), isFromMultiple: true)
+                vertexType: .transit), isFromMultiple: true, forceLC: true)
         }
     }
 }

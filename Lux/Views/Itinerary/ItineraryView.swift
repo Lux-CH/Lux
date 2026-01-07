@@ -32,6 +32,7 @@ struct ItineraryView: View {
     @State var otherItineraries: [TripOption] = []
     @State private var isSingle: Bool
     let fromNearby: Bool
+    var forceLC: Bool = false
     let itineraarySharer = ItinerarySharer()
     
     @State private var trackingMode: MapTrackingMode = .none
@@ -39,6 +40,14 @@ struct ItineraryView: View {
     init(tripId: String, fromNearby: Bool, otherTripOptions: [TripOption] = []) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
         self.fromNearby = fromNearby
+        self._otherItineraries = State(initialValue: otherTripOptions)
+        self.isSingle = true
+    }
+    
+    init(tripId: String, fromNearby: Bool, forceLC: Bool, otherTripOptions: [TripOption] = []) {
+        _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId, forceLC: forceLC))
+        self.fromNearby = fromNearby
+        self.forceLC = forceLC
         self._otherItineraries = State(initialValue: otherTripOptions)
         self.isSingle = true
     }
@@ -96,11 +105,11 @@ struct ItineraryView: View {
                     ForEach(viewModel.mapAnnotations) { annotation in
                         if annotation.isTerminal {
                             Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                                StopAnnotationView(annotation: annotation, isTerminal: true, isMultiple: !isSingle, showSheet: $showDetails)
+                                StopAnnotationView(annotation: annotation, isTerminal: true, isMultiple: !isSingle || forceLC, showSheet: $showDetails)
                             }
                         } else if viewModel.showingIntermediateStops {
                             Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                                StopAnnotationView(annotation: annotation, isTerminal: false, isMultiple: !isSingle, showSheet: $showDetails)
+                                StopAnnotationView(annotation: annotation, isTerminal: false, isMultiple: !isSingle || forceLC, showSheet: $showDetails)
                             }
                         }
                     }
@@ -220,7 +229,7 @@ struct ItineraryView: View {
                 }
                 // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
                 .sheet(isPresented: $showDetails) {
-                    ItineraryDetailSheet(viewModel: viewModel, itinerarySharer: itineraarySharer, isSingle: isSingle)
+                    ItineraryDetailSheet(viewModel: viewModel, itinerarySharer: itineraarySharer, isSingle: isSingle, forceLC: forceLC)
                         .presentationDetents([isSingle ? .fraction(detents.0) : .fraction(0.225), .medium, .large])
                         .presentationDragIndicator(.visible)
                         .presentationCornerRadius(38)

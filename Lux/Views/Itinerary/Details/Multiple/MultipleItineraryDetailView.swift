@@ -16,6 +16,7 @@ struct MultipleItineraryDetailView: View {
     @State private var selectedTightConnection: (from: String, to: String)?
     let viewModel: ItineraryViewModel
     let itineraarySharer: ItinerarySharer
+    let forceLC: Bool
     
     private func calculateUpcomingStops(leg: Leg) -> [Place] {
         guard let intermediateStops = leg.intermediateStops else { return [] }
@@ -159,7 +160,8 @@ struct MultipleItineraryDetailView: View {
                                 fromStop: leg.from,
                                 toStop: leg.to,
                                 duration: leg.duration,
-                                isMultipleLeg: true
+                                isMultipleLeg: true,
+                                forceLC: forceLC
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)

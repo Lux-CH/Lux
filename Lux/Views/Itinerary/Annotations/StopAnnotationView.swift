@@ -92,7 +92,7 @@ struct StopAnnotationView: View {
             .presentationCompactAdaptation(.popover)
         }
         .fullScreenCover(isPresented: $showExpandedStop) {
-            ItineraryStopDetailView(stop: annotation.place, isFromMultiple: isMultiple)
+            ItineraryStopDetailView(stop: annotation.place, isFromMultiple: isMultiple, forceLC: isMultiple)
                 .toolbarBackground(.hidden, for: .navigationBar)
                 .navigationBarBackButtonHidden(true)
         }

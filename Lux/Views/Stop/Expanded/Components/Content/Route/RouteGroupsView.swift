@@ -44,7 +44,7 @@ struct RouteGroupsView: View {
             }
         } else if let stopTimes = viewModel.stopTimes?.stopTimes {
             List(viewModel.sortStopTimes(stopTimes)) { stopTime in
-                ExpandedDepartureRowView(stopTime: stopTime) { routeShortName in
+                ExpandedDepartureRowView(stopTime: stopTime, forceLC: viewModel.shouldLoadViaLC) { routeShortName in
                     viewModel.userSelectedLine(routeShortName)
                 }
                 .listRowBackground(Color(.secondarySystemBackground).opacity(0.1))
