@@ -194,23 +194,3 @@ struct SearchHistoryContent: View {
         return nil
     }
 }
-
-struct EmptyHistoryView: View {
-    var body: some View {
-        VStack {
-            VStack(spacing: 20) {
-                Image(systemName: "clock.arrow.circlepath")
-                    .font(.system(size: 40))
-                    .foregroundColor(.secondary.opacity(0.6))
-                    .padding(.top, 40)
-                Text(String(localized: "Vos recherches récentes apparaîtront ici"))
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
-            }
-            .frame(maxWidth: .infinity)
-            .transition(.opacity)
-            Spacer()
-        }
-    }
-}

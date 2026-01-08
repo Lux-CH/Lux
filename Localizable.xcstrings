@@ -5030,16 +5030,6 @@
         }
       }
     },
-    "Vos recherches récentes apparaîtront ici" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your recent searches will appear here"
-          }
-        }
-      }
-    },
     "Votre appareil n'est pas en mesure d'envoyer des SMS." : {
       "localizations" : {
         "en" : {
