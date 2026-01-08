@@ -25,17 +25,6 @@ struct SearchHistoryContent: View {
                     VStack(spacing: 12) {
                         ForEach(Array(viewModel.searchHistory.enumerated()), id: \.element.id) { index, result in
                             historyRow(for: result)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(colorScheme == .dark ?
-                                              Color(.systemBackground).opacity(0.8) :
-                                              Color(.systemBackground))
-                                        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
-                                )
-                                .contentShape(Rectangle())
-                                .padding(.horizontal)
                                 .opacity(appearAnimation ? 1 : 0)
                                 .offset(y: appearAnimation ? 0 : 10)
                                 .animation(
@@ -116,49 +105,61 @@ struct SearchHistoryContent: View {
     
     @ViewBuilder
     private func historyRow(for result: SearchResult) -> some View {
-        Button(action: {
+        HStack(spacing: 12) {
+            let (iconName, iconColor) = shortcutSymbol(for: result).map { ($0, Color.accentColor) } ?? getIconForType(result.type)
+            ZStack {
+                Circle()
+                    .fill(iconColor.opacity(0.15))
+                    .frame(width: 44, height: 44)
+                Image(systemName: iconName)
+                    .font(.system(size: 18))
+                    .foregroundColor(iconColor)
+                    .symbolRenderingMode(.hierarchical)
+            }
+            VStack(alignment: .leading, spacing: 2) {
+                Text(result.name)
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                    .lineLimit(1)
+                if let area = relevantArea(result) {
+                    Text(area)
+                        .font(.system(size: 13))
+                        .foregroundColor(.secondary.opacity(0.8))
+                        .lineLimit(1)
+                        .padding(.top, 1)
+                }
+            }
+            Spacer(minLength: 0)
+            Button {
+                HapticFeedback.mediumImpact()
+                withAnimation { viewModel.removeFromHistory(id: result.id) }
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundColor(.secondary)
+                    .frame(width: 44, height: 44)
+                    .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(Text(String(localized: "Supprimer de l'historique")))
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 10)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(colorScheme == .dark ?
+                      Color(.systemBackground).opacity(0.8) :
+                      Color(.systemBackground))
+                .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+        )
+        .contentShape(Rectangle())
+        .padding(.horizontal)
+        .onTapGesture {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                 viewModel.selectLocation(result)
                 HapticFeedback.lightImpact()
             }
-        }) {
-            HStack(spacing: 12) {
-                let (iconName, iconColor) = shortcutSymbol(for: result).map { ($0, Color.accentColor) } ?? getIconForType(result.type)
-                ZStack {
-                    Circle()
-                        .fill(iconColor.opacity(0.15))
-                        .frame(width: 44, height: 44)
-                    Image(systemName: iconName)
-                        .font(.system(size: 18))
-                        .foregroundColor(iconColor)
-                        .symbolRenderingMode(.hierarchical)
-                }
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(result.name)
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                        .lineLimit(1)
-                    if let area = relevantArea(result) {
-                        Text(area)
-                            .font(.footnote)
-                            .foregroundColor(.secondary)
-                            .lineLimit(1)
-                    }
-                }
-                Spacer()
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.secondary)
-                    .contentShape(Circle())
-                    .onTapGesture {
-                        HapticFeedback.mediumImpact()
-                        withAnimation { viewModel.removeFromHistory(id: result.id) }
-                    }
-                    .accessibilityLabel(Text(String(localized: "Supprimer de l'historique")))
-                    .accessibilityAddTraits(.isButton)
-            }
         }
-        .buttonStyle(ScaleButtonStyle())
     }
     
     private func relevantArea(_ result: SearchResult) -> String? {
