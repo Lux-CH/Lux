@@ -146,7 +146,7 @@ struct MultipleItineraryDetailView: View {
                     ForEach(Array(itinerary.legs.enumerated()), id: \.element.legGeometry.points) { legIndex, leg in
                         if leg.mode != .walk {
                             // Transit leg
-                            LegHeaderView(leg: leg, legColor: getLegColor(leg), isSingle: false, nextStop: nil)
+                            LegHeaderView(leg: leg, legColor: getLegColor(leg), isSingle: false, forceLC: forceLC, nextStop: nil)
                                 .padding(.horizontal, 20)
                                 .padding(.top, 25)
                                 .padding(.bottom, 15)

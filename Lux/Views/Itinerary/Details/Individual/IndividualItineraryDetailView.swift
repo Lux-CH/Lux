@@ -80,7 +80,7 @@ struct IndividualItineraryDetailView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 if let leg = mainLeg {
-                    LegHeaderView(leg: leg, legColor: legColor, isSingle: !isMultipleLeg, nextStop: nextStop)
+                    LegHeaderView(leg: leg, legColor: legColor, isSingle: !isMultipleLeg, forceLC: forceLC, nextStop: nextStop)
                         .padding(.horizontal, 20)
                         .padding(.top, 25)
                         .padding(.bottom, 17.5)
