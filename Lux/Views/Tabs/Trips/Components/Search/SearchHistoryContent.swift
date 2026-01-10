@@ -61,9 +61,10 @@ struct SearchHistoryContent: View {
     
     private var header: some View {
         HStack {
-            Text(String(localized: "Historique"))
+            Text("Historique")
                 .font(.headline)
                 .foregroundColor(.secondary)
+                .padding(.top, -2) // iii negative padding values we like that that missed me !
             Spacer()
             Button {
                 HapticFeedback.lightImpact()
@@ -72,19 +73,14 @@ struct SearchHistoryContent: View {
                 HStack(spacing: 6) {
                     Image(systemName: "trash")
                         .font(.system(size: 13, weight: .semibold))
-                    Text(String(localized: "Effacer"))
-                        .font(.system(size: 13, weight: .medium))
                 }
-                .foregroundColor(.accentColor)
-                .padding(.vertical, 6)
-                .padding(.horizontal, 12)
+                .padding(.vertical, 5.5)
+                .padding(.horizontal, 24)
+                .foregroundColor(.red)
                 .background(
                     Capsule(style: .continuous)
-                        .fill(Color.accentColor.opacity(0.12))
-                        .overlay(
-                            Capsule(style: .continuous)
-                                .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
-                        )
+                        .fill(Color(.secondarySystemFill).opacity(0.5))
+                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                 )
             }
             .buttonStyle(ScaleButtonStyle())
@@ -97,6 +93,30 @@ struct SearchHistoryContent: View {
             } message: {
                 Text(String(localized: "Cette action supprimera tous les éléments de l'historique."))
             }
+            
+            Button {
+                HapticFeedback.lightImpact()
+                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                    viewModel.selectCurrentPosition()
+                }
+            } label: {
+                HStack(spacing: 6) {
+                    Image(systemName: "location.fill")
+                        .font(.system(size: 13, weight: .semibold))
+                }
+                .foregroundColor(.accentColor)
+                .padding(.vertical, 6)
+                .padding(.horizontal, 24)
+                .background(
+                    Capsule(style: .continuous)
+                        .fill(Color.accentColor.opacity(0.12))
+                        .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                )
+            }
+            .buttonStyle(ScaleButtonStyle())
+            .disabled(!viewModel.isCurrentPositionAvailable())
+            .opacity(viewModel.isCurrentPositionAvailable() ? 1 : 0.5)
+            
         }
         .padding(.horizontal)
         .padding(.top, 22)
