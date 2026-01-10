@@ -34,7 +34,7 @@ struct TripResultView: View {
     var body: some View {
         if !dontGoToView {
             NavigationLink(destination:
-                            ItineraryView(itinerary: itinerary, fromNearby: false)
+                            ItineraryView(itinerary: itinerary, fromNearby: false, forceLC: true)
                 .toolbarBackground(.hidden, for: .navigationBar)
                 .navigationBarBackButtonHidden(true)
             ) {
