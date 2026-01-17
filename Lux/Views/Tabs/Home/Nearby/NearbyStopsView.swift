@@ -214,6 +214,20 @@ struct NearbyStopsView: View {
                         }
                         .padding(.top, 14)
                     }
+                    else if UIDevice.current.batteryLevel <= 0.35 && UIDevice.current.batteryState != .charging && UIDevice.current.modelIdentifier == "iPhone12,1" {
+                        HintIndicatorView(
+                            icon: "battery.25",
+                            message: "Votre batterie est faible. Pensez à charger votre appareil avant de partir.",
+                            delay: 0.25,
+                            duration: 15
+                        ) {
+                            showingSuggestion = false
+                        }
+                        .onAppear {
+                            showingSuggestion = true
+                        }
+                        .padding(.top, 14)
+                    }
                 }
             }
         }
@@ -222,6 +236,10 @@ struct NearbyStopsView: View {
                 .ignoresSafeArea()
         }
         .onAppear {
+            if UIDevice.current.modelIdentifier == "iPhone12,1" {
+                UIDevice.current.isBatteryMonitoringEnabled = true
+            }
+            
             monitorNetwork()
             Task.detached() {
                 await checkMessage()
@@ -432,4 +450,16 @@ struct WarningMessage: Codable {
     let message: String
     let icon: String
     let show: Bool
+}
+
+extension UIDevice {
+    var modelIdentifier: String {
+        var systemInfo = utsname()
+        uname(&systemInfo)
+        return withUnsafePointer(to: &systemInfo.machine) {
+            $0.withMemoryRebound(to: CChar.self, capacity: Int(_SYS_NAMELEN)) {
+                String(validatingUTF8: $0) ?? "Unknown"
+            }
+        }
+    }
 }
