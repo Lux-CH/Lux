@@ -217,9 +217,9 @@ struct NearbyStopsView: View {
                     else if UIDevice.current.batteryLevel <= 0.35 && UIDevice.current.batteryState != .charging && UIDevice.current.modelIdentifier == "iPhone12,1" {
                         HintIndicatorView(
                             icon: "battery.25",
-                            message: "Votre batterie est faible. Pensez à charger votre appareil avant de partir.",
+                            message: "Votre batterie est faible.\nPensez à charger votre appareil avant de partir.",
                             delay: 0.25,
-                            duration: 15
+                            duration: 25
                         ) {
                             showingSuggestion = false
                         }
