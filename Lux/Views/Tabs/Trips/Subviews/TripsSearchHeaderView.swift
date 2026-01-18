@@ -168,7 +168,9 @@ struct TripsSearchHeaderView: View {
                 departureType: $viewModel.departureType,
                 showDatePicker: $showTimePicker
             ) {
-                viewModel.changeDepartureType(viewModel.departureType)
+                if viewModel.selectedFrom != nil && viewModel.selectedTo != nil {
+                    viewModel.searchTrips()
+                }
             }
             .presentationCompactAdaptation(.popover)
         }
