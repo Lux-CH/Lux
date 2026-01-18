@@ -605,9 +605,9 @@ class TripsSearchViewModel: ObservableObject {
     
     func changeDepartureType(_ type: DepartureType) {
         self.departureType = type
-        if selectedFrom != nil && selectedTo != nil {
-            searchTrips()
-        }
+//        if selectedFrom != nil && selectedTo != nil {
+//            searchTrips()
+//        }
     }
     @MainActor
     func handleInitialSearchResult(_ result: SearchResult, targetField: SearchField) {
