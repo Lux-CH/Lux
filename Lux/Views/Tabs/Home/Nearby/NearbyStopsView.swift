@@ -283,6 +283,16 @@ struct NearbyStopsView: View {
                 refreshNearbyStopsInBackground()
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ReloadNearbyStops"))) { _ in
+            searchResults = []
+            lastFetchedLocation = nil
+            maintenanceStatus = nil
+            warningMessage = nil
+            
+            if !isAuthorizationNotAllowed && locationManager.location != nil {
+                loadNearbyStops(showLoading: true)
+            }
+        }
         .onDisappear {
             backgroundRefreshTask?.cancel()
             isWaitingForLocation = false

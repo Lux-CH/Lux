@@ -21,6 +21,7 @@ struct DataSourcePicker<SelectionValue: Hashable>: View {
                         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
                         withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                             selection = option.value
+                            NotificationCenter.default.post(name: NSNotification.Name("ReloadNearbyStops"), object: nil)
                         }
                     } label: {
                         VStack(spacing: 8) {
