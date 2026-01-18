@@ -91,7 +91,22 @@ struct StopHeaderView: View {
         }
         .navigationDestination(isPresented: $showTripSearch) {
             TripsSearchView(
-                initialSearchResult: stop,
+                initialSearchResult: {
+                    if settings.dataSource == .cita {
+                        return SearchResult(
+                            type: .place,
+                            tokens: stop.tokens,
+                            name: stop.name,
+                            id: "",
+                            lat: stop.lat,
+                            lon: stop.lon,
+                            areas: stop.areas,
+                            score: stop.score
+                        )
+                    } else {
+                        return stop
+                    }
+                }(),
                 initialTargetField: .to
             )
             .toolbarBackground(.hidden, for: .navigationBar)
