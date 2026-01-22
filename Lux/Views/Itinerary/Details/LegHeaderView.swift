@@ -47,6 +47,7 @@ struct LegHeaderView: View {
         HStack(alignment: .top, spacing: 10) {
             LinePill(line: leg.routeShortName ?? "",
                      mode: leg.mode,
+                     agency: leg.agencyId,
                      width: 64,
                      height: 40,
                      fontSize: 19)

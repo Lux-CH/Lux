@@ -12,6 +12,7 @@ struct LinePill: View {
     @ObservedObject var settings = Settings.shared
     let line: String
     let mode: TransportationMode
+    let agency: String?
     var width: CGFloat = 30
     var height: CGFloat = 20
     var fontSize: CGFloat = 11

@@ -55,7 +55,7 @@ struct IncomingBusView: View {
                     }?.place.track ?? group.stopTimes.first?.place.scheduledTrack
                     
                     HStack(spacing: 12) {
-                        LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus, width: 45, height: 30, fontSize: 16.5)
+                        LinePill(line: group.routeShortName, mode: group.stopTimes.first?.mode ?? .bus, agency: group.stopTimes.first?.agencyId, width: 45, height: 30, fontSize: 16.5)
                         VStack(alignment: .leading, spacing: 0) {
                             if shouldUseNormalDisplay {
                                 HStack(spacing: 8) {
