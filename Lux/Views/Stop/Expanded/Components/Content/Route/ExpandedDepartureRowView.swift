@@ -25,6 +25,7 @@ struct ExpandedDepartureRowView: View {
                 LinePill(
                     line: stopTime.routeShortName,
                     mode: stopTime.mode,
+                    agency: stopTime.agencyId,
                     width: 32,
                     height: 20,
                     fontSize: 13

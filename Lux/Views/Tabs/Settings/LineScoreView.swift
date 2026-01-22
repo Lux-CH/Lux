@@ -219,6 +219,7 @@ struct LineScoreRow: View {
             LinePill(
                 line: lineScore.routeShortName,
                 mode: .bus,
+                agency: nil,
                 width: 50,
                 height: 30,
                 fontSize: 14

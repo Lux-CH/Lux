@@ -50,6 +50,7 @@ struct ReportView: View {
                         LinePill(
                             line: leg.routeShortName ?? "",
                             mode: leg.mode,
+                            agency: leg.agencyId,
                             width: 35,
                             height: 22,
                             fontSize: 11

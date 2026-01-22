@@ -30,7 +30,7 @@ struct StopHeaderView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 6) {
                             ForEach(connections, id: \.self) { connection in
-                                LinePill(line: connection, mode: .bus)
+                                LinePill(line: connection, mode: .bus, agency: nil)
                             }
                         }
                     }
