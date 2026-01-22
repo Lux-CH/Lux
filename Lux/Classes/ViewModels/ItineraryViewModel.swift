@@ -399,8 +399,14 @@ func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
     default:
         var baseColor: Color
         
+        let lausanneAgencies: Set<String> = ["151", "55", "764", "7256", "344", "29"]
+
+        var isLausanne: Bool {
+            return lausanneAgencies.contains(leg.agencyId ?? "")
+        }
+        
         if let routeName = leg.routeShortName {
-            if let color = LineColors.color(for: routeName) {
+            if let color = (isLausanne ? LineColors.tlColor(for: routeName) : LineColors.color(for: routeName)) {
                 baseColor = color
             } else {
                 let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR") ||

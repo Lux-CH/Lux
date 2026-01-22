@@ -22,6 +22,12 @@ struct LinePill: View {
         .longDistance, .metro, .nightRail, .regionalFastRail
     ]
     
+    private static let lausanneAgencies: Set<String> = ["151", "55", "764", "7256", "344", "29"]
+
+    private var isLausanne: Bool {
+        return Self.lausanneAgencies.contains(agency ?? "")
+    }
+    
     private var isTrainDetected: Bool {
         line.hasPrefix("RL") || line.hasPrefix("IR") || line.hasPrefix("RE") || line.hasPrefix("IC") || line == "R"
     }
@@ -46,7 +52,7 @@ struct LinePill: View {
         if isSquared && LineColors.color(for: line) == nil {
             return Color(hex: "EA0706")
         }
-        return LineColors.color(for: line) ?? .accent
+        return (isLausanne ? LineColors.tlColor(for: line) : LineColors.color(for: line)) ?? .accent
     }
     
     private var lineColor: Color {
@@ -72,7 +78,7 @@ struct LinePill: View {
             
             Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
-                .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: line) : (baseLineColor == .black ? .white : lineColor))
+                .foregroundColor(settings.highContrastButAccurateLinePill && !isLausanne ? LineColors.textColor(for: line) : (baseLineColor == .black ? .white : lineColor))
                 .multilineTextAlignment(.center)
                 .shadow(color: Color.black.opacity(0.3), radius: 1, x: 0, y: 1)
         }
