@@ -11,6 +11,7 @@ import LuxCom
 struct LinePill: View {
     let line: String
     let mode: TransportationMode
+    let agency: String
     var width: CGFloat = 30
     var height: CGFloat = 20
     var fontSize: CGFloat = 11
@@ -22,6 +23,12 @@ struct LinePill: View {
     
     private var isTrainDetected: Bool {
         line.hasPrefix("RL") || line.hasPrefix("IR") || line.hasPrefix("RE") || line.hasPrefix("IC") || line == "R"
+    }
+    
+    private static let lausanneAgencies: Set<String> = ["151", "55", "764", "7256", "344", "29"]
+
+    private var isLausanne: Bool {
+        return Self.lausanneAgencies.contains(agency)
     }
 
     private var isSquared: Bool {
@@ -44,7 +51,7 @@ struct LinePill: View {
         if isSquared && LineColors.color(for: line) == nil {
             return Color(hex: "EA0706")
         }
-        return LineColors.color(for: line) ?? .accentColor
+        return (isLausanne ? LineColors.tlColor(for: line) : LineColors.color(for: line)) ?? .accentColor
     }
     
     private var lineColor: Color {

@@ -306,6 +306,7 @@ struct DepartureRowView: View {
                 LinePill(
                     line: departure.routeShortName,
                     mode: departure.mode,
+                    agency: departure.agencyId,
                     width: 28,
                     height: 18,
                     fontSize: 12
