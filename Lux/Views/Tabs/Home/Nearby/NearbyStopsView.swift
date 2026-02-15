@@ -13,7 +13,6 @@ import CoreLocation
 
 struct NearbyStopsView: View {
     @EnvironmentObject var locationManager: LocationManager
-    @State private var searchResults: [SearchResult] = []
     @State private var isLoading = false
     @State private var isWaitingForLocation = false
     @ObservedObject var settings = Settings.shared
@@ -92,7 +91,7 @@ struct NearbyStopsView: View {
             } else if isLoading {
                 ProgressView("Chargement des arrêts à proximité...")
                     .padding()
-            } else if searchResults.isEmpty {
+            } else if progress.searchResults.isEmpty {
                 if let status = maintenanceStatus, status.isMaintenance {
                     Spacer()
                     VStack(spacing: 16) {
@@ -159,8 +158,8 @@ struct NearbyStopsView: View {
             } else {
                 VStack(spacing: 8) {
                     VStack(spacing: 2.5) {
-                        ForEach(Array(searchResults.prefix(2).enumerated()), id: \.element.id) { index, result in
-                            let isLastStop = index == min(1, searchResults.count - 1)
+                        ForEach(Array(progress.searchResults.prefix(2).enumerated()), id: \.element.id) { index, result in
+                            let isLastStop = index == min(1, progress.searchResults.count - 1)
                             ZStack {
                                 StopView(stop: result, maxGroupsToShow: index == 0 ? 3 : (showingSuggestion ? 1 : 2), fromStops: false, isLastStopOverall: isLastStop)
                             }
@@ -249,7 +248,7 @@ struct NearbyStopsView: View {
                 if locationManager.authorizationStatus == .notDetermined && !settings.firstLaunch {
                     locationManager.requestLoc()
                 }
-            } else if searchResults.isEmpty && !isAuthorizationNotAllowed {
+            } else if progress.searchResults.isEmpty && !isAuthorizationNotAllowed {
                 loadNearbyStops(showLoading: true)
             } else if !isAuthorizationNotAllowed {
                 checkLocationAndRefresh()
@@ -284,7 +283,7 @@ struct NearbyStopsView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ReloadNearbyStops"))) { _ in
-            searchResults = []
+            progress.searchResults = []
             lastFetchedLocation = nil
             maintenanceStatus = nil
             warningMessage = nil
@@ -360,7 +359,7 @@ struct NearbyStopsView: View {
                     return result.lat != 0.0 && result.lon != 0.0
                 }
                 
-                self.searchResults = filteredResults
+                self.progress.searchResults = filteredResults
                 self.lastFetchedLocation = fetchLocation
                 
                 if filteredResults.isEmpty {
