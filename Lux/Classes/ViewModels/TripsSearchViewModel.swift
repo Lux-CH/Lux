@@ -9,6 +9,7 @@
 import LuxCom
 import Foundation
 import SwiftUI
+import CoreLocation
 
 enum SelectedLocation: Equatable {
     case searchResult(SearchResult)
@@ -71,6 +72,8 @@ class TripsSearchViewModel: ObservableObject {
     @Published var isLoadingLater = false
     @Published var isChangingContent = false
     @Published var animateIn = false
+    @ObservedObject var settings = Settings.shared
+    @ObservedObject var progress = Progress.shared
     private var allTrips: [Itinerary] = []
     private var currentPageIndex = 0
     private let itemsPerPage = 6
@@ -564,10 +567,22 @@ class TripsSearchViewModel: ObservableObject {
                 return RouteOptions.RouteLocation(coordinates: (result.lat, result.lon))
             }
         case .currentPosition:
-            if let coords = locationManager?.location?.coordinate {
-                return RouteOptions.RouteLocation(coordinates: (coords.latitude, coords.longitude))
+            guard let coords = locationManager?.location?.coordinate else { return nil }
+            
+            if settings.dataSource == .luxCom {
+                let nearbyStop = progress.searchResults.first { stop in
+                    guard stop.lat != 0.0 && stop.lon != 0.0 else { return false }
+                    let stopLocation = CLLocation(latitude: stop.lat, longitude: stop.lon)
+                    let userLocation = CLLocation(latitude: coords.latitude, longitude: coords.longitude)
+                    return userLocation.distance(from: stopLocation) <= 15.0
+                }
+                
+                if let stop = nearbyStop {
+                    return RouteOptions.RouteLocation(stopId: stop.id)
+                }
             }
-            return nil
+            
+            return RouteOptions.RouteLocation(coordinates: (coords.latitude, coords.longitude))
         }
     }
     

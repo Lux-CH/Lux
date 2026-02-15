@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import LuxCom
+import CoreLocation
 
 class Progress: ObservableObject, @unchecked Sendable {
     @MainActor static let shared = Progress()
@@ -16,4 +18,5 @@ class Progress: ObservableObject, @unchecked Sendable {
     
     // tips
     @AppStorage("tip_shownTripViewSuggestion") var shownTripViewSuggestion: Bool = false
+    @Published var searchResults: [SearchResult] = []
 }
