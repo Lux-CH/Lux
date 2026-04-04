@@ -13,7 +13,8 @@ class Settings: ObservableObject, @unchecked Sendable {
     
     @AppStorage("firstLaunch") var firstLaunch: Bool = true
     @AppStorage("appLaunchCount") var appLaunchCount: Int = 1
-    @AppStorage("dataSource") var dataSource: DataSource = .luxCom
+    @AppStorage("upd_0.7") var upd07: Bool = false
+    @AppStorage("dataSource") var dataSource: DataSource = .cita
     
     /// Shortcuts
     @AppStorage("showShortcutLabel") var showShortcutLabel: Bool = true
