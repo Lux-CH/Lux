@@ -32,8 +32,6 @@
 	<array>
 		<string>tpg-font.otf</string>
 	</array>
-	<key>UIDesignRequiresCompatibility</key>
-	<true/>
 	<key>UTExportedTypeDeclarations</key>
 	<array>
 		<dict>
