@@ -67,12 +67,14 @@ struct ShareButtonView: View {
                         }
                     }
                     .frame(width: 45, height: 45)
-                    .background(.ultraThickMaterial)
                     .clipShape(Circle())
-                    .overlay(
-                        Circle()
-                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                    )
+                    .adaptable(ios26: .glassButton, fallback: {
+                        $0.background(.ultraThickMaterial).overlay(
+                            Circle()
+                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                        )
+
+                    })
                     .shadow(radius: 2)
                 }
                 .disabled(isUploading || isSavingToCalendar)

@@ -139,6 +139,10 @@ class StopsViewModel: ObservableObject {
                 
                 await MainActor.run {
                     self.searchResults = filteredResults
+                    for result in filteredResults {
+                        print(result.id)
+                        print(result.name)
+                    }
                     self.lastFetchedLocation = fetchLocation
                     self.isLoading = false
                 }

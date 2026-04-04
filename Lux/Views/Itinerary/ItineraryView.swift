@@ -153,75 +153,83 @@ struct ItineraryView: View {
                         )
                 )
                 .overlay(alignment: .leading) {
-                    VStack(spacing: 12) {
-                        Button(action: {
-                            showDetails = false
-                            dismiss()
-                        }) {
-                            Image(systemName: "chevron.backward")
-                                .font(.headline)
-                                .foregroundColor(.accentColor)
-                                .frame(width: 45, height: 45)
-                                .background(.ultraThickMaterial)
-                                .clipShape(Circle())
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                )
-                                .shadow(radius: 2)
-                        }
-                        
-                        Button(action: {
-                            withAnimation {
-                                cycleTrackingMode()
-                            }
-                        }) {
-                            Image(systemName: locationButtonIcon)
-                                .font(.headline)
-                                .foregroundColor(.accentColor)
-                                .frame(width: 45, height: 45)
-                                .background(.ultraThickMaterial)
-                                .clipShape(Circle())
-                                .overlay(
-                                    Circle()
-                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                )
-                                .shadow(radius: 2)
-                        }
-                        
-                        if otherItineraries.count > 1 {
-                            Menu {
-                                ForEach(otherItineraries) { tripOption in
-                                    if tripOption.id == viewModel.tripId {
-                                        Button(
-                                            getExactTime(from: tripOption.startTime),
-                                            systemImage: "checkmark"
-                                        ) {}
-                                    }
-                                    else {
-                                        Button(getExactTime(from: tripOption.startTime)) {
-                                            Task {
-                                                await viewModel.switchToTrip(tripId: tripOption.id)
-                                            }
-                                        }
-                                    }
-                                }
-                            } label: {
-                                Image(systemName: "clock")
+                    GlassEffectGroup {
+                        VStack(spacing: 12) {
+                            Button(action: {
+                                showDetails = false
+                                dismiss()
+                            }) {
+                                Image(systemName: "chevron.backward")
                                     .font(.headline)
                                     .foregroundColor(.accentColor)
                                     .frame(width: 45, height: 45)
-                                    .background(.ultraThickMaterial)
                                     .clipShape(Circle())
-                                    .overlay(
-                                        Circle()
-                                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                    )
+                                    .adaptable(ios26: .glassButton, fallback: {
+                                        $0.background(.ultraThickMaterial).overlay(
+                                            Circle()
+                                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                        )
+                                        
+                                    })
                                     .shadow(radius: 2)
                             }
+                            
+                            Button(action: {
+                                withAnimation {
+                                    cycleTrackingMode()
+                                }
+                            }) {
+                                Image(systemName: locationButtonIcon)
+                                    .font(.headline)
+                                    .foregroundColor(.accentColor)
+                                    .frame(width: 45, height: 45)
+                                    .clipShape(Circle())
+                                    .adaptable(ios26: .glassButton, fallback: {
+                                        $0.background(.ultraThickMaterial).overlay(
+                                            Circle()
+                                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                        )
+                                        
+                                    })
+                                    .shadow(radius: 2)
+                            }
+                            
+                            if otherItineraries.count > 1 {
+                                Menu {
+                                    ForEach(otherItineraries) { tripOption in
+                                        if tripOption.id == viewModel.tripId {
+                                            Button(
+                                                getExactTime(from: tripOption.startTime),
+                                                systemImage: "checkmark"
+                                            ) {}
+                                        }
+                                        else {
+                                            Button(getExactTime(from: tripOption.startTime)) {
+                                                Task {
+                                                    await viewModel.switchToTrip(tripId: tripOption.id)
+                                                }
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: "clock")
+                                        .font(.headline)
+                                        .foregroundColor(.accentColor)
+                                        .frame(width: 45, height: 45)
+                                        .clipShape(Circle())
+                                        .adaptable(ios26: .glassButton, fallback: {
+                                            $0.background(.ultraThickMaterial).overlay(
+                                                Circle()
+                                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                            )
+                                            
+                                        })
+                                        .shadow(radius: 2)
+                                }
+                            }
+                            
+                            Spacer()
                         }
-                        
-                        Spacer()
                     }
                     .padding(.leading, 16)
                 }
