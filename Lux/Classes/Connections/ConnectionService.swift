@@ -35,20 +35,17 @@ class ConnectionService: ObservableObject {
         }
         
         loadingTasks[cleanStopId]?.cancel()
-        
-        loadingTasks[cleanStopId] = Future<[String], Never> { promise in
-            DispatchQueue.global(qos: .userInitiated).async { [weak self] in
-                guard let self = self, let extractor = self.extractor else {
-                    promise(.success([]))
-                    return
-                }
-                
+
+        loadingTasks[cleanStopId] = Future<[String], Never> { [weak self] promise in
+            guard let self = self, let extractor = self.extractor else {
+                promise(.success([]))
+                return
+            }
+
+            Task(priority: .userInitiated) {
                 do {
-                    if let connections = try extractor.extractSpecificKey(cleanStopId) {
-                        promise(.success(connections))
-                    } else {
-                        promise(.success([]))
-                    }
+                    let connections = try await extractor.extractSpecificKey(cleanStopId) ?? []
+                    promise(.success(connections))
                 } catch {
                     print("\(cleanStopId) \(error)")
                     promise(.success([]))
