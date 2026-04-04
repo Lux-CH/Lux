@@ -38,6 +38,10 @@ struct LuxApp: App {
                 // i am fully aware this will deprecated in the future; however not putting it doesn't apply the accent everywhere; same if you only leave accentColor
                 .accentColor(accentColorManager.selectedAccentColor)
                 .onAppear {
+                    if !settings.upd07 && settings.dataSource == .luxCom {
+                        settings.dataSource = .cita
+                    }
+                    settings.upd07 = true
                     if ((settings.appLaunchCount % 15) == 0) {
                         Task.detached(priority: .background) {
                             await CacheCleaner.performCleanup()
