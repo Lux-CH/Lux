@@ -11,6 +11,7 @@ enum iOS26Effect {
     case glass
     case glassButton
     case glassIn(AnyShape)
+    case glassButtonIn(AnyShape)
 }
 
 extension View {
@@ -45,17 +46,38 @@ extension View {
             self.glassEffect(.clear.interactive(true))
         case .glassIn(let shape):
             self.glassEffect(in: shape)
+        case .glassButtonIn(let shape):
+            self.glassEffect(.clear.interactive(true), in: shape)
+        }
+    }
+
+    @ViewBuilder
+    func glassButtonStyleIfAvailable(prominent: Bool = false) -> some View {
+        if #available(iOS 26, *) {
+            if prominent {
+                self.buttonStyle(.glassProminent)
+            } else {
+                self.buttonStyle(.glass)
+            }
+        } else {
+            self
         }
     }
 }
 
 
 struct GlassEffectGroup<Content: View>: View {
+    let spacing: CGFloat
     @ViewBuilder let content: () -> Content
+    
+    init(spacing: CGFloat = 18, @ViewBuilder content: @escaping () -> Content) {
+        self.spacing = spacing
+        self.content = content
+    }
 
     var body: some View {
         if #available(iOS 26, *) {
-            GlassEffectContainer {
+            GlassEffectContainer(spacing: spacing) {
                 content()
             }
         } else {

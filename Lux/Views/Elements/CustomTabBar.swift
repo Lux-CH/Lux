@@ -14,54 +14,61 @@ struct CustomTabBar: View {
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
-        HStack(spacing: 0) {
-            ForEach(ViewMode.allCases, id: \.self) { tab in
-                if tab != .search {
-                    TabButton(
-                        tab: tab,
-                        selectedTab: $selectedTab,
-                        namespace: tabAnimation,
-                        onSelect: {
-                            if selectedTab != tab {
-                                onModeChange(tab)
+        GlassEffectGroup(spacing: 16) {
+            HStack(spacing: 0) {
+                ForEach(ViewMode.allCases, id: \.self) { tab in
+                    if tab != .search {
+                        TabButton(
+                            tab: tab,
+                            selectedTab: $selectedTab,
+                            namespace: tabAnimation,
+                            onSelect: {
+                                if selectedTab != tab {
+                                    onModeChange(tab)
+                                }
                             }
-                        }
-                    )
-                    .accessibilityLabel("Onglet \(tab.title) \(selectedTab == tab ? "séléctionné" : "")")
-                    .accessibilityHint("Double-tapez pour changer d'onglet")
+                        )
+                        .accessibilityLabel("Onglet \(tab.title) \(selectedTab == tab ? "séléctionné" : "")")
+                        .accessibilityHint("Double-tapez pour changer d'onglet")
+                    }
                 }
             }
+            .padding(8)
+            .adaptable(
+                ios26: .glassIn(AnyShape(Capsule(style: .continuous))),
+                fallback: { view in
+                    view.background(
+                        ZStack {
+                            Capsule(style: .continuous)
+                                .fill(
+                                    Color(.secondarySystemBackground)
+                                )
+                                .shadow(
+                                    color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
+                                    radius: 7.5,
+                                    x: 0,
+                                    y: 5
+                                )
+                            Capsule(style: .continuous)
+                                .fill(
+                                    colorScheme == .dark
+                                    ? Color(.secondarySystemBackground).opacity(0.7)
+                                    : Color.white
+                                )
+                                .stroke(
+                                    colorScheme == .dark
+                                    ? Color.primary.opacity(0.1)
+                                    : Color.gray.opacity(0.1),
+                                    lineWidth: 0.75
+                                )
+                        }
+                    )
+                }
+            )
+            .frame(height: 54)
+            .padding(.horizontal, 24)
+            .padding(.bottom, 8)
         }
-        .padding(8)
-        .background(
-            ZStack {
-                Capsule(style: .continuous)
-                    .fill(
-                        Color(.secondarySystemBackground)
-                    )
-                    .shadow(
-                        color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
-                        radius: 7.5,
-                        x: 0,
-                        y: 5
-                    )
-                Capsule(style: .continuous)
-                    .fill(
-                        colorScheme == .dark
-                        ? Color(.secondarySystemBackground).opacity(0.7)
-                        : Color.white
-                    )
-                    .stroke(
-                        colorScheme == .dark
-                        ? Color.primary.opacity(0.1)
-                        : Color.gray.opacity(0.1),
-                        lineWidth: 0.75
-                    )
-            }
-        )
-        .frame(height: 54)
-        .padding(.horizontal, 24)
-        .padding(.bottom, 8)
     }
 }
 
@@ -106,6 +113,12 @@ struct TabButton: View {
                         )
                         .stroke(Color.primary.opacity(0.1), lineWidth: 0.25)
                         .matchedGeometryEffect(id: "TAB", in: namespace)
+                        .adaptable(
+                            ios26: .glassButtonIn(AnyShape(Capsule(style: .continuous))),
+                            fallback: { view in
+                                view
+                            }
+                        )
                 }
             }
         }
