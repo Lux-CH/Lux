@@ -126,6 +126,14 @@ struct StopPopoverView: View {
     
     @Environment(\.colorScheme) var colorScheme
     
+    private var backgroundColor: Color {
+        if #available(iOS 26, *) {
+            return Color.clear
+        } else {
+            return Color(.secondarySystemBackground).opacity(0.8)
+        }
+    }
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
@@ -184,7 +192,7 @@ struct StopPopoverView: View {
         }
         .padding()
         .frame(minWidth: 250)
-        .background(Color(.secondarySystemBackground).opacity(0.8))
+        .background(backgroundColor)
     }
     
     private func formatTime(_ date: Date) -> String {
