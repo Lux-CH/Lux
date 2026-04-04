@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Aeastr/GlowGetter",
       "state" : {
-        "revision" : "b1e9372d49f4047ab8ff39ef6b9b8f56f47608b9",
-        "version" : "1.1.1"
+        "revision" : "78f41fa9f28b07879a70e101bf3fd2010dac61b8",
+        "version" : "1.1.2"
       }
     },
     {
@@ -34,7 +34,7 @@
       "location" : "https://github.com/Lux-CH/LuxCom",
       "state" : {
         "branch" : "main",
-        "revision" : "7f8f229feb2bc2b859a9c3e61dd635c35a17de8f"
+        "revision" : "f36f78c60cfe7388749e59d5ac732eb653a28d93"
       }
     },
     {
@@ -43,7 +43,7 @@
       "location" : "https://github.com/Lux-CH/LuxComHAFAS",
       "state" : {
         "branch" : "main",
-        "revision" : "a3068b9c058997b962c52037401cc3062c8a965e"
+        "revision" : "bf44d3209f0822fb8f462ca599a4142837dc2903"
       }
     },
     {
@@ -94,10 +94,10 @@
     {
       "identity" : "tripkit",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/alexander-albers/tripkit.git",
+      "location" : "https://github.com/Lux-CH/tripkit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "5689d0aca1a444c85a2734f39c57076ff12a6c69"
+        "revision" : "0e500815b50cf9f558140d3dbd80c4fbf272ca67"
       }
     }
   ],

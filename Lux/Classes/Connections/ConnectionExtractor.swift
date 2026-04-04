@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import LuxComHAFAS
 
 class ConnectionExtractor: ObservableObject {
     @ObservedObject var settings = Settings.shared
@@ -26,20 +27,13 @@ class ConnectionExtractor: ObservableObject {
         mappedData = try Data(contentsOf: url, options: .mappedIfSafe)
     }
     
+    func extractSpecificKey(_ key: String) async throws -> [String]? {
+        if settings.isCita {
+            return try await getConnections(stopId: key)
+        }
 
-    func extractSpecificKey(_ key: String) throws -> [String]? {
         guard let data = mappedData else {
             throw BinaryPlistError.dataNotLoaded
-        }
-        
-        var computedKey: String = ""
-        if settings.dataSource == .cita {
-            guard let match = key.firstMatch(of: /L=(\d+)@/) else {
-                return nil
-            }
-            computedKey = "ch_\(match.1)"
-        } else {
-            computedKey = key
         }
         
         let stream = InputStream(data: data)
@@ -50,7 +44,7 @@ class ConnectionExtractor: ObservableObject {
             throw BinaryPlistError.invalidPlistFormat
         }
         
-        return plist[computedKey] as? [String]
+        return plist[key] as? [String]
     }
     
     func releaseResources() {

@@ -34,6 +34,8 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("crowdbackAllowed") var crowdbackAllowed: Bool = true
     @AppStorage("swisspassOnHome") var swisspassOnHome: Bool = false
     @AppStorage("showDebug") var showDebug: Bool = false
+
+    var isCita: Bool { dataSource == .cita }
 }
 
 enum DataSource: String, Codable, Hashable, Sendable {
