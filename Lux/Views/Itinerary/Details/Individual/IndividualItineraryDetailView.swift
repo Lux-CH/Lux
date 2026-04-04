@@ -38,7 +38,11 @@ struct IndividualItineraryDetailView: View {
     }
     
     private var backgroundColor: Color {
-        colorScheme == .dark ? Color(.systemBackground) : Color.white
+        if #available(iOS 26, *) {
+            return Color.clear
+        } else {
+            return colorScheme == .dark ? Color(.systemBackground) : Color.white
+        }
     }
     
     private static func calculateUpcomingStops(leg: Leg) -> [Place] {
