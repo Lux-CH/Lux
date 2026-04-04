@@ -78,11 +78,7 @@ struct ItineraryView: View {
     
     var detents: (CGFloat, CGFloat) {
         if #available(iOS 26, *) {
-            if #unavailable(iOS 26.1) {
-                return (0.1374, 68.5)
-            } else {
-                return (0.1, 72.5)
-            }
+            return (0.1374, 102.5)
         } else {
             return (0.1, 72.5)
         }
