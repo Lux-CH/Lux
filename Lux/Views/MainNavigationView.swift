@@ -121,47 +121,50 @@ struct MainNavigationView: View {
                                 if viewMode != .search {
                                     VStack {
                                         if viewMode == .home && !isAnimatingToSearch {
-                                            HStack {
-                                                shortcutsRow
-                                                
-                                                Button {
-                                                    showSettings.toggle()
-                                                    UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-                                                } label: {
-                                                    Image(systemName: "gearshape")
-                                                        .foregroundColor(Color.primary.opacity(0.6))
-                                                        .font(.system(size: 20))
-                                                        .frame(width: 61, height: 52.5)
-                                                        .background(Color(.secondarySystemFill).opacity(0.5))
-                                                        .cornerRadius(35)
-                                                        .overlay(
+                                            GlassEffectGroup(spacing: 6) {
+                                                HStack {
+                                                    shortcutsRow
+                                                    
+                                                    Button {
+                                                        showSettings.toggle()
+                                                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                                                    } label: {
+                                                        Image(systemName: "gearshape")
+                                                            .foregroundColor(Color.primary.opacity(0.6))
+                                                            .font(.system(size: 20))
+                                                            .frame(width: 61, height: 52.5)
+                                                            .accessibilityLabel("Paramètres")
+                                                            .accessibilityHint("Double-tapez pour ouvrir les paramètres de l'application")
+                                                    }
+                                                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+                                                    .cornerRadius(35)
+                                                    .adaptable(ios26: .glassButtonClear, fallback: {
+                                                        $0.background(Color(.secondarySystemFill).opacity(0.5)).overlay(
                                                             Capsule(style: .continuous)
                                                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                                         )
-                                                        .accessibilityLabel("Paramètres")
-                                                        .accessibilityHint("Double-tapez pour ouvrir les paramètres de l'application")
+                                                    })
                                                 }
-                                                .transition(.scale(scale: 0.8).combined(with: .opacity))
-                                            }
-                                            .sheet(isPresented: $showSettings) {
-                                                SettingsView()
-                                                    .environmentObject(shortcutManager)
-                                                    .presentationCornerRadius(36)
-                                            }
-                                            .sheet(isPresented: $showShortcutsSettings) {
-                                                NavigationStack {
-                                                    ShortcutsListView()
-                                                        .navigationTitle("Raccourcis")
+                                                .sheet(isPresented: $showSettings) {
+                                                    SettingsView()
+                                                        .environmentObject(shortcutManager)
                                                         .presentationCornerRadius(36)
                                                 }
+                                                .sheet(isPresented: $showShortcutsSettings) {
+                                                    NavigationStack {
+                                                        ShortcutsListView()
+                                                            .navigationTitle("Raccourcis")
+                                                            .presentationCornerRadius(36)
+                                                    }
+                                                }
+                                                .sheet(isPresented: $showLuxPass) {
+                                                    LuxPassView(showSwisspassOnHome: $settings.swisspassOnHome, isFromHome: true)
+                                                        .presentationDetents([.medium])
+                                                        .presentationCornerRadius(36)
+                                                }
+                                                .padding(.top, 65)
+                                                .padding(.bottom, 5)
                                             }
-                                            .sheet(isPresented: $showLuxPass) {
-                                                LuxPassView(showSwisspassOnHome: $settings.swisspassOnHome, isFromHome: true)
-                                                    .presentationDetents([.medium])
-                                                    .presentationCornerRadius(36)
-                                            }
-                                            .padding(.top, 65)
-                                            .padding(.bottom, 5)
                                             .transition(.opacity.combined(with: .move(edge: .top)))
                                         }
                                         
@@ -191,11 +194,13 @@ struct MainNavigationView: View {
                                             isTextFieldDisabled: viewMode == .home
                                         )
                                         .focused($isSearchBarFocused)
-                                        .onTapGesture {
-                                            if viewMode == .home {
-                                                transitionToSearchMode()
+                                        .simultaneousGesture(
+                                            TapGesture().onEnded {
+                                                if viewMode == .home {
+                                                    transitionToSearchMode()
+                                                }
                                             }
-                                        }
+                                        )
                                         .accessibilityAction(.default) {
                                             if viewMode == .home {
                                                 transitionToSearchMode()
@@ -432,17 +437,27 @@ struct MainNavigationView: View {
                         }
                     }
                     .frame(width: 275, height: 52)
-                    .background(
-                        Capsule(style: .continuous)
-                            .stroke(Color.secondary.opacity(0.3),
+                    .adaptable(ios26: .glassButtonClear, fallback: {
+                        $0.background(
+                            Capsule(style: .continuous)
+                                .stroke(Color.secondary.opacity(0.3),
+                                        style: StrokeStyle(lineWidth: 2, dash: [6])
+                                       )
+                                .background(
+                                    Color(.secondarySystemFill)
+                                        .opacity(0.3)
+                                        .cornerRadius(35)
+                                )
+                        )
+                    })
+                    .overlay{
+                        if #available(iOS 26, *) {
+                            Capsule(style: .continuous)
+                                .stroke(Color.secondary.opacity(0.3),
                                     style: StrokeStyle(lineWidth: 2, dash: [6])
-                                   )
-                            .background(
-                                Color(.secondarySystemFill)
-                                    .opacity(0.3)
-                                    .cornerRadius(35)
-                            )
-                    )
+                                )
+                        }
+                    }
                 }
                 .transition(.scale(scale: 0.8).combined(with: .opacity))
             } else {
@@ -487,18 +502,20 @@ struct MainNavigationView: View {
                             }
                         }
                         .frame(width: 134, height: 52.5)
-                        .background(
-                            Capsule(style: .continuous)
-                                .stroke(
-                                    Color.primary.opacity(0.1),
-                                    style: StrokeStyle(lineWidth: 0.5)
-                                )
-                                .background(
-                                    Color(.secondarySystemFill)
-                                        .opacity(0.5)
-                                        .cornerRadius(35)
-                                )
-                        )
+                        .adaptable(ios26: .glassButtonClear, fallback: {
+                            $0.background(
+                                Capsule(style: .continuous)
+                                    .stroke(
+                                        Color.primary.opacity(0.1),
+                                        style: StrokeStyle(lineWidth: 0.5)
+                                    )
+                                    .background(
+                                        Color(.secondarySystemFill)
+                                            .opacity(0.5)
+                                            .cornerRadius(35)
+                                    )
+                            )
+                        })
                     }
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
                     .accessibilityLabel("Raccourcis SwissPass")
