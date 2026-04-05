@@ -43,11 +43,9 @@ struct DateTimePickerView: View {
             }
             .padding(.top, 4)
             
-            if #unavailable(iOS 26) {
                 Divider()
                     .padding(.horizontal)
                     .overlay(Color(.tertiaryLabel))
-            }
 
             HStack {
                 Button("Annuler") {
