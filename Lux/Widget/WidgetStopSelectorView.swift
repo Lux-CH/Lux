@@ -11,10 +11,17 @@ import LuxCom
 struct WidgetStopSelectorView: View {
     @StateObject private var viewModel = WidgetStopSearchViewModel()
     @EnvironmentObject var locationManager: LocationManager
+    @Environment(\.colorScheme) private var colorScheme
     @State private var searchQuery = ""
     @State private var selectedStopId: String?
     
     @FocusState private var isSearchFocused: Bool
+    private let resultCardCornerRadius: CGFloat = 16
+    private var resultCardTint: Color {
+        colorScheme == .dark
+        ? Color(.secondarySystemBackground).opacity(0.85)
+        : Color(.secondarySystemBackground)
+    }
     
     private var uniqueSearchResults: [SearchResult] {
         var seen = Set<String>()
@@ -106,27 +113,38 @@ struct WidgetStopSelectorView: View {
     
     private var searchResultsList: some View {
         ScrollView {
-            VStack(spacing: 0) {
-                currentLocationOption
-                
-                Divider()
-                    .padding(.leading)
-                
-                ForEach(uniqueSearchResults) { result in
-                    Button {
-                        saveSelection(result)
-                    } label: {
-                        WidgetStopRow(
-                            result: result,
-                            isSelected: selectedStopId == result.id
-                        )
-                        .padding()
-                        .background(Color(.secondarySystemBackground))
-                    }
+            GlassEffectGroup(spacing: 12) {
+                VStack(spacing: 12) {
+                    currentLocationOption
                     
-                    Divider()
-                        .padding(.leading)
+                    ForEach(uniqueSearchResults) { result in
+                        Button {
+                            saveSelection(result)
+                        } label: {
+                            WidgetStopRow(
+                                result: result,
+                                isSelected: selectedStopId == result.id
+                            )
+                            .padding()
+                            .adaptable(
+                                ios26: .glassButtonTintedIn(
+                                    AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
+                                    resultCardTint
+                                ),
+                                fallback: {
+                                    $0.background(
+                                        RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
+                                            .fill(colorScheme == .dark
+                                                  ? Color(.secondarySystemBackground).opacity(0.85)
+                                                  : Color(.secondarySystemBackground))
+                                    )
+                                }
+                            )
+                        }
+                    }
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 12)
             }
         }
     }
@@ -134,11 +152,12 @@ struct WidgetStopSelectorView: View {
     private var contentWithCurrentLocation: some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(spacing: 0) {
-                    currentLocationOption
-                    
-                    Divider()
-                        .padding(.leading)
+                GlassEffectGroup(spacing: 12) {
+                    VStack(spacing: 12) {
+                        currentLocationOption
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 12)
                 }
             }
             
@@ -199,11 +218,12 @@ struct WidgetStopSelectorView: View {
     private var noResultsWithCurrentLocation: some View {
         VStack(spacing: 0) {
             ScrollView {
-                VStack(spacing: 0) {
-                    currentLocationOption
-                    
-                    Divider()
-                        .padding(.leading)
+                GlassEffectGroup(spacing: 12) {
+                    VStack(spacing: 12) {
+                        currentLocationOption
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 12)
                 }
             }
             
@@ -268,7 +288,20 @@ struct WidgetStopSelectorView: View {
                     .foregroundColor(selectedStopId == "current" ? .accentColor : .secondary.opacity(0.7))
             }
             .padding()
-            .background(Color(.secondarySystemBackground))
+            .adaptable(
+                ios26: .glassButtonTintedIn(
+                    AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
+                    resultCardTint
+                ),
+                fallback: {
+                    $0.background(
+                        RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
+                            .fill(colorScheme == .dark
+                                  ? Color(.secondarySystemBackground).opacity(0.85)
+                                  : Color(.secondarySystemBackground))
+                    )
+                }
+            )
         }
     }
     
