@@ -13,8 +13,8 @@ class Settings: ObservableObject, @unchecked Sendable {
     
     @AppStorage("firstLaunch") var firstLaunch: Bool = true
     @AppStorage("appLaunchCount") var appLaunchCount: Int = 1
-    @AppStorage("upd_0.7") var upd07: Bool = false
-    @AppStorage("dataSource") var dataSource: DataSource = .cita
+    @AppStorage("dataSource") var dataSource: DataSource = .luxCom
+    @AppStorage("dataSourceMode") var dataSourceMode: DataSourceMode = .auto
     
     /// Shortcuts
     @AppStorage("showShortcutLabel") var showShortcutLabel: Bool = true
@@ -40,6 +40,12 @@ class Settings: ObservableObject, @unchecked Sendable {
 }
 
 enum DataSource: String, Codable, Hashable, Sendable {
+   case luxCom = "LC"
+   case cita = "CTA"
+}
+
+enum DataSourceMode: String, Codable, Hashable, Sendable {
+   case auto = "AUTO"
    case luxCom = "LC"
    case cita = "CTA"
 }

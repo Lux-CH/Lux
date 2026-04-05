@@ -10,7 +10,7 @@ import SwiftUI
 struct DataSourcePicker<SelectionValue: Hashable>: View {
     @ObservedObject var accentColorManager = AccentColorManager.shared
     @Binding var selection: SelectionValue
-    let options: [(value: SelectionValue, label: String, symbol: String, color: Color)]
+    let options: [(value: SelectionValue, label: String, symbol: String, isSystemSymbol: Bool, color: Color)]
     @Namespace private var animation
     
     var body: some View {
@@ -24,8 +24,14 @@ struct DataSourcePicker<SelectionValue: Hashable>: View {
                             NotificationCenter.default.post(name: NSNotification.Name("ReloadNearbyStops"), object: nil)
                         }
                     } label: {
-                        VStack(spacing: 8) {
-                            Image(option.symbol)
+                        VStack(spacing: 6) {
+                            Group {
+                                if option.isSystemSymbol {
+                                    Image(systemName: option.symbol)
+                                } else {
+                                    Image(option.symbol)
+                                }
+                            }
                                 .font(.system(size: 24))
                                 .foregroundColor(isSelected(option.value) ? option.color : .secondary)
                                 .scaleEffect(isSelected(option.value) ? 1.05 : 1.0)
