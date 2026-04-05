@@ -14,6 +14,10 @@ struct SearchHistoryContent: View {
     @EnvironmentObject var shortcutManager: ShortcutManager
     @State private var appearAnimation = false
     @State private var showClearHistoryAlert = false
+    private let resultCardCornerRadius: CGFloat = 16
+    private var resultCardTint: Color {
+        colorScheme == .dark ? Color(.systemBackground).opacity(0.8) : Color(.systemBackground)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -22,20 +26,24 @@ struct SearchHistoryContent: View {
             } else {
                 header
                 ScrollView {
-                    VStack(spacing: 12) {
-                        ForEach(Array(viewModel.searchHistory.enumerated()), id: \.element.id) { index, result in
-                            historyRow(for: result)
-                                .opacity(appearAnimation ? 1 : 0)
-                                .offset(y: appearAnimation ? 0 : 10)
-                                .animation(
-                                    .spring(response: 0.3, dampingFraction: 0.75)
-                                        .delay(Double(index) * 0.05),
-                                    value: appearAnimation
-                                )
+                    GlassEffectGroup(spacing: 12) {
+                        VStack(spacing: 12) {
+                            ForEach(Array(viewModel.searchHistory.enumerated()), id: \.element.id) { index, result in
+                                historyRow(for: result)
+                                    .opacity(appearAnimation ? 1 : 0)
+                                    .offset(y: appearAnimation ? 0 : 10)
+                                    .animation(
+                                        .spring(response: 0.3, dampingFraction: 0.75)
+                                            .delay(Double(index) * 0.05),
+                                        value: appearAnimation
+                                    )
+                            }
                         }
+                        .padding(.top, 6)
                     }
                     .padding(.bottom, 16)
                 }
+                .scrollClipDisabled()
                 .safeAreaInset(edge: .bottom) {
                     Spacer().frame(height: 12)
                 }
@@ -172,12 +180,20 @@ struct SearchHistoryContent: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 10)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .fill(colorScheme == .dark ?
-                      Color(.systemBackground).opacity(0.8) :
-                      Color(.systemBackground))
-                .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+        .adaptable(
+            ios26: .glassButtonTintedIn(
+                AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
+                resultCardTint
+            ),
+            fallback: {
+                $0.background(
+                    RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
+                        .fill(colorScheme == .dark ?
+                              Color(.systemBackground).opacity(0.8) :
+                              Color(.systemBackground))
+                        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+                )
+            }
         )
         .contentShape(Rectangle())
         .padding(.horizontal)

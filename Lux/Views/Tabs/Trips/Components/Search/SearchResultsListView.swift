@@ -11,6 +11,10 @@ struct SearchResultsListView: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
     @State private var appearAnimation = false
+    private let resultCardCornerRadius: CGFloat = 16
+    private var resultCardTint: Color {
+        colorScheme == .dark ? Color(.systemBackground).opacity(0.8) : Color(.systemBackground)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -22,39 +26,51 @@ struct SearchResultsListView: View {
                 .padding(.bottom, 8)
             
             ScrollView {
-                VStack(spacing: 12) {
-                    ForEach(Array(viewModel.searchResults.enumerated()), id: \.element.id) { index, result in
-                        Button(action: {
-                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                                viewModel.selectLocation(result)
-                                HapticFeedback.lightImpact()
+                GlassEffectGroup(spacing: 12) {
+                    VStack(spacing: 12) {
+                        ForEach(Array(viewModel.searchResults.enumerated()), id: \.element.id) { index, result in
+                            Button(action: {
+                                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                    viewModel.selectLocation(result)
+                                    HapticFeedback.lightImpact()
+                                }
+                            }) {
+                                SearchResultRow(result: result)
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 10)
+                                    .contentShape(Rectangle())
+                                    .adaptable(
+                                        ios26: .glassButtonTintedIn(
+                                            AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
+                                            resultCardTint
+                                        ),
+                                        fallback: {
+                                            $0.background(
+                                                RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
+                                                    .fill(colorScheme == .dark ?
+                                                          Color(.systemBackground).opacity(0.8) :
+                                                          Color(.systemBackground))
+                                                    .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+                                            )
+                                        }
+                                    )
+                                    .opacity(appearAnimation ? 1 : 0)
+                                    .offset(y: appearAnimation ? 0 : 10)
+                                    .animation(
+                                        .spring(response: 0.3, dampingFraction: 0.75)
+                                        .delay(Double(index) * 0.05),
+                                        value: appearAnimation
+                                    )
                             }
-                        }) {
-                            SearchResultRow(result: result)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 10)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 16)
-                                        .fill(colorScheme == .dark ?
-                                              Color(.systemBackground).opacity(0.8) :
-                                              Color(.systemBackground))
-                                        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
-                                )
-                                .contentShape(Rectangle())
-                                .opacity(appearAnimation ? 1 : 0)
-                                .offset(y: appearAnimation ? 0 : 10)
-                                .animation(
-                                    .spring(response: 0.3, dampingFraction: 0.75)
-                                    .delay(Double(index) * 0.05),
-                                    value: appearAnimation
-                                )
+                            .buttonStyle(ScaleButtonStyle())
+                            .padding(.horizontal)
                         }
-                        .buttonStyle(ScaleButtonStyle())
-                        .padding(.horizontal)
                     }
+                    .padding(.top, 6)
                 }
                 .padding(.bottom, 16)
             }
+            .scrollClipDisabled()
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
@@ -249,6 +265,10 @@ struct CurrentLocationOption: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
     @State private var isHovering = false
+    private let resultCardCornerRadius: CGFloat = 16
+    private var resultCardTint: Color {
+        colorScheme == .dark ? Color(.systemBackground).opacity(0.8) : Color(.systemBackground)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -292,12 +312,20 @@ struct CurrentLocationOption: View {
                 }
                 .padding(.vertical, 14)
                 .padding(.horizontal, 16)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(colorScheme == .dark ?
-                              Color(.systemBackground).opacity(0.8) :
-                              Color(.systemBackground))
-                        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+                .adaptable(
+                    ios26: .glassButtonTintedIn(
+                        AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
+                        resultCardTint
+                    ),
+                    fallback: {
+                        $0.background(
+                            RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
+                                .fill(colorScheme == .dark ?
+                                      Color(.systemBackground).opacity(0.8) :
+                                      Color(.systemBackground))
+                                .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
+                        )
+                    }
                 )
                 .padding(.horizontal)
                 .onHover { hovering in

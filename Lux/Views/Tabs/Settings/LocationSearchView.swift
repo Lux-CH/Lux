@@ -10,6 +10,7 @@ import LuxCom
 
 struct LocationSearchView: View {
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @StateObject private var viewModel = LocationSearchViewModel()
     @EnvironmentObject private var locationManager: LocationManager
     @Binding var searchQuery: String
@@ -17,6 +18,12 @@ struct LocationSearchView: View {
     var onLocationSelected: (SearchResult) -> Void
     
     @FocusState private var isSearchFocused: Bool
+    private let resultCardCornerRadius: CGFloat = 16
+    private var resultCardTint: Color {
+        colorScheme == .dark
+        ? Color(.secondarySystemBackground).opacity(0.85)
+        : Color(.secondarySystemBackground)
+    }
     
     var body: some View {
         NavigationStack {
@@ -100,56 +107,80 @@ struct LocationSearchView: View {
     
     private var searchResultsList: some View {
         ScrollView {
-            VStack(spacing: 0) {
-                if locationManager.authorizationStatus == .authorizedWhenInUse && !searchQuery.isEmpty {
-                    Button {
-                        viewModel.useCurrentLocation(locationManager: locationManager) { result in
-                            if let result = result {
-                                onLocationSelected(result)
+            GlassEffectGroup(spacing: 12) {
+                VStack(spacing: 12) {
+                    if locationManager.authorizationStatus == .authorizedWhenInUse && !searchQuery.isEmpty {
+                        Button {
+                            viewModel.useCurrentLocation(locationManager: locationManager) { result in
+                                if let result = result {
+                                    onLocationSelected(result)
+                                }
                             }
-                        }
-                    } label: {
-                        HStack {
-                            ZStack {
-                                Circle()
-                                    .fill(Color.accentColor.opacity(0.2))
-                                    .frame(width: 38, height: 38)
+                        } label: {
+                            HStack {
+                                ZStack {
+                                    Circle()
+                                        .fill(Color.accentColor.opacity(0.2))
+                                        .frame(width: 38, height: 38)
+                                    
+                                    Image(systemName: "location.fill")
+                                        .font(.system(size: 16))
+                                        .foregroundColor(.accentColor)
+                                }
                                 
-                                Image(systemName: "location.fill")
-                                    .font(.system(size: 16))
-                                    .foregroundColor(.accentColor)
+                                Text("Position actuelle")
+                                    .foregroundColor(.primary)
+                                
+                                Spacer()
+                                
+                                Image(systemName: "chevron.right")
+                                    .font(.system(size: 14))
+                                    .foregroundColor(.secondary)
                             }
-                            
-                            Text("Position actuelle")
-                                .foregroundColor(.primary)
-                            
-                            Spacer()
-                            
-                            Image(systemName: "chevron.right")
-                                .font(.system(size: 14))
-                                .foregroundColor(.secondary)
-                        }
-                        .padding()
-                        .background(Color(.secondarySystemBackground))
-                    }
-                    
-                    Divider()
-                        .padding(.leading)
-                }
-                
-                ForEach(viewModel.searchResults) { result in
-                    Button {
-                        selectedLocation = result
-                        onLocationSelected(result)
-                    } label: {
-                        SearchResultRow(result: result)
                             .padding()
-                            .background(Color(.secondarySystemBackground))
+                            .adaptable(
+                                ios26: .glassButtonTintedIn(
+                                    AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
+                                    resultCardTint
+                                ),
+                                fallback: {
+                                    $0.background(
+                                        RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
+                                            .fill(colorScheme == .dark
+                                                  ? Color(.secondarySystemBackground).opacity(0.85)
+                                                  : Color(.secondarySystemBackground))
+                                    )
+                                }
+                            )
+                        }
                     }
                     
-                    Divider()
-                        .padding(.leading)
+                    ForEach(viewModel.searchResults) { result in
+                        Button {
+                            selectedLocation = result
+                            onLocationSelected(result)
+                        } label: {
+                            SearchResultRow(result: result)
+                                .padding()
+                                .adaptable(
+                                    ios26: .glassButtonTintedIn(
+                                        AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
+                                        resultCardTint
+                                    ),
+                                    fallback: {
+                                        $0.background(
+                                            RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
+                                                .fill(colorScheme == .dark
+                                                      ? Color(.secondarySystemBackground).opacity(0.85)
+                                                      : Color(.secondarySystemBackground))
+                                        )
+                                    }
+                                )
+                        }
+                    }
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 12)
             }
         }
     }
