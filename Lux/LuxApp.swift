@@ -24,6 +24,8 @@ struct LuxApp: App {
     @State private var sharedItinerary: Itinerary?
     @State private var sharedStopDetail: (String, String)?
     @State private var errorMessage: String = ""
+    @State private var didHandleStartupDataSource = false
+    @State private var isWaitingForStartupLocation = false
     
     @ObservedObject var settings = Settings.shared
     
@@ -38,16 +40,32 @@ struct LuxApp: App {
                 // i am fully aware this will deprecated in the future; however not putting it doesn't apply the accent everywhere; same if you only leave accentColor
                 .accentColor(accentColorManager.selectedAccentColor)
                 .onAppear {
-                    if !settings.upd07 && settings.dataSource == .luxCom {
-                        settings.dataSource = .cita
-                    }
-                    settings.upd07 = true
+                    configureDataSourceOnStartupIfNeeded()
                     if ((settings.appLaunchCount % 15) == 0) {
                         Task.detached(priority: .background) {
                             await CacheCleaner.performCleanup()
                         }
                     }
                     settings.appLaunchCount += 1
+                }
+                .onChange(of: locationManager.location) {
+                    guard isWaitingForStartupLocation else { return }
+                    guard settings.dataSourceMode == .auto else { return }
+                    guard let coordinate = locationManager.location?.coordinate else { return }
+                    
+                    applyAutomaticDataSource(latitude: coordinate.latitude, longitude: coordinate.longitude)
+                    isWaitingForStartupLocation = false
+                }
+                .onChange(of: locationManager.authorizationStatus) {
+                    guard isWaitingForStartupLocation else { return }
+                    guard settings.dataSourceMode == .auto else { return }
+                    guard locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted else { return }
+                    
+                    setDataSourceIfNeeded(.luxCom)
+                    isWaitingForStartupLocation = false
+                }
+                .onChange(of: settings.dataSourceMode) {
+                    applySelectedDataSourceMode()
                 }
                 .onOpenURL { url in
                     Task {
@@ -117,7 +135,56 @@ struct LuxApp: App {
                 }
         }
     }
+    
+    private func configureDataSourceOnStartupIfNeeded() {
+        guard !didHandleStartupDataSource else { return }
+        didHandleStartupDataSource = true
+        applySelectedDataSourceMode()
+    }
+    
+    private func applySelectedDataSourceMode() {
+        switch settings.dataSourceMode {
+        case .auto:
+            if let coordinate = locationManager.location?.coordinate {
+                applyAutomaticDataSource(latitude: coordinate.latitude, longitude: coordinate.longitude)
+                isWaitingForStartupLocation = false
+            } else {
+                // Auto defaults to LuxCom outside Geneva (or while location is unavailable).
+                setDataSourceIfNeeded(.luxCom)
+                isWaitingForStartupLocation = true
+            }
+        case .luxCom:
+            isWaitingForStartupLocation = false
+            setDataSourceIfNeeded(.luxCom)
+        case .cita:
+            isWaitingForStartupLocation = false
+            setDataSourceIfNeeded(.cita)
+        }
+    }
+    
+    private func applyAutomaticDataSource(latitude: Double, longitude: Double) {
+        let shouldUseCita = isInsideCitaBounds(latitude: latitude, longitude: longitude)
+        setDataSourceIfNeeded(shouldUseCita ? .cita : .luxCom)
+    }
+    
+    private func setDataSourceIfNeeded(_ dataSource: DataSource) {
+        guard settings.dataSource != dataSource else { return }
+        settings.dataSource = dataSource
+        NotificationCenter.default.post(name: NSNotification.Name("ReloadNearbyStops"), object: nil)
+    }
+    
+    private func isInsideCitaBounds(latitude: Double, longitude: Double) -> Bool {
+        let minLongitude = 5.88593
+        let minLatitude = 46.09657
+        let maxLongitude = 6.31577
+        let maxLatitude = 46.31119
         
+        return longitude >= minLongitude &&
+               longitude <= maxLongitude &&
+               latitude >= minLatitude &&
+               latitude <= maxLatitude
+    }
+    
     @MainActor
     private func handleIncomingURL(_ url: URL) async {
         let result = await URLHandler.process(url)

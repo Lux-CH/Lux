@@ -263,10 +263,11 @@ struct SettingsView: View {
         SettingsCard {
             Section {
                 DataSourcePicker(
-                    selection: $settings.dataSource,
+                    selection: $settings.dataSourceMode,
                     options: [
-                        (value: .luxCom, label: "Lux", symbol: "lux", color: .orange),
-                        (value: .cita, label: "tpg", symbol: "tpg", color: Color(hex: "FD5312"))
+                        (value: .auto, label: "Auto", symbol: "location.fill", isSystemSymbol: true, color: .teal),
+                        (value: .luxCom, label: "Lux", symbol: "lux", isSystemSymbol: false, color: .orange),
+                        (value: .cita, label: "tpg", symbol: "tpg", isSystemSymbol: false, color: Color(hex: "FD5312"))
                     ]
                 )
             } header: {
@@ -274,7 +275,7 @@ struct SettingsView: View {
                     icon: "cylinder.split.1x2.fill",
                     iconColor: .teal,
                     title: String(localized: "Source des données"),
-                    subtitle: String(localized: "Choisissez la source des données affichées sur Lux"),
+                    subtitle: String(localized: "Choisissez la source des données affichées sur Lux\(settings.dataSourceMode == .auto ? String(localized:". Source utilisée: \(settings.dataSource == .luxCom ? "Lux" : "tpg")") : "")"),
                     showInfoButton: true,
                     infoAction: { showDataSourceInfo = true }
                 )
@@ -283,7 +284,7 @@ struct SettingsView: View {
         .alert("Source des données", isPresented: $showDataSourceInfo) {
             Button("OK", role: .cancel) { }
         } message: {
-            Text("Lux est la source de données officielle de l’application. Elle garantit une meilleure compatibilité avec celle-ci et offre un meilleur respect de la vie privée.\nL'option tpg utilise le serveur officiel des Transports Publics Genevois comme source de données. Cette source peut être plus précise, mais elle est moins compatible avec l'application. Par conséquent, certaines fonctionnalités ne seront que partiellement disponibles lorsque tpg est séléctionné.\nLe calcul des itinéraires est, dans tous les cas, effectué à l'aide des serveurs de Lux.\n\nLa politique de confidentialité de Lux ne s'applique plus lorsque l'option tpg est sélectionnée. Tous droits relatifs aux noms et icônes des Transports Publics Genevois sont réservés.")
+            Text("L’option Auto est recommandée : l'app montre les données officielles des tpg dans le canton de Genève, puis celle de Lux en dehors.\nLux est la source de données officielle de l’application. Elle garantit une meilleure compatibilité avec celle-ci et offre un meilleur respect de la vie privée.\nL'option tpg utilise le serveur officiel des Transports Publics Genevois comme source de données. Cette source peut être plus précise, mais elle est moins compatible avec l'application. Par conséquent, certaines fonctionnalités ne seront que partiellement disponibles lorsque tpg est séléctionné.\nLe calcul des itinéraires est, dans tous les cas, effectué à l'aide des serveurs de Lux.\n\nLa politique de confidentialité de Lux ne s'applique plus lorsque l'option tpg est sélectionnée. Tous droits relatifs aux noms et icônes des Transports Publics Genevois sont réservés.")
         }
     }
     
