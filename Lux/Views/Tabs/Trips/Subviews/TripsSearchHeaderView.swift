@@ -97,11 +97,15 @@ struct TripsSearchHeaderView: View {
                         .padding(.vertical, 8)
                         .padding(.horizontal, 20)
                         .foregroundColor(.accentColor)
-                        .background(
-                            Capsule(style: .continuous)
-                                .fill(Color(.secondarySystemFill).opacity(0.5))
-                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                        )
+                        .clipShape(Capsule(style: .continuous))
+                        .adaptable(ios26: .glassButtonClear, fallback: {
+                            $0.background(
+                                Capsule(style: .continuous)
+                                    .fill(Color(.secondarySystemFill).opacity(0.5))
+                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            )
+                            
+                        })
                 }
                 .buttonStyle(ScaleButtonStyle())
                 .transition(.asymmetric(
@@ -112,25 +116,29 @@ struct TripsSearchHeaderView: View {
             
             Spacer()
             
-            if viewModel.selectedDate ?? Date() < Date().addingTimeInterval(-10 * 60) {
-                warningTimeChip
-                    .transition(.asymmetric(
-                        insertion: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8)),
-                        removal: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8))
-                    ))
+            GlassEffectGroup(spacing: 6) {
+                HStack {
+                    if viewModel.selectedDate ?? Date() < Date().addingTimeInterval(-10 * 60) {
+                        warningTimeChip
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8)),
+                                removal: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8))
+                            ))
+                    }
+                    
+                    timeChip
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8)),
+                            removal: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8))
+                        ))
+                    
+                    optionsChip
+                        .transition(.asymmetric(
+                            insertion: .opacity.combined(with: .move(edge: .trailing)).combined(with: .scale(scale: 0.8)),
+                            removal: .opacity.combined(with: .move(edge: .trailing)).combined(with: .scale(scale: 0.8))
+                        ))
+                }
             }
-            
-            timeChip
-                .transition(.asymmetric(
-                    insertion: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8)),
-                    removal: .opacity.combined(with: .move(edge: .top)).combined(with: .scale(scale: 0.8))
-                ))
-            
-            optionsChip
-                .transition(.asymmetric(
-                    insertion: .opacity.combined(with: .move(edge: .trailing)).combined(with: .scale(scale: 0.8)),
-                    removal: .opacity.combined(with: .move(edge: .trailing)).combined(with: .scale(scale: 0.8))
-                ))
         }
         .padding(.horizontal, 4)
     }
@@ -154,11 +162,14 @@ struct TripsSearchHeaderView: View {
             .frame(maxHeight: 15)
             .padding(.vertical, 8)
             .padding(.horizontal, 20)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(Color.accentColor.opacity(0.12))
-                    .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
-            )
+            .clipShape(Capsule(style: .continuous))
+            .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
+                $0.background(
+                    Capsule(style: .continuous)
+                        .fill(Color.accentColor.opacity(0.12))
+                        .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                )
+            })
         }
         .buttonStyle(ScaleButtonStyle())
         .accessibilityLabel("Heure de \(viewModel.departureType == .arriveBy ? "d'arrivée" : "départ"): \(timeSummaryText)")
@@ -190,11 +201,14 @@ struct TripsSearchHeaderView: View {
             .frame(maxHeight: 15)
             .padding(.vertical, 8)
             .padding(.horizontal, 14)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(Color.yellow.opacity(0.12))
-                    .stroke(Color.yellow.opacity(0.35), lineWidth: 0.5)
-            )
+            .clipShape(Capsule(style: .continuous))
+            .adaptable(ios26: .glassButtonTinted(Color.yellow.opacity(0.12)), fallback: {
+                $0.background(
+                    Capsule(style: .continuous)
+                        .fill(Color.yellow.opacity(0.12))
+                        .stroke(Color.yellow.opacity(0.35), lineWidth: 0.5)
+                )
+            })
         }
         .buttonStyle(ScaleButtonStyle())
         .accessibilityLabel("Avertissement")
@@ -227,11 +241,14 @@ struct TripsSearchHeaderView: View {
             .frame(maxHeight: 15)
             .padding(.vertical, 8)
             .padding(.horizontal, 20)
-            .background(
-                Capsule(style: .continuous)
-                    .fill(Color.accentColor.opacity(0.12))
-                    .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
-            )
+            .clipShape(Capsule(style: .continuous))
+            .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
+                $0.background(
+                    Capsule(style: .continuous)
+                        .fill(Color.accentColor.opacity(0.12))
+                        .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                )
+            })
         }
         .buttonStyle(ScaleButtonStyle())
         .accessibilityLabel("Options d'itinéraire")
