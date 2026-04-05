@@ -15,6 +15,76 @@ enum iOS26Effect {
     case glassButtonClearTinted(Color)
     case glassIn(AnyShape)
     case glassButtonIn(AnyShape)
+    case glassButtonTintedIn(AnyShape, Color)
+}
+
+private struct LiquidGlassLightModeButtonTintOptOutKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+extension EnvironmentValues {
+    var liquidGlassLightModeButtonTintOptOut: Bool {
+        get { self[LiquidGlassLightModeButtonTintOptOutKey.self] }
+        set { self[LiquidGlassLightModeButtonTintOptOutKey.self] = newValue }
+    }
+}
+
+private struct iOS26EffectModifier: ViewModifier {
+    let effect: iOS26Effect
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.liquidGlassLightModeButtonTintOptOut) private var lightModeButtonTintOptOut
+
+    private var shouldUseLightModeButtonTint: Bool {
+        colorScheme == .light && !lightModeButtonTintOptOut
+    }
+
+    private var defaultLightModeButtonTint: Color {
+        Color(.secondarySystemFill)
+    }
+
+    @ViewBuilder
+    func body(content: Content) -> some View {
+        if #available(iOS 26, *) {
+            applyiOS26Effect(to: content)
+        } else {
+            content
+        }
+    }
+
+    @available(iOS 26, *)
+    @ViewBuilder
+    private func applyiOS26Effect(to content: Content) -> some View {
+        switch effect {
+        case .glass:
+            content.glassEffect()
+        case .glassButton:
+            if shouldUseLightModeButtonTint {
+                content.glassEffect(.regular.tint(defaultLightModeButtonTint).interactive(true))
+            } else {
+                content.glassEffect(.regular.interactive(true))
+            }
+        case .glassButtonClear:
+            if shouldUseLightModeButtonTint {
+                content.glassEffect(.regular.tint(defaultLightModeButtonTint).interactive(true))
+            } else {
+                content.glassEffect(.clear.interactive(true))
+            }
+        case .glassButtonTinted(let tint):
+            content.glassEffect(.regular.tint(tint).interactive(true))
+        case .glassButtonClearTinted(let tint):
+            if shouldUseLightModeButtonTint {
+                content.glassEffect(.regular.tint(tint).interactive(true))
+            } else {
+                content.glassEffect(.clear.tint(tint).interactive(true))
+            }
+        case .glassIn(let shape):
+            content.glassEffect(in: shape)
+        case .glassButtonIn(let shape):
+            content.glassEffect(.clear.interactive(true), in: shape)
+        case .glassButtonTintedIn(let shape, let tint):
+            content.glassEffect(.regular.tint(tint).interactive(true), in: shape)
+        }
+    }
 }
 
 extension View {
@@ -24,7 +94,7 @@ extension View {
         @ViewBuilder fallback: (Self) -> Fallback
     ) -> some View {
         if #available(iOS 26, *) {
-            self.applyiOS26Effect(effect)
+            self.modifier(iOS26EffectModifier(effect: effect))
         } else {
             fallback(self)
         }
@@ -33,30 +103,9 @@ extension View {
     @ViewBuilder
     func ifAvailable(ios26 effect: iOS26Effect) -> some View {
         if #available(iOS 26, *) {
-            self.applyiOS26Effect(effect)
+            self.modifier(iOS26EffectModifier(effect: effect))
         } else {
             self
-        }
-    }
- 
-    @available(iOS 26, *)
-    @ViewBuilder
-    private func applyiOS26Effect(_ effect: iOS26Effect) -> some View {
-        switch effect {
-        case .glass:
-            self.glassEffect()
-        case .glassButton:
-            self.glassEffect(.regular.interactive(true))
-        case .glassButtonClear:
-            self.glassEffect(.clear.interactive(true))
-        case .glassButtonTinted(let tint):
-            self.glassEffect(.regular.tint(tint).interactive(true))
-        case .glassButtonClearTinted(let tint):
-            self.glassEffect(.clear.tint(tint).interactive(true))
-        case .glassIn(let shape):
-            self.glassEffect(in: shape)
-        case .glassButtonIn(let shape):
-            self.glassEffect(.clear.interactive(true), in: shape)
         }
     }
 
@@ -71,6 +120,10 @@ extension View {
         } else {
             self
         }
+    }
+
+    func liquidGlassLightModeButtonTintOptOut(_ enabled: Bool = true) -> some View {
+        environment(\.liquidGlassLightModeButtonTintOptOut, enabled)
     }
 }
 
