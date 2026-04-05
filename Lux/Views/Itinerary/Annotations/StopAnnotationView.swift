@@ -42,12 +42,14 @@ struct StopAnnotationView: View {
     let isMultiple: Bool
     @State private var showPopover = false
     @State private var showExpandedStop = false
+    @State private var connections: [String] = []
     @Binding var showSheet: Bool
     
     private let circleSize: CGFloat = 16
     private let terminalSize: CGFloat = 20
     private let intermediateSize: CGFloat = 10
     private let hitAreaSize: CGFloat = 44
+    private let popoverDelay: TimeInterval = 0.12
     
     @State private var isAnimating = false
     
@@ -57,12 +59,15 @@ struct StopAnnotationView: View {
                 .frame(width: hitAreaSize, height: hitAreaSize)
                 .contentShape(Circle())
                 .onTapGesture {
-                    withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+                    loadConnections()
+
+                    withAnimation(.spring(response: 0.2, dampingFraction: 0.65)) {
                         isAnimating = true
-                        showSheet = false
                     }
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+
+                    setSheetVisibility(false)
+
+                    DispatchQueue.main.asyncAfter(deadline: .now() + popoverDelay) {
                         isAnimating = false
                         showPopover = true
                     }
@@ -85,7 +90,7 @@ struct StopAnnotationView: View {
                 .scaleEffect(isAnimating ? 1.2 : 1.0)
         }
         .popover(isPresented: $showPopover) {
-            StopPopoverView(place: annotation.place, color: annotation.color, onNavigate: {
+            StopPopoverView(place: annotation.place, color: annotation.color, connections: connections, onNavigate: {
                 showPopover = false
                 showExpandedStop = true
             })
@@ -98,12 +103,12 @@ struct StopAnnotationView: View {
         }
         .onChange(of: showPopover) {
             if !showPopover && !showExpandedStop {
-                showSheet = true
+                setSheetVisibility(true)
             }
         }
         .onChange(of: showExpandedStop) {
             if !showExpandedStop {
-                showSheet = true
+                setSheetVisibility(true)
             }
         }
     }
@@ -117,11 +122,32 @@ struct StopAnnotationView: View {
             return circleSize
         }
     }
+
+    private func loadConnections() {
+        guard let stopId = sanitizedStopId else { return }
+
+        ConnectionService.shared.getConnections(for: stopId) { results in
+            connections = results
+        }
+    }
+
+    private var sanitizedStopId: String? {
+        guard let stopId = annotation.place.stopId, !stopId.isEmpty else { return nil }
+        return stopId.components(separatedBy: ":").first
+    }
+
+    private func setSheetVisibility(_ isVisible: Bool) {
+        guard showSheet != isVisible else { return }
+        withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
+            showSheet = isVisible
+        }
+    }
 }
 
 struct StopPopoverView: View {
     let place: Place
     let color: Color
+    let connections: [String]
     let onNavigate: () -> Void
     
     @Environment(\.colorScheme) var colorScheme
@@ -147,23 +173,8 @@ struct StopPopoverView: View {
             .padding(.bottom, 4)
             
             VStack(alignment: .leading, spacing: 8) {
-                if let arrival = place.arrival {
-                    HStack(spacing: 6) {
-                        Image(systemName: "clock")
-                            .foregroundColor(color)
-                        Text("Arrivée prévue : \(formatTime(arrival))")
-                            .fontWeight(.medium)
-                    }
-                }
-                else if let departure = place.departure {
-                    HStack(spacing: 6) {
-                        Image(systemName: "clock")
-                            .foregroundColor(color)
-                        Text("Départ à : \(formatTime(departure))")
-                            .fontWeight(.medium)
-                    }
-                }
-                
+                timingRows
+
                 if let track = place.track {
                     HStack(spacing: 6) {
                         Image(systemName: "train.side.front.car")
@@ -171,6 +182,23 @@ struct StopPopoverView: View {
                         Text(getTrackType(track))
                             .fontWeight(.medium)
                     }
+                }
+
+                if !connections.isEmpty {
+                    HStack(alignment: .top, spacing: 6) {
+                        Image(systemName: "arrow.triangle.swap")
+                            .foregroundColor(color)
+
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 4) {
+                                ForEach(connections, id: \.self) { routeName in
+                                    LinePill(line: routeName, mode: .bus, agency: nil)
+                                }
+                            }
+                        }
+                    }
+                    .padding(.top, 2)
+                    .accessibilityHidden(true)
                 }
             }
             .font(.subheadline)
@@ -196,8 +224,36 @@ struct StopPopoverView: View {
     }
     
     private func formatTime(_ date: Date) -> String {
+        Self.timeFormatter.string(from: date)
+    }
+
+    @ViewBuilder
+    private var timingRows: some View {
+        if let arrival = place.arrival,
+           let departure = place.departure,
+           arrival != departure {
+            timingRow(icon: "arrow.down.circle.fill", text: String(localized:"Arrivée prévue : \(formatTime(arrival))"))
+            timingRow(icon: "arrow.up.circle.fill", text: String(localized:"Départ à : \(formatTime(departure))"))
+        } else if let arrival = place.arrival {
+            timingRow(icon: "clock", text: String(localized:"Arrivée prévue : \(formatTime(arrival))"))
+        } else if let departure = place.departure {
+            timingRow(icon: "clock", text: String(localized:"Départ à : \(formatTime(departure))"))
+        }
+    }
+
+    @ViewBuilder
+    private func timingRow(icon: String, text: String) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .foregroundColor(color)
+            Text(text)
+                .fontWeight(.medium)
+        }
+    }
+
+    private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()
         formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
+        return formatter
+    }()
 }
