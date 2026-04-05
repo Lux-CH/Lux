@@ -149,7 +149,7 @@ struct ItineraryView: View {
                         )
                 )
                 .overlay(alignment: .leading) {
-                    GlassEffectGroup {
+                    GlassEffectGroup(spacing: 8) {
                         VStack(spacing: 12) {
                             Button(action: {
                                 showDetails = false
