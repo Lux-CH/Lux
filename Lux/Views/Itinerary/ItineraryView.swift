@@ -228,6 +228,7 @@ struct ItineraryView: View {
                         }
                     }
                     .padding(.leading, 16)
+                    .liquidGlassLightModeButtonTintOptOut()
                 }
                 .overlay(alignment: .trailing) {
                     VStack(spacing: 12) {
@@ -237,6 +238,7 @@ struct ItineraryView: View {
                         Spacer()
                     }
                     .padding(.trailing, 16)
+                    .liquidGlassLightModeButtonTintOptOut()
                 }
                 // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
                 .sheet(isPresented: $showDetails) {
