@@ -43,7 +43,7 @@ extension View {
         case .glass:
             self.glassEffect()
         case .glassButton:
-            self.glassEffect(.clear.interactive(true))
+            self.glassEffect(.regular.interactive(true))
         case .glassIn(let shape):
             self.glassEffect(in: shape)
         case .glassButtonIn(let shape):
