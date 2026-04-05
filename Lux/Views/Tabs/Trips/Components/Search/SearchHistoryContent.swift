@@ -77,11 +77,15 @@ struct SearchHistoryContent: View {
                 .padding(.vertical, 5.5)
                 .padding(.horizontal, 24)
                 .foregroundColor(.red)
-                .background(
-                    Capsule(style: .continuous)
-                        .fill(Color(.secondarySystemFill).opacity(0.5))
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                )
+                .clipShape(Capsule(style: .continuous))
+                .adaptable(ios26: .glassButtonClear, fallback: {
+                    $0.background(
+                        Capsule(style: .continuous)
+                            .fill(Color(.secondarySystemFill).opacity(0.5))
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                    )
+                    
+                })
             }
             .buttonStyle(ScaleButtonStyle())
             .alert(String(localized: "Effacer l'historique ?"), isPresented: $showClearHistoryAlert) {
@@ -107,11 +111,14 @@ struct SearchHistoryContent: View {
                 .foregroundColor(.accentColor)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 24)
-                .background(
-                    Capsule(style: .continuous)
-                        .fill(Color.accentColor.opacity(0.12))
-                        .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
-                )
+                .clipShape(Capsule(style: .continuous))
+                .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
+                    $0.background(
+                        Capsule(style: .continuous)
+                            .fill(Color.accentColor.opacity(0.12))
+                            .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                    )
+                })
             }
             .buttonStyle(ScaleButtonStyle())
             .disabled(!viewModel.isCurrentPositionAvailable())
