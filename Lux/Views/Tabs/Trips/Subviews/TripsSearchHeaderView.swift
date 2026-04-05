@@ -398,16 +398,19 @@ struct TripsSearchHeaderView: View {
                 .font(.system(size: 16, weight: .semibold))
                 .foregroundColor(swapButtonForegroundColor)
                 .frame(width: 38, height: 38)
-                .background(
-                    Circle()
-                        .fill(Color(.secondarySystemFill).opacity(0.5))
-                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                        .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
-                        .background(Circle().fill(Color(.secondarySystemBackground)))
-                )
                 .rotationEffect(isSwapping ? Angle(degrees: 180) : .zero)
                 .animation(.spring(response: 0.5, dampingFraction: 0.6), value: isSwapping)
                 .scaleEffect(isSwapping ? 0.95 : 1.0)
+                .clipShape(Circle())
+                .adaptable(ios26: .glassButtonClear, fallback: {
+                    $0.background(
+                        Circle()
+                            .fill(Color(.secondarySystemFill).opacity(0.5))
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+                            .background(Circle().fill(Color(.secondarySystemBackground)))
+                    )
+                })
         }
         .disabled(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
         .buttonStyle(PlainButtonStyle())
