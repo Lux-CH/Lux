@@ -70,7 +70,7 @@ struct PaginationControlsView: View {
                         : Color.gray.opacity(0.1),
                         lineWidth: 0.75
                     )
-                    .glassEffect(.regular)
+                    .glassEffect(.regular.interactive(true))
                     .shadow(
                         color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
                         radius: 7.5,
@@ -79,6 +79,7 @@ struct PaginationControlsView: View {
                     )
                     .scaleEffect(isChangingContent ? 0.98 : 1)
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isChangingContent)
+                    .allowsHitTesting(false)
             }
             else {
                 Capsule(style: .continuous)
@@ -101,6 +102,7 @@ struct PaginationControlsView: View {
                     )
                     .scaleEffect(isChangingContent ? 0.98 : 1)
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isChangingContent)
+                    .allowsHitTesting(false)
             }
         }
         .frame(height: 54)
