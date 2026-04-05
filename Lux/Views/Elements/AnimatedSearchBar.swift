@@ -60,11 +60,14 @@ struct AnimatedSearchBar: View {
             .padding(.trailing, 18)
         }
         .frame(width: 350, height: 60)
-        .background(
-            Capsule(style: .continuous)
-                .fill(Color(.secondarySystemFill).opacity(0.5))
-                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-        )
+        .contentShape(Capsule(style: .continuous))
+        .adaptable(ios26: .glassButtonClear, fallback: {
+            $0.background(
+                Capsule(style: .continuous)
+                    .fill(Color(.secondarySystemFill).opacity(0.5))
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+            )
+        })
         .animation(.spring(response: 0.4, dampingFraction: 0.8), value: placeholderText)
         .accessibilityElement(children: isTextFieldDisabled ? .ignore : .contain)
     }

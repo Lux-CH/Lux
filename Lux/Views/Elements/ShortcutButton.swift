@@ -30,18 +30,28 @@ struct ShortcutButton: View {
                 }
             }
             .frame(width: 134, height: 52.5)
-            .background(
-                Capsule(style: .continuous)
-                    .stroke(
-                        isPlaceholder ? Color.secondary.opacity(0.3) : Color.primary.opacity(0.1),
-                        style: StrokeStyle(lineWidth: isPlaceholder ? 2 : 0.5, dash: isPlaceholder ? [6] : [])
-                    )
-                    .background(
-                        Color(.secondarySystemFill)
-                            .opacity(isPlaceholder ? 0.3 : 0.5)
-                            .cornerRadius(35)
-                    )
-            )
+            .adaptable(ios26: .glassButtonClear, fallback: {
+                $0.background(
+                    Capsule(style: .continuous)
+                        .stroke(
+                            isPlaceholder ? Color.secondary.opacity(0.3) : Color.primary.opacity(0.1),
+                            style: StrokeStyle(lineWidth: isPlaceholder ? 2 : 0.5, dash: isPlaceholder ? [6] : [])
+                        )
+                        .background(
+                            Color(.secondarySystemFill)
+                                .opacity(isPlaceholder ? 0.3 : 0.5)
+                                .cornerRadius(35)
+                        )
+                )
+            })
+            .overlay{
+                if isPlaceholder, #available(iOS 26.0, *) {
+                    Capsule(style: .continuous)
+                        .stroke(Color.secondary.opacity(0.3),
+                            style: StrokeStyle(lineWidth: 2, dash: [6])
+                        )
+                }
+            }
         }
     }
 }
