@@ -73,11 +73,9 @@ struct TripsSearchTimePickerView: View {
                 .buttonStyle(ScaleButtonStyle())
                 .padding(.top, 4)
             }
-            if #unavailable(iOS 26) {
-                Divider()
-                    .padding(.horizontal)
-                    .overlay(Color(.tertiaryLabel))
-            }
+            Divider()
+                .padding(.horizontal)
+                .overlay(Color(.tertiaryLabel))
             
             HStack {
                 Button("Annuler") {
