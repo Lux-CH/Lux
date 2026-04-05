@@ -56,36 +56,41 @@ struct StopHeaderView: View {
                 }
             }
             Spacer()
-            HStack {
-                if settings.showDebug {
-                    Button {
-                        showAlert = true
-                    } label: {
-                        Image(systemName: "link")
-                            .foregroundColor(Color.accentColor)
-                            .font(.system(size: 13.3))
-                            .frame(width: 40.5, height: 35)
-                            .background(Color(.secondarySystemFill).opacity(0.5))
-                            .clipShape(Circle())
-                            .overlay(
-                                Circle()
-                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                            )
+            GlassEffectGroup(spacing: 6) {
+                HStack {
+                    if settings.showDebug {
+                        Button {
+                            showAlert = true
+                        } label: {
+                            Image(systemName: "link")
+                                .foregroundColor(Color.accentColor)
+                                .font(.system(size: 13.3))
+                                .frame(width: 40.5, height: 35)
+                                .clipShape(Circle())
+                                .adaptable(ios26: .glassButtonClear, fallback: {
+                                    $0.background(Color(.secondarySystemFill).opacity(0.5)).overlay(
+                                        Circle()
+                                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                    )
+                                })
+                        }
                     }
-                }
-                Button {
-                    showTripSearch.toggle()
-                } label: {
-                    Image(systemName: "arrow.triangle.turn.up.right.circle")
-                        .foregroundColor(Color.accentColor)
-                        .font(.system(size: 20))
-                        .frame(width: 61, height: 52.5)
-                        .background(Color(.secondarySystemFill).opacity(0.5))
-                        .clipShape(Circle())
-                        .overlay(
-                            Circle()
-                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                        )
+                    Button {
+                        showTripSearch.toggle()
+                    } label: {
+                        Image(systemName: "arrow.triangle.turn.up.right.circle")
+                            .foregroundColor(Color.accentColor)
+                            .font(.system(size: 20))
+                            .frame(width: 61, height: 52.5)
+                            .clipShape(Circle())
+                            .adaptable(ios26: .glassButtonClear, fallback: {
+                                $0.background(Color(.secondarySystemFill).opacity(0.5)).overlay(
+                                    Circle()
+                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                )
+                            })
+                        
+                    }
                 }
             }
         }

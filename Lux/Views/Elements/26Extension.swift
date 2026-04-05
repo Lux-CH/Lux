@@ -10,6 +10,9 @@ import SwiftUI
 enum iOS26Effect {
     case glass
     case glassButton
+    case glassButtonClear
+    case glassButtonTinted(Color)
+    case glassButtonClearTinted(Color)
     case glassIn(AnyShape)
     case glassButtonIn(AnyShape)
 }
@@ -44,6 +47,12 @@ extension View {
             self.glassEffect()
         case .glassButton:
             self.glassEffect(.regular.interactive(true))
+        case .glassButtonClear:
+            self.glassEffect(.clear.interactive(true))
+        case .glassButtonTinted(let tint):
+            self.glassEffect(.regular.tint(tint).interactive(true))
+        case .glassButtonClearTinted(let tint):
+            self.glassEffect(.clear.tint(tint).interactive(true))
         case .glassIn(let shape):
             self.glassEffect(in: shape)
         case .glassButtonIn(let shape):
