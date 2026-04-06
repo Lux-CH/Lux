@@ -76,10 +76,12 @@ struct TripResultView: View {
                 }
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .background(
-                    Capsule(style: .continuous)
-                        .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
-                )
+                .adaptable(ios26: .glass, fallback: {
+                    $0.background(
+                        Capsule(style: .continuous)
+                            .fill(colorScheme == .dark ? Color(.systemGray5) : Color(.systemGray6))
+                    )
+                })
             }
             
             HStack(spacing: 16) {
