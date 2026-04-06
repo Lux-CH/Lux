@@ -36,11 +36,7 @@ struct ShortcutsKeyboardToolbar: View {
                         .frame(height: 16)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
-                        .background(
-                            RoundedRectangle(cornerRadius: 25)
-                                .fill(Color.accentColor.opacity(0.15))
-                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                        )
+                        .ifAvailable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.15)))
                     }
                     .buttonStyle(ScaleButtonStyle())
                     
@@ -69,14 +65,7 @@ struct ShortcutsKeyboardToolbar: View {
                                 .frame(height: 16)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 8)
-                                .background(
-                                    RoundedRectangle(cornerRadius: 25)
-                                        .fill(colorScheme == .dark ?
-                                              Color(.systemFill).opacity(0.8) :
-                                                Color(.secondarySystemBackground))
-                                        .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                    
-                                )
+                                .ifAvailable(ios26: .glassButtonTinted(colorScheme == .dark ? Color(.systemFill).opacity(0.8) : Color(.secondarySystemBackground)))
                             }
                             .buttonStyle(ScaleButtonStyle())
                         }
