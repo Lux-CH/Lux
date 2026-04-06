@@ -66,6 +66,7 @@ struct StopHeaderView: View {
                                 .foregroundColor(Color.accentColor)
                                 .font(.system(size: 13.3))
                                 .frame(width: 40.5, height: 35)
+                                .contentShape(Circle())
                                 .clipShape(Circle())
                                 .adaptable(ios26: .glassButtonClear, fallback: {
                                     $0.background(
@@ -85,6 +86,7 @@ struct StopHeaderView: View {
                             .foregroundColor(Color.accentColor)
                             .font(.system(size: 20))
                             .frame(width: 61, height: 52.5)
+                            .contentShape(Circle())
                             .clipShape(Circle())
                             .adaptable(ios26: .glassButtonClear, fallback: {
                                 $0.background(

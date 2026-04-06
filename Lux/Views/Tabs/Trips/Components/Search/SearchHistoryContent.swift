@@ -85,6 +85,7 @@ struct SearchHistoryContent: View {
                 .padding(.vertical, 5.5)
                 .padding(.horizontal, 24)
                 .foregroundColor(.red)
+                .contentShape(Capsule(style: .continuous))
                 .clipShape(Capsule(style: .continuous))
                 .adaptable(ios26: .glassButtonClear, fallback: {
                     $0.background(
@@ -119,6 +120,7 @@ struct SearchHistoryContent: View {
                 .foregroundColor(.accentColor)
                 .padding(.vertical, 6)
                 .padding(.horizontal, 24)
+                .contentShape(Capsule(style: .continuous))
                 .clipShape(Capsule(style: .continuous))
                 .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
                     $0.background(

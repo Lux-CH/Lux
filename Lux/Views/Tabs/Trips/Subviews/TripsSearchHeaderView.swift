@@ -97,6 +97,7 @@ struct TripsSearchHeaderView: View {
                         .padding(.vertical, 8)
                         .padding(.horizontal, 20)
                         .foregroundColor(.accentColor)
+                        .contentShape(Capsule(style: .continuous))
                         .clipShape(Capsule(style: .continuous))
                         .adaptable(ios26: .glassButtonClear, fallback: {
                             $0.background(
@@ -162,6 +163,7 @@ struct TripsSearchHeaderView: View {
             .frame(maxHeight: 15)
             .padding(.vertical, 8)
             .padding(.horizontal, 20)
+            .contentShape(Capsule(style: .continuous))
             .clipShape(Capsule(style: .continuous))
             .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
                 $0.background(
@@ -201,6 +203,7 @@ struct TripsSearchHeaderView: View {
             .frame(maxHeight: 15)
             .padding(.vertical, 8)
             .padding(.horizontal, 14)
+            .contentShape(Capsule(style: .continuous))
             .clipShape(Capsule(style: .continuous))
             .adaptable(ios26: .glassButtonTinted(Color.yellow.opacity(0.12)), fallback: {
                 $0.background(
@@ -241,6 +244,7 @@ struct TripsSearchHeaderView: View {
             .frame(maxHeight: 15)
             .padding(.vertical, 8)
             .padding(.horizontal, 20)
+            .contentShape(Capsule(style: .continuous))
             .clipShape(Capsule(style: .continuous))
             .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
                 $0.background(
@@ -401,6 +405,7 @@ struct TripsSearchHeaderView: View {
                 .rotationEffect(isSwapping ? Angle(degrees: 180) : .zero)
                 .animation(.spring(response: 0.5, dampingFraction: 0.6), value: isSwapping)
                 .scaleEffect(isSwapping ? 0.95 : 1.0)
+                .contentShape(Circle())
                 .clipShape(Circle())
                 .adaptable(ios26: .glassButtonClear, fallback: {
                     $0.background(
