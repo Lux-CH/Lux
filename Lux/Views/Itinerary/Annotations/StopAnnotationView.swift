@@ -49,7 +49,6 @@ struct StopAnnotationView: View {
     private let terminalSize: CGFloat = 20
     private let intermediateSize: CGFloat = 10
     private let hitAreaSize: CGFloat = 44
-    private let popoverDelay: TimeInterval = 0.12
     
     @State private var isAnimating = false
     
@@ -61,13 +60,12 @@ struct StopAnnotationView: View {
                 .onTapGesture {
                     loadConnections()
 
-                    withAnimation(.spring(response: 0.2, dampingFraction: 0.65)) {
+                    withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
                         isAnimating = true
+                        showSheet = false
                     }
 
-                    setSheetVisibility(false)
-
-                    DispatchQueue.main.asyncAfter(deadline: .now() + popoverDelay) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
                         isAnimating = false
                         showPopover = true
                     }
@@ -103,12 +101,12 @@ struct StopAnnotationView: View {
         }
         .onChange(of: showPopover) {
             if !showPopover && !showExpandedStop {
-                setSheetVisibility(true)
+                showSheet = true
             }
         }
         .onChange(of: showExpandedStop) {
             if !showExpandedStop {
-                setSheetVisibility(true)
+                showSheet = true
             }
         }
     }
@@ -136,12 +134,6 @@ struct StopAnnotationView: View {
         return stopId.components(separatedBy: ":").first
     }
 
-    private func setSheetVisibility(_ isVisible: Bool) {
-        guard showSheet != isVisible else { return }
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.85)) {
-            showSheet = isVisible
-        }
-    }
 }
 
 struct StopPopoverView: View {
