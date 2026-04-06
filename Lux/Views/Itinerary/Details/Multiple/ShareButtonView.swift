@@ -217,6 +217,7 @@ struct ShareButtonView: View {
     private func floatingButtonContainer<Content: View>(@ViewBuilder content: () -> Content) -> some View {
         content()
             .frame(width: 45, height: 45)
+            .contentShape(Circle())
             .clipShape(Circle())
             .adaptable(ios26: .glassButton, fallback: {
                 $0.background(.ultraThickMaterial, in: Circle()).overlay(

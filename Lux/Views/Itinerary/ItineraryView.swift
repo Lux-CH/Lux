@@ -159,6 +159,7 @@ struct ItineraryView: View {
                                     .font(.headline)
                                     .foregroundColor(.accentColor)
                                     .frame(width: 45, height: 45)
+                                    .contentShape(Circle())
                                     .clipShape(Circle())
                                     .adaptable(ios26: .glassButton, fallback: {
                                         $0.background(.ultraThickMaterial, in: Circle()).overlay(
@@ -179,6 +180,7 @@ struct ItineraryView: View {
                                     .font(.headline)
                                     .foregroundColor(.accentColor)
                                     .frame(width: 45, height: 45)
+                                    .contentShape(Circle())
                                     .clipShape(Circle())
                                     .adaptable(ios26: .glassButton, fallback: {
                                         $0.background(.ultraThickMaterial, in: Circle()).overlay(
@@ -212,6 +214,7 @@ struct ItineraryView: View {
                                         .font(.headline)
                                         .foregroundColor(.accentColor)
                                         .frame(width: 45, height: 45)
+                                        .contentShape(Circle())
                                         .clipShape(Circle())
                                         .adaptable(ios26: .glassButton, fallback: {
                                             $0.background(.ultraThickMaterial, in: Circle()).overlay(
