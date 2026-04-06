@@ -108,6 +108,7 @@ struct ShareButtonView: View {
                         .transition(.opacity)
                     }
                 }
+                .buttonStyle(.plain)
             } else {
                 Button(action: {
                     showingShareDialog = true
@@ -218,11 +219,10 @@ struct ShareButtonView: View {
             .frame(width: 45, height: 45)
             .clipShape(Circle())
             .adaptable(ios26: .glassButton, fallback: {
-                $0.background(.ultraThickMaterial).overlay(
+                $0.background(.ultraThickMaterial, in: Circle()).overlay(
                     Circle()
                         .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                 )
-
             })
             .shadow(radius: 2)
     }

@@ -161,14 +161,14 @@ struct ItineraryView: View {
                                     .frame(width: 45, height: 45)
                                     .clipShape(Circle())
                                     .adaptable(ios26: .glassButton, fallback: {
-                                        $0.background(.ultraThickMaterial).overlay(
+                                        $0.background(.ultraThickMaterial, in: Circle()).overlay(
                                             Circle()
                                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                         )
-                                        
                                     })
                                     .shadow(radius: 2)
                             }
+                            .buttonStyle(.plain)
                             
                             Button(action: {
                                 withAnimation {
@@ -181,14 +181,14 @@ struct ItineraryView: View {
                                     .frame(width: 45, height: 45)
                                     .clipShape(Circle())
                                     .adaptable(ios26: .glassButton, fallback: {
-                                        $0.background(.ultraThickMaterial).overlay(
+                                        $0.background(.ultraThickMaterial, in: Circle()).overlay(
                                             Circle()
                                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                         )
-                                        
                                     })
                                     .shadow(radius: 2)
                             }
+                            .buttonStyle(.plain)
                             
                             if otherItineraries.count > 1 {
                                 Menu {
@@ -214,14 +214,14 @@ struct ItineraryView: View {
                                         .frame(width: 45, height: 45)
                                         .clipShape(Circle())
                                         .adaptable(ios26: .glassButton, fallback: {
-                                            $0.background(.ultraThickMaterial).overlay(
+                                            $0.background(.ultraThickMaterial, in: Circle()).overlay(
                                                 Circle()
                                                     .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                             )
-                                            
                                         })
                                         .shadow(radius: 2)
                                 }
+                                .buttonStyle(.plain)
                             }
                             
                             Spacer()

@@ -68,7 +68,10 @@ struct StopHeaderView: View {
                                 .frame(width: 40.5, height: 35)
                                 .clipShape(Circle())
                                 .adaptable(ios26: .glassButtonClear, fallback: {
-                                    $0.background(Color(.secondarySystemFill).opacity(0.5)).overlay(
+                                    $0.background(
+                                        Color(.secondarySystemFill).opacity(0.5),
+                                        in: Circle()
+                                    ).overlay(
                                         Circle()
                                             .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                     )
@@ -84,7 +87,10 @@ struct StopHeaderView: View {
                             .frame(width: 61, height: 52.5)
                             .clipShape(Circle())
                             .adaptable(ios26: .glassButtonClear, fallback: {
-                                $0.background(Color(.secondarySystemFill).opacity(0.5)).overlay(
+                                $0.background(
+                                    Color(.secondarySystemFill).opacity(0.5),
+                                    in: Circle()
+                                ).overlay(
                                     Circle()
                                         .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                 )
