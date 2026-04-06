@@ -11,7 +11,7 @@ import SwiftUI
 import Foundation
 
 class ItinerarySharer {
-    private func encode(_ itinerary: Itinerary) throws -> Data {
+    func encode(_ itinerary: Itinerary) throws -> Data {
         return try MessagePackEncoder().encode(itinerary)
     }
     func decode(_ data: Data) throws -> Itinerary {

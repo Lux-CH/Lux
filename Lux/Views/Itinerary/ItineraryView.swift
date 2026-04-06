@@ -78,7 +78,7 @@ struct ItineraryView: View {
     
     var detents: (CGFloat, CGFloat) {
         if #available(iOS 26, *) {
-            return (0.1374, 102.5)
+            return (0.151, 112.5)
         } else {
             return (0.1, 72.5)
         }
@@ -231,11 +231,18 @@ struct ItineraryView: View {
                     .liquidGlassLightModeButtonTintOptOut()
                 }
                 .overlay(alignment: .trailing) {
-                    VStack(spacing: 12) {
-                        if let itinerary = viewModel.itinerary {
-                            ShareButtonView(itinerary: itinerary, itineraarySharer: itineraarySharer, compact: true)
+                    GlassEffectGroup(spacing: 8) {
+                        VStack(spacing: 12) {
+                            if let itinerary = viewModel.itinerary {
+                                ShareButtonView(
+                                    itinerary: itinerary,
+                                    itineraarySharer: itineraarySharer,
+                                    compact: true,
+                                    showCompactSaveAction: !isSingle
+                                )
+                            }
+                            Spacer()
                         }
-                        Spacer()
                     }
                     .padding(.trailing, 16)
                     .liquidGlassLightModeButtonTintOptOut()
