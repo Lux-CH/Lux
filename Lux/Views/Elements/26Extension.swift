@@ -14,6 +14,7 @@ enum iOS26Effect {
     case glassButtonTinted(Color)
     case glassButtonClearTinted(Color)
     case glassIn(AnyShape)
+    case glassTintedIn(AnyShape, Color)
     case glassButtonIn(AnyShape)
     case glassButtonTintedIn(AnyShape, Color)
 }
@@ -79,6 +80,8 @@ private struct iOS26EffectModifier: ViewModifier {
             }
         case .glassIn(let shape):
             content.glassEffect(in: shape)
+        case .glassTintedIn(let shape, let color):
+            content.glassEffect(.regular.tint(color), in: shape)
         case .glassButtonIn(let shape):
             content.glassEffect(.clear.interactive(true), in: shape)
         case .glassButtonTintedIn(let shape, let tint):
