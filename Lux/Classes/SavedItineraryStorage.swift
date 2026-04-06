@@ -101,8 +101,13 @@ final class SavedItineraryStorage {
     
     func isSavedAsync(_ itinerary: Itinerary, referenceDate: Date = Date()) async -> Bool {
         await withCheckedContinuation { continuation in
+            let itinerarySnapshot = itinerary
+            let referenceDateSnapshot = referenceDate
             DispatchQueue.global(qos: .utility).async {
-                let isSaved = self.isSaved(itinerary, referenceDate: referenceDate)
+                let isSaved = SavedItineraryStorage.shared.isSaved(
+                    itinerarySnapshot,
+                    referenceDate: referenceDateSnapshot
+                )
                 continuation.resume(returning: isSaved)
             }
         }
