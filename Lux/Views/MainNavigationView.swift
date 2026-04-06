@@ -147,7 +147,10 @@ struct MainNavigationView: View {
                                                     .transition(.scale(scale: 0.8).combined(with: .opacity))
                                                     .cornerRadius(35)
                                                     .adaptable(ios26: .glassButtonClear, fallback: {
-                                                        $0.background(Color(.secondarySystemFill).opacity(0.5)).overlay(
+                                                        $0.background(
+                                                            Color(.secondarySystemFill).opacity(0.5),
+                                                            in: Capsule(style: .continuous)
+                                                        ).overlay(
                                                             Capsule(style: .continuous)
                                                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                                         )
@@ -453,17 +456,18 @@ struct MainNavigationView: View {
                     }
                     .frame(width: 275, height: 52)
                     .adaptable(ios26: .glassButtonClear, fallback: {
-                        $0.background(
-                            Capsule(style: .continuous)
-                                .stroke(Color.secondary.opacity(0.3),
+                        $0
+                            .background(
+                                Color(.secondarySystemFill).opacity(0.3),
+                                in: Capsule(style: .continuous)
+                            )
+                            .overlay(
+                                Capsule(style: .continuous)
+                                    .stroke(
+                                        Color.secondary.opacity(0.3),
                                         style: StrokeStyle(lineWidth: 2, dash: [6])
-                                       )
-                                .background(
-                                    Color(.secondarySystemFill)
-                                        .opacity(0.3)
-                                        .cornerRadius(35)
-                                )
-                        )
+                                    )
+                            )
                     })
                     .overlay{
                         if #available(iOS 26, *) {
@@ -523,18 +527,18 @@ struct MainNavigationView: View {
                         }
                         .frame(width: 134, height: 52.5)
                         .adaptable(ios26: .glassButtonClear, fallback: {
-                            $0.background(
-                                Capsule(style: .continuous)
-                                    .stroke(
-                                        Color.primary.opacity(0.1),
-                                        style: StrokeStyle(lineWidth: 0.5)
-                                    )
-                                    .background(
-                                        Color(.secondarySystemFill)
-                                            .opacity(0.5)
-                                            .cornerRadius(35)
-                                    )
-                            )
+                            $0
+                                .background(
+                                    Color(.secondarySystemFill).opacity(0.5),
+                                    in: Capsule(style: .continuous)
+                                )
+                                .overlay(
+                                    Capsule(style: .continuous)
+                                        .stroke(
+                                            Color.primary.opacity(0.1),
+                                            style: StrokeStyle(lineWidth: 0.5)
+                                        )
+                                )
                         })
                     }
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
@@ -625,17 +629,18 @@ struct MainNavigationView: View {
         }
         .frame(width: 134, height: 52.5)
         .adaptable(ios26: .glassButtonClearTinted(Color.green.opacity(0.25)), fallback: {
-            $0.background(
-                Capsule(style: .continuous)
-                    .stroke(
-                        Color.green.opacity(0.35),
-                        style: StrokeStyle(lineWidth: 0.8)
-                    )
-                    .background(
-                        Color.green.opacity(0.16)
-                            .cornerRadius(35)
-                    )
-            )
+            $0
+                .background(
+                    Color.green.opacity(0.16),
+                    in: Capsule(style: .continuous)
+                )
+                .overlay(
+                    Capsule(style: .continuous)
+                        .stroke(
+                            Color.green.opacity(0.35),
+                            style: StrokeStyle(lineWidth: 0.8)
+                        )
+                )
         })
     }
 
