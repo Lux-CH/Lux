@@ -73,6 +73,14 @@ struct MainNavigationView: View {
     @State private var searchBarOffset: CGFloat = 0
     
     @State private var searchDragOffset: CGFloat = 0
+    @State private var upcomingSavedItinerary: SavedItineraryRecord?
+    
+    private let itineraryRefreshTimer = Timer.publish(every: 30, on: .main, in: .common).autoconnect()
+    private static let itineraryTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        return formatter
+    }()
     
     var body: some View {
         NavigationStack {
@@ -347,6 +355,7 @@ struct MainNavigationView: View {
         .onAppear {
             stopsViewModel.setupLocationManager(locationManager)
             searchViewModel.setupLocationManager(locationManager)
+            refreshUpcomingSavedItinerary()
         }
         .onDisappear {
             stopsViewModel.cancelBackgroundTasks()
@@ -382,6 +391,12 @@ struct MainNavigationView: View {
             if viewMode == .stops && !stopsViewModel.isSearchMode {
                 stopsViewModel.refreshNearbyStopsInBackground()
             }
+        }
+        .onReceive(itineraryRefreshTimer) { _ in
+            refreshUpcomingSavedItinerary()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .savedItinerariesDidChange)) { _ in
+            refreshUpcomingSavedItinerary()
         }
     }
     
@@ -423,7 +438,7 @@ struct MainNavigationView: View {
     
     private var shortcutsRow: some View {
         HStack {
-            if shortcutManager.visibleShortcuts.isEmpty && !settings.swisspassOnHome {
+            if upcomingSavedItinerary == nil && shortcutManager.visibleShortcuts.isEmpty && !settings.swisspassOnHome {
                 Button {
                     showShortcutsSettings = true
                 } label: {
@@ -461,7 +476,12 @@ struct MainNavigationView: View {
                 }
                 .transition(.scale(scale: 0.8).combined(with: .opacity))
             } else {
-                if let firstShortcut = shortcutManager.visibleShortcuts.first {
+                if let savedItinerary = upcomingSavedItinerary {
+                    savedItineraryShortcutButton(for: savedItinerary)
+                        .transition(.scale(scale: 0.8).combined(with: .opacity))
+                        .accessibilityLabel("Itinéraire enregistré")
+                        .accessibilityAddTraits(.isButton)
+                } else if let firstShortcut = shortcutManager.visibleShortcuts.first {
                     ShortcutButton(
                         symbol: firstShortcut.symbol,
                         name: firstShortcut.name
@@ -519,30 +539,116 @@ struct MainNavigationView: View {
                     }
                     .transition(.scale(scale: 0.8).combined(with: .opacity))
                     .accessibilityLabel("Raccourcis SwissPass")
-                } else if shortcutManager.visibleShortcuts.count >= 2 {
-                    let secondShortcut = shortcutManager.visibleShortcuts[1]
-                    ShortcutButton(
-                        symbol: secondShortcut.symbol,
-                        name: secondShortcut.name
-                    ) {
-                        transitionToSearchModeWithShortcut(secondShortcut)
-                    }
-                    .transition(.scale(scale: 0.8).combined(with: .opacity))
-                    .accessibilityLabel("Raccourcis \(secondShortcut.name)")
-                    .accessibilityAddTraits(.isButton)
                 } else {
-                    ShortcutButton(
-                        symbol: "plus",
-                        name: "Ajouter",
-                        isPlaceholder: true
-                    ) {
-                        showShortcutsSettings = true
+                    let secondShortcutIndex = upcomingSavedItinerary == nil ? 1 : 0
+                    if shortcutManager.visibleShortcuts.indices.contains(secondShortcutIndex) {
+                        let secondShortcut = shortcutManager.visibleShortcuts[secondShortcutIndex]
+                        ShortcutButton(
+                            symbol: secondShortcut.symbol,
+                            name: secondShortcut.name
+                        ) {
+                            transitionToSearchModeWithShortcut(secondShortcut)
+                        }
+                        .transition(.scale(scale: 0.8).combined(with: .opacity))
+                        .accessibilityLabel("Raccourcis \(secondShortcut.name)")
+                        .accessibilityAddTraits(.isButton)
+                    } else {
+                        ShortcutButton(
+                            symbol: "plus",
+                            name: "Ajouter",
+                            isPlaceholder: true
+                        ) {
+                            showShortcutsSettings = true
+                        }
+                        .transition(.scale(scale: 0.8).combined(with: .opacity))
+                        .accessibilityLabel("Ajouter un raccourci")
+                        .accessibilityAddTraits(.isButton)
                     }
-                    .transition(.scale(scale: 0.8).combined(with: .opacity))
-                    .accessibilityLabel("Ajouter un raccourci")
-                    .accessibilityAddTraits(.isButton)
                 }
             }
+        }
+    }
+
+    private func savedItineraryShortcutButton(for savedItinerary: SavedItineraryRecord) -> some View {
+        NavigationLink(destination: savedItineraryDestinationView(for: savedItinerary)) {
+            itineraryShortcutLabel(for: savedItinerary)
+        }
+        .simultaneousGesture(TapGesture().onEnded {
+            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        })
+    }
+
+    @ViewBuilder
+    private func savedItineraryDestinationView(for savedItinerary: SavedItineraryRecord) -> some View {
+        if let itinerary = SavedItineraryStorage.shared.loadItinerary(from: savedItinerary.fileURL) {
+            ItineraryView(itinerary: itinerary, fromNearby: false)
+                .navigationBarBackButtonHidden(true)
+                .toolbar(.hidden, for: .navigationBar)
+        } else {
+            VStack(spacing: 12) {
+                Image(systemName: "exclamationmark.triangle")
+                    .font(.largeTitle)
+                    .foregroundStyle(.orange)
+                Text("Itinéraire indisponible")
+                    .font(.headline)
+                Text("Ce trajet n'est plus disponible.")
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .padding()
+            .toolbar(.hidden, for: .navigationBar)
+            .onAppear {
+                refreshUpcomingSavedItinerary()
+            }
+        }
+    }
+
+    private func itineraryShortcutLabel(for savedItinerary: SavedItineraryRecord) -> some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 6) {
+                Image(systemName: "calendar.badge.clock")
+                    .foregroundColor(Color.green.opacity(0.85))
+                    .font(.system(size: 20))
+
+                if settings.showShortcutLabel {
+                    VStack(alignment: .leading, spacing: 0) {
+                        Text("Itinéraire")
+                            .font(.system(size: 15, weight: .semibold))
+                            .foregroundColor(Color.green.opacity(0.85))
+
+                        Text(itineraryTimeLabel(for: savedItinerary.itinerary))
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(Color.green.opacity(0.7))
+                    }
+                }
+            }
+        }
+        .frame(width: 134, height: 52.5)
+        .adaptable(ios26: .glassButtonClearTinted(Color.green.opacity(0.25)), fallback: {
+            $0.background(
+                Capsule(style: .continuous)
+                    .stroke(
+                        Color.green.opacity(0.35),
+                        style: StrokeStyle(lineWidth: 0.8)
+                    )
+                    .background(
+                        Color.green.opacity(0.16)
+                            .cornerRadius(35)
+                    )
+            )
+        })
+    }
+
+    private func itineraryTimeLabel(for itinerary: Itinerary) -> String {
+        let formatter = MainNavigationView.itineraryTimeFormatter
+        let departure = formatter.string(from: itinerary.startTime)
+        let arrival = formatter.string(from: itinerary.endTime)
+        return "\(departure) → \(arrival)"
+    }
+
+    private func refreshUpcomingSavedItinerary(referenceDate: Date = Date()) {
+        withAnimation(ultraSmoothSpring) {
+            upcomingSavedItinerary = SavedItineraryStorage.shared.loadUpcomingItinerary(referenceDate: referenceDate)
         }
     }
     

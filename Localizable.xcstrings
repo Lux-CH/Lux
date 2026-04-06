@@ -720,16 +720,6 @@
         }
       }
     },
-    "Aperçu de l'itinéraire" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Itinerary Preview"
-          }
-        }
-      }
-    },
     "Appliquer" : {
       "localizations" : {
         "en" : {
@@ -1252,16 +1242,6 @@
         }
       }
     },
-    "Calendrier" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calendar"
-          }
-        }
-      }
-    },
     "Calme" : {
       "localizations" : {
         "en" : {
@@ -1274,6 +1254,16 @@
     },
     "cclerc.ch" : {
       "shouldTranslate" : false
+    },
+    "Ce trajet n'est plus disponible." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This itinerary is not available anymore."
+          }
+        }
+      }
     },
     "Cet itinéraire vous a été partagé. Assurez-vous qu'il provient d'une source fiable." : {
       "localizations" : {
@@ -2124,16 +2114,6 @@
         }
       }
     },
-    "Enregistrer dans Calendrier" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save in Calendar"
-          }
-        }
-      }
-    },
     "Entrez au moins 3 caractères pour rechercher" : {
       "localizations" : {
         "en" : {
@@ -2620,6 +2600,16 @@
         }
       }
     },
+    "Impossible de générer l'aperçu de l'itinéraire." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unable to generate a preview of the itinerary."
+          }
+        }
+      }
+    },
     "inconnu" : {
       "localizations" : {
         "en" : {
@@ -2686,6 +2676,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Invert « From » field and « To » field"
+          }
+        }
+      }
+    },
+    "Itinéraire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinerary"
+          }
+        }
+      }
+    },
+    "Itinéraire enregistré" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itinerary saved"
           }
         }
       }
@@ -2760,16 +2770,6 @@
         }
       }
     },
-    "L'accès au calendrier est requis pour enregistrer l'itinéraire. Veuillez autoriser l'accès dans les Réglages." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Calendar access is required to save the itinerary. Please allow it in Settings."
-          }
-        }
-      }
-    },
     "L'affichage du code SwissPass depuis cette application ne garantit pas sa reconnaissance par les contrôleurs.\n\nLux décline toute responsabilité en cas de refus, d'amende ou de tout autre problème. Veuillez toujours avoir votre SwissPass physique ou l'application officielle avec vous." : {
       "localizations" : {
         "en" : {
@@ -2790,12 +2790,42 @@
         }
       }
     },
-    "L'itinéraire a bien été enregistré dans votre calendrier !" : {
+    "L'itinéraire a bien été enregistré dans l'app et dans votre calendrier." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The itinerary was successfully saved in your calendar !"
+            "value" : "The itinerary was successfully saved in the app and in your calendar."
+          }
+        }
+      }
+    },
+    "L'itinéraire a été enregistré dans l'app, mais pas dans le calendrier : %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The itinerary was saved in the app, but not in your calendar: %@"
+          }
+        }
+      }
+    },
+    "L'itinéraire a été enregistré dans l'app. L'accès au calendrier n'a pas été autorisé." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The itinerary was successfully saved in the app. Calendar access was not given."
+          }
+        }
+      }
+    },
+    "L'itinéraire a été enregistré dans le calendrier, mais pas localement : %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The itinerary was successfully saved in your calendar, but not locally : %@"
           }
         }
       }
@@ -3870,6 +3900,16 @@
         }
       }
     },
+    "Préparation de l'image..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preparing image…"
+          }
+        }
+      }
+    },
     "Prochain: %@" : {
       "localizations" : {
         "en" : {
@@ -4336,6 +4376,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sat"
+          }
+        }
+      }
+    },
+    "Sauvegarder l'itinéraire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save itinerary"
           }
         }
       }
@@ -4876,6 +4926,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An error occurred while loading the itinerary"
+          }
+        }
+      }
+    },
+    "Une erreur inconnue est survenue." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "An unknown error occurred."
           }
         }
       }
