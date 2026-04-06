@@ -61,10 +61,13 @@ struct DisruptionSectionView: View {
                 .clipped()
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isExpanded)
             }
-            .background(
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(colorScheme == .dark ? Color(.secondarySystemBackground) : Color(.systemGray6))
-            )
+            .adaptable(ios26: .glassIn(AnyShape(RoundedRectangle(cornerRadius: 20, style: .continuous))), fallback: {
+                $0.background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(colorScheme == .dark ? Color(.secondarySystemBackground) : Color(.systemGray6))
+                )
+            })
+            .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
     }
 }
@@ -94,10 +97,13 @@ struct DisruptionCardView: View {
             Spacer()
         }
         .padding(12)
-        .background(
-            RoundedRectangle(cornerRadius: 8)
-                .fill(colorScheme == .dark ? Color(.tertiarySystemBackground) : Color.white)
-        )
+        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .adaptable(ios26: .glassTintedIn(AnyShape(RoundedRectangle(cornerRadius: 14, style: .continuous)), colorScheme == .dark ? Color(.tertiarySystemBackground) : Color.white), fallback: {
+            $0.background(
+                RoundedRectangle(cornerRadius: 14, style: .continuous)
+                    .fill(colorScheme == .dark ? Color(.tertiarySystemBackground) : Color.white)
+            )
+        })
     }
     private func extractTitleAndDesc(_ disr: String) -> (String, String) {
         if let range = disr.range(of: " - ") {
