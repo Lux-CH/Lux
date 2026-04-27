@@ -77,8 +77,12 @@ class TripsSearchViewModel: ObservableObject {
     private var allTrips: [Itinerary] = []
     private var currentPageIndex = 0
     private let itemsPerPage = 6
-    private var hasMoreEarlier = true
-    private var hasMoreLater = true
+    private var hasMoreEarlier: Bool {
+        !(previousPageCursor?.isEmpty ?? true)
+    }
+    private var hasMoreLater: Bool {
+        !(nextPageCursor?.isEmpty ?? true)
+    }
     
     @Published var routeOptions = RouteOptions(
         from: RouteOptions.RouteLocation(coordinates: (0, 0)),
@@ -423,8 +427,6 @@ class TripsSearchViewModel: ObservableObject {
             isLoadingTrips = true
             allTrips = []
             currentPageIndex = 0
-            hasMoreEarlier = true
-            hasMoreLater = true
         }
         
         showTripResults = true
@@ -455,27 +457,39 @@ class TripsSearchViewModel: ObservableObject {
                 let result = try await getRoute(options)
                 
                 await MainActor.run {
-                    if isLoadingEarlier {
-                        allTrips.insert(contentsOf: result.itineraries, at: 0)
-                        currentPageIndex += result.itineraries.count / itemsPerPage
-                    } else if isLoadingLater {
-                        allTrips.append(contentsOf: result.itineraries)
+                    let loadingEarlier = self.isLoadingEarlier
+                    let loadingLater = self.isLoadingLater
+                    
+                    if loadingEarlier {
+                        self.allTrips.insert(contentsOf: result.itineraries, at: 0)
+                        // After fetching previous results, immediately show that earlier page.
+                        self.currentPageIndex = 0
+                    } else if loadingLater {
+                        let oldMaxPageIndex = max(0, (self.allTrips.count - 1) / self.itemsPerPage)
+                        self.allTrips.append(contentsOf: result.itineraries)
+                        // Move to the first page that includes newly loaded later results.
+                        let newMaxPageIndex = max(0, (self.allTrips.count - 1) / self.itemsPerPage)
+                        self.currentPageIndex = min(oldMaxPageIndex + 1, newMaxPageIndex)
                     } else {
-                        allTrips = result.itineraries
+                        self.allTrips = result.itineraries
                         
-                        if departureType == .arriveBy && !allTrips.isEmpty {
-                            currentPageIndex = (allTrips.count - 1) / itemsPerPage
+                        if self.departureType == .arriveBy && !self.allTrips.isEmpty {
+                            self.currentPageIndex = (self.allTrips.count - 1) / self.itemsPerPage
                         } else {
-                            currentPageIndex = 0
+                            self.currentPageIndex = 0
                         }
                     }
                     
                     self.directs = result.direct
-                    self.previousPageCursor = result.previousPageCursor
-                    self.nextPageCursor = result.nextPageCursor
                     
-                    self.hasMoreEarlier = !(result.previousPageCursor.isEmpty)
-                    self.hasMoreLater = !(result.nextPageCursor.isEmpty)
+                    if loadingEarlier {
+                        self.previousPageCursor = result.previousPageCursor
+                    } else if loadingLater {
+                        self.nextPageCursor = result.nextPageCursor
+                    } else {
+                        self.previousPageCursor = result.previousPageCursor
+                        self.nextPageCursor = result.nextPageCursor
+                    }
                     
                     self.updateDisplayedTrips()
                     
@@ -524,7 +538,7 @@ class TripsSearchViewModel: ObservableObject {
                 self.animateIn = true
             }
         }
-        else if hasMoreEarlier && !(previousPageCursor?.isEmpty ?? true) {
+        else if hasMoreEarlier, let previousPageCursor {
             isLoadingEarlier = true
             searchTrips(pageCursor: previousPageCursor)
         } else {
@@ -548,7 +562,7 @@ class TripsSearchViewModel: ObservableObject {
                 self.animateIn = true
             }
         }
-        else if hasMoreLater && !(nextPageCursor?.isEmpty ?? true) {
+        else if hasMoreLater, let nextPageCursor {
             isLoadingLater = true
             searchTrips(pageCursor: nextPageCursor)
         } else {
