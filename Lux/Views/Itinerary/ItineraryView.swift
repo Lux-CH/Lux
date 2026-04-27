@@ -137,6 +137,12 @@ struct ItineraryView: View {
                             VehicleAnnotationView(annotation: vehicle)
                         }
                     }
+                    
+                    ForEach(viewModel.walkingAnnotations) { walking in
+                        Annotation("", coordinate: walking.coordinate) {
+                            WalkingAnnotationView()
+                        }
+                    }
                 }
                 .mapStyle(.standard(pointsOfInterest: .excludingAll))
                 .mapControls {}

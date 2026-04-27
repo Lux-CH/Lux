@@ -16,6 +16,7 @@ final class ItineraryViewModel: ObservableObject {
     @Published var tripId: String
     private let zoomThreshold: CLLocationDistance = 50000
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
+    private var walkingLegCoordinates: [String: [CLLocationCoordinate2D]] = [:]
     private var vehicleUpdateTask: Task<Void, Never>?
     private var itineraryRefreshTask: Task<Void, Never>?
     
@@ -28,6 +29,7 @@ final class ItineraryViewModel: ObservableObject {
     @Published var routeOverlays: [RouteOverlay] = []
     @Published var showingIntermediateStops: Bool = true
     @Published var vehicleAnnotations: [VehicleAnnotation] = []
+    @Published var walkingAnnotations: [WalkingAnnotation] = []
     @Published var isLoading: Bool = true
     @Published var error: String?
     @Published var walkingDirections: [String: [MKRoute.Step]] = [:]
@@ -53,12 +55,14 @@ final class ItineraryViewModel: ObservableObject {
         stopAllTasks()
         
         self.vehicleAnnotations = []
+        self.walkingAnnotations = []
         self.tripId = tripId
         self.itinerary = nil
         self.mapAnnotations = []
         self.routeOverlays = []
         self.walkingDirections = [:]
         self.legKeyFrames = [:]
+        self.walkingLegCoordinates = [:]
         self.error = nil
         self.shouldStop = false
         
@@ -212,6 +216,7 @@ final class ItineraryViewModel: ObservableObject {
             await fetchWalkingDirectionsForAllLegs(itinerary.legs)
         }
         
+        prepareWalkingLegCoordinates(for: itinerary.legs)
         prepareVehicleKeyframes(for: itinerary.legs)
         
         startVehicleUpdates()
@@ -236,6 +241,25 @@ final class ItineraryViewModel: ObservableObject {
             let legId = getLegIdentifier(leg)
             let keyFrames = VehicleVisualisation.calculateKeyFrames(for: leg, polylineString: leg.legGeometry.points, precision: 1e6)
             legKeyFrames[legId] = keyFrames
+        }
+    }
+    
+    private func prepareWalkingLegCoordinates(for legs: [Leg]) {
+        guard !shouldStop else { return }
+        
+        walkingLegCoordinates.removeAll()
+        
+        for leg in legs where leg.mode == .walk {
+            let legId = getLegIdentifier(leg)
+            let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e6)
+            
+            if let coordinates = polyline.coordinates, coordinates.count >= 2 {
+                walkingLegCoordinates[legId] = coordinates
+            } else {
+                let from = CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon)
+                let to = CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon)
+                walkingLegCoordinates[legId] = [from, to]
+            }
         }
     }
     
@@ -296,9 +320,102 @@ final class ItineraryViewModel: ObservableObject {
             )
         }
         
+        let newWalkingAnnotations = itinerary.legs.compactMap { leg -> WalkingAnnotation? in
+            guard leg.mode == .walk else { return nil }
+            
+            guard leg.startTime <= currentTime && leg.endTime >= currentTime else { return nil }
+            
+            let legId = getLegIdentifier(leg)
+            guard let position = walkingPosition(for: leg, legId: legId, at: currentTimeInterval) else { return nil }
+            
+            return WalkingAnnotation(id: legId, coordinate: position)
+        }
+        
         withAnimation(.easeInOut(duration: 0.5)) {
             vehicleAnnotations = newVehicleAnnotations
         }
+        
+        withAnimation(.linear(duration: 2.0)) {
+            walkingAnnotations = newWalkingAnnotations
+        }
+    }
+    
+    private func walkingPosition(for leg: Leg, legId: String, at timestamp: TimeInterval) -> CLLocationCoordinate2D? {
+        let startTime = leg.startTime.timeIntervalSince1970
+        let endTime = leg.endTime.timeIntervalSince1970
+        
+        guard endTime > startTime else {
+            return CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon)
+        }
+        
+        let progress = max(0, min(1, (timestamp - startTime) / (endTime - startTime)))
+        
+        if let coordinates = walkingLegCoordinates[legId], let coordinate = interpolateOnPath(coordinates, progress: progress) {
+            return coordinate
+        }
+        
+        let from = CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon)
+        let to = CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon)
+        return interpolateCoordinate(from: from, to: to, progress: progress)
+    }
+    
+    private func interpolateOnPath(_ coordinates: [CLLocationCoordinate2D], progress: Double) -> CLLocationCoordinate2D? {
+        guard let first = coordinates.first else { return nil }
+        guard let last = coordinates.last else { return first }
+        
+        if coordinates.count == 1 || progress <= 0 {
+            return first
+        }
+        
+        if progress >= 1 {
+            return last
+        }
+        
+        var distances: [CLLocationDistance] = []
+        distances.reserveCapacity(max(0, coordinates.count - 1))
+        
+        var totalDistance: CLLocationDistance = 0
+        for index in 1..<coordinates.count {
+            let segmentDistance = coordinates[index - 1].distance(to: coordinates[index])
+            distances.append(segmentDistance)
+            totalDistance += segmentDistance
+        }
+        
+        guard totalDistance > 0 else { return first }
+        
+        let targetDistance = totalDistance * progress
+        var traversedDistance: CLLocationDistance = 0
+        
+        for index in 0..<distances.count {
+            let segmentDistance = distances[index]
+            let nextTraversedDistance = traversedDistance + segmentDistance
+            
+            if targetDistance <= nextTraversedDistance {
+                let segmentProgress = segmentDistance > 0
+                ? (targetDistance - traversedDistance) / segmentDistance
+                : 0
+                
+                return interpolateCoordinate(
+                    from: coordinates[index],
+                    to: coordinates[index + 1],
+                    progress: segmentProgress
+                )
+            }
+            
+            traversedDistance = nextTraversedDistance
+        }
+        
+        return last
+    }
+    
+    private func interpolateCoordinate(
+        from start: CLLocationCoordinate2D,
+        to end: CLLocationCoordinate2D,
+        progress: Double
+    ) -> CLLocationCoordinate2D {
+        let latitude = start.latitude + (end.latitude - start.latitude) * progress
+        let longitude = start.longitude + (end.longitude - start.longitude) * progress
+        return CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
     }
     
     private func createAnnotationsAndOverlays(for itinerary: Itinerary) -> (annotations: [StopAnnotation], overlays: [RouteOverlay]) {
