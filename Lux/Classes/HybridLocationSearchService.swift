@@ -200,57 +200,95 @@ struct HybridLocationSearchService {
     }
 
     private func mapItemVisualStyle(for item: MKMapItem) -> SearchResultVisualStyle? {
-        guard item.pointOfInterestCategory != nil else {
+        guard let categoryKey = item.pointOfInterestCategory?.rawValue.lowercased() else {
             return nil
         }
         
-        let categoryKey = item.pointOfInterestCategory?.rawValue.lowercased() ?? ""
+        func matches(_ tokens: [String]) -> Bool {
+            tokens.contains { categoryKey.contains($0) }
+        }
         
-        if categoryKey.contains("restaurant") || categoryKey.contains("bakery") || categoryKey.contains("cafe") || categoryKey.contains("foodmarket") || categoryKey.contains("brewery") || categoryKey.contains("winery") || categoryKey.contains("distillery") {
+        if matches(["restaurant", "bakery", "cafe", "foodmarket", "brewery", "winery", "distillery"]) {
             return SearchResultVisualStyle(symbolName: "fork.knife", color: .yellow)
         }
         
-        if categoryKey.contains("airport") {
+        if matches(["airport"]) {
             return SearchResultVisualStyle(symbolName: "airplane", color: .blue)
         }
         
-        if categoryKey.contains("hotel") || categoryKey.contains("campground") || categoryKey.contains("rvpark") || categoryKey.contains("marina") {
+        if matches(["hotel", "campground", "rvpark", "marina"]) {
             return SearchResultVisualStyle(symbolName: "bed.double.fill", color: .teal)
         }
         
-        if categoryKey.contains("parking") {
+        if matches(["parking"]) {
             return SearchResultVisualStyle(symbolName: "parkingsign.circle.fill", color: .indigo)
         }
         
-        if categoryKey.contains("hospital") || categoryKey.contains("pharmacy") || categoryKey.contains("fitness") || categoryKey.contains("spa") {
+        if matches(["hospital", "pharmacy", "fitnesscenter", "spa"]) {
             return SearchResultVisualStyle(symbolName: "cross.case.fill", color: .red)
         }
         
-        if categoryKey.contains("school") || categoryKey.contains("university") || categoryKey.contains("library") {
+        if matches(["library", "planetarium", "school", "university"]) {
             return SearchResultVisualStyle(symbolName: "book.fill", color: .brown)
         }
         
-        if categoryKey.contains("movie") || categoryKey.contains("theater") || categoryKey.contains("museum") || categoryKey.contains("music") || categoryKey.contains("nightlife") || categoryKey.contains("amusement") || categoryKey.contains("aquarium") || categoryKey.contains("zoo") {
-            return SearchResultVisualStyle(symbolName: "ticket.fill", color: .purple)
+        if matches(["museum", "musicvenue", "theater", "movietheater", "nightlife"]) {
+            return SearchResultVisualStyle(symbolName: "theatermasks.fill", color: .purple)
         }
         
-        if categoryKey.contains("park") || categoryKey.contains("beach") || categoryKey.contains("hiking") || categoryKey.contains("skiing") || categoryKey.contains("swimming") || categoryKey.contains("surfing") || categoryKey.contains("golf") || categoryKey.contains("tennis") || categoryKey.contains("soccer") || categoryKey.contains("basketball") || categoryKey.contains("baseball") {
+        if matches(["castle", "fortress", "landmark", "nationalmonument"]) {
+            return SearchResultVisualStyle(symbolName: "building.columns.fill", color: .brown)
+        }
+        
+        if matches(["amusementpark", "aquarium", "beach", "fairground", "nationalpark", "park", "zoo"]) {
+            return SearchResultVisualStyle(symbolName: "tree.fill", color: .green)
+        }
+        
+        if matches(["baseball", "basketball", "bowling", "gokart", "golf", "hiking", "minigolf", "rockclimbing", "skatepark", "skating", "skiing", "soccer", "stadium", "tennis", "volleyball"]) {
             return SearchResultVisualStyle(symbolName: "figure.outdoor.cycle", color: .green)
         }
         
-        if categoryKey.contains("publictransport") || categoryKey.contains("station") {
+        if matches(["fishing", "kayaking", "surfing", "swimming"]) {
+            return SearchResultVisualStyle(symbolName: "water.waves", color: .blue)
+        }
+        
+        if matches(["publictransport"]) {
             return SearchResultVisualStyle(symbolName: "tram.fill", color: .mint)
         }
         
-        if categoryKey.contains("gasstation") || categoryKey.contains("evcharger") || categoryKey.contains("carrental") || categoryKey.contains("automotive") {
+        if matches(["carrental", "gasstation", "evcharger", "automotiverepair"]) {
             return SearchResultVisualStyle(symbolName: "car.fill", color: .cyan)
         }
         
-        if categoryKey.contains("bank") || categoryKey.contains("atm") || categoryKey.contains("postoffice") || categoryKey.contains("mailbox") || categoryKey.contains("police") || categoryKey.contains("firestation") {
+        if matches(["conventioncenter", "store"]) {
+            return SearchResultVisualStyle(symbolName: "building.2.fill", color: .blue)
+        }
+        
+        if matches(["bank", "atm", "postoffice", "mailbox"]) {
             return SearchResultVisualStyle(symbolName: "building.columns.fill", color: .blue)
         }
         
-        return SearchResultVisualStyle(symbolName: "mappin", color: .blue)
+        if matches(["firestation", "police"]) {
+            return SearchResultVisualStyle(symbolName: "shield.fill", color: .red)
+        }
+        
+        if matches(["animalservice"]) {
+            return SearchResultVisualStyle(symbolName: "pawprint.fill", color: .yellow)
+        }
+        
+        if matches(["beauty"]) {
+            return SearchResultVisualStyle(symbolName: "sparkles", color: .pink)
+        }
+        
+        if matches(["laundry"]) {
+            return SearchResultVisualStyle(symbolName: "washer.fill", color: .cyan)
+        }
+        
+        if matches(["restroom"]) {
+            return SearchResultVisualStyle(symbolName: "figure.stand", color: .gray)
+        }
+        
+        return SearchResultVisualStyle(symbolName: "mappin.circle.fill", color: .blue)
     }
     
     private func mapItemType(_ item: MKMapItem) -> LocationType {
