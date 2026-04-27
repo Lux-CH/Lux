@@ -57,6 +57,12 @@
         }
       }
     },
+    "%@ left" : {
+
+    },
+    "%@ remaining" : {
+
+    },
     "%@%lld'" : {
       "localizations" : {
         "fr" : {
@@ -2444,6 +2450,9 @@
         }
       }
     },
+    "Get within 300m for live pace" : {
+
+    },
     "Glissez vers le bas pour planifier un itinéraire ou obtenir des directions" : {
       "localizations" : {
         "en" : {
@@ -2910,6 +2919,16 @@
         }
       }
     },
+    "Lavande Pastel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pastel Lavanda"
+          }
+        }
+      }
+    },
     "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention." : {
       "localizations" : {
         "en" : {
@@ -3049,9 +3068,6 @@
           }
         }
       }
-    },
-    "Lilas Pastel" : {
-
     },
     "Liste des arrêts à proximité" : {
       "localizations" : {
@@ -3769,6 +3785,16 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "Passez %1$@ %2$@ %3$@ %4$@"
+          }
+        }
+      }
+    },
+    "Pêche Pastel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pastel Peach"
           }
         }
       }

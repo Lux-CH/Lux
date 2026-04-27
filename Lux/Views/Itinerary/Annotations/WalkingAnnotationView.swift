@@ -2,7 +2,7 @@
 //  WalkingAnnotationView.swift
 //  Lux
 //
-//  Created by Codex on 27.04.2026.
+//  Created by Constantin Clerc on 27.04.2026.
 //
 
 import SwiftUI
