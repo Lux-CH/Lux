@@ -6,24 +6,26 @@
 //
 
 import SwiftUI
+import LuxCom
 
 struct LocationTagView: View {
     @EnvironmentObject var shortcutManager: ShortcutManager
+    @ObservedObject private var visualStyleStore = SearchResultVisualStyleStore.shared
     let location: SelectedLocation
     let onRemove: () -> Void
     
     var body: some View {
         HStack(spacing: 6) {
-            if let icon = iconName {
-                Image(systemName: icon)
+            if let iconStyle = iconStyle {
+                Image(systemName: iconStyle.symbolName)
                     .font(.system(size: 10))
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(iconStyle.color)
                     .frame(width: 28, height: 18)
-                    .background(Color.accentColor.opacity(0.12))
+                    .background(iconStyle.color.opacity(0.12))
                     .clipShape(Capsule(style: .continuous))
                     .overlay(
                         Capsule(style: .continuous)
-                            .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                            .stroke(iconStyle.color.opacity(0.35), lineWidth: 0.5)
                     )
             }
             
@@ -53,15 +55,46 @@ struct LocationTagView: View {
         .animation(.spring(response: 0.3), value: location)
     }
     
-    private var iconName: String? {
+    private var iconStyle: (symbolName: String, color: Color)? {
         if case .currentPosition = location {
-            return "location.fill"
+            return ("location.fill", .accentColor)
         }
         
-        if let shortcut = shortcutManager.shortcuts.first(where: {
-            $0.name.localizedCaseInsensitiveCompare(location.displayName) == .orderedSame
+        guard case .searchResult(let result) = location else {
+            return nil
+        }
+        
+        if let shortcutSymbol = shortcutSymbol(for: result) {
+            return (shortcutSymbol, .accentColor)
+        }
+        
+        if result.type != .stop, let style = visualStyleStore.style(for: result.id) {
+            return (style.symbolName, style.color)
+        }
+        
+        return defaultIcon(for: result.type)
+    }
+    
+    private func defaultIcon(for type: LocationType) -> (symbolName: String, color: Color) {
+        switch type {
+        case .adress:
+            return ("mappin", .red)
+        case .place:
+            return ("building.fill", .blue)
+        case .stop:
+            return ("signpost.right.fill", .accentColor)
+        }
+    }
+    
+    private func shortcutSymbol(for result: SearchResult) -> String? {
+        if let matchByStop = shortcutManager.shortcuts.first(where: { $0.stopId == result.id }) {
+            return matchByStop.symbol
+        }
+        
+        if let matchByName = shortcutManager.shortcuts.first(where: {
+            $0.name.localizedCaseInsensitiveCompare(result.name) == .orderedSame
         }) {
-            return shortcut.symbol
+            return matchByName.symbol
         }
         
         return nil

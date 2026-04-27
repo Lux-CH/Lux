@@ -160,6 +160,13 @@ struct SettingsView: View {
                     )
                 }
                 
+                SettingsToggle(
+                    icon: "list.bullet.indent",
+                    title: String(localized: "Afficher l'historique"),
+                    subtitle: String(localized: "Liste les recherches récentes dans vos destinations"),
+                    isOn: $settings.showHistory
+                )
+                
                 LineStylePicker(
                     icon: { if #available(iOS 18, *) { "capsule.on.capsule" } else { "inset.filled.capsule " } }(),
                     title: String(localized: "Affichage des lignes"),

@@ -119,9 +119,24 @@ struct StopRowView: View {
 
 func formatDistance(_ distance: Double) -> String {
     if distance >= 1000 {
-        let km = distance / 1000
-        return "\(Int(km))km"
+        let km = distance / 1000.0
+        let roundedKm = (km * 10).rounded() / 10
+        
+        if let formatted = kmDistanceFormatter.string(from: NSNumber(value: roundedKm)) {
+            return "\(formatted)km"
+        }
+        
+        return String(format: "%.1fkm", roundedKm)
     } else {
-        return "\(Int(distance))m"
+        return "\(Int(distance.rounded()))m"
     }
 }
+
+private let kmDistanceFormatter: NumberFormatter = {
+    let formatter = NumberFormatter()
+    formatter.numberStyle = .decimal
+    formatter.locale = Locale.current
+    formatter.minimumFractionDigits = 1
+    formatter.maximumFractionDigits = 1
+    return formatter
+}()

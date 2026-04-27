@@ -10,6 +10,7 @@ import LuxCom
 
 struct SearchHistoryContent: View {
     @ObservedObject var viewModel: TripsSearchViewModel
+    @ObservedObject private var visualStyleStore = SearchResultVisualStyleStore.shared
     @Environment(\.colorScheme) private var colorScheme
     @EnvironmentObject var shortcutManager: ShortcutManager
     @State private var appearAnimation = false
@@ -143,7 +144,8 @@ struct SearchHistoryContent: View {
     @ViewBuilder
     private func historyRow(for result: SearchResult) -> some View {
         HStack(spacing: 12) {
-            let (iconName, iconColor) = shortcutSymbol(for: result).map { ($0, Color.accentColor) } ?? getIconForType(result.type)
+            let defaultIcon: (String, Color) = visualStyleStore.style(for: result.id).map { ($0.symbolName, $0.color) } ?? getIconForType(result.type)
+            let (iconName, iconColor) = shortcutSymbol(for: result).map { ($0, Color.accentColor) } ?? defaultIcon
             ZStack {
                 Circle()
                     .fill(iconColor.opacity(0.15))
@@ -221,7 +223,7 @@ struct SearchHistoryContent: View {
     private func getIconForType(_ type: LocationType) -> (String, Color) {
         switch type {
         case .adress:
-            return ("mappin.circle.fill", .red)
+            return ("mappin", .red)
         case .place:
             return ("building.fill", .blue)
         case .stop:

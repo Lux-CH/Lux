@@ -28,6 +28,7 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("customScheme") var customScheme: Bool = false
     @AppStorage("customSchemeSelection") var customSchemeSelection: String = ""
     @AppStorage("easyOnTheEyes") var easyOnTheEyes: Bool = false
+    @AppStorage("showHistory") var showHistory: Bool = true
 
     /// Experimental
     @AppStorage("fetchWalkingDirectionsUsingMKDirections") var fetchWalkingDirectionsUsingMKDirections: Bool = false
