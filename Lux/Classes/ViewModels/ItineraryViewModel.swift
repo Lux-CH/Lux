@@ -15,9 +15,12 @@ import Polyline
 final class ItineraryViewModel: ObservableObject {
     @Published var tripId: String
     private let zoomThreshold: CLLocationDistance = 50000
+    private let vehicleUpdateInterval: Duration = .seconds(2)
+    private let walkingUpdateInterval: Duration = .milliseconds(33)
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
     private var walkingLegCoordinates: [String: [CLLocationCoordinate2D]] = [:]
     private var vehicleUpdateTask: Task<Void, Never>?
+    private var walkingUpdateTask: Task<Void, Never>?
     private var itineraryRefreshTask: Task<Void, Never>?
     
     private var shouldStop = false
@@ -73,6 +76,7 @@ final class ItineraryViewModel: ObservableObject {
         shouldStop = true
         stopItineraryRefresh()
         stopVehicleUpdates()
+        stopWalkingUpdates()
     }
     
     func loadItinerary() async {
@@ -220,6 +224,7 @@ final class ItineraryViewModel: ObservableObject {
         prepareVehicleKeyframes(for: itinerary.legs)
         
         startVehicleUpdates()
+        startWalkingUpdates()
     }
     
     private func fetchWalkingDirectionsForAllLegs(_ legs: [Leg]) async {
@@ -275,7 +280,18 @@ final class ItineraryViewModel: ObservableObject {
         vehicleUpdateTask = Task {
             while !Task.isCancelled && !shouldStop {
                 updateVehiclePositions()
-                try? await Task.sleep(for: .seconds(2))
+                try? await Task.sleep(for: vehicleUpdateInterval)
+            }
+        }
+    }
+    
+    private func startWalkingUpdates() {
+        guard !shouldStop, walkingUpdateTask == nil else { return }
+        
+        walkingUpdateTask = Task {
+            while !Task.isCancelled && !shouldStop {
+                updateWalkingPositions()
+                try? await Task.sleep(for: walkingUpdateInterval)
             }
         }
     }
@@ -283,14 +299,21 @@ final class ItineraryViewModel: ObservableObject {
     deinit {
         shouldStop = true
         vehicleUpdateTask?.cancel()
+        walkingUpdateTask?.cancel()
         itineraryRefreshTask?.cancel()
         vehicleUpdateTask = nil
+        walkingUpdateTask = nil
         itineraryRefreshTask = nil
     }
     
     private func stopVehicleUpdates() {
         vehicleUpdateTask?.cancel()
         vehicleUpdateTask = nil
+    }
+    
+    private func stopWalkingUpdates() {
+        walkingUpdateTask?.cancel()
+        walkingUpdateTask = nil
     }
 
     private func updateVehiclePositions() {
@@ -320,6 +343,17 @@ final class ItineraryViewModel: ObservableObject {
             )
         }
         
+        withAnimation(.easeInOut(duration: 0.5)) {
+            vehicleAnnotations = newVehicleAnnotations
+        }
+    }
+    
+    private func updateWalkingPositions() {
+        guard let itinerary = itinerary, !shouldStop else { return }
+        
+        let currentTime = Date()
+        let currentTimeInterval = currentTime.timeIntervalSince1970
+        
         let newWalkingAnnotations = itinerary.legs.compactMap { leg -> WalkingAnnotation? in
             guard leg.mode == .walk else { return nil }
             
@@ -331,13 +365,7 @@ final class ItineraryViewModel: ObservableObject {
             return WalkingAnnotation(id: legId, coordinate: position)
         }
         
-        withAnimation(.easeInOut(duration: 0.5)) {
-            vehicleAnnotations = newVehicleAnnotations
-        }
-        
-        withAnimation(.linear(duration: 2.0)) {
-            walkingAnnotations = newWalkingAnnotations
-        }
+        walkingAnnotations = newWalkingAnnotations
     }
     
     private func walkingPosition(for leg: Leg, legId: String, at timestamp: TimeInterval) -> CLLocationCoordinate2D? {
