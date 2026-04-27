@@ -2,7 +2,7 @@
 //  SavedItineraryStorage.swift
 //  Lux
 //
-//  Created by Codex on 06.04.2026.
+//  Created by Constantin Clerc on 06.04.2026.
 //
 
 import Foundation
