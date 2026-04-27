@@ -2204,6 +2204,16 @@
         }
       }
     },
+    "Étendue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Extended"
+          }
+        }
+      }
+    },
     "Êtes-vous sûr de vouloir ouvrir cet itinéraire ?" : {
       "localizations" : {
         "en" : {
