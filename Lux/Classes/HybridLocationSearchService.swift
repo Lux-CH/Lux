@@ -29,8 +29,9 @@ struct HybridLocationSearchService {
             mergedResults.append(contentsOf: luxFallback)
         }
         
-        let deduplicatedResults = deduplicated(results: mergedResults)
-        return sortedByClosestDistance(deduplicatedResults, userLocation: userLocation)
+        let deduplicatedByID = deduplicated(results: mergedResults)
+        let sortedResults = sortedByClosestDistance(deduplicatedByID, userLocation: userLocation)
+        return deduplicatedByNameAndProximity(sortedResults)
     }
     
     private func searchStops(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
@@ -288,7 +289,7 @@ struct HybridLocationSearchService {
             return SearchResultVisualStyle(symbolName: "figure.stand", color: .gray)
         }
         
-        return SearchResultVisualStyle(symbolName: "mappin.circle.fill", color: .blue)
+        return SearchResultVisualStyle(symbolName: "mappin", color: .blue)
     }
     
     private func mapItemType(_ item: MKMapItem) -> LocationType {
@@ -385,6 +386,70 @@ struct HybridLocationSearchService {
         }
         
         return dedupedResults
+    }
+    
+    private func deduplicatedByNameAndProximity(_ results: [SearchResult]) -> [SearchResult] {
+        let duplicateDistanceThreshold: CLLocationDistance = 120.0
+        var keptByNormalizedName: [String: [SearchResult]] = [:]
+        var deduplicated: [SearchResult] = []
+        
+        for result in results {
+            let normalizedName = normalizedName(for: result.name)
+            guard !normalizedName.isEmpty else {
+                deduplicated.append(result)
+                continue
+            }
+            
+            let existing = keptByNormalizedName[normalizedName] ?? []
+            let isDuplicate = existing.contains { existingResult in
+                areWithinDuplicateThreshold(existingResult, result, threshold: duplicateDistanceThreshold)
+            }
+            
+            if isDuplicate {
+                continue
+            }
+            
+            keptByNormalizedName[normalizedName, default: []].append(result)
+            deduplicated.append(result)
+        }
+        
+        return deduplicated
+    }
+    
+    private func normalizedName(for name: String) -> String {
+        let folded = name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+        let trimmed = folded.trimmingCharacters(in: .whitespacesAndNewlines)
+        let punctuationFree = trimmed.replacingOccurrences(
+            of: "[^\\p{L}\\p{N}\\s]",
+            with: " ",
+            options: .regularExpression
+        )
+        let collapsedSpaces = punctuationFree.replacingOccurrences(
+            of: "\\s+",
+            with: " ",
+            options: .regularExpression
+        )
+        return collapsedSpaces.lowercased()
+    }
+    
+    private func areWithinDuplicateThreshold(
+        _ lhs: SearchResult,
+        _ rhs: SearchResult,
+        threshold: CLLocationDistance
+    ) -> Bool {
+        let lhsCoordinate = CLLocationCoordinate2D(latitude: lhs.lat, longitude: lhs.lon)
+        let rhsCoordinate = CLLocationCoordinate2D(latitude: rhs.lat, longitude: rhs.lon)
+        
+        guard CLLocationCoordinate2DIsValid(lhsCoordinate),
+              CLLocationCoordinate2DIsValid(rhsCoordinate),
+              !(lhs.lat == 0.0 && lhs.lon == 0.0),
+              !(rhs.lat == 0.0 && rhs.lon == 0.0) else {
+            return false
+        }
+        
+        let lhsLocation = CLLocation(latitude: lhs.lat, longitude: lhs.lon)
+        let rhsLocation = CLLocation(latitude: rhs.lat, longitude: rhs.lon)
+        return lhsLocation.distance(from: rhsLocation) <= threshold
     }
     
     private func sortedByClosestDistance(_ results: [SearchResult], userLocation: CLLocationCoordinate2D?) -> [SearchResult] {
@@ -551,7 +616,7 @@ actor MapKitRateLimitState {
 }
 
 @MainActor
-private final class MapKitCompleterClient: NSObject, MKLocalSearchCompleterDelegate {
+private final class MapKitCompleterClient: NSObject {
     private let completer: MKLocalSearchCompleter = {
         let completer = MKLocalSearchCompleter()
         completer.resultTypes = [.address, .pointOfInterest]
@@ -579,29 +644,26 @@ private final class MapKitCompleterClient: NSObject, MKLocalSearchCompleterDeleg
             completer.region = region
         }
         
-        return await withCheckedContinuation { continuation in
-            resolvePendingContinuation(with: [])
-            self.continuation = continuation
-            
-            timeoutWorkItem?.cancel()
-            let timeoutItem = DispatchWorkItem { [weak self] in
-                guard let self else { return }
-                self.resolvePendingContinuation(with: self.completer.results)
+        return await withTaskCancellationHandler {
+            await withCheckedContinuation { continuation in
+                resolvePendingContinuation(with: [])
+                self.continuation = continuation
+                
+                timeoutWorkItem?.cancel()
+                let timeoutItem = DispatchWorkItem { [weak self] in
+                    guard let self else { return }
+                    self.resolvePendingContinuation(with: self.completer.results)
+                }
+                timeoutWorkItem = timeoutItem
+                DispatchQueue.main.asyncAfter(deadline: .now() + timeout, execute: timeoutItem)
+                
+                completer.queryFragment = query
             }
-            timeoutWorkItem = timeoutItem
-            DispatchQueue.main.asyncAfter(deadline: .now() + timeout, execute: timeoutItem)
-            
-            completer.queryFragment = query
+        } onCancel: { [weak self] in
+            Task { @MainActor [weak self] in
+                self?.resolvePendingContinuation(with: [])
+            }
         }
-    }
-    
-    func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        resolvePendingContinuation(with: completer.results)
-    }
-    
-    func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
-        print("map completer error: \(error.localizedDescription)")
-        resolvePendingContinuation(with: [])
     }
     
     private func resolvePendingContinuation(with results: [MKLocalSearchCompletion]) {
@@ -614,5 +676,20 @@ private final class MapKitCompleterClient: NSObject, MKLocalSearchCompleterDeleg
         
         self.continuation = nil
         continuation.resume(returning: results)
+    }
+}
+
+extension MapKitCompleterClient: MKLocalSearchCompleterDelegate {
+    nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
+        Task { @MainActor [weak self] in
+            self?.resolvePendingContinuation(with: completer.results)
+        }
+    }
+    
+    nonisolated func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        Task { @MainActor [weak self] in
+            print("map completer error: \(error.localizedDescription)")
+            self?.resolvePendingContinuation(with: [])
+        }
     }
 }
