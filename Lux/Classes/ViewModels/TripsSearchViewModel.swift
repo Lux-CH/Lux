@@ -114,6 +114,7 @@ class TripsSearchViewModel: ObservableObject {
     
     private var backgroundRefreshTask: Task<Void, Never>? = nil
     private var locationManager: LocationManager?
+    private let hybridSearchService = HybridLocationSearchService()
     
     private let defaultMaxTransfers = 5
     private let defaultMinTransferTime = 0
@@ -359,24 +360,17 @@ class TripsSearchViewModel: ObservableObject {
         cancelBackgroundTasks()
         
         backgroundRefreshTask = Task {
-            do {
-                if let coords = locationManager?.location?.coordinate {
-                    let results = try await geocode(text: query, place: (coords.latitude, coords.longitude), placeBias: 2)
-                    if !Task.isCancelled {
-                        await MainActor.run {
-                            self.searchResults = self.filterResults(results)
-                            self.isLoading = false
-                            self.backgroundRefreshTask = nil
-                        }
-                    }
-                }
-            } catch {
-                if !(error is CancellationError) {
-                    print("search error : \(error)")
-                    await MainActor.run {
-                        self.isLoading = false
-                        self.backgroundRefreshTask = nil
-                    }
+            let userCoordinate = self.locationManager?.location?.coordinate
+            let results = await self.hybridSearchService.search(
+                query: query,
+                userLocation: userCoordinate
+            )
+            
+            if !Task.isCancelled {
+                await MainActor.run {
+                    self.searchResults = self.filterResults(results)
+                    self.isLoading = false
+                    self.backgroundRefreshTask = nil
                 }
             }
         }
@@ -384,23 +378,16 @@ class TripsSearchViewModel: ObservableObject {
     
     private func filterResults(_ results: [SearchResult]) -> [SearchResult] {
         var seenIDs = Set<String>()
-        
-        var stopResults: [SearchResult] = []
-        var nonStopResults: [SearchResult] = []
-        
+        var dedupedResults: [SearchResult] = []
+
         for result in results {
             if !seenIDs.contains(result.id) {
                 seenIDs.insert(result.id)
-                
-                if result.type == .stop {
-                    stopResults.append(result)
-                } else {
-                    nonStopResults.append(result)
-                }
+                dedupedResults.append(result)
             }
         }
-        
-        return stopResults + nonStopResults
+
+        return dedupedResults
     }
     
     func cancelBackgroundTasks() {

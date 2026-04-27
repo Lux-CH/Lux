@@ -10,6 +10,7 @@ import SwiftUI
 struct TripsSearchContentView: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
+    @ObservedObject var settings = Settings.shared
     
     var body: some View {
         ZStack {
@@ -25,7 +26,7 @@ struct TripsSearchContentView: View {
                     } else {
                         if (viewModel.activeSearchField == .from || viewModel.activeSearchField == .to) &&
                             viewModel.fromQuery.isEmpty && viewModel.toQuery.isEmpty &&
-                            viewModel.searchResults.isEmpty && !viewModel.showMinCharactersMessage {
+                            viewModel.searchResults.isEmpty && !viewModel.showMinCharactersMessage && settings.showHistory {
                             SearchHistoryContent(viewModel: viewModel)
                                 .transition(.opacity.combined(with: .move(edge: .top)))
                         } else {

@@ -500,6 +500,16 @@
         }
       }
     },
+    "Afficher l'historique" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show history"
+          }
+        }
+      }
+    },
     "Afficher le plan" : {
       "localizations" : {
         "en" : {
@@ -3046,6 +3056,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "List of search results"
+          }
+        }
+      }
+    },
+    "Liste les recherches récentes dans vos destinations" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "List recent destination searches"
           }
         }
       }

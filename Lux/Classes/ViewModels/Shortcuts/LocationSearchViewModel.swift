@@ -7,6 +7,7 @@
 
 import LuxCom
 import Foundation
+import CoreLocation
 
 @MainActor
 class LocationSearchViewModel: ObservableObject {
@@ -16,6 +17,7 @@ class LocationSearchViewModel: ObservableObject {
     var userLocation: (Double, Double)? = nil
     
     private var searchTask: Task<Void, Never>? = nil
+    private let hybridSearchService = HybridLocationSearchService()
     
     func performSearch(_ query: String) {
         searchTask?.cancel()
@@ -36,31 +38,19 @@ class LocationSearchViewModel: ObservableObject {
         isLoading = true
         
         searchTask = Task {
-            do {
-                var results: [SearchResult]
-                
-                if let location = userLocation {
-                    results = try await geocode(
-                        text: query,
-                        place: location,
-                        placeBias: 2
-                    )
-                } else {
-                    results = try await geocode(text: query)
-                }
-                
-                if !Task.isCancelled {
-                    await MainActor.run {
-                        self.searchResults = self.filterResults(results)
-                        self.isLoading = false
-                    }
-                }
-            } catch {
-                if !Task.isCancelled {
-                    print("searcghh error \(error.localizedDescription)")
-                    await MainActor.run {
-                        self.isLoading = false
-                    }
+            let currentUserLocation = userLocation.map {
+                CLLocationCoordinate2D(latitude: $0.0, longitude: $0.1)
+            }
+            
+            let results = await hybridSearchService.search(
+                query: query,
+                userLocation: currentUserLocation
+            )
+            
+            if !Task.isCancelled {
+                await MainActor.run {
+                    self.searchResults = self.filterResults(results)
+                    self.isLoading = false
                 }
             }
         }
@@ -116,22 +106,15 @@ class LocationSearchViewModel: ObservableObject {
     
     private func filterResults(_ results: [SearchResult]) -> [SearchResult] {
         var seenIDs = Set<String>()
-        
-        var stopResults: [SearchResult] = []
-        var nonStopResults: [SearchResult] = []
-        
+        var dedupedResults: [SearchResult] = []
+
         for result in results {
             if !seenIDs.contains(result.id) {
                 seenIDs.insert(result.id)
-                
-                if result.type == .stop {
-                    stopResults.append(result)
-                } else {
-                    nonStopResults.append(result)
-                }
+                dedupedResults.append(result)
             }
         }
-        
-        return stopResults + nonStopResults
+
+        return dedupedResults
     }
 }

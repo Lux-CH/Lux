@@ -11,12 +11,13 @@ import LuxCom
 
 struct SearchResultRow: View {
     @EnvironmentObject var locationManager: LocationManager
+    @ObservedObject private var visualStyleStore = SearchResultVisualStyleStore.shared
     let result: SearchResult
     
     private func getIconForType(_ type: LocationType)-> (String, Color) {
         switch type{
         case .adress:
-            return ("mappin.circle.fill", .red)
+            return ("mappin", .red)
         case .place:
             return ("building.fill", .blue)
         case .stop:
@@ -58,9 +59,17 @@ struct SearchResultRow: View {
         return nil
     }
     
+    private func iconStyleForResult() -> (String, Color) {
+        if let style = visualStyleStore.style(for: result.id), result.type != .stop {
+            return (style.symbolName, style.color)
+        }
+        
+        return getIconForType(result.type)
+    }
+    
     var body: some View {
         HStack(spacing: 18) {
-            let (iconName, iconColor) = getIconForType(result.type)
+            let (iconName, iconColor) = iconStyleForResult()
             
             ZStack {
                 Circle()
