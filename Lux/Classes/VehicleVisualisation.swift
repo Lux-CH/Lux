@@ -18,6 +18,11 @@ struct VehicleAnnotation: Identifiable {
     let color: Color
 }
 
+struct WalkingAnnotation: Identifiable {
+    let id: String
+    var coordinate: CLLocationCoordinate2D
+}
+
 enum VehicleVisualisation {
     struct KeyFrame {
         let point: CLLocationCoordinate2D
