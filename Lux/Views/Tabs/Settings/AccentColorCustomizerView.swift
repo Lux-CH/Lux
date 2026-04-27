@@ -105,7 +105,7 @@ struct AccentColorCustomizerView: View {
         }
     }
     
-    private func selectColor(_ colorData: (name: String, color: Color, iconName: String?)) {
+    private func selectColor(_ colorData: AccentColorManager.AccentColorOption) {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
             accentColorManager.setAccentColor(colorData.color)
             selectedColorName = colorData.name
