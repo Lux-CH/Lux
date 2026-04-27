@@ -87,7 +87,8 @@ struct HybridLocationSearchService {
             wasRateLimited = completionOutcome.wasRateLimited
         }
         
-        let dedupedMapItems = deduplicatedMapItems(mapItems)
+        let filteredMapItems = mapItems.filter { !isMapKitTransitStop($0) }
+        let dedupedMapItems = deduplicatedMapItems(filteredMapItems)
         
         let mappedResults = dedupedMapItems
             .prefix(maxReturnedPlaces)
@@ -124,6 +125,7 @@ struct HybridLocationSearchService {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
         request.resultTypes = [.address, .pointOfInterest]
+        request.pointOfInterestFilter = MKPointOfInterestFilter(excluding: [.publicTransport])
         if let region {
             request.region = region
         }
@@ -148,6 +150,7 @@ struct HybridLocationSearchService {
             
             let request = MKLocalSearch.Request(completion: completion)
             request.resultTypes = [.address, .pointOfInterest]
+            request.pointOfInterestFilter = MKPointOfInterestFilter(excluding: [.publicTransport])
             if let region {
                 request.region = region
             }
@@ -198,6 +201,14 @@ struct HybridLocationSearchService {
             ),
             visualStyle: visualStyle
         )
+    }
+    
+    private func isMapKitTransitStop(_ item: MKMapItem) -> Bool {
+        guard let category = item.pointOfInterestCategory else {
+            return false
+        }
+        
+        return category.rawValue.lowercased().contains("publictransport")
     }
 
     private func mapItemVisualStyle(for item: MKMapItem) -> SearchResultVisualStyle? {
@@ -620,6 +631,7 @@ private final class MapKitCompleterClient: NSObject {
     private let completer: MKLocalSearchCompleter = {
         let completer = MKLocalSearchCompleter()
         completer.resultTypes = [.address, .pointOfInterest]
+        completer.pointOfInterestFilter = MKPointOfInterestFilter(excluding: [.publicTransport])
         return completer
     }()
     
