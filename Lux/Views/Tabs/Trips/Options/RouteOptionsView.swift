@@ -590,7 +590,7 @@ struct TransferTimeSelector: View {
 
 struct WalkingTimeSelector: View {
     @Binding var selectedTime: Int
-    private let walkingTimeOptions = [300, 900, 1200, 1800]
+    private let walkingTimeOptions = [300, 900, 1200, 1800, 5400]
     @ObservedObject var accentColorManager = AccentColorManager.shared
 
     private func formatWalkingTime(_ seconds: Int) -> String {
@@ -608,6 +608,8 @@ struct WalkingTimeSelector: View {
             return String(localized: "Modérée")
         case 1800:
             return String(localized: "Longue")
+        case 5400:
+            return String(localized: "Étendue")
         default:
             return String(localized: "Standard")
         }
