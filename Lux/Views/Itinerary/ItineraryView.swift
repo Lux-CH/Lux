@@ -133,13 +133,13 @@ struct ItineraryView: View {
                     }
                     
                     ForEach(viewModel.vehicleAnnotations) { vehicle in
-                        Annotation("", coordinate: vehicle.coordinate) {
+                        Annotation("", coordinate: vehicle.coordinate, anchor: .center) {
                             VehicleAnnotationView(annotation: vehicle)
                         }
                     }
                     
                     ForEach(viewModel.walkingAnnotations) { walking in
-                        Annotation("", coordinate: walking.coordinate) {
+                        Annotation("", coordinate: walking.coordinate, anchor: .center) {
                             WalkingAnnotationView()
                         }
                     }
