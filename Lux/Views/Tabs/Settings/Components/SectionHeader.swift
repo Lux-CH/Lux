@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SectionHeader: View {
+    @ObservedObject var accentColorManager = AccentColorManager.shared
     let icon: String
     let iconColor: Color
     let title: String
@@ -42,7 +43,7 @@ struct SectionHeader: View {
                 }) {
                     Image(systemName: "info.circle")
                         .font(.callout)
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(accentColorManager.selectedAccentColor)
                         .frame(width: 24, height: 24)
                 }
                 .buttonStyle(.plain)

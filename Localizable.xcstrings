@@ -1192,6 +1192,16 @@
         }
       }
     },
+    "Bleu Pastel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pastel Blue"
+          }
+        }
+      }
+    },
     "Bleu SBB CFF" : {
       "localizations" : {
         "en" : {
@@ -3040,6 +3050,9 @@
         }
       }
     },
+    "Lilas Pastel" : {
+
+    },
     "Liste des arrêts à proximité" : {
       "localizations" : {
         "en" : {
@@ -3308,6 +3321,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Prioritize the lines you use most."
+          }
+        }
+      }
+    },
+    "Mimosa Pastel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pastel Mimosa"
           }
         }
       }
@@ -4300,6 +4323,16 @@
         }
       }
     },
+    "Rose Pastel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pastel Pink"
+          }
+        }
+      }
+    },
     "Rose UNIGE" : {
       "localizations" : {
         "en" : {
@@ -5056,6 +5089,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "CGTE Green"
+          }
+        }
+      }
+    },
+    "Vert Pastel" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pastel Green"
           }
         }
       }
