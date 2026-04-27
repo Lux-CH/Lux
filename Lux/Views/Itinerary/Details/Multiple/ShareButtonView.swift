@@ -48,36 +48,71 @@ struct ShareButtonView: View {
         Group {
             if compact {
                 VStack(spacing: 10) {
-                    Menu {
-                        Button {
-                            uploadItinerary()
+                    if #available(iOS 26, *) {
+                        Menu {
+                            Button {
+                                uploadItinerary()
+                            } label: {
+                                Label("Partager l'entiereté", systemImage: "link")
+                            }
+                            
+                            Button {
+                                shareRenderedPreviewImage()
+                            } label: {
+                                Label(
+                                    isRenderingPreviewImage ? "Préparation de l'image..." : "Partager l'aperçu en tant qu'image",
+                                    systemImage: "photo"
+                                )
+                            }
+                            .disabled(isRenderingPreviewImage)
                         } label: {
-                            Label("Partager l'entiereté", systemImage: "link")
-                        }
-                        
-                        Button {
-                            shareRenderedPreviewImage()
-                        } label: {
-                            Label(
-                                isRenderingPreviewImage ? "Préparation de l'image..." : "Partager l'aperçu en tant qu'image",
-                                systemImage: "photo"
-                            )
-                        }
-                        .disabled(isRenderingPreviewImage)
-                    } label: {
-                        floatingButtonContainer {
-                            if isUploading {
-                                ProgressView()
-                                    .scaleEffect(0.8)
-                            } else {
-                                Image(systemName: "square.and.arrow.up")
-                                    .font(.headline)
-                                    .foregroundColor(.accentColor)
-                                    .offset(y: -1)
+                            floatingButtonContainer {
+                                if isUploading {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Image(systemName: "square.and.arrow.up")
+                                        .font(.headline)
+                                        .foregroundColor(.accentColor)
+                                        .offset(y: -1)
+                                }
                             }
                         }
+                        .buttonStyle(.plain)
+                        .disabled(isUploading || isSavingItinerary)
+                    } else {
+                        Menu {
+                            Button {
+                                uploadItinerary()
+                            } label: {
+                                Label("Partager l'entiereté", systemImage: "link")
+                            }
+                            
+                            Button {
+                                shareRenderedPreviewImage()
+                            } label: {
+                                Label(
+                                    isRenderingPreviewImage ? "Préparation de l'image..." : "Partager l'aperçu en tant qu'image",
+                                    systemImage: "photo"
+                                )
+                            }
+                            .disabled(isRenderingPreviewImage)
+                        } label: {
+                            floatingButtonContainer {
+                                if isUploading {
+                                    ProgressView()
+                                        .scaleEffect(0.8)
+                                } else {
+                                    Image(systemName: "square.and.arrow.up")
+                                        .font(.headline)
+                                        .foregroundColor(.accentColor)
+                                        .offset(y: -1)
+                                }
+                            }
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(isUploading || isSavingItinerary)
                     }
-                    .disabled(isUploading || isSavingItinerary)
                     
                     if showCompactSaveAction && shouldShowCompactSaveButton {
                         Button {
@@ -108,7 +143,6 @@ struct ShareButtonView: View {
                         .transition(.opacity)
                     }
                 }
-                .buttonStyle(.plain)
             } else {
                 Button(action: {
                     showingShareDialog = true

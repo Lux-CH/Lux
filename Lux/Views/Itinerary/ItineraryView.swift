@@ -149,50 +149,54 @@ struct ItineraryView: View {
                         )
                 )
                 .overlay(alignment: .leading) {
-                    GlassEffectGroup(spacing: 8) {
-                        VStack(spacing: 12) {
-                            Button(action: {
-                                showDetails = false
-                                dismiss()
-                            }) {
-                                Image(systemName: "chevron.backward")
-                                    .font(.headline)
-                                    .foregroundColor(.accentColor)
-                                    .frame(width: 45, height: 45)
-                                    .contentShape(Circle())
-                                    .clipShape(Circle())
-                                    .adaptable(ios26: .glassButton, fallback: {
-                                        $0.background(.ultraThickMaterial, in: Circle()).overlay(
-                                            Circle()
-                                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                        )
-                                    })
-                                    .shadow(radius: 2)
-                            }
-                            .buttonStyle(.plain)
-                            
-                            Button(action: {
-                                withAnimation {
-                                    cycleTrackingMode()
+                    VStack(spacing: 12) {
+                        GlassEffectGroup(spacing: 8) {
+                            VStack(spacing: 12) {
+                                Button(action: {
+                                    showDetails = false
+                                    dismiss()
+                                }) {
+                                    Image(systemName: "chevron.backward")
+                                        .font(.headline)
+                                        .foregroundColor(.accentColor)
+                                        .frame(width: 45, height: 45)
+                                        .contentShape(Circle())
+                                        .clipShape(Circle())
+                                        .adaptable(ios26: .glassButton, fallback: {
+                                            $0.background(.ultraThickMaterial, in: Circle()).overlay(
+                                                Circle()
+                                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                            )
+                                        })
+                                        .shadow(radius: 2)
                                 }
-                            }) {
-                                Image(systemName: locationButtonIcon)
-                                    .font(.headline)
-                                    .foregroundColor(.accentColor)
-                                    .frame(width: 45, height: 45)
-                                    .contentShape(Circle())
-                                    .clipShape(Circle())
-                                    .adaptable(ios26: .glassButton, fallback: {
-                                        $0.background(.ultraThickMaterial, in: Circle()).overlay(
-                                            Circle()
-                                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                        )
-                                    })
-                                    .shadow(radius: 2)
+                                .buttonStyle(.plain)
+                                
+                                Button(action: {
+                                    withAnimation {
+                                        cycleTrackingMode()
+                                    }
+                                }) {
+                                    Image(systemName: locationButtonIcon)
+                                        .font(.headline)
+                                        .foregroundColor(.accentColor)
+                                        .frame(width: 45, height: 45)
+                                        .contentShape(Circle())
+                                        .clipShape(Circle())
+                                        .adaptable(ios26: .glassButton, fallback: {
+                                            $0.background(.ultraThickMaterial, in: Circle()).overlay(
+                                                Circle()
+                                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                            )
+                                        })
+                                        .shadow(radius: 2)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            .buttonStyle(.plain)
-                            
-                            if otherItineraries.count > 1 {
+                        }
+                        
+                        if otherItineraries.count > 1 {
+                            if #available(iOS 26, *) {
                                 Menu {
                                     ForEach(otherItineraries) { tripOption in
                                         if tripOption.id == viewModel.tripId {
@@ -225,27 +229,57 @@ struct ItineraryView: View {
                                         .shadow(radius: 2)
                                 }
                                 .buttonStyle(.plain)
+                            } else {
+                                Menu {
+                                    ForEach(otherItineraries) { tripOption in
+                                        if tripOption.id == viewModel.tripId {
+                                            Button(
+                                                getExactTime(from: tripOption.startTime),
+                                                systemImage: "checkmark"
+                                            ) {}
+                                        }
+                                        else {
+                                            Button(getExactTime(from: tripOption.startTime)) {
+                                                Task {
+                                                    await viewModel.switchToTrip(tripId: tripOption.id)
+                                                }
+                                            }
+                                        }
+                                    }
+                                } label: {
+                                    Image(systemName: "clock")
+                                        .font(.headline)
+                                        .foregroundColor(.accentColor)
+                                        .frame(width: 45, height: 45)
+                                        .contentShape(Circle())
+                                        .clipShape(Circle())
+                                        .background(.ultraThickMaterial, in: Circle())
+                                        .overlay(
+                                            Circle()
+                                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                        )
+                                        .shadow(radius: 2)
+                                }
+                                .buttonStyle(.plain)
                             }
-                            
-                            Spacer()
                         }
+                        
+                        Spacer()
                     }
                     .padding(.leading, 16)
                     .liquidGlassLightModeButtonTintOptOut()
                 }
                 .overlay(alignment: .trailing) {
-                    GlassEffectGroup(spacing: 8) {
-                        VStack(spacing: 12) {
-                            if let itinerary = viewModel.itinerary {
-                                ShareButtonView(
-                                    itinerary: itinerary,
-                                    itineraarySharer: itineraarySharer,
-                                    compact: true,
-                                    showCompactSaveAction: !isSingle
-                                )
-                            }
-                            Spacer()
+                    VStack(spacing: 12) {
+                        if let itinerary = viewModel.itinerary {
+                            ShareButtonView(
+                                itinerary: itinerary,
+                                itineraarySharer: itineraarySharer,
+                                compact: true,
+                                showCompactSaveAction: !isSingle
+                            )
                         }
+                        Spacer()
                     }
                     .padding(.trailing, 16)
                     .liquidGlassLightModeButtonTintOptOut()
