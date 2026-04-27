@@ -31,6 +31,8 @@ struct ItineraryView: View {
     @State private var showDetails: Bool = true
     @State var otherItineraries: [TripOption] = []
     @State private var isSingle: Bool
+    @State private var isSwitchingTrip = false
+    @State private var tripSwitchTask: Task<Void, Never>?
     let fromNearby: Bool
     var forceLC: Bool = false
     let itineraarySharer = ItinerarySharer()
@@ -82,6 +84,14 @@ struct ItineraryView: View {
         } else {
             return (0.1, 72.5)
         }
+    }
+    
+    private var selectableTripOptions: [TripOption] {
+        var seenTripIDs = Set<String>()
+        
+        return otherItineraries
+            .sorted { $0.startTime < $1.startTime }
+            .filter { seenTripIDs.insert($0.id).inserted }
     }
     
     var body: some View {
@@ -195,73 +205,14 @@ struct ItineraryView: View {
                             }
                         }
                         
-                        if otherItineraries.count > 1 {
-                            if #available(iOS 26, *) {
-                                Menu {
-                                    ForEach(otherItineraries) { tripOption in
-                                        if tripOption.id == viewModel.tripId {
-                                            Button(
-                                                getExactTime(from: tripOption.startTime),
-                                                systemImage: "checkmark"
-                                            ) {}
-                                        }
-                                        else {
-                                            Button(getExactTime(from: tripOption.startTime)) {
-                                                Task {
-                                                    await viewModel.switchToTrip(tripId: tripOption.id)
-                                                }
-                                            }
-                                        }
-                                    }
-                                } label: {
-                                    Image(systemName: "clock")
-                                        .font(.headline)
-                                        .foregroundColor(.accentColor)
-                                        .frame(width: 45, height: 45)
-                                        .contentShape(Circle())
-                                        .clipShape(Circle())
-                                        .adaptable(ios26: .glassButton, fallback: {
-                                            $0.background(.ultraThickMaterial, in: Circle()).overlay(
-                                                Circle()
-                                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                            )
-                                        })
-                                        .shadow(radius: 2)
-                                }
-                                .buttonStyle(.plain)
-                            } else {
-                                Menu {
-                                    ForEach(otherItineraries) { tripOption in
-                                        if tripOption.id == viewModel.tripId {
-                                            Button(
-                                                getExactTime(from: tripOption.startTime),
-                                                systemImage: "checkmark"
-                                            ) {}
-                                        }
-                                        else {
-                                            Button(getExactTime(from: tripOption.startTime)) {
-                                                Task {
-                                                    await viewModel.switchToTrip(tripId: tripOption.id)
-                                                }
-                                            }
-                                        }
-                                    }
-                                } label: {
-                                    Image(systemName: "clock")
-                                        .font(.headline)
-                                        .foregroundColor(.accentColor)
-                                        .frame(width: 45, height: 45)
-                                        .contentShape(Circle())
-                                        .clipShape(Circle())
-                                        .background(.ultraThickMaterial, in: Circle())
-                                        .overlay(
-                                            Circle()
-                                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                                        )
-                                        .shadow(radius: 2)
-                                }
-                                .buttonStyle(.plain)
+                        if selectableTripOptions.count > 1 {
+                            Menu {
+                                tripSelectionMenuContent
+                            } label: {
+                                tripSelectionButtonLabel
                             }
+                            .buttonStyle(.plain)
+                            .disabled(viewModel.isLoading || isSwitchingTrip)
                         }
                         
                         Spacer()
@@ -306,6 +257,9 @@ struct ItineraryView: View {
             }
         }
         .onDisappear {
+            tripSwitchTask?.cancel()
+            tripSwitchTask = nil
+            isSwitchingTrip = false
             viewModel.stopAllTasks()
         }
     }
@@ -334,6 +288,65 @@ struct ItineraryView: View {
         }
     }
     
+    @ViewBuilder
+    private var tripSelectionMenuContent: some View {
+        ForEach(selectableTripOptions) { tripOption in
+            if tripOption.id == viewModel.tripId {
+                Button(
+                    getExactTime(from: tripOption.startTime),
+                    systemImage: "checkmark"
+                ) { }
+                .disabled(true)
+            } else {
+                Button(getExactTime(from: tripOption.startTime)) {
+                    switchToTrip(tripOption.id)
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var tripSelectionButtonLabel: some View {
+        Group {
+            if viewModel.isLoading || isSwitchingTrip {
+                ProgressView()
+                    .scaleEffect(0.8)
+            } else {
+                Image(systemName: "clock")
+                    .font(.headline)
+                    .foregroundColor(.accentColor)
+            }
+        }
+        .frame(width: 45, height: 45)
+        .contentShape(Circle())
+        .clipShape(Circle())
+        .adaptable(ios26: .glassButton, fallback: {
+            $0.background(.ultraThickMaterial, in: Circle()).overlay(
+                Circle()
+                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+            )
+        })
+        .shadow(radius: 2)
+    }
+    
+    private func switchToTrip(_ tripId: String) {
+        guard tripId != viewModel.tripId else { return }
+        
+        HapticFeedback.lightImpact()
+        isSwitchingTrip = true
+        tripSwitchTask?.cancel()
+        
+        tripSwitchTask = Task(priority: .userInitiated) {
+            await viewModel.switchToTrip(tripId: tripId)
+            
+            if !Task.isCancelled {
+                await MainActor.run {
+                    isSwitchingTrip = false
+                }
+            }
+        }
+    }
+    
     func getExactTime(from date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateFormat = "HH:mm"
@@ -346,11 +359,11 @@ struct ItineraryView: View {
 //        super.viewDidLoad()
 //        interactivePopGestureRecognizer?.delegate = self
 //    }
-//    
+//
 //    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
 //        return viewControllers.count > 1
 //    }
-//    
+//
 //    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
 //        true
 //    }
