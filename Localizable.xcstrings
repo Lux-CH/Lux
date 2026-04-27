@@ -57,12 +57,6 @@
         }
       }
     },
-    "%@ left" : {
-
-    },
-    "%@ remaining" : {
-
-    },
     "%@%lld'" : {
       "localizations" : {
         "fr" : {
@@ -2449,9 +2443,6 @@
           }
         }
       }
-    },
-    "Get within 300m for live pace" : {
-
     },
     "Glissez vers le bas pour planifier un itinéraire ou obtenir des directions" : {
       "localizations" : {
