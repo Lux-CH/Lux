@@ -35,6 +35,8 @@ struct PaginationControlsView: View {
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)
                 .frame(height: 44)
+                .contentShape(Capsule(style: .continuous))
+                .clipShape(Capsule(style: .continuous))
             }
             .buttonStyle(.plain)
             .disabled(isLoadingEarlier || isLoadingLater || isLoading || isChangingContent)
@@ -56,6 +58,8 @@ struct PaginationControlsView: View {
                 .padding(.vertical, 12)
                 .padding(.horizontal, 16)
                 .frame(height: 44)
+                .contentShape(Capsule(style: .continuous))
+                .clipShape(Capsule(style: .continuous))
             }
             .buttonStyle(.plain)
             .disabled(isLoadingEarlier || isLoadingLater || isLoading || isChangingContent)
@@ -79,7 +83,6 @@ struct PaginationControlsView: View {
                     )
                     .scaleEffect(isChangingContent ? 0.98 : 1)
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isChangingContent)
-                    .allowsHitTesting(false)
             }
             else {
                 Capsule(style: .continuous)
@@ -102,7 +105,6 @@ struct PaginationControlsView: View {
                     )
                     .scaleEffect(isChangingContent ? 0.98 : 1)
                     .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isChangingContent)
-                    .allowsHitTesting(false)
             }
         }
         .frame(height: 54)
