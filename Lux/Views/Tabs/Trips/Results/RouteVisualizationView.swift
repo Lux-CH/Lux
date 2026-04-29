@@ -11,8 +11,19 @@ import LuxCom
 struct RouteVisualizationView: View {
     let legs: [Leg]
     
+    private var filteredLegs: [Leg] {
+        legs.filter { leg in
+            if leg.mode == .walk {
+                if leg.from.name == leg.to.name && leg.from.track == leg.to.track {
+                    return false
+                }
+            }
+            return true
+        }
+    }
+    
     private var totalDuration: Int {
-        legs.reduce(0) { $0 + $1.duration } + calculateTotalWaitingTime()
+        filteredLegs.reduce(0) { $0 + $1.duration } + calculateTotalWaitingTime()
     }
 
     private func calculateWaitingTime(between currentLeg: Leg, and nextLeg: Leg) -> Int {
@@ -20,9 +31,9 @@ struct RouteVisualizationView: View {
     }
 
     private func calculateTotalWaitingTime() -> Int {
-        guard legs.count > 1 else { return 0 }
+        guard filteredLegs.count > 1 else { return 0 }
         
-        return zip(legs, legs.dropFirst()).reduce(0) { totalWaiting, legPair in
+        return zip(filteredLegs, filteredLegs.dropFirst()).reduce(0) { totalWaiting, legPair in
             let (currentLeg, nextLeg) = legPair
             return totalWaiting + calculateWaitingTime(between: currentLeg, and: nextLeg)
         }
@@ -31,28 +42,28 @@ struct RouteVisualizationView: View {
     var body: some View {
         GeometryReader { geometry in
             HStack(spacing: 0) {
-                ForEach(0..<(legs.count * 2 - 1), id: \.self) { index in
+                ForEach(0..<(filteredLegs.count * 2 - 1), id: \.self) { index in
                     if index % 2 == 0 {
                         let legIndex = index / 2
-                        let leg = legs[legIndex]
+                        let leg = filteredLegs[legIndex]
                         let proportion = CGFloat(leg.duration) / CGFloat(totalDuration)
                         let calculatedWidth = geometry.size.width * proportion
-                        let width = min(calculatedWidth, geometry.size.width - CGFloat(legs.count - 1) * 4)
+                        let width = min(calculatedWidth, geometry.size.width - CGFloat(filteredLegs.count - 1) * 4)
                         
                         let finalWidth = max(width, CGFloat(10))
                         
                         LegSegmentView(
                             leg: leg,
                             isFirst: legIndex == 0,
-                            isLast: legIndex == legs.count - 1
+                            isLast: legIndex == filteredLegs.count - 1
                         )
                         .frame(width: finalWidth)
                     } else {
                         let previousLegIndex = index / 2
                         let nextLegIndex = previousLegIndex + 1
                         
-                        if nextLegIndex < legs.count {
-                            let waitingTime = calculateWaitingTime(between: legs[previousLegIndex], and: legs[nextLegIndex])
+                        if nextLegIndex < filteredLegs.count {
+                            let waitingTime = calculateWaitingTime(between: filteredLegs[previousLegIndex], and: filteredLegs[nextLegIndex])
                             
                             if waitingTime > 120 {
                                 let proportion = CGFloat(waitingTime) / CGFloat(totalDuration)
