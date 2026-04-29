@@ -10,7 +10,6 @@ import SwiftUI
 struct VehicleAnnotationView: View {
     let annotation: VehicleAnnotation
     @State private var isPulsing = false
-    @State private var isSecondPulsing = false
     
     private let badgeSize: CGFloat = 32
     
@@ -21,30 +20,16 @@ struct VehicleAnnotationView: View {
                 .frame(width: badgeSize, height: badgeSize)
                 .shadow(color: annotation.color.opacity(0.7), radius: 4)
                 .background {
-                    ZStack {
-                        Circle()
-                            .stroke(annotation.color.opacity(0.6), lineWidth: 3.5)
-                            .frame(width: badgeSize, height: badgeSize)
-                            .scaleEffect(isPulsing ? 1.5 : 1.0)
-                            .opacity(isPulsing ? 0 : 0.7)
-                            .animation(
-                                Animation.easeInOut(duration: 2.0)
-                                    .repeatForever(autoreverses: false),
-                                value: isPulsing
-                            )
-                        
-                        Circle()
-                            .stroke(annotation.color.opacity(0.4), lineWidth: 2.5)
-                            .frame(width: badgeSize, height: badgeSize)
-                            .scaleEffect(isSecondPulsing ? 1.4 : 1.0)
-                            .opacity(isSecondPulsing ? 0 : 0.5)
-                            .animation(
-                                Animation.easeInOut(duration: 2.0)
-                                    .delay(0.7)
-                                    .repeatForever(autoreverses: false),
-                                value: isSecondPulsing
-                            )
-                    }
+                    Circle()
+                        .stroke(annotation.color.opacity(0.6), lineWidth: 3.5)
+                        .frame(width: badgeSize, height: badgeSize)
+                        .scaleEffect(isPulsing ? 1.5 : 1.0)
+                        .opacity(isPulsing ? 0 : 0.7)
+                        .animation(
+                            Animation.easeInOut(duration: 2.0)
+                                .repeatForever(autoreverses: false),
+                            value: isPulsing
+                        )
                 }
             
             if let routeName = annotation.routeShortName {
@@ -57,10 +42,6 @@ struct VehicleAnnotationView: View {
         .frame(width: 64, height: 64)
         .onAppear {
             isPulsing = true
-            
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                isSecondPulsing = true
-            }
         }
     }
 }
