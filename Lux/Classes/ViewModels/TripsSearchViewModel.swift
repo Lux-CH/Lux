@@ -628,31 +628,31 @@ class TripsSearchViewModel: ObservableObject {
     @MainActor
     func handleInitialSearchResult(_ result: SearchResult, targetField: SearchField) {
         addToHistory(result)
-        if (targetField == .from && selectedFrom != nil) || (targetField == .to && selectedTo != nil) {
-            return
+        let location = SelectedLocation.searchResult(result)
+        
+        if selectedFrom == nil && selectedTo != nil {
+            selectedFrom = location
+        } else if selectedTo == nil && selectedFrom != nil {
+            selectedTo = location
+        } else {
+            if targetField == .to {
+                selectedTo = location
+            } else {
+                selectedFrom = location
+            }
         }
         
-        if targetField == .from {
-            selectedFrom = .searchResult(result)
-            fromQuery = ""
-            if selectedTo != nil {
-                activeSearchField = .none
-                searchTrips()
-            } else {
-                activeSearchField = .to
-            }
-        } else {
-            selectedTo = .searchResult(result)
-            toQuery = ""
-            if selectedFrom != nil {
-                activeSearchField = .none
-                searchTrips()
-            } else {
-                activeSearchField = .from
-            }
-        }
+        fromQuery = ""
+        toQuery = ""
         searchResults = []
         showMinCharactersMessage = false
         isLoading = false
+        
+        if selectedFrom != nil && selectedTo != nil {
+            activeSearchField = .none
+            searchTrips()
+        } else {
+            activeSearchField = selectedFrom == nil ? .from : .to
+        }
     }
 }
