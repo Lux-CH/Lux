@@ -347,12 +347,6 @@ struct TripsSearchHeaderView: View {
                 }
             }
         )
-        .onTapGesture {
-            if viewModel.selectedFrom == nil {
-                isFromFocused = true
-                viewModel.setActiveSearchField(.from)
-            }
-        }
         .onChange(of: isFromFocused) {
             if isFromFocused {
                 viewModel.setActiveSearchField(.from)
@@ -374,12 +368,6 @@ struct TripsSearchHeaderView: View {
                 }
             }
         )
-        .onTapGesture {
-            if viewModel.selectedTo == nil {
-                isToFocused = true
-                viewModel.setActiveSearchField(.to)
-            }
-        }
         .onChange(of: isToFocused) {
             if isToFocused {
                 viewModel.setActiveSearchField(.to)
