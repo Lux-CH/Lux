@@ -575,8 +575,14 @@ func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
             return lausanneAgencies.contains(leg.agencyId ?? "")
         }
         
+        var isTAC: Bool {
+            return leg.agencyId == "1"
+        }
+        
         if let routeName = leg.routeShortName {
-            if let color = (isLausanne ? LineColors.tlColor(for: routeName) : LineColors.color(for: routeName)) {
+            if isTAC, let color = LineColors.tacColors(for: routeName) {
+                baseColor = color
+            } else if let color = (isLausanne ? LineColors.tlColor(for: routeName) : LineColors.color(for: routeName)) {
                 baseColor = color
             } else {
                 let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR") ||
