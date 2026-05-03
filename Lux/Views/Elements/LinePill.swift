@@ -28,6 +28,10 @@ struct LinePill: View {
         return Self.lausanneAgencies.contains(agency ?? "")
     }
     
+    private var isTAC: Bool {
+        return agency == "1"
+    }
+    
     private var isTrainDetected: Bool {
         line.hasPrefix("RL") || line.hasPrefix("IR") || line.hasPrefix("RE") || line.hasPrefix("IC") || line == "R"
     }
@@ -51,6 +55,9 @@ struct LinePill: View {
     private var baseLineColor: Color {
         if isSquared && LineColors.color(for: line) == nil {
             return Color(hex: "EA0706")
+        }
+        if isTAC {
+            return LineColors.tacColors(for: line) ?? .accent
         }
         return (isLausanne ? LineColors.tlColor(for: line) : LineColors.color(for: line)) ?? .accent
     }
@@ -78,7 +85,11 @@ struct LinePill: View {
             
             Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
-                .foregroundColor(settings.highContrastButAccurateLinePill && !isLausanne ? LineColors.textColor(for: line) : (baseLineColor == .black ? .white : lineColor))
+                .foregroundColor(
+                    settings.highContrastButAccurateLinePill && !isLausanne
+                        ? (isTAC ? LineColors.tacTextColor(for: line) : LineColors.textColor(for: line))
+                        : (baseLineColor == .black ? .white : lineColor)
+                )
                 .multilineTextAlignment(.center)
                 .shadow(color: Color.black.opacity(0.3), radius: 1, x: 0, y: 1)
         }
