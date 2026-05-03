@@ -113,56 +113,13 @@ struct ItineraryView: View {
                         .padding()
                 }
             } else {
-                Map(position: $viewModel.position) {
-                    UserAnnotation()
-                    ForEach(viewModel.mapAnnotations) { annotation in
-                        if annotation.isTerminal {
-                            Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                                StopAnnotationView(annotation: annotation, isTerminal: true, isMultiple: !isSingle || forceLC, showSheet: $showDetails)
-                            }
-                        } else if viewModel.showingIntermediateStops {
-                            Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                                StopAnnotationView(annotation: annotation, isTerminal: false, isMultiple: !isSingle || forceLC, showSheet: $showDetails)
-                            }
-                        }
-                    }
-                    
-                    ForEach(viewModel.routeOverlays) { overlay in
-                        MapPolyline(coordinates: overlay.coordinates)
-                            .stroke(overlay.color, lineWidth: 4)
-                    }
-                    
-                    ForEach(viewModel.vehicleAnnotations) { vehicle in
-                        Annotation("", coordinate: vehicle.coordinate, anchor: .center) {
-                            VehicleAnnotationView(annotation: vehicle)
-                        }
-                    }
-                    
-                    ForEach(viewModel.walkingAnnotations) { walking in
-                        Annotation("", coordinate: walking.coordinate, anchor: .center) {
-                            WalkingAnnotationView()
-                        }
-                    }
-                }
-                .mapStyle(.standard(pointsOfInterest: .excludingAll))
-                .mapControls {}
-                .safeAreaInset(edge: .bottom) {
-                    Spacer().frame(height: isSingle ? detents.1 : 165)
-                }
-                .onMapCameraChange { context in
-                    viewModel.updateZoomLevel(distance: context.camera.distance)
-                }
-                .simultaneousGesture(
-                    DragGesture()
-                        .onChanged { _ in
-                            disableTrackingIfNeeded()
-                        }
-                        .simultaneously(with:
-                            MagnificationGesture()
-                            .onChanged { _ in
-                                disableTrackingIfNeeded()
-                            }
-                        )
+                ItineraryMapView(
+                    viewModel: viewModel,
+                    trackingMode: $trackingMode,
+                    showDetails: $showDetails,
+                    isSingle: isSingle,
+                    forceLC: forceLC,
+                    detents: detents
                 )
                 .overlay(alignment: .leading) {
                     VStack(spacing: 12) {
@@ -270,14 +227,6 @@ struct ItineraryView: View {
         }
     }
 
-    private func disableTrackingIfNeeded() {
-        if trackingMode != .none {
-            withAnimation {
-                trackingMode = .none
-            }
-        }
-    }
-    
     private func cycleTrackingMode() {
         switch trackingMode {
         case .none:
@@ -360,20 +309,84 @@ struct ItineraryView: View {
     }
 }
 
-//extension UINavigationController: @retroactive UIGestureRecognizerDelegate {
-//    override open func viewDidLoad() {
-//        super.viewDidLoad()
-//        interactivePopGestureRecognizer?.delegate = self
-//    }
-//
-//    public func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
-//        return viewControllers.count > 1
-//    }
-//
-//    public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-//        true
-//    }
-//}
+struct ItineraryMapView: View {
+    @ObservedObject var viewModel: ItineraryViewModel
+    @Binding var trackingMode: MapTrackingMode
+    @Binding var showDetails: Bool
+    let isSingle: Bool
+    let forceLC: Bool
+    let detents: (CGFloat, CGFloat)
+    
+    @State private var position: MapCameraPosition = .automatic
+    
+    var body: some View {
+        Map(position: $position) {
+            UserAnnotation()
+            ForEach(viewModel.mapAnnotations) { annotation in
+                if annotation.isTerminal {
+                    Annotation(annotation.place.name, coordinate: annotation.coordinate) {
+                        StopAnnotationView(annotation: annotation, isTerminal: true, isMultiple: !isSingle || forceLC, showSheet: $showDetails)
+                    }
+                } else if viewModel.showingIntermediateStops {
+                    Annotation(annotation.place.name, coordinate: annotation.coordinate) {
+                        StopAnnotationView(annotation: annotation, isTerminal: false, isMultiple: !isSingle || forceLC, showSheet: $showDetails)
+                    }
+                }
+            }
+            
+            ForEach(viewModel.routeOverlays) { overlay in
+                MapPolyline(coordinates: overlay.coordinates)
+                    .stroke(overlay.color, lineWidth: 4)
+            }
+            
+            ForEach(viewModel.vehicleAnnotations) { vehicle in
+                Annotation("", coordinate: vehicle.coordinate, anchor: .center) {
+                    VehicleAnnotationView(annotation: vehicle)
+                }
+            }
+            
+            ForEach(viewModel.walkingAnnotations) { walking in
+                Annotation("", coordinate: walking.coordinate, anchor: .center) {
+                    WalkingAnnotationView()
+                }
+            }
+        }
+        .mapStyle(.standard(pointsOfInterest: .excludingAll))
+        .mapControls {}
+        .safeAreaInset(edge: .bottom) {
+            Spacer().frame(height: isSingle ? detents.1 : 165)
+        }
+        .onMapCameraChange { context in
+            viewModel.updateZoomLevel(distance: context.camera.distance)
+        }
+        .simultaneousGesture(
+            DragGesture()
+                .onChanged { _ in
+                    disableTrackingIfNeeded()
+                }
+                .simultaneously(with:
+                    MagnificationGesture()
+                    .onChanged { _ in
+                        disableTrackingIfNeeded()
+                    }
+                )
+        )
+        .onAppear {
+            position = viewModel.position
+        }
+        .onChange(of: viewModel.position) { _, newValue in
+            position = newValue
+        }
+    }
+    
+    private func disableTrackingIfNeeded() {
+        if trackingMode != .none {
+            withAnimation {
+                trackingMode = .none
+            }
+        }
+    }
+}
 
 struct RouteOverlay: Identifiable {
     let id = UUID()
