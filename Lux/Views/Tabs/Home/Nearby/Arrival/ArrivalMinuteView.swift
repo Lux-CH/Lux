@@ -15,6 +15,7 @@ struct ArrivalMinuteView: View {
     @StateObject private var blinkManager = BlinkManager.shared
     @State private var now = Date()
     @State private var bufferTime: TimeInterval = 50.0
+    @State private var previousTimeDifferenceInSeconds: Int?
         
     private static let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -30,10 +31,16 @@ struct ArrivalMinuteView: View {
                 Text(displayText)
                     .foregroundColor(latenessColor)
                     .strikethrough(incomingStop.cancelled, color: .red)
+                    .contentTransition(.numericText(countsDown: shouldCountDown))
+                    .animation(.snappy, value: displayText)
             }
         }
         .onAppear {
             bufferTime = bufferTimeForTransport()
+            previousTimeDifferenceInSeconds = timeDifferenceInSeconds
+        }
+        .onChange(of: timeDifferenceInSeconds) { oldValue, _ in
+            previousTimeDifferenceInSeconds = oldValue
         }
         .task(id: shouldAutoRefresh) {
             guard shouldAutoRefresh else { return }
@@ -81,6 +88,11 @@ struct ArrivalMinuteView: View {
                 return "\(Self.hourFormatter.string(from: arrival))\(isNextDay ? "*" : "")"
             }
         }
+    }
+
+    private var shouldCountDown: Bool {
+        guard let previousTimeDifferenceInSeconds else { return true }
+        return timeDifferenceInSeconds <= previousTimeDifferenceInSeconds
     }
     
     private func bufferTimeForTransport() -> TimeInterval {
