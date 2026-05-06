@@ -66,8 +66,7 @@ struct MainNavigationView: View {
     
     @State private var isSearchTransitioning: Bool = false
     @State private var searchViewModel = TripsSearchViewModel()
-    @FocusState private var isFromFocused: Bool
-    @FocusState private var isToFocused: Bool
+    @FocusState private var focusedField: TripsSearchViewModel.SearchField?
     
     @State private var isAnimatingToSearch: Bool = false
     @State private var searchBarOffset: CGFloat = 0
@@ -231,8 +230,7 @@ struct MainNavigationView: View {
                                 } else {
                                     TripsSearchHeaderView(
                                         viewModel: searchViewModel,
-                                        isFromFocused: $isFromFocused,
-                                        isToFocused: $isToFocused,
+                                        focusedField: $focusedField,
                                         onBack: {exitSearchMode()}
                                     )
                                     .transition(searchModeTransition)
@@ -343,7 +341,7 @@ struct MainNavigationView: View {
             .keyboardToolbarIf(viewMode == .search) {
                 ShortcutsKeyboardToolbar(
                     onShortcutSelected: { result in
-                        let targetField: TripsSearchViewModel.SearchField = isFromFocused ? .from : .to
+                        let targetField: TripsSearchViewModel.SearchField = focusedField ?? .from
                         searchViewModel.handleInitialSearchResult(result, targetField: targetField)
                     },
                     onCurrentPositionSelected: {
@@ -687,7 +685,7 @@ struct MainNavigationView: View {
             
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 searchViewModel.setActiveSearchField(.to)
-                isToFocused = true
+                focusedField = .to
                 
                 withAnimation(ultraSmoothSpring) {
                     isAnimatingToSearch = false
@@ -733,7 +731,7 @@ struct MainNavigationView: View {
                     searchViewModel.handleInitialSearchResult(searchResult, targetField: .to)
                     
                     if searchViewModel.selectedFrom == nil {
-                        isFromFocused = true
+                        focusedField = .from
                         searchViewModel.setActiveSearchField(.from)
                     }
                     
@@ -755,8 +753,7 @@ struct MainNavigationView: View {
         
         isSearchTransitioning = true
         
-        isFromFocused = false
-        isToFocused = false
+        focusedField = nil
         
         withAnimation(searchTransitionSpring) {
             isAnimatingToSearch = true

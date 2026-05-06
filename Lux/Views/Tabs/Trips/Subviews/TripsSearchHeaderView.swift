@@ -9,8 +9,8 @@ import SwiftUI
 
 struct TripsSearchHeaderView: View {
     @ObservedObject var viewModel: TripsSearchViewModel
-    @FocusState.Binding var isFromFocused: Bool
-    @FocusState.Binding var isToFocused: Bool
+    @FocusState.Binding var focusedField: TripsSearchViewModel.SearchField?
+    @Namespace private var searchAnimation
     @Environment(\.colorScheme) private var colorScheme
     @State private var isSwapping = false
     @State private var showTimePicker = false
@@ -47,6 +47,11 @@ struct TripsSearchHeaderView: View {
             }
             .presentationDetents([.medium, .large])
             .presentationCornerRadius(36)
+        }
+        .onChange(of: focusedField) {
+            if let newValue = focusedField, newValue != .none {
+                viewModel.setActiveSearchField(newValue)
+            }
         }
     }
     
@@ -336,7 +341,9 @@ struct TripsSearchHeaderView: View {
     private var fromSearchBar: some View {
         TripSearchBar(
             searchText: $viewModel.fromQuery,
-            isFocused: $isFromFocused,
+            focusedField: $focusedField,
+            equals: .from,
+            animation: searchAnimation,
             placeholderText: String(localized:"Depuis"),
             selectedLocation: viewModel.selectedFrom,
             onSearch: { viewModel.performSearch(viewModel.fromQuery) },
@@ -347,17 +354,14 @@ struct TripsSearchHeaderView: View {
                 }
             }
         )
-        .onChange(of: isFromFocused) {
-            if isFromFocused {
-                viewModel.setActiveSearchField(.from)
-            }
-        }
     }
     
     private var toSearchBar: some View {
         TripSearchBar(
             searchText: $viewModel.toQuery,
-            isFocused: $isToFocused,
+            focusedField: $focusedField,
+            equals: .to,
+            animation: searchAnimation,
             placeholderText: String(localized:"À"),
             selectedLocation: viewModel.selectedTo,
             onSearch: { viewModel.performSearch(viewModel.toQuery) },
@@ -368,11 +372,6 @@ struct TripsSearchHeaderView: View {
                 }
             }
         )
-        .onChange(of: isToFocused) {
-            if isToFocused {
-                viewModel.setActiveSearchField(.to)
-            }
-        }
     }
     
     private var swapButton: some View {
