@@ -62,5 +62,5 @@ fastlane/screenshots/**/*.png
 fastlane/test_output
 GPSTests.gpx
 /Lux.xcodeproj/xcuserdata/cclerc.xcuserdatad/xcschemes/xcschememanagement.plist
-/.DS_Store
 /.gemini
+.DS_Store
