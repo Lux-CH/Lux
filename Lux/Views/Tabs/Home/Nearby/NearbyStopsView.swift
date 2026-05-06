@@ -163,7 +163,6 @@ struct NearbyStopsView: View {
                             ZStack {
                                 StopView(stop: result, maxGroupsToShow: index == 0 ? 3 : (showingSuggestion ? 1 : 2), fromStops: false, isLastStopOverall: isLastStop)
                             }
-                            .id("\(result.id)-\(index)")
                             .frame(maxWidth: .infinity)
                         }
                         
