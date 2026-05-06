@@ -11,8 +11,7 @@ import LuxCom
 struct TripsSearchView: View {
     @StateObject private var viewModel = TripsSearchViewModel()
     @EnvironmentObject var locationManager: LocationManager
-    @FocusState private var isFromFocused: Bool
-    @FocusState private var isToFocused: Bool
+    @FocusState private var focusedField: TripsSearchViewModel.SearchField?
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.dismiss) var dismiss
     @State private var dragOffset: CGFloat = 0
@@ -37,8 +36,7 @@ struct TripsSearchView: View {
                     VStack(spacing: -15) {
                         TripsSearchHeaderView(
                             viewModel: viewModel,
-                            isFromFocused: $isFromFocused,
-                            isToFocused: $isToFocused,
+                            focusedField: $focusedField,
                             isFromStop: true,
                             onBack: { dismiss() }
                         )
@@ -56,7 +54,7 @@ struct TripsSearchView: View {
             .keyboardToolbar {
                 ShortcutsKeyboardToolbar(
                     onShortcutSelected: { result in
-                        let targetField: TripsSearchViewModel.SearchField = isFromFocused ? .from : .to
+                        let targetField: TripsSearchViewModel.SearchField = focusedField ?? .from
                         viewModel.handleInitialSearchResult(result, targetField: targetField)
                     },
                     onCurrentPositionSelected: {
