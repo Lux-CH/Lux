@@ -9,7 +9,7 @@ import Foundation
 import LuxCom
 
 struct GroupedStopTime: Identifiable {
-    let id = UUID()
+    var id: String { "\(routeShortName)|\(headsign)" }
     let routeShortName: String
     let headsign: String
     let stopTimes: [StopTime]
