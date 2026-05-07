@@ -8,11 +8,10 @@
 
 import SwiftUI
 
-struct TripSearchBar<Value: Hashable>: View {
+struct TripSearchBar: View {
     @Binding var searchText: String
-    @FocusState.Binding var focusedField: Value?
-    var equals: Value
-    var animation: Namespace.ID
+    @FocusState.Binding var isFocused: Bool
+    @Namespace private var animation
     
     var placeholderText: String
     var selectedLocation: SelectedLocation?
@@ -33,7 +32,7 @@ struct TripSearchBar<Value: Hashable>: View {
                 ))
             } else {
                 TextField(placeholderText, text: $searchText)
-                    .focused($focusedField, equals: equals)
+                    .focused($isFocused)
                     .font(.system(size: 16, weight: .medium))
                     .padding(.vertical, 6)
                     .submitLabel(.search)
@@ -74,7 +73,7 @@ struct TripSearchBar<Value: Hashable>: View {
         }
         .frame(height: 40)
         .scaleEffect(1)
-        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: focusedField == equals)
+        .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isFocused)
         .animation(.spring(response: 0.4), value: searchText)
     }
 }
