@@ -105,12 +105,12 @@ struct IncomingBusView: View {
                 Spacer()
                 VStack(alignment: .trailing, spacing: 2) {
                     if let firstStop = group.stopTimes.first {
-                        ArrivalMinuteView(incomingStop: firstStop)
+                        ArrivalMinuteView(incomingStop: firstStop, shouldAutoRefresh: true)
                             .font(.system(size: 19, weight: .semibold))
                     }
                     
                     if group.stopTimes.count > 1 {
-                        ArrivalMinuteView(incomingStop: group.stopTimes[1])
+                        ArrivalMinuteView(incomingStop: group.stopTimes[1], shouldAutoRefresh: true)
                             .font(.system(size: 11, weight: .regular))
                             .opacity(0.7)
                     }
