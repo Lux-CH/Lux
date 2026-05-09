@@ -56,6 +56,11 @@ class ConnectionService: ObservableObject {
         .sink { [weak self] connections in
             guard let self = self else { return }
             
+            if self.loadedConnections.count > 100 {
+                if let keyToRemove = self.loadedConnections.keys.first {
+                    self.loadedConnections.removeValue(forKey: keyToRemove)
+                }
+            }
             self.loadedConnections[cleanStopId] = connections
             
             let sortedConnections = LineScoreManager.shared.getSortedRouteNames(connections)

@@ -40,9 +40,9 @@ final class DisruptionManager: ObservableObject {
     }
     
     private func startAutoRefresh() {
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { _ in
+        refreshTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in
             Task {
-                await self.fetchDisruptions()
+                await self?.fetchDisruptions()
             }
         }
     }
