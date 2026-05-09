@@ -26,8 +26,10 @@ struct NearbyStopsView: View {
     @State private var warningMessage: WarningMessage? = nil
     @State private var showingSuggestion: Bool = false
     @State private var showSafari: Bool = false
+    @State private var networkMonitor: NWPathMonitor? = nil
     
     private let significantDistance: CLLocationDistance = 100.0
+    private let networkMonitorQueue = DispatchQueue(label: "NetworkMonitor")
     
     var isAuthorizationNotAllowed: Bool {
         return locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted
@@ -238,7 +240,7 @@ struct NearbyStopsView: View {
                 UIDevice.current.isBatteryMonitoringEnabled = true
             }
             
-            monitorNetwork()
+            startNetworkMonitoring()
             Task.detached() {
                 await checkMessage()
             }
@@ -293,6 +295,7 @@ struct NearbyStopsView: View {
         }
         .onDisappear {
             backgroundRefreshTask?.cancel()
+            stopNetworkMonitoring()
             isWaitingForLocation = false
         }
     }
@@ -386,15 +389,22 @@ struct NearbyStopsView: View {
         loadNearbyStops(showLoading: false)
     }
     
-    private func monitorNetwork() {
+    private func startNetworkMonitoring() {
+        guard networkMonitor == nil else { return }
+        
         let monitor = NWPathMonitor()
         monitor.pathUpdateHandler = { path in
             DispatchQueue.main.async {
                 isUserConnectedToInternet = path.status == .satisfied
             }
         }
-        let queue = DispatchQueue(label: "NetworkMonitor")
-        monitor.start(queue: queue)
+        monitor.start(queue: networkMonitorQueue)
+        networkMonitor = monitor
+    }
+    
+    private func stopNetworkMonitoring() {
+        networkMonitor?.cancel()
+        networkMonitor = nil
     }
     
     func checkMaintenanceStatus() async {
