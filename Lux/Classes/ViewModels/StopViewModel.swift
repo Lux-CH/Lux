@@ -86,7 +86,7 @@ class StopViewModel: ObservableObject {
     
     @MainActor
     func refreshDepartures(showLoading: Bool) async {
-        await refreshDepartures(forTime: currentTime, showLoading: showLoading)
+        await refreshDepartures(forTime: getReferenceTime(), showLoading: showLoading)
     }
     
     @MainActor
@@ -136,6 +136,7 @@ class StopViewModel: ObservableObject {
             }
         }
         await backgroundRefreshTask?.value
+        backgroundRefreshTask = nil
     }
     
     private func fetchDeparturesAndArrivals(for time: Date) async throws -> (departures: StopTimes, arrivals: StopTimes) {
@@ -168,11 +169,14 @@ class StopViewModel: ObservableObject {
     }
 
     private func refreshDeparturesInBackground() async {
-        backgroundRefreshTask?.cancel()
+        guard backgroundRefreshTask == nil || backgroundRefreshTask?.isCancelled == true else {
+            return
+        }
+        let refreshTime = getReferenceTime()
         
         backgroundRefreshTask = Task {
             do {
-                let (departuresData, arrivalsData) = try await fetchDeparturesAndArrivals(for: currentTime)
+                let (departuresData, arrivalsData) = try await fetchDeparturesAndArrivals(for: refreshTime)
                 if Task.isCancelled {
                     backgroundRefreshTask = nil
                     return
