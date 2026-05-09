@@ -34,7 +34,7 @@
       "location" : "https://github.com/Lux-CH/LuxCom",
       "state" : {
         "branch" : "main",
-        "revision" : "5fd7c9516514f30e27c746d9a93a1aa4c53514c6"
+        "revision" : "f265137913a6429d27e7c31a1c00149a1a26e337"
       }
     },
     {
@@ -97,7 +97,7 @@
       "location" : "https://github.com/Lux-CH/tripkit.git",
       "state" : {
         "branch" : "main",
-        "revision" : "0e500815b50cf9f558140d3dbd80c4fbf272ca67"
+        "revision" : "22f67b4b0b61b2750c42d097609dde261b11265d"
       }
     }
   ],

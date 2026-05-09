@@ -111,7 +111,8 @@ class StopViewModel: ObservableObject {
                 if Task.isCancelled { return }
                 
                 let allStopTimes = departuresData.stopTimes + arrivalsData.stopTimes
-                let combinedStopTimes = Array(Set(allStopTimes))
+                var seenTripIds = Set<String>()
+                let combinedStopTimes = allStopTimes.filter { seenTripIds.insert($0.tripId).inserted }
                 
                 let freshStopTimes = StopTimes(
                     stopTimes: combinedStopTimes,
@@ -179,7 +180,8 @@ class StopViewModel: ObservableObject {
                 }
                 
                 let allStopTimes = departuresData.stopTimes + arrivalsData.stopTimes
-                let combinedStopTimes = Array(Set(allStopTimes))
+                var seenTripIds = Set<String>()
+                let combinedStopTimes = allStopTimes.filter { seenTripIds.insert($0.tripId).inserted }
                 
                 await MainActor.run {
                     self.stopTimes = StopTimes(
