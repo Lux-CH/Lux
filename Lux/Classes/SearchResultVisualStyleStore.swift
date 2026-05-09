@@ -59,10 +59,19 @@ struct SearchResultVisualStyle: Codable, Equatable {
 
 @MainActor
 final class SearchResultVisualStyleStore: ObservableObject {
+    private struct PersistedStyleEntry: Codable {
+        let style: SearchResultVisualStyle
+        let updatedAt: Date
+    }
+    
     static let shared = SearchResultVisualStyleStore()
     
     @Published private var stylesByResultID: [String: SearchResultVisualStyle] = [:]
     private let storageKey = "search_result_visual_styles"
+    private let maxStoredStyles = 750
+    private let maxStyleAge: TimeInterval = 60 * 60 * 24 * 45
+    
+    private var persistedEntries: [String: PersistedStyleEntry] = [:]
     
     private init() {
         loadPersistedStyles()
@@ -73,23 +82,28 @@ final class SearchResultVisualStyleStore: ObservableObject {
     }
     
     func setStyles(_ styles: [String: SearchResultVisualStyle]) {
+        guard !styles.isEmpty else { return }
+        
         var hasChanges = false
+        let now = Date()
         
         for (resultID, style) in styles {
-            if stylesByResultID[resultID] != style {
-                stylesByResultID[resultID] = style
+            if persistedEntries[resultID]?.style != style {
+                persistedEntries[resultID] = PersistedStyleEntry(style: style, updatedAt: now)
                 hasChanges = true
             }
         }
         
-        if hasChanges {
+        let didPrune = pruneEntries(referenceDate: now)
+        if hasChanges || didPrune {
+            refreshPublishedStyles()
             persistStyles()
         }
     }
     
     private func persistStyles() {
         do {
-            let encoded = try JSONEncoder().encode(stylesByResultID)
+            let encoded = try JSONEncoder().encode(persistedEntries)
             UserDefaults.standard.set(encoded, forKey: storageKey)
         } catch {
             print("failed to persist search result visual styles: \(error.localizedDescription)")
@@ -101,10 +115,54 @@ final class SearchResultVisualStyleStore: ObservableObject {
             return
         }
         
-        do {
-            stylesByResultID = try JSONDecoder().decode([String: SearchResultVisualStyle].self, from: data)
-        } catch {
-            print("failed to decode persisted search result visual styles: \(error.localizedDescription)")
+        if let decodedEntries = try? JSONDecoder().decode([String: PersistedStyleEntry].self, from: data) {
+            persistedEntries = decodedEntries
+        } else if let legacyStyles = try? JSONDecoder().decode([String: SearchResultVisualStyle].self, from: data) {
+            let now = Date()
+            persistedEntries = legacyStyles.mapValues { style in
+                PersistedStyleEntry(style: style, updatedAt: now)
+            }
+        } else {
+            print("failed to decode persisted search result visual styles")
+            return
         }
+        
+        if pruneEntries(referenceDate: Date()) {
+            persistStyles()
+        }
+        
+        refreshPublishedStyles()
+    }
+    
+    private func pruneEntries(referenceDate: Date) -> Bool {
+        var didPrune = false
+        let expirationDate = referenceDate.addingTimeInterval(-maxStyleAge)
+        
+        let countBeforeExpiryPrune = persistedEntries.count
+        persistedEntries = persistedEntries.filter { _, entry in
+            entry.updatedAt >= expirationDate
+        }
+        if persistedEntries.count != countBeforeExpiryPrune {
+            didPrune = true
+        }
+        
+        if persistedEntries.count > maxStoredStyles {
+            let keysToKeep = Set(
+                persistedEntries
+                    .sorted { $0.value.updatedAt > $1.value.updatedAt }
+                    .prefix(maxStoredStyles)
+                    .map(\.key)
+            )
+            persistedEntries = persistedEntries.filter { key, _ in
+                keysToKeep.contains(key)
+            }
+            didPrune = true
+        }
+        
+        return didPrune
+    }
+    
+    private func refreshPublishedStyles() {
+        stylesByResultID = persistedEntries.mapValues(\.style)
     }
 }

@@ -5,7 +5,6 @@
 //  Created by Constantin Clerc on 20.04.2025.
 //
 
-// FIXME: Risk of memory leak, pls flush cache
 import Foundation
 import Combine
 

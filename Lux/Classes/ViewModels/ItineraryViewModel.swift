@@ -16,7 +16,7 @@ final class ItineraryViewModel: ObservableObject {
     @Published var tripId: String
     private let zoomThreshold: CLLocationDistance = 50000
     private let vehicleUpdateInterval: Duration = .seconds(2)
-    private let walkingUpdateInterval: Duration = .milliseconds(33)
+    private let walkingUpdateInterval: Duration = .milliseconds(66)
 
     private struct WalkingPathMetrics {
         let coordinates: [CLLocationCoordinate2D]

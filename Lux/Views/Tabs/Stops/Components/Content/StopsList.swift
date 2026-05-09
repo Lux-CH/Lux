@@ -10,7 +10,7 @@ import LuxCom
 
 struct StopsList: View {
     let stops: [SearchResult]
-    let locationManager: LocationManager
+    @ObservedObject var locationManager: LocationManager
     let isSearching: Bool
     
     private var uniqueStops: [SearchResult] {
