@@ -106,29 +106,17 @@ struct IncomingBusView: View {
                 VStack(alignment: .trailing, spacing: 2) {
                     if let firstStop = group.stopTimes.first {
                         ArrivalMinuteView(incomingStop: firstStop, shouldAutoRefresh: true)
-                            .id(arrivalIdentity(for: firstStop, suffix: "first"))
                             .font(.system(size: 19, weight: .semibold))
                     }
                     
                     if group.stopTimes.count > 1 {
                         ArrivalMinuteView(incomingStop: group.stopTimes[1], shouldAutoRefresh: true)
-                            .id(arrivalIdentity(for: group.stopTimes[1], suffix: "second"))
                             .font(.system(size: 11, weight: .regular))
                             .opacity(0.7)
                     }
                 }
             }
         }
-    }
-    
-    private func arrivalIdentity(for stopTime: StopTime, suffix: String) -> String {
-        let realtimeMinute = (stopTime.place.departure ?? stopTime.place.arrival)
-            .map { Int($0.timeIntervalSince1970 / 60) } ?? -1
-        let scheduledMinute = (stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival)
-            .map { Int($0.timeIntervalSince1970 / 60) } ?? -1
-        let tripKey = stopTime.tripId.isEmpty ? "unknown" : stopTime.tripId
-        
-        return "\(group.id)|\(suffix)|\(tripKey)|rt\(realtimeMinute)|sc\(scheduledMinute)|c\(stopTime.cancelled ? 1 : 0)|r\(stopTime.realTime ? 1 : 0)"
     }
 }
 
