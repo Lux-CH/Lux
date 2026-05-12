@@ -169,6 +169,7 @@ struct ArrivalMinuteView: View {
             .foregroundColor(latenessColor)
             .font(.system(size: 15))
             .opacity(blinkManager.isVisible ? 1.0 : 0.0)
-            .animation(.easeInOut(duration: 0.1), value: blinkManager.isVisible)
+            .scaleEffect(blinkManager.isVisible ? 1.0 : 0.88)
+            .animation(.easeInOut(duration: 0.35), value: blinkManager.isVisible)
     }
 }
