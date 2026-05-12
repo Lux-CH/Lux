@@ -320,7 +320,7 @@ struct DepartureRowView: View {
                 
                 Spacer()
                 
-                ArrivalMinuteView(incomingStop: departure)
+                ArrivalMinuteView(incomingStop: departure, shouldAutoRefresh: false)
             }
             Divider()
                 .padding(.top, -5)
