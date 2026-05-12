@@ -11,11 +11,24 @@ import LuxCom
 struct ArrivalMinuteView: View {
     let incomingStop: StopTime
     @Environment(\.calendar) private var calendar
-    @State var shouldAutoRefresh: Bool = false
+    let shouldAutoRefresh: Bool
     @StateObject private var blinkManager = BlinkManager.shared
     @State private var now = Date()
     @State private var bufferTime: TimeInterval = 50.0
     @State private var previousTimeDifferenceInSeconds: Int?
+    
+    private var refreshIdentity: String {
+        let event = incomingStop.place.departure ?? incomingStop.place.arrival
+        let scheduled = incomingStop.place.scheduledDeparture ?? incomingStop.place.scheduledArrival
+        return [
+            incomingStop.tripId,
+            String(describing: incomingStop.mode),
+            String(event?.timeIntervalSince1970 ?? 0),
+            String(scheduled?.timeIntervalSince1970 ?? 0),
+            incomingStop.cancelled ? "1" : "0",
+            incomingStop.realTime ? "1" : "0"
+        ].joined(separator: "|")
+    }
         
     private static let hourFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -42,10 +55,14 @@ struct ArrivalMinuteView: View {
         .onChange(of: timeDifferenceInSeconds) { oldValue, _ in
             previousTimeDifferenceInSeconds = oldValue
         }
-        .task(id: shouldAutoRefresh) {
+        .onChange(of: refreshIdentity) {
+            now = Date()
+            bufferTime = bufferTimeForTransport()
+            previousTimeDifferenceInSeconds = timeDifferenceInSeconds
+        }
+        .task {
             guard shouldAutoRefresh else { return }
-            
-            while !Task.isCancelled && shouldAutoRefresh {
+            while !Task.isCancelled {
                 now = Date()
                 try? await Task.sleep(for: .seconds(5))
             }

@@ -12,8 +12,22 @@ struct StopView: View {
     let stop: SearchResult
     let maxGroupsToShow: Int
     let fromStops: Bool
-    @State var dontShowLastDivider: Bool = true
-    @State var isLastStopOverall: Bool = false
+    let dontShowLastDivider: Bool
+    let isLastStopOverall: Bool
+    
+    init(
+        stop: SearchResult,
+        maxGroupsToShow: Int,
+        fromStops: Bool,
+        dontShowLastDivider: Bool = true,
+        isLastStopOverall: Bool = false
+    ) {
+        self.stop = stop
+        self.maxGroupsToShow = maxGroupsToShow
+        self.fromStops = fromStops
+        self.dontShowLastDivider = dontShowLastDivider
+        self.isLastStopOverall = isLastStopOverall
+    }
     
     var body: some View {
         if fromStops {
