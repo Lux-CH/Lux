@@ -33,6 +33,7 @@ struct ItineraryView: View {
     @State private var isSingle: Bool
     @State private var isSwitchingTrip = false
     @State private var tripSwitchTask: Task<Void, Never>?
+    @State private var shouldRenderMap = true
     let fromNearby: Bool
     var forceLC: Bool = false
     let itineraarySharer = ItinerarySharer()
@@ -113,14 +114,21 @@ struct ItineraryView: View {
                         .padding()
                 }
             } else {
-                ItineraryMapView(
-                    viewModel: viewModel,
-                    trackingMode: $trackingMode,
-                    showDetails: $showDetails,
-                    isSingle: isSingle,
-                    forceLC: forceLC,
-                    detents: detents
-                )
+                Group {
+                    if shouldRenderMap {
+                        ItineraryMapView(
+                            viewModel: viewModel,
+                            trackingMode: $trackingMode,
+                            showDetails: $showDetails,
+                            isSingle: isSingle,
+                            forceLC: forceLC,
+                            detents: detents
+                        )
+                    } else {
+                        Color(.secondarySystemBackground)
+                            .ignoresSafeArea()
+                    }
+                }
                 .overlay(alignment: .leading) {
                     VStack(spacing: 12) {
                         GlassEffectGroup(spacing: 8) {
@@ -212,6 +220,9 @@ struct ItineraryView: View {
         .task {
             await viewModel.loadItinerary()
         }
+        .onAppear {
+            shouldRenderMap = true
+        }
         .onChange(of: viewModel.isLoading) { _, newValue in
             if !newValue {
                 if fromNearby, let userLocation = locationManager.location?.coordinate {
@@ -223,6 +234,8 @@ struct ItineraryView: View {
             tripSwitchTask?.cancel()
             tripSwitchTask = nil
             isSwitchingTrip = false
+            shouldRenderMap = false
+            trackingMode = .none
             viewModel.stopAllTasks()
         }
     }
