@@ -10,6 +10,12 @@ import LuxCom
 
 struct IndividualStopView: View {
     @State var stop: SearchResult
+    let forceLC: Bool
+    
+    init(stop: SearchResult, forceLC: Bool = false) {
+        self._stop = State(initialValue: stop)
+        self.forceLC = forceLC
+    }
     
     var body: some View {
         ZStack(alignment: .topLeading) {
@@ -22,7 +28,7 @@ struct IndividualStopView: View {
                     .padding(.bottom, 20)
                 Divider()
                 VStack(alignment: .center) {
-                    StopView(stop: stop, maxGroupsToShow: 50, fromStops: true)
+                    StopView(stop: stop, maxGroupsToShow: 50, fromStops: true, forceLC: forceLC)
                         .padding(.top, -5)
                 }
             }
