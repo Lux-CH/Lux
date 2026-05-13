@@ -9,6 +9,12 @@ import SwiftUI
 import LuxCom
 import CoreLocation
 
+struct StopDetailDestination: Identifiable {
+    let id = UUID()
+    let place: Place
+}
+
+
 struct StopAnnotation: Identifiable {
     let id = UUID()
     let place: Place
@@ -40,8 +46,9 @@ struct StopAnnotationView: View {
     let annotation: StopAnnotation
     let isTerminal: Bool
     let isMultiple: Bool
+    let onOpenExpandedStop: (Place) -> Void
     @State private var showPopover = false
-    @State private var showExpandedStop = false
+    @State private var isLaunchingStopDetail = false
     @State private var connections: [String] = []
     @Binding var showSheet: Bool
     
@@ -89,23 +96,17 @@ struct StopAnnotationView: View {
         }
         .popover(isPresented: $showPopover) {
             StopPopoverView(place: annotation.place, color: annotation.color, connections: connections, onNavigate: {
+                isLaunchingStopDetail = true
                 showPopover = false
-                showExpandedStop = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    onOpenExpandedStop(annotation.place)
+                    isLaunchingStopDetail = false
+                }
             })
             .presentationCompactAdaptation(.popover)
         }
-        .fullScreenCover(isPresented: $showExpandedStop) {
-            ItineraryStopDetailView(stop: annotation.place, isFromMultiple: isMultiple, forceLC: isMultiple)
-                .toolbarBackground(.hidden, for: .navigationBar)
-                .navigationBarBackButtonHidden(true)
-        }
         .onChange(of: showPopover) {
-            if !showPopover && !showExpandedStop {
-                showSheet = true
-            }
-        }
-        .onChange(of: showExpandedStop) {
-            if !showExpandedStop {
+            if !showPopover && !isLaunchingStopDetail {
                 showSheet = true
             }
         }

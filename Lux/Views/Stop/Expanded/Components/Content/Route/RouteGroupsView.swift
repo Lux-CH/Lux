@@ -19,7 +19,7 @@ struct RouteGroupsView: View {
     var body: some View {
         if viewType == String(localized: "Groupé") {
             ScrollView(.vertical, showsIndicators: true) {
-                VStack(spacing: 0) {
+                LazyVStack(spacing: 0) {
                     let shownRoutes = Array(viewModel.routeNames.prefix(maxGroupsToShow))
                     ForEach(Array(shownRoutes.enumerated()), id: \.element) { index, routeName in
                         if let groups = viewModel.routeGroups[routeName], !groups.isEmpty {

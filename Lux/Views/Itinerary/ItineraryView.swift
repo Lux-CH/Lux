@@ -331,6 +331,7 @@ struct ItineraryMapView: View {
     let detents: (CGFloat, CGFloat)
     
     @State private var position: MapCameraPosition = .automatic
+    @State private var stopDetailDestination: StopDetailDestination?
     
     var body: some View {
         Map(position: $position) {
@@ -338,11 +339,29 @@ struct ItineraryMapView: View {
             ForEach(viewModel.mapAnnotations) { annotation in
                 if annotation.isTerminal {
                     Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                        StopAnnotationView(annotation: annotation, isTerminal: true, isMultiple: !isSingle || forceLC, showSheet: $showDetails)
+                        StopAnnotationView(
+                            annotation: annotation,
+                            isTerminal: true,
+                            isMultiple: !isSingle || forceLC,
+                            onOpenExpandedStop: { place in
+                                showDetails = false
+                                stopDetailDestination = StopDetailDestination(place: place)
+                            },
+                            showSheet: $showDetails
+                        )
                     }
                 } else if viewModel.showingIntermediateStops {
                     Annotation(annotation.place.name, coordinate: annotation.coordinate) {
-                        StopAnnotationView(annotation: annotation, isTerminal: false, isMultiple: !isSingle || forceLC, showSheet: $showDetails)
+                        StopAnnotationView(
+                            annotation: annotation,
+                            isTerminal: false,
+                            isMultiple: !isSingle || forceLC,
+                            onOpenExpandedStop: { place in
+                                showDetails = false
+                                stopDetailDestination = StopDetailDestination(place: place)
+                            },
+                            showSheet: $showDetails
+                        )
                     }
                 }
             }
@@ -389,6 +408,17 @@ struct ItineraryMapView: View {
         }
         .onChange(of: viewModel.position) { _, newValue in
             position = newValue
+        }
+        .fullScreenCover(item: $stopDetailDestination, onDismiss: {
+            showDetails = true
+        }) { destination in
+            ItineraryStopDetailView(
+                stop: destination.place,
+                isFromMultiple: !isSingle || forceLC,
+                forceLC: !isSingle || forceLC
+            )
+            .toolbarBackground(.hidden, for: .navigationBar)
+            .navigationBarBackButtonHidden(true)
         }
     }
     
