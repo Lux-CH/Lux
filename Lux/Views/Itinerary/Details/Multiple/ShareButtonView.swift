@@ -14,6 +14,7 @@ struct ShareButtonView: View {
     let itineraarySharer: ItinerarySharer
     let compact: Bool
     let showCompactSaveAction: Bool
+    let showTips: Bool
     
     @State private var showingShareDialog = false
     @State private var renderedUIImage: UIImage?
@@ -36,12 +37,14 @@ struct ShareButtonView: View {
         itinerary: Itinerary,
         itineraarySharer: ItinerarySharer,
         compact: Bool,
-        showCompactSaveAction: Bool = true
+        showCompactSaveAction: Bool = true,
+        showTips: Bool = false
     ) {
         self.itinerary = itinerary
         self.itineraarySharer = itineraarySharer
         self.compact = compact
         self.showCompactSaveAction = showCompactSaveAction
+        self.showTips = showTips
     }
     
     var body: some View {
@@ -51,12 +54,14 @@ struct ShareButtonView: View {
                     if #available(iOS 26, *) {
                         Menu {
                             Button {
+                                donateShareTipEvent()
                                 uploadItinerary()
                             } label: {
                                 Label("Partager l'entiereté", systemImage: "link")
                             }
                             
                             Button {
+                                donateShareTipEvent()
                                 shareRenderedPreviewImage()
                             } label: {
                                 Label(
@@ -80,15 +85,18 @@ struct ShareButtonView: View {
                         }
                         .buttonStyle(.plain)
                         .disabled(isUploading || isSavingItinerary)
+                        .itineraryTip(ItineraryShareTip(), enabled: showTips, arrowEdge: .trailing)
                     } else {
                         Menu {
                             Button {
+                                donateShareTipEvent()
                                 uploadItinerary()
                             } label: {
                                 Label("Partager l'entiereté", systemImage: "link")
                             }
                             
                             Button {
+                                donateShareTipEvent()
                                 shareRenderedPreviewImage()
                             } label: {
                                 Label(
@@ -112,10 +120,12 @@ struct ShareButtonView: View {
                         }
                         .buttonStyle(.plain)
                         .disabled(isUploading || isSavingItinerary)
+                        .itineraryTip(ItineraryShareTip(), enabled: showTips, arrowEdge: .trailing)
                     }
                     
                     if showCompactSaveAction && shouldShowCompactSaveButton {
                         Button {
+                            donateSaveTipEvent()
                             saveItinerary()
                         } label: {
                             floatingButtonContainer {
@@ -141,6 +151,7 @@ struct ShareButtonView: View {
                         .disabled(isUploading || isSavingItinerary || didSaveInCurrentSession)
                         .accessibilityLabel("Sauvegarder l'itinéraire")
                         .transition(.opacity)
+                        .itineraryTip(ItinerarySaveTip(), enabled: showTips, arrowEdge: .trailing)
                     }
                 }
             } else {
@@ -170,15 +181,18 @@ struct ShareButtonView: View {
                 .disabled(isUploading || isSavingItinerary)
                 .confirmationDialog("Partager l'itinéraire", isPresented: $showingShareDialog, titleVisibility: .visible) {
                     Button("Partager l'entiereté") {
+                        donateShareTipEvent()
                         uploadItinerary()
                     }
                     
                     Button(isRenderingPreviewImage ? "Préparation de l'image..." : "Partager l'aperçu en tant qu'image") {
+                        donateShareTipEvent()
                         shareRenderedPreviewImage()
                     }
                     .disabled(isRenderingPreviewImage)
                     
                     Button("Sauvegarder l'itinéraire") {
+                        donateSaveTipEvent()
                         saveItinerary()
                     }
                     
@@ -426,6 +440,14 @@ struct ShareButtonView: View {
         if let uiImage = renderer.uiImage {
             renderedUIImage = uiImage
         }
+    }
+
+    private func donateShareTipEvent() {
+        ItineraryTipState.didUseShareAction = true
+    }
+
+    private func donateSaveTipEvent() {
+        ItineraryTipState.didUseSaveAction = true
     }
 }
 

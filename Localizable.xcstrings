@@ -1275,6 +1275,26 @@
     "cclerc.ch" : {
       "shouldTranslate" : false
     },
+    "Ce bouton enregistre l'itinéraire dans l'app pour vous le proposer le moment venu." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This button saves the itinerary in the app to show it to you when needed."
+          }
+        }
+      }
+    },
+    "Ce bouton permet de partager votre trajet à d'autres via un lien." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This button allows you to share your trip to others via a link."
+          }
+        }
+      }
+    },
     "Ce trajet n'est plus disponible." : {
       "localizations" : {
         "en" : {
@@ -2816,6 +2836,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The stop is at"
+          }
+        }
+      }
+    },
+    "L'icône horloge vous montre les autres horaires à venir pour cette ligne. Cliquez sur un horaire pour voir plus de détails." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The clock icon shows you other upcoming departures for this line. Click on a time to show more details."
           }
         }
       }
@@ -4466,6 +4496,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save itinerary"
+          }
+        }
+      }
+    },
+    "Sauvegarder le trajet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save your trip"
           }
         }
       }

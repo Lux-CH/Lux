@@ -7,6 +7,7 @@
 
 import SwiftUI
 import LuxCom
+import TipKit
 
 @main
 struct LuxApp: App {
@@ -26,6 +27,7 @@ struct LuxApp: App {
     @State private var errorMessage: String = ""
     @State private var didHandleStartupDataSource = false
     @State private var isWaitingForStartupLocation = false
+    @State private var didConfigureTipKit = false
     
     @ObservedObject var settings = Settings.shared
     
@@ -41,6 +43,7 @@ struct LuxApp: App {
                 .accentColor(accentColorManager.selectedAccentColor)
                 .onAppear {
                     configureDataSourceOnStartupIfNeeded()
+                    configureTipKitIfNeeded()
                     if ((settings.appLaunchCount % 15) == 0) {
                         Task.detached(priority: .background) {
                             await CacheCleaner.performCleanup()
@@ -140,6 +143,17 @@ struct LuxApp: App {
         guard !didHandleStartupDataSource else { return }
         didHandleStartupDataSource = true
         applySelectedDataSourceMode()
+    }
+
+    private func configureTipKitIfNeeded() {
+        guard !didConfigureTipKit else { return }
+
+        do {
+            try Tips.configure([.displayFrequency(.immediate)])
+            didConfigureTipKit = true
+        } catch {
+            print(error)
+        }
     }
     
     private func applySelectedDataSourceMode() {
