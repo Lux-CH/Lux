@@ -17,6 +17,8 @@ final class ItineraryViewModel: ObservableObject {
     private let zoomThreshold: CLLocationDistance = 50000
     private let vehicleUpdateInterval: Duration = .seconds(2)
     private let walkingUpdateInterval: Duration = .milliseconds(66)
+    private let maxRouteOverlayPointsPerLeg = 450
+    private let maxWalkingPathPointsPerLeg = 220
 
     private struct WalkingPathMetrics {
         let coordinates: [CLLocationCoordinate2D]
@@ -268,7 +270,11 @@ final class ItineraryViewModel: ObservableObject {
             let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e6)
             
             if let coordinates = polyline.coordinates, coordinates.count >= 2 {
-                self.walkingLegPaths[legId] = buildWalkingPathMetrics(from: coordinates)
+                let simplifiedCoordinates = reduceCoordinatesIfNeeded(
+                    coordinates,
+                    maxPoints: maxWalkingPathPointsPerLeg
+                )
+                self.walkingLegPaths[legId] = buildWalkingPathMetrics(from: simplifiedCoordinates)
             } else {
                 let from = CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon)
                 let to = CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon)
@@ -302,6 +308,28 @@ final class ItineraryViewModel: ObservableObject {
             totalDistance: totalDistance
         )
     }
+
+    private func reduceCoordinatesIfNeeded(
+        _ coordinates: [CLLocationCoordinate2D],
+        maxPoints: Int
+    ) -> [CLLocationCoordinate2D] {
+        guard coordinates.count > maxPoints, maxPoints > 2 else { return coordinates }
+
+        let lastIndex = coordinates.count - 1
+        let step = Double(lastIndex) / Double(maxPoints - 1)
+        var reducedCoordinates: [CLLocationCoordinate2D] = []
+        reducedCoordinates.reserveCapacity(maxPoints)
+        reducedCoordinates.append(coordinates[0])
+
+        for reducedIndex in 1..<(maxPoints - 1) {
+            let sourceIndex = Int((Double(reducedIndex) * step).rounded())
+            let clampedSourceIndex = min(max(sourceIndex, 1), lastIndex - 1)
+            reducedCoordinates.append(coordinates[clampedSourceIndex])
+        }
+
+        reducedCoordinates.append(coordinates[lastIndex])
+        return reducedCoordinates
+    }
     
     func getLegIdentifier(_ leg: Leg) -> String {
         "\(leg.routeShortName ?? "")_\(leg.headsign ?? "")_\(leg.startTime.timeIntervalSince1970)"
@@ -309,6 +337,10 @@ final class ItineraryViewModel: ObservableObject {
     
     private func startVehicleUpdates() {
         guard !shouldStop else { return }
+        guard !legKeyFrames.isEmpty else {
+            vehicleAnnotations = []
+            return
+        }
         
         stopVehicleUpdates()
         
@@ -322,6 +354,10 @@ final class ItineraryViewModel: ObservableObject {
     
     private func startWalkingUpdates() {
         guard !shouldStop, walkingUpdateTask == nil else { return }
+        guard !walkingLegPaths.isEmpty else {
+            walkingAnnotations = []
+            return
+        }
         
         walkingUpdateTask = Task {
             while !Task.isCancelled && !shouldStop {
@@ -534,8 +570,13 @@ final class ItineraryViewModel: ObservableObject {
         let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e6)
         
         guard let coordinates = polyline.coordinates, !coordinates.isEmpty else { return nil }
-        
-        return RouteOverlay(coordinates: coordinates, color: color)
+
+        let simplifiedCoordinates = reduceCoordinatesIfNeeded(
+            coordinates,
+            maxPoints: maxRouteOverlayPointsPerLeg
+        )
+
+        return RouteOverlay(coordinates: simplifiedCoordinates, color: color)
     }
     
     private func calculateMapPosition() {
