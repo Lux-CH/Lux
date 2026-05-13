@@ -93,7 +93,7 @@ struct IndividualItineraryDetailView: View {
                         .frame(minHeight: 1)
                     ScrollViewReader { proxy in
                         ScrollView {
-                            if let actualName = leg.routeShortName {
+                            if let actualName = leg.routeShortName, (leg.agencyId == "881" || leg.agencyId == "Transports Publics Genevois") {
                                 DisruptionSectionView(disruptions: disruptionManager.disruptions(for: actualName))
                                 .padding(.horizontal, 20)
                                 .padding(.top, 15)
