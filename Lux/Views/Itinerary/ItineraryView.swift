@@ -184,7 +184,6 @@ struct ItineraryView: View {
                             }
                             .buttonStyle(.plain)
                             .disabled(viewModel.isLoading || isSwitchingTrip)
-                            .itineraryTip(ItineraryClockTip(), enabled: true, arrowEdge: .leading)
                         }
                         
                         Spacer()
@@ -199,8 +198,7 @@ struct ItineraryView: View {
                                 itinerary: itinerary,
                                 itineraarySharer: itineraarySharer,
                                 compact: true,
-                                showCompactSaveAction: !isSingle,
-                                showTips: true
+                                showCompactSaveAction: !isSingle
                             )
                         }
                         Spacer()
@@ -301,8 +299,7 @@ struct ItineraryView: View {
     
     private func switchToTrip(_ tripId: String) {
         guard tripId != viewModel.tripId else { return }
-        ItineraryTipState.didUseTripSelection = true
-
+        
         HapticFeedback.lightImpact()
         isSwitchingTrip = true
         tripSwitchTask?.cancel()
