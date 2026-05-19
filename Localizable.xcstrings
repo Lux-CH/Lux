@@ -1964,16 +1964,6 @@
         }
       }
     },
-    "Données des perturbations" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disruptions data"
-          }
-        }
-      }
-    },
     "Double-cliquez pour obtenir plus de détails sur le prochain départ." : {
       "localizations" : {
         "en" : {
