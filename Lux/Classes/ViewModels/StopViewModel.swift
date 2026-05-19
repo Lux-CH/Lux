@@ -68,7 +68,7 @@ class StopViewModel: ObservableObject {
                     }
                 }
             
-            departureCheckTimer = Timer.publish(every: 1, on: .main, in: .common)
+            departureCheckTimer = Timer.publish(every: 10, on: .main, in: .common)
                 .autoconnect()
                 .sink { [weak self] _ in
                     Task { @MainActor [weak self] in
