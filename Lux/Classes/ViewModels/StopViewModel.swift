@@ -86,7 +86,8 @@ class StopViewModel: ObservableObject {
     
     @MainActor
     func refreshDepartures(showLoading: Bool) async {
-        await refreshDepartures(forTime: currentTime, showLoading: showLoading)
+        let timeToUse = isCustomTimeSelected ? currentTime : Date()
+        await refreshDepartures(forTime: timeToUse, showLoading: showLoading)
     }
     
     @MainActor
@@ -95,7 +96,8 @@ class StopViewModel: ObservableObject {
         backgroundRefreshTask?.cancel()
         
         let now = Date()
-        isCustomTimeSelected = abs(time.timeIntervalSince(now)) > 60
+        let isSignificantDifference = abs(time.timeIntervalSince(now)) > 60
+        isCustomTimeSelected = isSignificantDifference
         currentTime = time
         
         backgroundRefreshTask = Task {
@@ -171,9 +173,14 @@ class StopViewModel: ObservableObject {
     private func refreshDeparturesInBackground() async {
         backgroundRefreshTask?.cancel()
         
+        let fetchTime = isCustomTimeSelected ? currentTime : Date()
+        if !isCustomTimeSelected {
+            currentTime = fetchTime
+        }
+        
         backgroundRefreshTask = Task {
             do {
-                let (departuresData, arrivalsData) = try await fetchDeparturesAndArrivals(for: currentTime)
+                let (departuresData, arrivalsData) = try await fetchDeparturesAndArrivals(for: fetchTime)
                 if Task.isCancelled {
                     backgroundRefreshTask = nil
                     return
