@@ -11,7 +11,7 @@ struct CreditsView: View {
     private let creditItems = [
         CreditItem(name: "Constantin Clerc", credit: String(localized: "Développeur Principal"), imageURL: "https://avatars.githubusercontent.com/u/102235607?v=4", url: "https://github.com/c22dev"),
         CreditItem(name: "Valentin Busi Dias", credit: String(localized: "Conseiller intuitivité et design"), imageURL: "https://cclerc.ch/lux-assets/credits/val.png", url: "https://cclerc.ch/val"),
-        CreditItem(name: "Philippe Weidmann", credit: String(localized: "Données des perturbations"), imageURL: "https://avatars.githubusercontent.com/u/5843044?v=4", url: "https://github.com/PhilippeWeidmann"),
+        CreditItem(name: "Michail Kiourkos", credit: String(localized: "Conseiller intuitivité et design"), imageURL: "https://cclerc.ch/lux-assets/credits/michail.png", url: "https://www.linkedin.com/in/michail-kiourkos-42025338a/"),
     ]
     var body: some View {
         NavigationStack {
