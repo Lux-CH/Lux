@@ -15,13 +15,24 @@ struct StopDetailDestination: Identifiable {
 }
 
 
-struct StopAnnotation: Identifiable {
-    let id = UUID()
+struct StopAnnotation: Identifiable, Equatable {
+    let id: String
     let place: Place
     let coordinate: CLLocationCoordinate2D
     let color: Color
     let isTerminal: Bool
     let isIntermediate: Bool
+    
+    static func == (lhs: StopAnnotation, rhs: StopAnnotation) -> Bool {
+        return lhs.id == rhs.id &&
+               lhs.place.arrival == rhs.place.arrival &&
+               lhs.place.departure == rhs.place.departure &&
+               lhs.place.track == rhs.place.track &&
+               lhs.place.name == rhs.place.name &&
+               lhs.color == rhs.color &&
+               lhs.isTerminal == rhs.isTerminal &&
+               lhs.isIntermediate == rhs.isIntermediate
+    }
     
     init(place: Place, color: Color, isTerminal: Bool = false, isIntermediate: Bool = false) {
         var modifiedPlace = place
@@ -34,6 +45,7 @@ struct StopAnnotation: Identifiable {
             break
         }
         
+        self.id = "\(place.stopId ?? "")_\(place.name)_\(place.lat)_\(place.lon)"
         self.place = modifiedPlace
         self.coordinate = CLLocationCoordinate2D(latitude: place.lat, longitude: place.lon)
         self.color = color

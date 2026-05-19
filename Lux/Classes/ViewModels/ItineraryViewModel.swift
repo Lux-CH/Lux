@@ -220,10 +220,11 @@ final class ItineraryViewModel: ObservableObject {
             return
         }
                 
+        let (annotations, overlays) = createAnnotationsAndOverlays(for: itinerary)
+        mapAnnotations = annotations
+        routeOverlays = overlays
+
         if shouldCalculateMapPosition {
-            let (annotations, overlays) = createAnnotationsAndOverlays(for: itinerary)
-            mapAnnotations = annotations
-            routeOverlays = overlays
             calculateMapPosition()
         }
         
@@ -576,7 +577,8 @@ final class ItineraryViewModel: ObservableObject {
             maxPoints: maxRouteOverlayPointsPerLeg
         )
 
-        return RouteOverlay(coordinates: simplifiedCoordinates, color: color)
+        let legId = getLegIdentifier(leg)
+        return RouteOverlay(id: legId, coordinates: simplifiedCoordinates, color: color)
     }
     
     private func calculateMapPosition() {
