@@ -144,7 +144,7 @@ struct SearchHistoryContent: View {
     @ViewBuilder
     private func historyRow(for result: SearchResult) -> some View {
         HStack(spacing: 12) {
-            let defaultIcon: (String, Color) = visualStyleStore.style(for: result.id).map { ($0.symbolName, $0.color) } ?? getIconForType(result.type)
+            let defaultIcon: (String, Color) = visualStyleStore.style(for: result.id).map { ($0.symbolName, $0.color) } ?? getIconForType(result.type, id: result.id)
             let (iconName, iconColor) = shortcutSymbol(for: result).map { ($0, Color.accentColor) } ?? defaultIcon
             ZStack {
                 Circle()
@@ -220,11 +220,14 @@ struct SearchHistoryContent: View {
         return nil
     }
     
-    private func getIconForType(_ type: LocationType) -> (String, Color) {
+    private func getIconForType(_ type: LocationType, id: String = "") -> (String, Color) {
         switch type {
         case .adress:
             return ("mappin", .red)
         case .place:
+            if id == "citaStop" {
+                return ("signpost.right.fill", .accentColor)
+            }
             return ("building.fill", .blue)
         case .stop:
             return ("signpost.right.fill", .accentColor)
