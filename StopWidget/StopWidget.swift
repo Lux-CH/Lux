@@ -112,7 +112,8 @@ struct Provider: TimelineProvider {
                 let stopTimes = try await getDeparturesForStop(
                     stopId: stopId,
                     time: Date(),
-                    numberOfEvents: numberOfEvents * 3
+                    numberOfEvents: numberOfEvents * 3,
+                    radius: 200
                 )
                 
                 let prioritizedDepartures = prioritizeDeparturesByLineScore(stopTimes.stopTimes)

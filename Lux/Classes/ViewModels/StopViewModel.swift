@@ -147,7 +147,8 @@ class StopViewModel: ObservableObject {
                 stopId: stop.id,
                 time: time,
                 arriveBy: false,
-                numberOfEvents: fromStops ? 100 : 50
+                numberOfEvents: fromStops ? 100 : 50,
+                radius: 200
             )
             
             async let arrivalsTask = getDeparturesForStop(
@@ -155,7 +156,8 @@ class StopViewModel: ObservableObject {
                 time: time,
                 arriveBy: true,
                 direction: "LATER",
-                numberOfEvents: fromStops ? 100 : 50
+                numberOfEvents: fromStops ? 100 : 50,
+                radius: 200
             )
             return try await (departuresTask, arrivalsTask)
         }
