@@ -49,8 +49,12 @@ struct ArrivalMinuteView: View {
             }
         }
         .onAppear {
+            blinkManager.startBlinking()
             bufferTime = bufferTimeForTransport()
             previousTimeDifferenceInSeconds = timeDifferenceInSeconds
+        }
+        .onDisappear {
+            blinkManager.stopBlinking()
         }
         .onChange(of: timeDifferenceInSeconds) { oldValue, _ in
             previousTimeDifferenceInSeconds = oldValue

@@ -15,17 +15,37 @@ class BlinkManager: ObservableObject {
     
     @Published var isVisible: Bool = true
     private var cancellable: AnyCancellable?
+    private var subscriberCount: Int = 0
     
-    private init() {
-        startBlinking()
+    private init() {}
+    
+    func startBlinking() {
+        subscriberCount += 1
+        if subscriberCount == 1 {
+            resumeTimer()
+        }
     }
     
-    private func startBlinking() {
+    func stopBlinking() {
+        subscriberCount = max(0, subscriberCount - 1)
+        if subscriberCount == 0 {
+            pauseTimer()
+        }
+    }
+    
+    private func resumeTimer() {
+        cancellable?.cancel()
         cancellable = Timer.publish(every: 1, on: .main, in: .common)
             .autoconnect()
             .sink { [weak self] _ in
                 self?.isVisible.toggle()
             }
+    }
+    
+    private func pauseTimer() {
+        cancellable?.cancel()
+        cancellable = nil
+        isVisible = true
     }
     
     deinit {

@@ -35,7 +35,9 @@ struct StopView: View {
     var body: some View {
         if fromStops {
             ExpandedStopView(
-                viewModel: StopViewModel(stop: stop, fromStops: true, isLC: forceLC, time: nil),
+                stop: stop,
+                fromStops: true,
+                forceLC: forceLC,
                 maxGroupsToShow: maxGroupsToShow
             )
         } else {
