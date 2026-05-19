@@ -108,7 +108,7 @@ struct ItineraryStopDetailView: View {
                 type: .place,
                 tokens: [[]],
                 name: stop.name,
-                id: "",
+                id: "citaStop",
                 lat: stop.lat,
                 lon: stop.lon,
                 level: Double(stop.level),
