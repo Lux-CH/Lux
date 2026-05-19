@@ -110,7 +110,7 @@ struct StopHeaderView: View {
                             type: .place,
                             tokens: stop.tokens,
                             name: stop.name,
-                            id: "",
+                            id: "citaStop",
                             lat: stop.lat,
                             lon: stop.lon,
                             areas: stop.areas,

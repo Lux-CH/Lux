@@ -72,14 +72,17 @@ struct LocationTagView: View {
             return (style.symbolName, style.color)
         }
         
-        return defaultIcon(for: result.type)
+        return defaultIcon(for: result.type, id: result.id)
     }
     
-    private func defaultIcon(for type: LocationType) -> (symbolName: String, color: Color) {
+    private func defaultIcon(for type: LocationType, id: String = "") -> (symbolName: String, color: Color) {
         switch type {
         case .adress:
             return ("mappin", .red)
         case .place:
+            if id == "citaStop" {
+                return ("signpost.right.fill", .accentColor)
+            }
             return ("building.fill", .blue)
         case .stop:
             return ("signpost.right.fill", .accentColor)
