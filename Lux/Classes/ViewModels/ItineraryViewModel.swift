@@ -16,7 +16,7 @@ final class ItineraryViewModel: ObservableObject {
     @Published var tripId: String
     private let zoomThreshold: CLLocationDistance = 50000
     private let vehicleUpdateInterval: Duration = .seconds(2)
-    private let walkingUpdateInterval: Duration = .milliseconds(66)
+    private let walkingUpdateInterval: Duration = .seconds(1)
     private let maxRouteOverlayPointsPerLeg = 450
     private let maxWalkingPathPointsPerLeg = 220
 
@@ -437,7 +437,9 @@ final class ItineraryViewModel: ObservableObject {
             return WalkingAnnotation(id: legId, coordinate: position)
         }
 
-        walkingAnnotations = newWalkingAnnotations
+        withAnimation(.linear(duration: 1.0)) {
+            walkingAnnotations = newWalkingAnnotations
+        }
     }
     
     private func walkingPosition(for leg: Leg, legId: String, at timestamp: TimeInterval) -> CLLocationCoordinate2D? {
