@@ -236,6 +236,7 @@ struct NearbyStopsView: View {
                 .ignoresSafeArea()
         }
         .onAppear {
+            locationManager.startMonitoring()
             if UIDevice.current.modelIdentifier == "iPhone12,1" {
                 UIDevice.current.isBatteryMonitoringEnabled = true
             }
@@ -294,6 +295,7 @@ struct NearbyStopsView: View {
             }
         }
         .onDisappear {
+            locationManager.stopMonitoring()
             backgroundRefreshTask?.cancel()
             stopNetworkMonitoring()
             isWaitingForLocation = false

@@ -125,7 +125,13 @@ struct ItineraryStopDetailView: View {
 
     private func createExpandedStopView() -> some View {
         let selectedDate = stop.departure ?? stop.arrival ?? Date()
-        return ExpandedStopView(viewModel: StopViewModel(stop: generateStopSearchResult(), fromStops: true, isLC: isFromMultiple || forceLC, time: selectedDate), selectedDate: selectedDate, maxGroupsToShow: 50)
-            .background(Color(.secondarySystemBackground))
+        return ExpandedStopView(
+            stop: generateStopSearchResult(),
+            fromStops: true,
+            forceLC: isFromMultiple || forceLC,
+            maxGroupsToShow: 50,
+            time: selectedDate
+        )
+        .background(Color(.secondarySystemBackground))
     }
 }

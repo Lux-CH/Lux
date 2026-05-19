@@ -69,12 +69,16 @@ struct TripsSearchView: View {
             }
         }
         .onAppear {
+            locationManager.startMonitoring()
             viewModel.setupLocationManager(locationManager)
             if let result = initialSearchResult {
                 Task { @MainActor in
                     viewModel.handleInitialSearchResult(result, targetField: initialTargetField)
                 }
             }
+        }
+        .onDisappear {
+            locationManager.stopMonitoring()
         }
         .onChange(of: viewModel.fromQuery) {
             viewModel.onChange(of: viewModel.fromQuery)

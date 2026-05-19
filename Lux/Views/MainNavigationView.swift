@@ -357,11 +357,13 @@ struct MainNavigationView: View {
             }
         }
         .onAppear {
+            locationManager.startMonitoring()
             stopsViewModel.setupLocationManager(locationManager)
             searchViewModel.setupLocationManager(locationManager)
             refreshUpcomingSavedItinerary()
         }
         .onDisappear {
+            locationManager.stopMonitoring()
             stopsViewModel.cancelBackgroundTasks()
         }
         .onChange(of: locationManager.location) {
