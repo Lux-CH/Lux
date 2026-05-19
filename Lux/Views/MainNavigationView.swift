@@ -44,6 +44,7 @@ struct MainNavigationView: View {
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var shortcutManager: ShortcutManager
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
     
     @State private var lastLocationUpdateTime: Date = Date.distantPast
     
@@ -396,7 +397,9 @@ struct MainNavigationView: View {
             }
         }
         .onReceive(itineraryRefreshTimer) { _ in
-            refreshUpcomingSavedItinerary()
+            if scenePhase == .active && viewMode == .home {
+                refreshUpcomingSavedItinerary()
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: .savedItinerariesDidChange)) { _ in
             refreshUpcomingSavedItinerary()

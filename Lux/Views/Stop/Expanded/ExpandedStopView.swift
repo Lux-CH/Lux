@@ -9,7 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct ExpandedStopView: View {
-    @StateObject var viewModel: StopViewModel
+    @StateObject private var viewModel: StopViewModel
     @State var selectedDate = Date()
     @State private var showDatePicker = false
     @State private var contentTransitionId = UUID()
@@ -19,6 +19,11 @@ struct ExpandedStopView: View {
     @State private var viewType = String(localized: "Groupé")
     @Namespace private var animation
     let maxGroupsToShow: Int
+    
+    init(stop: SearchResult, fromStops: Bool, forceLC: Bool, maxGroupsToShow: Int) {
+        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: fromStops, isLC: forceLC, time: nil))
+        self.maxGroupsToShow = maxGroupsToShow
+    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
