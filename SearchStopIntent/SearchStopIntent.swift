@@ -20,7 +20,7 @@ struct SearchStopIntent: AppIntent {
                 throw $stopName.needsValueError("Aucun arrêt trouvé pour \"\(stopName)\".")
             }
             
-            let departures = try await getDeparturesForStop(stopId: stopId, numberOfEvents: 20).stopTimes
+            let departures = try await getDeparturesForStop(stopId: stopId, numberOfEvents: 20, radius: 200).stopTimes
             
             if departures.isEmpty {
                 throw $stopName.needsValueError("Aucun départ trouvé pour l'arrêt \"\(departures.first?.place.name ?? stopName)\".")
