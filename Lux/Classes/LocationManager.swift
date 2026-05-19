@@ -16,6 +16,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var permissionDenied = false
     @Published var errorMessage: String?
     
+    private var subscriberCount: Int = 0
+    
     override init() {
         super.init()
         locationManager.delegate = self
@@ -23,7 +25,23 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         
         self.authorizationStatus = locationManager.authorizationStatus
-        
+    }
+    
+    func startMonitoring() {
+        subscriberCount += 1
+        if subscriberCount == 1 {
+            resumeUpdatesIfNeeded()
+        }
+    }
+    
+    func stopMonitoring() {
+        subscriberCount = max(0, subscriberCount - 1)
+        if subscriberCount == 0 {
+            stopLocationUpdates()
+        }
+    }
+    
+    private func resumeUpdatesIfNeeded() {
         if authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways {
             locationManager.startUpdatingLocation()
             locationManager.startUpdatingHeading()
@@ -50,8 +68,10 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             switch status {
             case .authorizedWhenInUse, .authorizedAlways:
                 self.permissionDenied = false
-                self.locationManager.startUpdatingLocation()
-                self.locationManager.startUpdatingHeading()
+                if self.subscriberCount > 0 {
+                    self.locationManager.startUpdatingLocation()
+                    self.locationManager.startUpdatingHeading()
+                }
             case .denied, .restricted:
                 self.permissionDenied = true
                 self.errorMessage = "Location access was denied. Please enable it in Settings to use the app properly."

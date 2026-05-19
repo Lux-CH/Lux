@@ -221,6 +221,7 @@ struct ItineraryView: View {
             await viewModel.loadItinerary()
         }
         .onAppear {
+            locationManager.startMonitoring()
             shouldRenderMap = true
         }
         .onChange(of: viewModel.isLoading) { _, newValue in
@@ -231,6 +232,7 @@ struct ItineraryView: View {
             }
         }
         .onDisappear {
+            locationManager.stopMonitoring()
             tripSwitchTask?.cancel()
             tripSwitchTask = nil
             isSwitchingTrip = false
