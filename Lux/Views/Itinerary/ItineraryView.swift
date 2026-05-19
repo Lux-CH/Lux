@@ -432,7 +432,7 @@ struct ItineraryMapView: View {
 }
 
 struct RouteOverlay: Identifiable {
-    let id = UUID()
+    let id: String
     let coordinates: [CLLocationCoordinate2D]
     let color: Color
 }
