@@ -10,7 +10,7 @@ import LuxCom
 import MapKit
 
 struct MultipleItineraryDetailView: View {
-    @State var itinerary: Itinerary
+    let itinerary: Itinerary
     @State private var expandedLegIds: Set<String> = []
     @State private var showingTightConnectionAlert = false
     @State private var selectedTightConnection: (from: String, to: String)?
@@ -155,6 +155,7 @@ struct MultipleItineraryDetailView: View {
                                 .padding(.horizontal, 20)
                             
                             ItinerarySheetDetailStopsContentView(
+                                viewModel: viewModel,
                                 stops: calculateUpcomingStops(leg: leg),
                                 legColor: getLegColor(leg),
                                 fromStop: leg.from,

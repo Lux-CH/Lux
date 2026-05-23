@@ -9,6 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct ItineraryStopTimelineView: View {
+    let viewModel: ItineraryViewModel
     let stops: [Place]
     let legColor: Color
     let accentColor: Color
@@ -32,34 +33,35 @@ struct ItineraryStopTimelineView: View {
     }
     
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 5)) { timeline in
-            LazyVStack(spacing: 0) {
-                ForEach(Array(displayedStops.enumerated()), id: \.element.stopId) { index, stop in
-                    let actualIndex = getActualIndex(displayIndex: index)
-                    
-                    ItineraryStopTimelineRowView(
-                        stop: stop,
+        LazyVStack(spacing: 0) {
+            ForEach(Array(displayedStops.enumerated()), id: \.element.stopId) { index, stop in
+                let actualIndex = getActualIndex(displayIndex: index)
+                
+                ItineraryStopTimelineRowView(
+                    stop: stop,
+                    legColor: legColor,
+                    accentColor: accentColor,
+                    isFirstStop: actualIndex == 0,
+                    isLastStop: actualIndex == stops.count - 1,
+                    isDepartureStop: stop.name == fromStop.name,
+                    isArrivalStop: stop.name == toStop.name,
+                    currentDate: Date(),
+                    isMultiple: isMultipleLeg,
+                    forceLC: forceLC,
+                    onSelect: {
+                        viewModel.selectedStop = stop
+                    }
+                )
+                .id(stop.stopId)
+                
+                if index == 0 && isMultipleLeg && stops.count > 2 {
+                    IntermediateStopsButton(
+                        count: intermediateStopsCount,
                         legColor: legColor,
-                        accentColor: accentColor,
-                        isFirstStop: actualIndex == 0,
-                        isLastStop: actualIndex == stops.count - 1,
-                        isDepartureStop: stop.name == fromStop.name,
-                        isArrivalStop: stop.name == toStop.name,
-                        currentDate: timeline.date,
-                        isMultiple: isMultipleLeg,
-                        forceLC: forceLC
-                    )
-                    .id(stop.stopId)
-                    
-                    if index == 0 && isMultipleLeg && stops.count > 2 {
-                        IntermediateStopsButton(
-                            count: intermediateStopsCount,
-                            legColor: legColor,
-                            isExpanded: showAllStops
-                        ) {
-                            withAnimation(.easeInOut(duration: 0.3)) {
-                                showAllStops.toggle()
-                            }
+                        isExpanded: showAllStops
+                    ) {
+                        withAnimation(.easeInOut(duration: 0.3)) {
+                            showAllStops.toggle()
                         }
                     }
                 }
@@ -132,7 +134,7 @@ struct ItineraryStopTimelineRowView: View {
     let currentDate: Date
     let isMultiple: Bool
     let forceLC: Bool
-    @State private var showingStopDetail = false
+    let onSelect: () -> Void
     
     private var stopStatus: StopStatus {
         calculateStopStatus(stop: stop, currentDate: currentDate)
@@ -157,7 +159,7 @@ struct ItineraryStopTimelineRowView: View {
     
     var body: some View {
         Button {
-            showingStopDetail = true
+            onSelect()
         } label: {
             HStack(alignment: .center, spacing: 0) {
                 TimelineIndicatorView(
@@ -215,15 +217,5 @@ struct ItineraryStopTimelineRowView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(PlainButtonStyle())
-//        .background(
-//            RoundedRectangle(cornerRadius: 12)
-//                .fill(stopStatus.isCurrentStop ?
-//                      (colorScheme == .dark ? Color(.systemGray6) : Color(.systemGray5).opacity(0.5)) :
-//                        Color.clear)
-//                .padding(.horizontal, 8)
-//        )
-        .fullScreenCover(isPresented: $showingStopDetail) {
-            ItineraryStopDetailView(stop: stop, isFromMultiple: isMultiple, forceLC: forceLC)
-        }
     }
 }

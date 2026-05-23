@@ -36,6 +36,7 @@ final class ItineraryViewModel: ObservableObject {
     private var forceLC: Bool = false
     
     @Published var itinerary: Itinerary?
+    @Published var selectedStop: Place? = nil
     @Published var position: MapCameraPosition = .automatic
     @Published var mapAnnotations: [StopAnnotation] = []
     @Published var routeOverlays: [RouteOverlay] = []
@@ -77,6 +78,7 @@ final class ItineraryViewModel: ObservableObject {
         self.walkingLegPaths = [:]
         self.error = nil
         self.shouldStop = false
+        self.selectedStop = nil
         
         await loadItinerary()
     }

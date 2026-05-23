@@ -10,6 +10,7 @@ import LuxCom
 
 struct ItinerarySheetDetailStopsContentView: View {
     @ObservedObject var accentColorManager = AccentColorManager.shared
+    let viewModel: ItineraryViewModel
     let stops: [Place]
     let legColor: Color
     let fromStop: Place
@@ -48,6 +49,7 @@ struct ItinerarySheetDetailStopsContentView: View {
                 .padding()
             } else {
                 ItineraryStopTimelineView(
+                    viewModel: viewModel,
                     stops: stops,
                     legColor: legColor,
                     accentColor: accentColorManager.selectedAccentColor,
