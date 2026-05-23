@@ -294,6 +294,20 @@ struct NearbyStopsView: View {
                 loadNearbyStops(showLoading: true)
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            locationManager.resumeUpdates()
+            
+            stopNetworkMonitoring()
+            startNetworkMonitoring()
+            
+            if !isAuthorizationNotAllowed {
+                if progress.searchResults.isEmpty {
+                    loadNearbyStops(showLoading: true)
+                } else {
+                    refreshNearbyStopsInBackground()
+                }
+            }
+        }
         .onDisappear {
             locationManager.stopMonitoring()
             backgroundRefreshTask?.cancel()
