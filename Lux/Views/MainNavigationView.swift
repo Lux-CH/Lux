@@ -406,6 +406,17 @@ struct MainNavigationView: View {
         .onReceive(NotificationCenter.default.publisher(for: .savedItinerariesDidChange)) { _ in
             refreshUpcomingSavedItinerary()
         }
+        .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+            locationManager.resumeUpdates()
+            refreshUpcomingSavedItinerary()
+            if viewMode == .stops && !stopsViewModel.isSearchMode {
+                if stopsViewModel.searchResults.isEmpty {
+                    stopsViewModel.loadNearbyStops(showLoading: true)
+                } else {
+                    stopsViewModel.refreshNearbyStopsInBackground()
+                }
+            }
+        }
     }
     
     private var searchModeDragGesture: some Gesture {
