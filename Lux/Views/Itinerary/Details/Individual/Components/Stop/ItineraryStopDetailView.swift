@@ -17,11 +17,18 @@ struct ItineraryStopDetailView: View {
     @State private var showTripSearch: Bool = false
 
     private var transformedStopId: String {
-        guard let stopId = stop.stopId, !stopId.contains("ch_Parent") else {
-            return stop.stopId ?? ""
+        guard let stopId = stop.stopId else { return "" }
+        
+        if stopId.contains("_Parent") { return stopId }
+        
+        if stopId.hasPrefix("ch-opentransportdataswiss26_") {
+            return stopId
+                .replacingOccurrences(of: "ch-opentransportdataswiss26_", with: "ch-opentransportdataswiss26_Parent")
+                .components(separatedBy: ":").first ?? stopId
         }
         
-        return stopId.replacingOccurrences(of: "ch_", with: "ch_Parent")
+        return stopId
+            .replacingOccurrences(of: "ch_", with: "ch_Parent")
             .components(separatedBy: ":").first ?? stopId
     }
 
