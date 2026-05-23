@@ -25,7 +25,9 @@ class ConnectionService: ObservableObject {
     }
     
     func getConnections(for stopId: String, completion: @escaping ([String]) -> Void) {
-        let cleanStopId = stopId.replacingOccurrences(of: "ch_Parent", with: "ch_")
+        let cleanStopId = stopId
+            .replacingOccurrences(of: "ch-opentransportdataswiss26", with: "ch")
+            .replacingOccurrences(of: "ch_Parent", with: "ch_")
         
         if let connections = loadedConnections[cleanStopId] {
             let sortedConnections = LineScoreManager.shared.getSortedRouteNames(connections)
