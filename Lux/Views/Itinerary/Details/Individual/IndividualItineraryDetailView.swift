@@ -9,6 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct IndividualItineraryDetailView: View {
+    let viewModel: ItineraryViewModel
     let itinerary: Itinerary
     let isMultipleLeg: Bool
     private let mainLeg: Leg?
@@ -21,7 +22,8 @@ struct IndividualItineraryDetailView: View {
     let forceLC: Bool
     let itineraarySharer: ItinerarySharer
     
-    init(itinerary: Itinerary, isMultipleLeg: Bool, forceLC: Bool, itineraarySharer: ItinerarySharer) {
+    init(viewModel: ItineraryViewModel, itinerary: Itinerary, isMultipleLeg: Bool, forceLC: Bool, itineraarySharer: ItinerarySharer) {
+        self.viewModel = viewModel
         self.itinerary = itinerary
         self.mainLeg = itinerary.legs.first
         self.legColor = mainLeg.flatMap { getLegColor($0) } ?? .black
@@ -100,6 +102,7 @@ struct IndividualItineraryDetailView: View {
                                 .padding(.bottom, -10)
                             }
                             ItinerarySheetDetailStopsContentView(
+                                viewModel: viewModel,
                                 stops: upcomingStops,
                                 legColor: legColor,
                                 fromStop: leg.from,

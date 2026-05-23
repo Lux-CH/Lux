@@ -411,8 +411,17 @@ struct ItineraryMapView: View {
         .onChange(of: viewModel.position) { _, newValue in
             position = newValue
         }
+        .onChange(of: viewModel.selectedStop) { _, newStop in
+            if let stop = newStop {
+                showDetails = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    stopDetailDestination = StopDetailDestination(place: stop)
+                }
+            }
+        }
         .fullScreenCover(item: $stopDetailDestination, onDismiss: {
             showDetails = true
+            viewModel.selectedStop = nil
         }) { destination in
             ItineraryStopDetailView(
                 stop: destination.place,

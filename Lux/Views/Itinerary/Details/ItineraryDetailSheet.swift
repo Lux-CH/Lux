@@ -10,7 +10,7 @@ import SwiftUI
 import LuxCom
 
 struct ItineraryDetailSheet: View {
-    let viewModel: ItineraryViewModel
+    @ObservedObject var viewModel: ItineraryViewModel
     let itinerarySharer: ItinerarySharer
     let isSingle: Bool
     let forceLC: Bool
@@ -18,7 +18,7 @@ struct ItineraryDetailSheet: View {
     var body: some View {
         if let itinerary = viewModel.itinerary {
             if isSingle {
-                IndividualItineraryDetailView(itinerary: itinerary, isMultipleLeg: false, forceLC: forceLC, itineraarySharer: itinerarySharer)
+                IndividualItineraryDetailView(viewModel: viewModel, itinerary: itinerary, isMultipleLeg: false, forceLC: forceLC, itineraarySharer: itinerarySharer)
             } else {
                 MultipleItineraryDetailView(itinerary: itinerary, viewModel: viewModel, itineraarySharer: itinerarySharer, forceLC: forceLC)
             }
