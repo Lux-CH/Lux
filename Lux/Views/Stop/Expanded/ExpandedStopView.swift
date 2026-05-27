@@ -79,7 +79,7 @@ struct ExpandedStopView: View {
         .onAppear {
             viewModel.startMonitoring()
             
-            withAnimation(.spring(response: 0.6, dampingFraction: 0.75)) {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
                 animateIn = true
             }
         }

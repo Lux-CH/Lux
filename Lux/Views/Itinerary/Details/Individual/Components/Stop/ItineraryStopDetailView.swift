@@ -78,9 +78,6 @@ struct ItineraryStopDetailView: View {
                         }
                     }
                 }
-                .transaction { transaction in
-                    transaction.disablesAnimations = true
-                }
                 .navigationDestination(isPresented: $showTripSearch) {
                     TripsSearchView(
                         initialSearchResult: generateTripSearchResult(),
