@@ -436,7 +436,8 @@ class TripsSearchViewModel: ObservableObject {
             pageCursor: pageCursor,
             timetableView: true,
             maxPreTransitTime: routeOptions.maxPreTransitTime,
-            maxPostTransitTime: routeOptions.maxPostTransitTime
+            maxPostTransitTime: routeOptions.maxPostTransitTime,
+            numLegAlternatives: 0 // 0.8
         )
         
         Task {

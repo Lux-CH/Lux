@@ -9,7 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct ItineraryStopTimelineView: View {
-    let viewModel: ItineraryViewModel
+    @ObservedObject var viewModel: ItineraryViewModel
     let stops: [Place]
     let legColor: Color
     let accentColor: Color
