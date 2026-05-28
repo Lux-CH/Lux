@@ -14,7 +14,7 @@ struct MultipleItineraryDetailView: View {
     @State private var expandedLegIds: Set<String> = []
     @State private var showingTightConnectionAlert = false
     @State private var selectedTightConnection: (from: String, to: String)?
-    let viewModel: ItineraryViewModel
+    @ObservedObject var viewModel: ItineraryViewModel
     let itineraarySharer: ItinerarySharer
     let forceLC: Bool
     

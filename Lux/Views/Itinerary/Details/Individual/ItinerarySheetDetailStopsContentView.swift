@@ -10,7 +10,7 @@ import LuxCom
 
 struct ItinerarySheetDetailStopsContentView: View {
     @ObservedObject var accentColorManager = AccentColorManager.shared
-    let viewModel: ItineraryViewModel
+    @ObservedObject var viewModel: ItineraryViewModel
     let stops: [Place]
     let legColor: Color
     let fromStop: Place
