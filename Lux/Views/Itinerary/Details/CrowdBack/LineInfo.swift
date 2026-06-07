@@ -36,7 +36,7 @@ struct AttributeIndicator: View {
     let type: AttributeType
     let info: InfoResponse
     let isRealtime: Bool
-    
+
     private var attributeData: (level: Double, trustLevel: Double)? {
         if isRealtime, let rtData = info.rt?[type.rawValue] {
             return (Double(rtData.level), Double(rtData.trustLevel))
@@ -45,7 +45,13 @@ struct AttributeIndicator: View {
         }
         return nil
     }
-    
+
+    private var isPatternBased: Bool {
+        if isRealtime { return false }
+        guard let avgData = info.average[type.rawValue] else { return false }
+        return avgData.reportCount == 0
+    }
+
     var body: some View {
         if let data = attributeData, data.trustLevel >= 2.0 {
             HStack(spacing: 2) {
@@ -53,7 +59,7 @@ struct AttributeIndicator: View {
                     .font(.system(size: 11))
                     .foregroundColor(type.color(for: data.level))
                     .frame(height: 12)
-                
+
                 HStack(spacing: 1) {
                     ForEach(1...5, id: \.self) { level in
                         Circle()
@@ -63,27 +69,12 @@ struct AttributeIndicator: View {
                             .frame(width: 3, height: 3)
                     }
                 }
-                
-//                if data.trustLevel > 3 {
-//                    Image(systemName: "checkmark.circle.fill")
-//                        .font(.system(size: 8))
-//                        .foregroundColor(.green)
-//                } else if data.trustLevel > 1 {
-//                    Image(systemName: "questionmark.circle.fill")
-//                        .font(.system(size: 8))
-//                        .foregroundColor(.orange)
-//                }
-                
-//                if isRealtime {
-//                    Circle()
-//                        .fill(Color.green)
-//                        .frame(width: 4, height: 4)
-//                }
             }
             .padding(.horizontal, 4)
             .padding(.vertical, 2)
             .background(Color.secondary.opacity(0.1))
             .cornerRadius(6)
+            .opacity(isPatternBased ? 0.6 : 1.0)
         }
     }
 }
