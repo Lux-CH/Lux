@@ -108,9 +108,19 @@ class StopViewModel: ObservableObject {
             }
             
             do {
-                let freshStopTimes = try await fetchDeparturesAndArrivals(for: time)
+                let (departuresData, arrivalsData) = try await fetchDeparturesAndArrivals(for: time)
                 
                 if Task.isCancelled { return }
+                
+                let allStopTimes = departuresData.stopTimes + arrivalsData.stopTimes
+                var seenTripIds = Set<String>()
+                let combinedStopTimes = allStopTimes.filter { seenTripIds.insert($0.tripId).inserted }
+                
+                let freshStopTimes = StopTimes(
+                    stopTimes: combinedStopTimes,
+                    previousPageCursor: departuresData.previousPageCursor,
+                    nextPageCursor: departuresData.nextPageCursor
+                )
                 
                 self.stopTimes = freshStopTimes
                 let times = freshStopTimes.stopTimes
@@ -131,25 +141,35 @@ class StopViewModel: ObservableObject {
         await backgroundRefreshTask?.value
     }
     
-    private func fetchDeparturesAndArrivals(for time: Date) async throws -> StopTimes {
+    private func fetchDeparturesAndArrivals(for time: Date) async throws -> (departures: StopTimes, arrivals: StopTimes) {
         if settings.dataSource == .luxCom || shouldLoadViaLC {
-            let eventsTask = try await getDeparturesForStop(
+            async let departuresTask = getDeparturesForStop(
                 stopId: stop.id,
                 time: time,
-                eventType: "BOTH",
+                arriveBy: false,
+                numberOfEvents: fromStops ? 100 : 50,
+                radius: 200
+            )
+            
+            async let arrivalsTask = getDeparturesForStop(
+                stopId: stop.id,
+                time: time,
+                arriveBy: true,
                 direction: "LATER",
                 numberOfEvents: fromStops ? 100 : 50,
                 radius: 200
             )
-            return eventsTask
+            return try await (departuresTask, arrivalsTask)
         }
-        let departuresTask = try await citaDepartures(
+        async let departuresTask = citaDepartures(
             stopId: stop.id,
             time: time,
             arriveBy: false,
             numberOfEvents: fromStops ? 100 : 50
         )
-        return departuresTask
+        let emptyArrivals = StopTimes(stopTimes: [], previousPageCursor: "", nextPageCursor: "")
+        
+        return try await (departuresTask, emptyArrivals)
     }
 
     private func refreshDeparturesInBackground() async {
@@ -162,14 +182,22 @@ class StopViewModel: ObservableObject {
         
         backgroundRefreshTask = Task {
             do {
-                let freshStopTimes = try await fetchDeparturesAndArrivals(for: fetchTime)
+                let (departuresData, arrivalsData) = try await fetchDeparturesAndArrivals(for: fetchTime)
                 if Task.isCancelled {
                     backgroundRefreshTask = nil
                     return
                 }
                 
+                let allStopTimes = departuresData.stopTimes + arrivalsData.stopTimes
+                var seenTripIds = Set<String>()
+                let combinedStopTimes = allStopTimes.filter { seenTripIds.insert($0.tripId).inserted }
+                
                 await MainActor.run {
-                    self.stopTimes = freshStopTimes
+                    self.stopTimes = StopTimes(
+                        stopTimes: combinedStopTimes,
+                        previousPageCursor: departuresData.previousPageCursor,
+                        nextPageCursor: departuresData.nextPageCursor
+                    )
                     let times = self.stopTimes?.stopTimes ?? []
                     if !times.isEmpty {
                         self.groupStopTimes(times)
