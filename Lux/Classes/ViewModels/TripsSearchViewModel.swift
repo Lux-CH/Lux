@@ -566,7 +566,7 @@ class TripsSearchViewModel: ObservableObject {
             if result.type == .stop {
                 return RouteOptions.RouteLocation(stopId: result.id)
             } else {
-                return RouteOptions.RouteLocation(coordinates: (result.lat, result.lon))
+                return RouteOptions.RouteLocation(coordinates: (result.lat, result.lon), level: result.level)
             }
         case .currentPosition:
             guard let coords = locationManager?.location?.coordinate else { return nil }
@@ -584,7 +584,11 @@ class TripsSearchViewModel: ObservableObject {
                 }
             }
             
-            return RouteOptions.RouteLocation(coordinates: (coords.latitude, coords.longitude))
+            var floorLevel: Double? = nil
+            if let level = locationManager?.location?.floor?.level {
+                floorLevel = Double(level)
+            }
+            return RouteOptions.RouteLocation(coordinates: (coords.latitude, coords.longitude), level: floorLevel)
         }
     }
     
