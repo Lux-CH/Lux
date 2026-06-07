@@ -136,7 +136,7 @@ class StopViewModel: ObservableObject {
             let eventsTask = try await getDeparturesForStop(
                 stopId: stop.id,
                 time: time,
-                eventType: "BOTH",
+                both: true,
                 direction: "LATER",
                 numberOfEvents: fromStops ? 100 : 50,
                 radius: 200
