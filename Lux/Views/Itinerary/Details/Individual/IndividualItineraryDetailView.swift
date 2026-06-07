@@ -9,7 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct IndividualItineraryDetailView: View {
-    let viewModel: ItineraryViewModel
+    @ObservedObject var viewModel: ItineraryViewModel
     let itinerary: Itinerary
     let isMultipleLeg: Bool
     private let mainLeg: Leg?
