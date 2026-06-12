@@ -221,7 +221,7 @@ struct MainNavigationView: View {
                                         .accessibilityLabel(viewMode == .home ? "Recherche de destination" : "")
                                         .accessibilityHint(viewMode == .home ? "Double-tapez pour ouvrir la recherche d'itinéraires" : "")
                                         .accessibilityAddTraits(viewMode == .home ? .isSearchField : [])
-                                        .padding(.top, viewMode == .home ? 0 : 55)
+                                        .padding(.top, viewMode == .home ? 0 : topSafeAreaInset + 5)
                                         .offset(y: searchBarOffset)
                                         .animation(searchTransitionSpring, value: viewMode)
                                         .animation(ultraSmoothSpring, value: searchBarOffset)
@@ -823,7 +823,7 @@ struct MainNavigationView: View {
         
         withAnimation(ultraSmoothSpring) {
             viewMode = newMode
-            headerHeight = newMode == .home ? 215 : 135
+            headerHeight = newMode == .home ? 215 : max(135, topSafeAreaInset + 75)
         }
         
         if newMode == .stops {
@@ -843,7 +843,7 @@ struct MainNavigationView: View {
         
         withAnimation(ultraSmoothSpring) {
             viewMode = .stops
-            headerHeight = 135
+            headerHeight = max(135, topSafeAreaInset + 75)
         }
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
@@ -852,6 +852,12 @@ struct MainNavigationView: View {
         progress.numOfTimesStopViewWasOpened += 1
     }
     
+    private var topSafeAreaInset: CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?.keyWindow?.safeAreaInsets.top ?? 44
+    }
+
     // doing cas par cas is a really ugly solution
     private func compactSize() -> CGFloat {
         if viewMode == .search {

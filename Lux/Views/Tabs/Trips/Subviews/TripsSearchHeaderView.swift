@@ -19,6 +19,12 @@ struct TripsSearchHeaderView: View {
     @State private var headerOffset: CGFloat = -100
     @State private var contentOpacity: Double = 0
     var onBack: (() -> Void)?
+
+    private var topSafeAreaInset: CGFloat {
+        UIApplication.shared.connectedScenes
+            .compactMap { $0 as? UIWindowScene }
+            .first?.keyWindow?.safeAreaInsets.top ?? 44
+    }
     
     var body: some View {
         ZStack(alignment: .top) {
@@ -30,7 +36,7 @@ struct TripsSearchHeaderView: View {
                 inputCard
                     .opacity(contentOpacity)
             }
-            .padding(.top, 47.5)
+            .padding(.top, topSafeAreaInset - 7)
             .padding(.horizontal, 16)
             .offset(y: headerOffset)
         }
