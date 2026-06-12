@@ -16,14 +16,9 @@ struct LocationSearchView: View {
     @Binding var searchQuery: String
     @Binding var selectedLocation: SearchResult?
     var onLocationSelected: (SearchResult) -> Void
-    
+
     @FocusState private var isSearchFocused: Bool
-    private let resultCardCornerRadius: CGFloat = 16
-    private var resultCardTint: Color {
-        colorScheme == .dark
-        ? Color(.secondarySystemBackground).opacity(0.85)
-        : Color(.secondarySystemBackground)
-    }
+    @State private var appearAnimation = false
     
     var body: some View {
         NavigationStack {
@@ -70,7 +65,11 @@ struct LocationSearchView: View {
                     viewModel.userLocation = (location.coordinate.latitude, location.coordinate.longitude)
                 }
                 viewModel.performSearch(searchQuery)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                    withAnimation { appearAnimation = true }
+                }
             }
+            .onDisappear { appearAnimation = false }
             .onChange(of: searchQuery) {
                 viewModel.performSearch(searchQuery)
             }
@@ -107,81 +106,87 @@ struct LocationSearchView: View {
     
     private var searchResultsList: some View {
         ScrollView {
-            GlassEffectGroup(spacing: 12) {
-                VStack(spacing: 12) {
-                    if locationManager.authorizationStatus == .authorizedWhenInUse && !searchQuery.isEmpty {
-                        Button {
-                            viewModel.useCurrentLocation(locationManager: locationManager) { result in
-                                if let result = result {
-                                    onLocationSelected(result)
-                                }
+            let showCurrentLocation = locationManager.authorizationStatus == .authorizedWhenInUse && !searchQuery.isEmpty
+
+            VStack(spacing: 0) {
+                if showCurrentLocation {
+                    Button {
+                        viewModel.useCurrentLocation(locationManager: locationManager) { result in
+                            if let result = result {
+                                onLocationSelected(result)
                             }
-                        } label: {
-                            HStack {
-                                ZStack {
-                                    Circle()
-                                        .fill(Color.accentColor.opacity(0.2))
-                                        .frame(width: 38, height: 38)
-                                    
-                                    Image(systemName: "location.fill")
-                                        .font(.system(size: 16))
-                                        .foregroundColor(.accentColor)
-                                }
-                                
-                                Text("Position actuelle")
-                                    .foregroundColor(.primary)
-                                
-                                Spacer()
-                                
-                                Image(systemName: "chevron.right")
-                                    .font(.system(size: 14))
-                                    .foregroundColor(.secondary)
-                            }
-                            .padding()
-                            .adaptable(
-                                ios26: .glassButtonTintedIn(
-                                    AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
-                                    resultCardTint
-                                ),
-                                fallback: {
-                                    $0.background(
-                                        RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
-                                            .fill(colorScheme == .dark
-                                                  ? Color(.secondarySystemBackground).opacity(0.85)
-                                                  : Color(.secondarySystemBackground))
-                                    )
-                                }
-                            )
                         }
+                    } label: {
+                        HStack(spacing: 14) {
+                            ZStack {
+                                Circle()
+                                    .fill(Color.accentColor.opacity(0.14))
+                                    .frame(width: 38, height: 38)
+                                Image(systemName: "location.fill")
+                                    .font(.system(size: 16, weight: .medium))
+                                    .foregroundColor(.accentColor)
+                            }
+                            Text("Position actuelle")
+                                .font(.system(size: 15, weight: .medium))
+                                .foregroundColor(.primary)
+                            Spacer()
+                        }
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .contentShape(Rectangle())
                     }
-                    
-                    ForEach(viewModel.searchResults) { result in
-                        Button {
-                            selectedLocation = result
-                            onLocationSelected(result)
-                        } label: {
-                            SearchResultRow(result: result)
-                                .padding()
-                                .adaptable(
-                                    ios26: .glassButtonTintedIn(
-                                        AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
-                                        resultCardTint
-                                    ),
-                                    fallback: {
-                                        $0.background(
-                                            RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
-                                                .fill(colorScheme == .dark
-                                                      ? Color(.secondarySystemBackground).opacity(0.85)
-                                                      : Color(.secondarySystemBackground))
-                                        )
-                                    }
-                                )
-                        }
+                    .buttonStyle(ScaleButtonStyle())
+                    .opacity(appearAnimation ? 1 : 0)
+                    .offset(y: appearAnimation ? 0 : 8)
+                    .animation(.spring(response: 0.35, dampingFraction: 0.8), value: appearAnimation)
+
+                    if !viewModel.searchResults.isEmpty {
+                        Divider().padding(.leading, 68)
                     }
                 }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 12)
+
+                ForEach(Array(viewModel.searchResults.enumerated()), id: \.element.id) { index, result in
+                    Button {
+                        selectedLocation = result
+                        onLocationSelected(result)
+                    } label: {
+                        SearchResultRow(result: result)
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .contentShape(Rectangle())
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                    .opacity(appearAnimation ? 1 : 0)
+                    .offset(y: appearAnimation ? 0 : 8)
+                    .animation(
+                        .spring(response: 0.35, dampingFraction: 0.8)
+                            .delay(Double(showCurrentLocation ? index + 1 : index) * 0.04),
+                        value: appearAnimation
+                    )
+
+                    if index < viewModel.searchResults.count - 1 {
+                        Divider().padding(.leading, 68)
+                    }
+                }
             }
+            .background(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .fill(colorScheme == .dark
+                        ? Color(.tertiarySystemBackground)
+                        : Color(.systemBackground))
+                    .shadow(
+                        color: Color.black.opacity(colorScheme == .dark ? 0.25 : 0.08),
+                        radius: 12, x: 0, y: 4
+                    )
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 20, style: .continuous)
+                    .stroke(Color.primary.opacity(colorScheme == .dark ? 0.08 : 0.06), lineWidth: 0.5)
+            )
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 40)
         }
     }
     

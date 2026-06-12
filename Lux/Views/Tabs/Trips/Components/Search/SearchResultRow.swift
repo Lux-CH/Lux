@@ -68,54 +68,46 @@ struct SearchResultRow: View {
     }
     
     var body: some View {
-        HStack(spacing: 18) {
+        HStack(spacing: 14) {
             let (iconName, iconColor) = iconStyleForResult()
-            
+
             ZStack {
                 Circle()
-                    .fill(iconColor.opacity(0.15))
-                    .frame(width: 44, height: 44)
-                
+                    .fill(iconColor.opacity(0.14))
+                    .frame(width: 38, height: 38)
+
                 Image(systemName: iconName)
-                    .font(.system(size: 18))
+                    .font(.system(size: 16, weight: .medium))
                     .foregroundColor(iconColor)
                     .symbolRenderingMode(.hierarchical)
             }
-            
-            VStack(alignment: .leading, spacing: 4) {
+
+            VStack(alignment: .leading, spacing: 2) {
                 Text(result.name)
-                    .font(.system(size: 16, weight: .semibold))
+                    .font(.system(size: 15, weight: .medium))
                     .lineLimit(1)
                     .foregroundColor(.primary)
-                
+
                 if result.type != .adress, let address = formattedAddress() {
                     Text(address)
-                        .font(.system(size: 14))
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
+                        .lineLimit(1)
+                } else if let area = relevantArea() {
+                    Text(area)
+                        .font(.system(size: 12))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
                 }
-                
-                if let area = relevantArea() {
-                    Text(area)
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary.opacity(0.8))
-                        .lineLimit(1)
-                        .padding(.top, 1)
-                }
             }
-            
+
             Spacer()
-            
-            HStack {
-                if let currentLoc = locationManager.location {
-                    let distance = currentLoc.distance(from: CLLocation(latitude: result.lat, longitude: result.lon))
-                    Text(formatDistance(distance))
-                        .font(.caption)
-                        .foregroundColor(.secondary.opacity(0.7))
-                }
-                Image(systemName: "chevron.right")
-                    .font(.caption)
-                    .foregroundColor(.secondary.opacity(0.7))
+
+            if let currentLoc = locationManager.location {
+                let distance = currentLoc.distance(from: CLLocation(latitude: result.lat, longitude: result.lon))
+                Text(formatDistance(distance))
+                    .font(.system(size: 12))
+                    .foregroundColor(Color(.tertiaryLabel))
             }
         }
         .contentShape(Rectangle())

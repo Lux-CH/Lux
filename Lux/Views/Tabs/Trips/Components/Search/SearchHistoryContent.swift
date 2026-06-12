@@ -15,39 +15,23 @@ struct SearchHistoryContent: View {
     @EnvironmentObject var shortcutManager: ShortcutManager
     @State private var appearAnimation = false
     @State private var showClearHistoryAlert = false
-    private let resultCardCornerRadius: CGFloat = 16
-    private var resultCardTint: Color {
-        colorScheme == .dark ? Color(.systemBackground).opacity(0.8) : Color(.systemBackground)
-    }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             if viewModel.searchHistory.isEmpty {
                 EmptyStateContent(viewModel: viewModel)
             } else {
                 header
+                    .padding(.horizontal, 20)
+                    .padding(.top, 18)
+                    .padding(.bottom, 11)
+
                 ScrollView {
-                    GlassEffectGroup(spacing: 12) {
-                        VStack(spacing: 12) {
-                            ForEach(Array(viewModel.searchHistory.enumerated()), id: \.element.id) { index, result in
-                                historyRow(for: result)
-                                    .opacity(appearAnimation ? 1 : 0)
-                                    .offset(y: appearAnimation ? 0 : 10)
-                                    .animation(
-                                        .spring(response: 0.3, dampingFraction: 0.75)
-                                            .delay(Double(index) * 0.05),
-                                        value: appearAnimation
-                                    )
-                            }
-                        }
-                        .padding(.top, 6)
-                    }
-                    .padding(.bottom, 16)
+                    historyList
+                        .padding(.horizontal, 16)
+                    Spacer().frame(height: 40)
                 }
                 .scrollClipDisabled()
-                .safeAreaInset(edge: .bottom) {
-                    Spacer().frame(height: 12)
-                }
                 .mask(
                     VStack(spacing: 0) {
                         Rectangle()
@@ -56,151 +40,178 @@ struct SearchHistoryContent: View {
                             startPoint: .top,
                             endPoint: .bottom
                         )
-                        .frame(height: 20)
+                        .frame(height: 28)
                     }
                 )
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                        withAnimation { appearAnimation = true }
+            }
+        }
+        .onAppear {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                withAnimation { appearAnimation = true }
+            }
+        }
+        .onDisappear { appearAnimation = false }
+    }
+
+    private var header: some View {
+        HStack(spacing: 8) {
+            Text("Historique")
+                .font(.system(size: 15, weight: .semibold))
+                .foregroundColor(.secondary)
+
+            Spacer()
+
+            GlassEffectGroup(spacing: 6) {
+                HStack(spacing: 6) {
+                    if viewModel.isCurrentPositionAvailable() {
+                        Button {
+                            HapticFeedback.lightImpact()
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                viewModel.selectCurrentPosition()
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Image(systemName: "location.fill")
+                                    .font(.system(size: 13, weight: .semibold))
+                            }
+                            .foregroundColor(.accentColor)
+                            .padding(.vertical, 6)
+                            .padding(.horizontal, 24)
+                            .contentShape(Capsule(style: .continuous))
+                            .clipShape(Capsule(style: .continuous))
+                            .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
+                                $0.background(
+                                    Capsule(style: .continuous)
+                                        .fill(Color.accentColor.opacity(0.12))
+                                        .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                                )
+                            })
+                        }
+                        .buttonStyle(ScaleButtonStyle())
+                    }
+
+                    Button {
+                        HapticFeedback.lightImpact()
+                        showClearHistoryAlert = true
+                    } label: {
+                        HStack(spacing: 6) {
+                            Image(systemName: "trash")
+                                .font(.system(size: 13, weight: .semibold))
+                        }
+                        .padding(.vertical, 5.5)
+                        .padding(.horizontal, 24)
+                        .foregroundColor(.red)
+                        .contentShape(Capsule(style: .continuous))
+                        .clipShape(Capsule(style: .continuous))
+                        .adaptable(ios26: .glassButtonClear, fallback: {
+                            $0.background(
+                                Capsule(style: .continuous)
+                                    .fill(Color(.secondarySystemFill).opacity(0.5))
+                                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            )
+                        })
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                    .alert(String(localized: "Effacer l'historique ?"), isPresented: $showClearHistoryAlert) {
+                        Button(String(localized: "Annuler"), role: .cancel) { }
+                        Button(String(localized: "Effacer"), role: .destructive) {
+                            HapticFeedback.mediumImpact()
+                            withAnimation { viewModel.clearHistory() }
+                        }
+                    } message: {
+                        Text(String(localized: "Cette action supprimera tous les éléments de l'historique."))
                     }
                 }
             }
         }
     }
-    
-    private var header: some View {
-        HStack {
-            Text("Historique")
-                .font(.headline)
-                .foregroundColor(.secondary)
-                .padding(.top, -2) // iii negative padding values we like that that missed me !
-            Spacer()
-            Button {
-                HapticFeedback.lightImpact()
-                showClearHistoryAlert = true
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "trash")
-                        .font(.system(size: 13, weight: .semibold))
+
+    private var historyList: some View {
+        VStack(spacing: 0) {
+            ForEach(Array(viewModel.searchHistory.enumerated()), id: \.element.id) { index, result in
+                historyRow(for: result, index: index)
+
+                if index < viewModel.searchHistory.count - 1 {
+                    Divider()
+                        .padding(.leading, 68)
                 }
-                .padding(.vertical, 5.5)
-                .padding(.horizontal, 24)
-                .foregroundColor(.red)
-                .contentShape(Capsule(style: .continuous))
-                .clipShape(Capsule(style: .continuous))
-                .adaptable(ios26: .glassButtonClear, fallback: {
-                    $0.background(
-                        Capsule(style: .continuous)
-                            .fill(Color(.secondarySystemFill).opacity(0.5))
-                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                    )
-                    
-                })
             }
-            .buttonStyle(ScaleButtonStyle())
-            .alert(String(localized: "Effacer l'historique ?"), isPresented: $showClearHistoryAlert) {
-                Button(String(localized: "Annuler"), role: .cancel) { }
-                Button(String(localized: "Effacer"), role: .destructive) {
-                    HapticFeedback.mediumImpact()
-                    withAnimation { viewModel.clearHistory() }
-                }
-            } message: {
-                Text(String(localized: "Cette action supprimera tous les éléments de l'historique."))
-            }
-            
-            Button {
-                HapticFeedback.lightImpact()
-                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                    viewModel.selectCurrentPosition()
-                }
-            } label: {
-                HStack(spacing: 6) {
-                    Image(systemName: "location.fill")
-                        .font(.system(size: 13, weight: .semibold))
-                }
-                .foregroundColor(.accentColor)
-                .padding(.vertical, 6)
-                .padding(.horizontal, 24)
-                .contentShape(Capsule(style: .continuous))
-                .clipShape(Capsule(style: .continuous))
-                .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
-                    $0.background(
-                        Capsule(style: .continuous)
-                            .fill(Color.accentColor.opacity(0.12))
-                            .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
-                    )
-                })
-            }
-            .buttonStyle(ScaleButtonStyle())
-            .disabled(!viewModel.isCurrentPositionAvailable())
-            .opacity(viewModel.isCurrentPositionAvailable() ? 1 : 0.5)
-            
         }
-        .padding(.horizontal)
-        .padding(.top, 22)
-        .padding(.bottom, 8)
+        .background(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .fill(colorScheme == .dark
+                    ? Color(.tertiarySystemBackground)
+                    : Color(.secondarySystemBackground))
+                .shadow(
+                    color: Color.black.opacity(colorScheme == .dark ? 0.25 : 0.1),
+                    radius: 12,
+                    x: 0,
+                    y: 4
+                )
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 20, style: .continuous)
+                .stroke(Color.primary.opacity(colorScheme == .dark ? 0.08 : 0.06), lineWidth: 0.5)
+        )
+        .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
     }
-    
+
     @ViewBuilder
-    private func historyRow(for result: SearchResult) -> some View {
-        HStack(spacing: 12) {
-            let defaultIcon: (String, Color) = visualStyleStore.style(for: result.id).map { ($0.symbolName, $0.color) } ?? getIconForType(result.type, id: result.id)
-            let (iconName, iconColor) = shortcutSymbol(for: result).map { ($0, Color.accentColor) } ?? defaultIcon
+    private func historyRow(for result: SearchResult, index: Int) -> some View {
+        let defaultIcon: (String, Color) = visualStyleStore.style(for: result.id).map { ($0.symbolName, $0.color) }
+            ?? getIconForType(result.type, id: result.id)
+        let (iconName, iconColor) = shortcutSymbol(for: result).map { ($0, Color.accentColor) } ?? defaultIcon
+
+        HStack(spacing: 14) {
             ZStack {
                 Circle()
-                    .fill(iconColor.opacity(0.15))
-                    .frame(width: 44, height: 44)
+                    .fill(iconColor.opacity(0.14))
+                    .frame(width: 38, height: 38)
                 Image(systemName: iconName)
-                    .font(.system(size: 18))
+                    .font(.system(size: 16, weight: .medium))
                     .foregroundColor(iconColor)
                     .symbolRenderingMode(.hierarchical)
             }
+
             VStack(alignment: .leading, spacing: 2) {
                 Text(result.name)
-                    .font(.body)
-                    .fontWeight(.semibold)
+                    .font(.system(size: 15, weight: .medium))
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 if let area = relevantArea(result) {
                     Text(area)
-                        .font(.system(size: 13))
-                        .foregroundColor(.secondary.opacity(0.8))
+                        .font(.system(size: 12))
+                        .foregroundColor(.secondary)
                         .lineLimit(1)
-                        .padding(.top, 1)
                 }
             }
+
             Spacer(minLength: 0)
+
             Button {
                 HapticFeedback.mediumImpact()
-                withAnimation { viewModel.removeFromHistory(id: result.id) }
+                withAnimation(.spring(response: 0.4)) {
+                    viewModel.removeFromHistory(id: result.id)
+                }
             } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.secondary)
-                    .frame(width: 44, height: 44)
-                    .contentShape(Rectangle())
+                Image(systemName: "xmark")
+                    .font(.system(size: 10, weight: .bold))
+                    .foregroundColor(Color(.tertiaryLabel))
+                    .frame(width: 24, height: 24)
+                    .background(Color(.quaternarySystemFill), in: Circle())
             }
             .buttonStyle(.plain)
             .accessibilityLabel(Text(String(localized: "Supprimer de l'historique")))
         }
         .padding(.horizontal, 16)
-        .padding(.vertical, 10)
-        .adaptable(
-            ios26: .glassButtonTintedIn(
-                AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
-                resultCardTint
-            ),
-            fallback: {
-                $0.background(
-                    RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
-                        .fill(colorScheme == .dark ?
-                              Color(.systemBackground).opacity(0.8) :
-                              Color(.systemBackground))
-                        .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
-                )
-            }
-        )
+        .padding(.vertical, 12)
         .contentShape(Rectangle())
-        .padding(.horizontal)
+        .opacity(appearAnimation ? 1 : 0)
+        .offset(y: appearAnimation ? 0 : 8)
+        .animation(
+            .spring(response: 0.35, dampingFraction: 0.8).delay(Double(index) * 0.04),
+            value: appearAnimation
+        )
         .onTapGesture {
             withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                 viewModel.selectLocation(result)
@@ -208,7 +219,7 @@ struct SearchHistoryContent: View {
             }
         }
     }
-    
+
     private func relevantArea(_ result: SearchResult) -> String? {
         if let matchedArea = result.areas.first(where: { $0.matched }) {
             return matchedArea.name
@@ -219,7 +230,7 @@ struct SearchHistoryContent: View {
         }
         return nil
     }
-    
+
     private func getIconForType(_ type: LocationType, id: String = "") -> (String, Color) {
         switch type {
         case .adress:
@@ -233,7 +244,7 @@ struct SearchHistoryContent: View {
             return ("signpost.right.fill", .accentColor)
         }
     }
-    
+
     private func shortcutSymbol(for result: SearchResult) -> String? {
         if let matchByStop = shortcutManager.shortcuts.first(where: { $0.stopId == result.id }) {
             return matchByStop.symbol

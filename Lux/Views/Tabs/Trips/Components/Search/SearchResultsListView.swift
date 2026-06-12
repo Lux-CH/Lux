@@ -11,77 +11,81 @@ struct SearchResultsListView: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
     @State private var appearAnimation = false
-    private let resultCardCornerRadius: CGFloat = 16
-    private var resultCardTint: Color {
-        colorScheme == .dark ? Color(.systemBackground).opacity(0.8) : Color(.systemBackground)
-    }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Résultats")
-                .font(.headline)
+                .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.secondary)
-                .padding(.horizontal)
-                .padding(.top, 22)
+                .padding(.horizontal, 20)
+                .padding(.top, 24)
                 .padding(.bottom, 8)
-            
+
             ScrollView {
-                GlassEffectGroup(spacing: 12) {
-                    VStack(spacing: 12) {
-                        ForEach(Array(viewModel.searchResults.enumerated()), id: \.element.id) { index, result in
-                            Button(action: {
-                                withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-                                    viewModel.selectLocation(result)
-                                    HapticFeedback.lightImpact()
-                                }
-                            }) {
-                                SearchResultRow(result: result)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 10)
-                                    .contentShape(Rectangle())
-                                    .adaptable(
-                                        ios26: .glassButtonTintedIn(
-                                            AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
-                                            resultCardTint
-                                        ),
-                                        fallback: {
-                                            $0.background(
-                                                RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
-                                                    .fill(colorScheme == .dark ?
-                                                          Color(.systemBackground).opacity(0.8) :
-                                                          Color(.systemBackground))
-                                                    .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
-                                            )
-                                        }
-                                    )
-                                    .opacity(appearAnimation ? 1 : 0)
-                                    .offset(y: appearAnimation ? 0 : 10)
-                                    .animation(
-                                        .spring(response: 0.3, dampingFraction: 0.75)
-                                        .delay(Double(index) * 0.05),
-                                        value: appearAnimation
-                                    )
+                VStack(spacing: 0) {
+                    ForEach(Array(viewModel.searchResults.enumerated()), id: \.element.id) { index, result in
+                        Button(action: {
+                            withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
+                                viewModel.selectLocation(result)
+                                HapticFeedback.lightImpact()
                             }
-                            .buttonStyle(ScaleButtonStyle())
-                            .padding(.horizontal)
+                        }) {
+                            SearchResultRow(result: result)
+                                .padding(.horizontal, 16)
+                                .padding(.vertical, 12)
+                                .contentShape(Rectangle())
+                        }
+                        .buttonStyle(ScaleButtonStyle())
+                        .opacity(appearAnimation ? 1 : 0)
+                        .offset(y: appearAnimation ? 0 : 8)
+                        .animation(
+                            .spring(response: 0.35, dampingFraction: 0.8).delay(Double(index) * 0.04),
+                            value: appearAnimation
+                        )
+
+                        if index < viewModel.searchResults.count - 1 {
+                            Divider()
+                                .padding(.leading, 70)
                         }
                     }
-                    .padding(.top, 6)
                 }
-                .padding(.bottom, 16)
+                .background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(colorScheme == .dark
+                            ? Color(.tertiarySystemBackground)
+                            : Color(.secondarySystemBackground))
+                        .shadow(
+                            color: Color.black.opacity(colorScheme == .dark ? 0.25 : 0.1),
+                            radius: 12, x: 0, y: 4
+                        )
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .stroke(Color.primary.opacity(colorScheme == .dark ? 0.08 : 0.06), lineWidth: 0.5)
+                )
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .padding(.horizontal, 16)
+                .padding(.bottom, 40)
             }
             .scrollClipDisabled()
+            .mask(
+                VStack(spacing: 0) {
+                    Rectangle()
+                    LinearGradient(
+                        gradient: Gradient(colors: [Color.black, Color.clear]),
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: 28)
+                }
+            )
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                withAnimation {
-                    appearAnimation = true
-                }
+                withAnimation { appearAnimation = true }
             }
         }
-        .onDisappear {
-            appearAnimation = false
-        }
+        .onDisappear { appearAnimation = false }
     }
 }
 
@@ -264,79 +268,58 @@ struct MinCharactersView: View {
 struct CurrentLocationOption: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @Environment(\.colorScheme) private var colorScheme
-    @State private var isHovering = false
-    private let resultCardCornerRadius: CGFloat = 16
-    private var resultCardTint: Color {
-        colorScheme == .dark ? Color(.systemBackground).opacity(0.8) : Color(.systemBackground)
-    }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text("Localisation")
-                .font(.headline)
+                .font(.system(size: 15, weight: .semibold))
                 .foregroundColor(.secondary)
-                .padding(.horizontal)
-                .padding(.top, 22)
-                .padding(.bottom, 12)
-            
+                .padding(.horizontal, 20)
+                .padding(.top, 24)
+                .padding(.bottom, 8)
+
             Button(action: {
                 withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
                     viewModel.selectCurrentPosition()
                     HapticFeedback.lightImpact()
                 }
             }) {
-                HStack {
+                HStack(spacing: 14) {
                     ZStack {
                         Circle()
-                            .fill(Color.accentColor.opacity(0.15))
+                            .fill(Color.accentColor.opacity(0.14))
                             .frame(width: 38, height: 38)
-                        
                         Image(systemName: "location.fill")
-                            .font(.system(size: 16))
+                            .font(.system(size: 16, weight: .medium))
                             .foregroundColor(.accentColor)
-                            .scaleEffect(isHovering ? 1.1 : 1.0)
-                            .animation(.easeInOut(duration: 0.2), value: isHovering)
                     }
-                    
+
                     Text("Position Actuelle")
-                        .fontWeight(.medium)
-                    
+                        .font(.system(size: 15, weight: .medium))
+                        .foregroundColor(.primary)
+
                     Spacer()
-                    
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 14, weight: .medium))
-                        .foregroundColor(.secondary)
-                        .opacity(isHovering ? 1 : 0.6)
-                        .offset(x: isHovering ? 4 : 0)
-                        .animation(.easeInOut(duration: 0.2), value: isHovering)
                 }
-                .padding(.vertical, 14)
+                .padding(.vertical, 12)
                 .padding(.horizontal, 16)
-                .adaptable(
-                    ios26: .glassButtonTintedIn(
-                        AnyShape(RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)),
-                        resultCardTint
-                    ),
-                    fallback: {
-                        $0.background(
-                            RoundedRectangle(cornerRadius: resultCardCornerRadius, style: .continuous)
-                                .fill(colorScheme == .dark ?
-                                      Color(.systemBackground).opacity(0.8) :
-                                      Color(.systemBackground))
-                                .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
-                        )
-                    }
+                .background(
+                    RoundedRectangle(cornerRadius: 20, style: .continuous)
+                        .fill(colorScheme == .dark
+                            ? Color(.tertiarySystemBackground)
+                            : Color(.systemBackground))
                 )
-                .padding(.horizontal)
-                .onHover { hovering in
-                    isHovering = hovering
-                }
+                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+                .shadow(
+                    color: Color.black.opacity(colorScheme == .dark ? 0.25 : 0.07),
+                    radius: 14, x: 0, y: 4
+                )
+                .padding(.horizontal, 16)
             }
             .buttonStyle(ScaleButtonStyle())
-            
+
             Divider()
                 .padding(.vertical, 16)
-                .padding(.horizontal)
+                .padding(.horizontal, 20)
         }
         .transition(.opacity.combined(with: .move(edge: .top)))
     }
