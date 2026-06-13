@@ -158,6 +158,7 @@ struct MainNavigationView: View {
                                                         )
                                                     })
                                                 }
+                                                .padding(.horizontal, 20)
                                                 .sheet(isPresented: $showSettings) {
                                                     SettingsView()
                                                         .environmentObject(shortcutManager)
@@ -181,51 +182,58 @@ struct MainNavigationView: View {
                                             .transition(.opacity.combined(with: .move(edge: .top)))
                                         }
                                         
-                                        AnimatedSearchBar(
-                                            searchText: viewMode == .home ? $searchText : $stopsViewModel.searchQuery,
-                                            placeholderText: viewMode == .home ?
-                                            (progress.numOfTimesTripViewWasOpened <= 1 ?
-                                                String(localized: "Où souhaitez-vous aller ?") :
-                                                String(localized: "Aller à...")) :
-                                            String(localized: "Rechercher un arrêt..."),
-                                            onSearch: {
-                                                if viewMode == .stops {
-                                                    withAnimation(ultraSmoothSpring) {
-                                                        stopsViewModel.performSearch()
+                                        GlassEffectGroup(spacing: 6) {
+                                            AnimatedSearchBar(
+                                                searchText: viewMode == .home ? $searchText : $stopsViewModel.searchQuery,
+                                                placeholderText: viewMode == .home ?
+                                                (progress.numOfTimesTripViewWasOpened <= 1 ?
+                                                    String(localized: "Où souhaitez-vous aller ?") :
+                                                    String(localized: "Aller à...")) :
+                                                String(localized: "Rechercher un arrêt..."),
+                                                onSearch: {
+                                                    if viewMode == .stops {
+                                                        withAnimation(ultraSmoothSpring) {
+                                                            stopsViewModel.performSearch()
+                                                        }
+                                                    }
+                                                },
+                                                onClear: {
+                                                    if viewMode == .stops {
+                                                        withAnimation(ultraSmoothSpring) {
+                                                            stopsViewModel.resetSearch()
+                                                        }
+                                                    } else {
+                                                        searchText = ""
+                                                    }
+                                                },
+                                                isTextFieldDisabled: viewMode == .home
+                                            )
+                                            .focused($isSearchBarFocused)
+                                            .simultaneousGesture(
+                                                TapGesture().onEnded {
+                                                    if viewMode == .home {
+                                                        transitionToSearchMode()
                                                     }
                                                 }
-                                            },
-                                            onClear: {
-                                                if viewMode == .stops {
-                                                    withAnimation(ultraSmoothSpring) {
-                                                        stopsViewModel.resetSearch()
-                                                    }
-                                                } else {
-                                                    searchText = ""
-                                                }
-                                            },
-                                            isTextFieldDisabled: viewMode == .home
-                                        )
-                                        .focused($isSearchBarFocused)
-                                        .simultaneousGesture(
-                                            TapGesture().onEnded {
+                                            )
+                                            .accessibilityAction(.default) {
                                                 if viewMode == .home {
                                                     transitionToSearchMode()
                                                 }
                                             }
-                                        )
-                                        .accessibilityAction(.default) {
-                                            if viewMode == .home {
-                                                transitionToSearchMode()
-                                            }
+                                            .accessibilityLabel(viewMode == .home ? "Recherche de destination" : "")
+                                            .accessibilityHint(viewMode == .home ? "Double-tapez pour ouvrir la recherche d'itinéraires" : "")
+                                            .accessibilityAddTraits(viewMode == .home ? .isSearchField : [])
+                                            .padding(.top, viewMode == .home ? 0 : topSafeAreaInset + 5)
+                                            .padding(.leading, 17.5)
+                                            // trailing pulled in slightly less than leading: the search bar's
+                                            // large corner radius visually recedes vs. the tight gear button,
+                                            // so its right edge needs to extend a touch further to *look* aligned.
+                                            .padding(.trailing, 15.5)
+                                            .offset(y: searchBarOffset)
+                                            .animation(searchTransitionSpring, value: viewMode)
+                                            .animation(ultraSmoothSpring, value: searchBarOffset)
                                         }
-                                        .accessibilityLabel(viewMode == .home ? "Recherche de destination" : "")
-                                        .accessibilityHint(viewMode == .home ? "Double-tapez pour ouvrir la recherche d'itinéraires" : "")
-                                        .accessibilityAddTraits(viewMode == .home ? .isSearchField : [])
-                                        .padding(.top, viewMode == .home ? 0 : topSafeAreaInset + 5)
-                                        .offset(y: searchBarOffset)
-                                        .animation(searchTransitionSpring, value: viewMode)
-                                        .animation(ultraSmoothSpring, value: searchBarOffset)
                                     }
                                     .opacity(isAnimatingToSearch ? 0 : 1)
                                     .animation(searchTransitionSpring, value: isAnimatingToSearch)
@@ -471,7 +479,8 @@ struct MainNavigationView: View {
                                 .foregroundColor(Color.accentColor.opacity(0.5))
                         }
                     }
-                    .frame(width: 275, height: 52)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
                     .adaptable(ios26: .glassButtonClear, fallback: {
                         $0
                             .background(
@@ -542,7 +551,8 @@ struct MainNavigationView: View {
                                 }
                             }
                         }
-                        .frame(width: 134, height: 52.5)
+                        .frame(maxWidth: .infinity)
+                        .frame(height: 52.5)
                         .adaptable(ios26: .glassButtonClear, fallback: {
                             $0
                                 .background(
@@ -644,7 +654,8 @@ struct MainNavigationView: View {
                 }
             }
         }
-        .frame(width: 134, height: 52.5)
+        .frame(maxWidth: .infinity)
+        .frame(height: 52.5)
         .adaptable(ios26: .glassButtonClearTinted(Color.green.opacity(0.25)), fallback: {
             $0
                 .background(

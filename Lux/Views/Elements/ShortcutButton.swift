@@ -29,7 +29,8 @@ struct ShortcutButton: View {
                     }
                 }
             }
-            .frame(width: 134, height: 52.5)
+            .frame(maxWidth: .infinity)
+            .frame(height: 52.5)
             .adaptable(ios26: .glassButtonClear, fallback: {
                 $0
                     .background(
