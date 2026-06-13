@@ -71,7 +71,7 @@ struct TripsSearchTimePickerView: View {
                         )
                 }
                 .buttonStyle(ScaleButtonStyle())
-                .padding(.top, 4)
+                .padding(.top, -8)
             }
             Divider()
                 .padding(.horizontal)
