@@ -77,7 +77,7 @@ struct NearbyStopsView: View {
             } else if isWaitingForLocation {
                 ProgressView("En attente de votre position...")
                     .padding()
-            } else if !isUserConnectedToInternet {
+            } else if !isUserConnectedToInternet && !offline.isOfflineActive {
                 Spacer()
                 VStack(alignment: .center) {
                     Image(systemName: "wifi.slash")
