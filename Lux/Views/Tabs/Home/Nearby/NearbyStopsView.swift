@@ -20,6 +20,7 @@ struct NearbyStopsView: View {
     @ObservedObject var progress = Progress.shared
     
     @State private var lastFetchedLocation: CLLocation? = nil
+    @State private var pendingFetchLocation: CLLocation? = nil
     @State private var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     @State private var backgroundRefreshTask: Task<Void, Never>? = nil
     @State private var isUserConnectedToInternet: Bool = false
@@ -326,13 +327,14 @@ struct NearbyStopsView: View {
         
         isWaitingForLocation = false
         
-        if let lastLoc = lastFetchedLocation {
-            let distance = currentLoc.distance(from: lastLoc)
-            if distance >= significantDistance {
-                refreshNearbyStopsInBackground()
-            }
-        } else {
-            refreshNearbyStopsInBackground()
+        let referenceLoc = pendingFetchLocation ?? lastFetchedLocation
+        guard let referenceLoc else {
+            loadNearbyStops(showLoading: false)
+            return
+        }
+
+        if currentLoc.distance(from: referenceLoc) >= significantDistance {
+            loadNearbyStops(showLoading: false)
         }
     }
     
@@ -355,6 +357,7 @@ struct NearbyStopsView: View {
             isWaitingForLocation = false
             let fetchLocation = locationManager.location
             
+            pendingFetchLocation = fetchLocation
             defer {
                 if showLoading { isLoading = false }
                 if !Task.isCancelled {
@@ -381,6 +384,7 @@ struct NearbyStopsView: View {
                 self.progress.searchResults = filteredResults
                 self.lastFetchedLocation = fetchLocation
                 
+                self.pendingFetchLocation = nil
                 if filteredResults.isEmpty {
                     if maintenanceStatus == nil {
                         await checkMaintenanceStatus()
@@ -389,6 +393,7 @@ struct NearbyStopsView: View {
                 
             } catch {
                 if !(error is CancellationError) {
+                    self.pendingFetchLocation = nil
                     print("failed to load nerby stops!! \(error)")
                     if maintenanceStatus == nil {
                         await checkMaintenanceStatus()

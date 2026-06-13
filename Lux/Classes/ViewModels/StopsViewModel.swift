@@ -20,6 +20,7 @@ class StopsViewModel: ObservableObject {
     
     private var locationManager: LocationManager?
     private var lastFetchedLocation: CLLocation? = nil
+    private var pendingFetchLocation: CLLocation? = nil
     private let significantDistance: CLLocationDistance = 100.0
     
     var refreshTimer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
@@ -90,13 +91,14 @@ class StopsViewModel: ObservableObject {
     func checkLocationAndRefresh() {
         guard let currentLoc = locationManager?.location else { return }
         
-        if let lastLoc = lastFetchedLocation {
-            let distance = currentLoc.distance(from: lastLoc)
-            if distance >= significantDistance {
-                refreshNearbyStopsInBackground()
-            }
-        } else {
-            refreshNearbyStopsInBackground()
+        let referenceLoc = pendingFetchLocation ?? lastFetchedLocation
+        guard let referenceLoc else {
+            loadNearbyStops(showLoading: false)
+            return
+        }
+
+        if currentLoc.distance(from: referenceLoc) >= significantDistance {
+            loadNearbyStops(showLoading: false)
         }
     }
     
@@ -115,6 +117,7 @@ class StopsViewModel: ObservableObject {
             
             let fetchLocation = locationManager?.location
             
+            await MainActor.run { self.pendingFetchLocation = fetchLocation }
             defer {
                 if !Task.isCancelled {
                     self.backgroundRefreshTask = nil
@@ -140,12 +143,16 @@ class StopsViewModel: ObservableObject {
                 await MainActor.run {
                     self.searchResults = filteredResults
                     self.lastFetchedLocation = fetchLocation
+                    self.pendingFetchLocation = nil
                     self.isLoading = false
                 }
             } catch {
                 if !(error is CancellationError) {
                     print("Failed to load nearby stops: \(error)")
-                    await MainActor.run { self.isLoading = false }
+                    await MainActor.run {
+                        self.pendingFetchLocation = nil
+                        self.isLoading = false
+                    }
                 }
             }
         }
