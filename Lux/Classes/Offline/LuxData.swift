@@ -44,7 +44,7 @@ enum LuxData {
         if let provider = OfflineRouter.shared.active {
             return try await provider.geocode(text: text, type: type, place: place)
         }
-        return try await geocode(
+        return try await luxComGeocode(
             text: text, language: language, type: type,
             place: place, placeBias: placeBias
         )
@@ -57,7 +57,7 @@ enum LuxData {
         if let provider = OfflineRouter.shared.active {
             return try await provider.reverseGeocode(place: place, type: type)
         }
-        return try await reverseGeocode(place: place, type: type)
+        return try await luxComReverseGeocode(place: place, type: type)
     }
 
     static func trip(tripId: String) async throws -> Itinerary {
@@ -73,4 +73,24 @@ enum LuxData {
         }
         return try await getRoute(options)
     }
+}
+
+private func luxComGeocode(
+    text: String,
+    language: String,
+    type: LocationType?,
+    place: (Double, Double)?,
+    placeBias: Int?
+) async throws -> [SearchResult] {
+    try await geocode(
+        text: text, language: language, type: type,
+        place: place, placeBias: placeBias
+    )
+}
+
+private func luxComReverseGeocode(
+    place: (Double, Double),
+    type: LocationType?
+) async throws -> [SearchResult] {
+    try await reverseGeocode(place: place, type: type)
 }
