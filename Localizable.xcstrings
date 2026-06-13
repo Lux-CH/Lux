@@ -340,6 +340,9 @@
         }
       }
     },
+    "Accès aux horaires sans connexion Internet" : {
+
+    },
     "Accès hors ligne à votre carte" : {
       "localizations" : {
         "en" : {
@@ -409,6 +412,9 @@
           }
         }
       }
+    },
+    "Activé — gérez les horaires téléchargés" : {
+
     },
     "Activer l'option de partage d'arrêt" : {
       "localizations" : {
@@ -1335,6 +1341,9 @@
         }
       }
     },
+    "Cette information est indisponible hors ligne." : {
+
+    },
     "Changer" : {
       "localizations" : {
         "en" : {
@@ -1637,6 +1646,9 @@
           }
         }
       }
+    },
+    "Consultez les départs et itinéraires sans connexion" : {
+
     },
     "Contribuer à CrowdBack" : {
       "localizations" : {
@@ -1974,6 +1986,9 @@
         }
       }
     },
+    "Données cellulaires" : {
+
+    },
     "Double-cliquez pour obtenir plus de détails sur le prochain départ." : {
       "localizations" : {
         "en" : {
@@ -2063,6 +2078,9 @@
           }
         }
       }
+    },
+    "Échec du téléchargement" : {
+
     },
     "Effacer" : {
       "localizations" : {
@@ -2344,6 +2362,9 @@
         }
       }
     },
+    "Forcer le mode hors ligne" : {
+
+    },
     "Forte" : {
       "localizations" : {
         "en" : {
@@ -2590,6 +2611,15 @@
         }
       }
     },
+    "Horaires disponibles" : {
+
+    },
+    "Hors ligne" : {
+
+    },
+    "Hors ligne, les horaires affichés sont théoriques (sans temps réel) et la planification, le partage et l’enregistrement d’itinéraires sont indisponibles." : {
+
+    },
     "Icône" : {
       "localizations" : {
         "en" : {
@@ -2609,6 +2639,9 @@
           }
         }
       }
+    },
+    "Importation…" : {
+
     },
     "Impossible d'envoyer le SMS" : {
       "localizations" : {
@@ -2689,6 +2722,9 @@
           }
         }
       }
+    },
+    "Installation…" : {
+
     },
     "Interface compacte" : {
       "localizations" : {
@@ -2900,6 +2936,9 @@
         }
       }
     },
+    "La planification d’itinéraire est indisponible hors ligne." : {
+
+    },
     "La vitesse choisie n'est plus sélectionnable." : {
       "localizations" : {
         "en" : {
@@ -2919,6 +2958,9 @@
           }
         }
       }
+    },
+    "Le fichier téléchargé est invalide." : {
+
     },
     "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention." : {
       "localizations" : {
@@ -2989,6 +3031,9 @@
           }
         }
       }
+    },
+    "Les horaires téléchargés seront supprimés de votre appareil." : {
+
     },
     "Les informations de l'itinéraire ne sont pas disponibles pour le moment." : {
       "localizations" : {
@@ -3332,6 +3377,9 @@
         }
       }
     },
+    "Mettre à jour" : {
+
+    },
     "Mimosa Pastel" : {
       "localizations" : {
         "en" : {
@@ -3341,6 +3389,12 @@
           }
         }
       }
+    },
+    "Mis à jour le " : {
+
+    },
+    "Mise en place de la base de données" : {
+
     },
     "Mode d'affichage" : {
       "localizations" : {
@@ -3361,6 +3415,9 @@
           }
         }
       }
+    },
+    "Mode hors ligne" : {
+
     },
     "Modéré" : {
       "localizations" : {
@@ -4050,6 +4107,9 @@
         }
       }
     },
+    "Quelques Mo · connexion Wi-Fi recommandée" : {
+
+    },
     "raccourci" : {
       "localizations" : {
         "en" : {
@@ -4229,6 +4289,9 @@
           }
         }
       }
+    },
+    "Récupération des horaires de la région" : {
+
     },
     "Réduire l'espacement dans l'onglet des arrêts" : {
       "localizations" : {
@@ -4710,6 +4773,12 @@
         }
       }
     },
+    "Supprimer les données hors ligne" : {
+
+    },
+    "Supprimer les données hors ligne ?" : {
+
+    },
     "sur" : {
       "localizations" : {
         "en" : {
@@ -4739,6 +4808,24 @@
           }
         }
       }
+    },
+    "Téléchargement impossible (%lld)." : {
+
+    },
+    "Téléchargement…" : {
+
+    },
+    "Télécharger" : {
+
+    },
+    "Télécharger les horaires" : {
+
+    },
+    "Télécharger quand même" : {
+
+    },
+    "Téléchargez les horaires de la région pour consulter les départs et itinéraires sans connexion." : {
+
     },
     "Température" : {
       "localizations" : {
@@ -5050,6 +5137,9 @@
         }
       }
     },
+    "Utiliser les données locales même lorsqu’une connexion est disponible." : {
+
+    },
     "Utiliser ma position actuelle" : {
       "localizations" : {
         "en" : {
@@ -5190,6 +5280,9 @@
         }
       }
     },
+    "Vos horaires hors ligne datent de plus de 2 semaines. Touchez pour les mettre à jour." : {
+
+    },
     "Vos rapports ont été transmis avec succès.\nMerci pour votre contribution !" : {
       "localizations" : {
         "en" : {
@@ -5239,6 +5332,9 @@
           }
         }
       }
+    },
+    "Vous êtes en données cellulaires. Le téléchargement des horaires peut consommer plusieurs Mo de votre forfait. Préférez une connexion Wi-Fi." : {
+
     },
     "Vous pouvez activer la localisation dans les réglages de votre appareil pour profiter pleinement de Lux." : {
       "localizations" : {

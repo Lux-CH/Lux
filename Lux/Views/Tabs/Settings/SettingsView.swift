@@ -46,6 +46,7 @@ struct SettingsView: View {
                         }
                         customizationCard
                         dataSourceCard
+                        offlineModeCard
                         experimentalCard
                         aboutCard
                     }
@@ -295,6 +296,24 @@ struct SettingsView: View {
         }
     }
     
+    private var offlineModeCard: some View {
+        SettingsCard {
+            Section {
+                NavigationLink(destination: OfflineSettingsView()) {
+                    SettingsRow(
+                        icon: "icloud.slash",
+                        title: String(localized: "Mode hors ligne"),
+                        subtitle: settings.offlineModeEnabled
+                            ? String(localized: "Activé — gérez les horaires téléchargés")
+                            : String(localized: "Consultez les départs et itinéraires sans connexion"),
+                        showChevron: true
+                    )
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
     private var experimentalCard: some View {
         SettingsCard {
             Section {
