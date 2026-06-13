@@ -26,6 +26,7 @@
 		79C64D402DB930DC00C01B89 /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 79C64D3F2DB930DC00C01B89 /* Polyline */; };
 		79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806F52E10CA8E004CA0A0 /* LuxCom */; };
 		79E806F92E10CAAB004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806F82E10CAAB004CA0A0 /* LuxCom */; };
+		AA0100000000000000000003 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = AA0100000000000000000002 /* GRDB */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -168,6 +169,7 @@
 				798605782F0DC7C4003C9CC6 /* LuxComHAFAS in Frameworks */,
 				7986FFDD2F0D851F003C9CC6 /* LuxComHAFAS in Frameworks */,
 				79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */,
+				AA0100000000000000000003 /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -276,6 +278,7 @@
 				7986FFDC2F0D851F003C9CC6 /* LuxComHAFAS */,
 				798605772F0DC7C4003C9CC6 /* LuxComHAFAS */,
 				799EE2952FC72228007F2852 /* LuxCom */,
+				AA0100000000000000000002 /* GRDB */,
 			);
 			productName = Lux;
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
@@ -343,6 +346,7 @@
 				790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */,
 				798605762F0DC7C4003C9CC6 /* XCRemoteSwiftPackageReference "LuxComHAFAS" */,
 				799EE2942FC72228007F2852 /* XCRemoteSwiftPackageReference "LuxCom" */,
+				AA0100000000000000000001 /* XCRemoteSwiftPackageReference "GRDB" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 799D2A682D98ABF80066E9F5 /* Products */;
@@ -847,6 +851,14 @@
 				kind = branch;
 			};
 		};
+		AA0100000000000000000001 /* XCRemoteSwiftPackageReference "GRDB" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/groue/GRDB.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 6.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -910,6 +922,11 @@
 		79E806F82E10CAAB004CA0A0 /* LuxCom */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LuxCom;
+		};
+		AA0100000000000000000002 /* GRDB */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA0100000000000000000001 /* XCRemoteSwiftPackageReference "GRDB" */;
+			productName = GRDB;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

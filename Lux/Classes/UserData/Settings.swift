@@ -37,6 +37,11 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("swisspassOnHome") var swisspassOnHome: Bool = false
     @AppStorage("showDebug") var showDebug: Bool = false
 
+    /// Offline mode (optional on-device GTFS dataset)
+    @AppStorage("offlineModeEnabled") var offlineModeEnabled: Bool = false
+    @AppStorage("offlineForceOffline") var offlineForceOffline: Bool = false
+    @AppStorage("offlineLastImportDate") var offlineLastImportDate: Double = 0
+
     var isCita: Bool { dataSource == .cita }
 }
 
