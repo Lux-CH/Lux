@@ -16,7 +16,6 @@ final class OfflineManager: ObservableObject {
         case absent
         case downloading(Double)
         case extracting
-        case importing(Double)
         case ready
         case failed(String)
     }
@@ -77,7 +76,7 @@ final class OfflineManager: ObservableObject {
 
     var isWorking: Bool {
         switch state {
-        case .downloading, .extracting, .importing: return true
+        case .downloading, .extracting: return true
         default: return false
         }
     }

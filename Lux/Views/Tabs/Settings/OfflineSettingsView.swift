@@ -216,7 +216,7 @@ struct OfflineSettingsView: View {
             return Status(
                 icon: "arrow.down.circle", tint: .accentColor,
                 title: String(localized: "Télécharger les horaires"),
-                subtitle: String(localized: "Quelques Mo · connexion Wi-Fi recommandée"),
+                subtitle: String(localized: "~450Mo · connexion Wi-Fi recommandée"),
                 isBusy: false, fraction: nil, percentText: nil,
                 action: Action(title: String(localized: "Télécharger"),
                                icon: "arrow.down", run: requestDownload)
@@ -235,13 +235,6 @@ struct OfflineSettingsView: View {
                 title: String(localized: "Installation…"),
                 subtitle: String(localized: "Mise en place de la base de données"),
                 isBusy: true, fraction: nil, percentText: nil, action: nil
-            )
-        case .importing(let p):
-            return Status(
-                icon: "tray.and.arrow.down", tint: .accentColor,
-                title: String(localized: "Importation…"),
-                subtitle: "", isBusy: true, fraction: min(max(p, 0), 1),
-                percentText: "\(Int(min(max(p, 0), 1) * 100)) %", action: nil
             )
         case .ready:
             return Status(
