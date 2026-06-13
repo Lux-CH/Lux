@@ -49,7 +49,6 @@ struct LuxApp: App {
                     settings.appLaunchCount += 1
                 }
                 .onChange(of: locationManager.location) {
-                    guard isWaitingForStartupLocation else { return }
                     guard settings.dataSourceMode == .auto else { return }
                     guard let coordinate = locationManager.location?.coordinate else { return }
                     
@@ -149,7 +148,6 @@ struct LuxApp: App {
                 applyAutomaticDataSource(latitude: coordinate.latitude, longitude: coordinate.longitude)
                 isWaitingForStartupLocation = false
             } else {
-                // Auto defaults to LuxCom outside Geneva (or while location is unavailable).
                 setDataSourceIfNeeded(.luxCom)
                 isWaitingForStartupLocation = true
             }
@@ -174,10 +172,10 @@ struct LuxApp: App {
     }
     
     private func isInsideCitaBounds(latitude: Double, longitude: Double) -> Bool {
-        let minLongitude = 5.88593
-        let minLatitude = 46.09657
-        let maxLongitude = 6.31577
-        let maxLatitude = 46.31119
+        let minLongitude = 5.87943
+        let minLatitude = 46.09207
+        let maxLongitude = 6.32227
+        let maxLatitude = 46.31569
         
         return longitude >= minLongitude &&
                longitude <= maxLongitude &&
