@@ -210,6 +210,16 @@
       },
       "shouldTranslate" : false
     },
+    "~450Mo · connexion Wi-Fi recommandée" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "~450Mo · Wi-Fi connection recommended"
+          }
+        }
+      }
+    },
     "1 an" : {
       "localizations" : {
         "en" : {
@@ -341,7 +351,14 @@
       }
     },
     "Accès aux horaires sans connexion Internet" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Access departures without an Internet connection"
+          }
+        }
+      }
     },
     "Accès hors ligne à votre carte" : {
       "localizations" : {
@@ -414,7 +431,14 @@
       }
     },
     "Activé — gérez les horaires téléchargés" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enabled — manage downloaded departures"
+          }
+        }
+      }
     },
     "Activer l'option de partage d'arrêt" : {
       "localizations" : {
@@ -1342,7 +1366,14 @@
       }
     },
     "Cette information est indisponible hors ligne." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This information is unavailable offline."
+          }
+        }
+      }
     },
     "Changer" : {
       "localizations" : {
@@ -1648,7 +1679,14 @@
       }
     },
     "Consultez les départs et itinéraires sans connexion" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Look up departures and itineraries without internet"
+          }
+        }
+      }
     },
     "Contribuer à CrowdBack" : {
       "localizations" : {
@@ -1987,7 +2025,14 @@
       }
     },
     "Données cellulaires" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mobile data"
+          }
+        }
+      }
     },
     "Double-cliquez pour obtenir plus de détails sur le prochain départ." : {
       "localizations" : {
@@ -2080,7 +2125,14 @@
       }
     },
     "Échec du téléchargement" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download failed"
+          }
+        }
+      }
     },
     "Effacer" : {
       "localizations" : {
@@ -2363,7 +2415,14 @@
       }
     },
     "Forcer le mode hors ligne" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Force offline mode"
+          }
+        }
+      }
     },
     "Forte" : {
       "localizations" : {
@@ -2612,13 +2671,34 @@
       }
     },
     "Horaires disponibles" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Available departures"
+          }
+        }
+      }
     },
     "Hors ligne" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline"
+          }
+        }
+      }
     },
     "Hors ligne, les horaires affichés sont théoriques (sans temps réel) et la planification, le partage et l’enregistrement d’itinéraires sont indisponibles." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline, shown departures are theoretical (not in real time) and the planification, sharing or saving of itineraries are unavailable."
+          }
+        }
+      }
     },
     "Icône" : {
       "localizations" : {
@@ -2641,7 +2721,15 @@
       }
     },
     "Importation…" : {
-
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Importing…"
+          }
+        }
+      }
     },
     "Impossible d'envoyer le SMS" : {
       "localizations" : {
@@ -2724,7 +2812,14 @@
       }
     },
     "Installation…" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Installing…"
+          }
+        }
+      }
     },
     "Interface compacte" : {
       "localizations" : {
@@ -2937,7 +3032,14 @@
       }
     },
     "La planification d’itinéraire est indisponible hors ligne." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Itineraries are unavailable offline."
+          }
+        }
+      }
     },
     "La vitesse choisie n'est plus sélectionnable." : {
       "localizations" : {
@@ -2960,7 +3062,14 @@
       }
     },
     "Le fichier téléchargé est invalide." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The downloaded file is invalid."
+          }
+        }
+      }
     },
     "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention." : {
       "localizations" : {
@@ -3033,7 +3142,14 @@
       }
     },
     "Les horaires téléchargés seront supprimés de votre appareil." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloaded departures will be deleted from your device."
+          }
+        }
+      }
     },
     "Les informations de l'itinéraire ne sont pas disponibles pour le moment." : {
       "localizations" : {
@@ -3378,7 +3494,14 @@
       }
     },
     "Mettre à jour" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update"
+          }
+        }
+      }
     },
     "Mimosa Pastel" : {
       "localizations" : {
@@ -3391,10 +3514,24 @@
       }
     },
     "Mis à jour le " : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Last updated : "
+          }
+        }
+      }
     },
     "Mise en place de la base de données" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Setting up database"
+          }
+        }
+      }
     },
     "Mode d'affichage" : {
       "localizations" : {
@@ -3417,7 +3554,14 @@
       }
     },
     "Mode hors ligne" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Offline mode"
+          }
+        }
+      }
     },
     "Modéré" : {
       "localizations" : {
@@ -4107,9 +4251,6 @@
         }
       }
     },
-    "Quelques Mo · connexion Wi-Fi recommandée" : {
-
-    },
     "raccourci" : {
       "localizations" : {
         "en" : {
@@ -4291,7 +4432,14 @@
       }
     },
     "Récupération des horaires de la région" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gathering departures"
+          }
+        }
+      }
     },
     "Réduire l'espacement dans l'onglet des arrêts" : {
       "localizations" : {
@@ -4774,10 +4922,24 @@
       }
     },
     "Supprimer les données hors ligne" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete offline data"
+          }
+        }
+      }
     },
     "Supprimer les données hors ligne ?" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete offline data ?"
+          }
+        }
+      }
     },
     "sur" : {
       "localizations" : {
@@ -4810,22 +4972,64 @@
       }
     },
     "Téléchargement impossible (%lld)." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download failed (%lld)."
+          }
+        }
+      }
     },
     "Téléchargement…" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Downloading…"
+          }
+        }
+      }
     },
     "Télécharger" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download"
+          }
+        }
+      }
     },
     "Télécharger les horaires" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download departures"
+          }
+        }
+      }
     },
     "Télécharger quand même" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download anyway"
+          }
+        }
+      }
     },
     "Téléchargez les horaires de la région pour consulter les départs et itinéraires sans connexion." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Download the region’s departures to consult them without internet access"
+          }
+        }
+      }
     },
     "Température" : {
       "localizations" : {
@@ -5138,7 +5342,14 @@
       }
     },
     "Utiliser les données locales même lorsqu’une connexion est disponible." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Use local data even if an internet connection is availalb.e"
+          }
+        }
+      }
     },
     "Utiliser ma position actuelle" : {
       "localizations" : {
@@ -5281,7 +5492,14 @@
       }
     },
     "Vos horaires hors ligne datent de plus de 2 semaines. Touchez pour les mettre à jour." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your offline data is more than 2 weeks old. Tap to update them."
+          }
+        }
+      }
     },
     "Vos rapports ont été transmis avec succès.\nMerci pour votre contribution !" : {
       "localizations" : {
@@ -5334,7 +5552,14 @@
       }
     },
     "Vous êtes en données cellulaires. Le téléchargement des horaires peut consommer plusieurs Mo de votre forfait. Préférez une connexion Wi-Fi." : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You are using mobile data. The download of the departures can consume many data in your data plan. Prefer a Wi-Fi connection."
+          }
+        }
+      }
     },
     "Vous pouvez activer la localisation dans les réglages de votre appareil pour profiter pleinement de Lux." : {
       "localizations" : {

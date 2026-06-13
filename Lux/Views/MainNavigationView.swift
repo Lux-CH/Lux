@@ -343,36 +343,10 @@ struct MainNavigationView: View {
                                 toggleViewMode(newMode)
                             })
                             .overlay {
-                                OfflineModeBadge()
-                                    .background {
-                                        if viewMode == .stops {
-                                            ZStack {
-                                                Capsule(style: .continuous)
-                                                    .fill(
-                                                        Color(.secondarySystemBackground)
-                                                    )
-                                                    .shadow(
-                                                        color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
-                                                        radius: 7.5,
-                                                        x: 0,
-                                                        y: 5
-                                                    )
-                                                Capsule(style: .continuous)
-                                                    .fill(
-                                                        colorScheme == .dark
-                                                        ? Color(.secondarySystemBackground).opacity(0.7)
-                                                        : Color.white
-                                                    )
-                                                    .stroke(
-                                                        colorScheme == .dark
-                                                        ? Color.primary.opacity(0.1)
-                                                        : Color.gray.opacity(0.1),
-                                                        lineWidth: 0.75
-                                                    )
-                                            }
-                                            .frame(width: 350, height: 65)
-                                        }
-                                    }
+                                if viewMode == .home {
+                                    OfflineModeBadge()
+                                        .padding(.top, 87.5)
+                                }
                             }
                         }
                         .ignoresSafeArea(.keyboard)
