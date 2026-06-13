@@ -20,7 +20,7 @@ struct DateTimePickerView: View {
                 selection: $selectedDate,
                 displayedComponents: [.date, .hourAndMinute]
             )
-            .datePickerStyle(.compact)
+            .datePickerStyle(.wheel)
             .labelsHidden()
             .padding(.horizontal)
             .padding(.top, 12)
@@ -69,7 +69,7 @@ struct DateTimePickerView: View {
             .padding(.horizontal)
             .padding(.bottom, 12)
         }
-        .frame(width: 300, height: 150)
+        .frame(width: 350, height: 332.5)
 //        .background(Color(.secondarySystemBackground))
         .cornerRadius(12)
         .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
