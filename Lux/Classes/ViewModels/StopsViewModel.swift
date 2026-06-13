@@ -61,8 +61,8 @@ class StopsViewModel: ObservableObject {
             do {
                 if let coords = locationManager?.location?.coordinate {
                     var results: [SearchResult] = []
-                    if settings.dataSource == .luxCom {
-                        results = try await geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 2)
+                    if OfflineRouter.shared.isOfflineActive || settings.dataSource == .luxCom {
+                        results = try await LuxData.geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 2)
                     }
                     else {
                         results = try await citaGeocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 2)
@@ -126,7 +126,10 @@ class StopsViewModel: ObservableObject {
             
             do {
                 var results: [SearchResult] = []
-                if settings.dataSource == .luxCom {
+                if OfflineRouter.shared.isOfflineActive {
+                    results = try await LuxData.reverseGeocode(place: (loc.latitude, loc.longitude))
+                }
+                else if settings.dataSource == .luxCom {
                     results = try await getMapSearchResults(
                         currentLoc: (loc.latitude, loc.longitude))
                 }

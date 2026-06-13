@@ -132,8 +132,8 @@ class StopViewModel: ObservableObject {
     }
     
     private func fetchDeparturesAndArrivals(for time: Date) async throws -> StopTimes {
-        if settings.dataSource == .luxCom || shouldLoadViaLC {
-            let eventsTask = try await getDeparturesForStop(
+        if OfflineRouter.shared.isOfflineActive || settings.dataSource == .luxCom || shouldLoadViaLC {
+            let eventsTask = try await LuxData.departures(
                 stopId: stop.id,
                 time: time,
                 both: true,

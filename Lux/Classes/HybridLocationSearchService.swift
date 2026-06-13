@@ -38,14 +38,14 @@ struct HybridLocationSearchService {
     private func searchStops(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
         do {
             if let userLocation {
-                return try await geocode(
+                return try await LuxData.geocode(
                     text: query,
                     type: .stop,
                     place: (userLocation.latitude, userLocation.longitude),
                     placeBias: 2
                 )
             }
-            return try await geocode(text: query, type: .stop)
+            return try await LuxData.geocode(text: query, type: .stop)
         } catch {
             print("stop geocode error: \(error.localizedDescription)")
             return []
@@ -55,14 +55,14 @@ struct HybridLocationSearchService {
     private func searchLuxFallbackAll(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
         do {
             if let userLocation {
-                return try await geocode(
+                return try await LuxData.geocode(
                     text: query,
                     place: (userLocation.latitude, userLocation.longitude),
                     placeBias: 2
                 )
             }
             
-            return try await geocode(text: query)
+            return try await LuxData.geocode(text: query)
         } catch {
             print("lux fallback geocode error: \(error.localizedDescription)")
             return []

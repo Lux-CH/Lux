@@ -442,7 +442,7 @@ class TripsSearchViewModel: ObservableObject {
         
         Task {
             do {
-                let result = try await getRoute(options)
+                let result = try await LuxData.route(options)
                 
                 await MainActor.run {
                     let loadingEarlier = self.isLoadingEarlier
@@ -490,7 +490,11 @@ class TripsSearchViewModel: ObservableObject {
                 }
             } catch {
                 await MainActor.run {
-                    self.errorMessage = "Erreur: \(error.localizedDescription)"
+                    if case OfflineError.tripPlanningUnavailable = error {
+                        self.errorMessage = error.localizedDescription
+                    } else {
+                        self.errorMessage = "Erreur: \(error.localizedDescription)"
+                    }
                     self.isLoadingTrips = false
                     self.isLoadingEarlier = false
                     self.isLoadingLater = false
