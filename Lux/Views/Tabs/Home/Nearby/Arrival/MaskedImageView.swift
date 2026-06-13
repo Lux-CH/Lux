@@ -9,16 +9,18 @@ import SwiftUI
 import LuxCom
 
 struct MaskedImageView: View {
-    @State private var randomImageName: String = ""
-    
+    @Environment(\.colorScheme) var colorScheme
+    let stopIdentifier: String
     var body: some View {
         GeometryReader { geometry in
             ZStack {
-                Image(randomImageName.isEmpty ? "Chambesy1" : randomImageName)
+                Image(getImageForStop())
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: geometry.size.width, height: geometry.size.height)
                     .blur(radius: 8)
+                    .saturation(colorScheme == .light ? 1.5 : 1.0)
+                    .contrast(colorScheme == .light ? 1.2 : 1.0)
                     .allowsHitTesting(false)
                     .clipShape(
                         .rect(
@@ -38,23 +40,22 @@ struct MaskedImageView: View {
                             startPoint: .top,
                             endPoint: .bottom
                         )
-                        .opacity(0.14)
+                        .opacity(colorScheme == .light ? 0.35 : 0.14)
                     )
             }
             .frame(width: geometry.size.width, height: geometry.size.height)
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .onAppear {
-            randomImageName = getRandomStopHeaderImage()
-        }
     }
     
-    func getRandomStopHeaderImage() -> String {
+    func getImageForStop() -> String {
         let stopHeaderImages = ["Mountain1", "Jet1", "Rive1", "Rive2", "Vignes1", "Vignes2", "Champel1", "Chambesy1", "Lancy1", "Rive3"]
-        return stopHeaderImages.randomElement() ?? "Chambesy1"
+        let index = abs(stopIdentifier.hashValue) % stopHeaderImages.count
+        
+        return stopHeaderImages[index]
     }
 }
 
 #Preview {
-    MaskedImageView()
+    MaskedImageView(stopIdentifier: "nil")
 }

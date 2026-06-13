@@ -79,7 +79,7 @@ struct CompactStopView: View {
             .accessibilityHint("Double-tapez pour voir tous les départs à cet arrêt")
             .accessibilityAddTraits(.isButton)
             .background(
-                MaskedImageView()
+                MaskedImageView(stopIdentifier: viewModel.stop.id)
                     .edgesIgnoringSafeArea(.all)
                     .opacity(colorScheme == .dark ? 1.0 : 0.75)
                     .background(
