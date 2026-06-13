@@ -68,7 +68,12 @@ private struct iOS26EffectModifier: ViewModifier {
             if shouldUseLightModeButtonTint {
                 content.glassEffect(.regular.tint(defaultLightModeButtonTint).interactive(true))
             } else {
-                content.glassEffect(.clear.interactive(true))
+                if #available(iOS 27, *) {
+                    content.glassEffect(.regular.tint(Color(.tertiarySystemBackground)).interactive(true))
+                }
+                else {
+                    content.glassEffect(.clear.interactive(true))
+                }
             }
         case .glassButtonTinted(let tint):
             content.glassEffect(.regular.tint(tint).interactive(true))
@@ -83,7 +88,12 @@ private struct iOS26EffectModifier: ViewModifier {
         case .glassTintedIn(let shape, let color):
             content.glassEffect(.regular.tint(color), in: shape)
         case .glassButtonIn(let shape):
-            content.glassEffect(.clear.interactive(true), in: shape)
+            if #available(iOS 27, *), !shouldUseLightModeButtonTint {
+                content.glassEffect(.clear.tint(Color(.tertiarySystemBackground)).interactive(true), in: shape)
+            }
+            else {
+                content.glassEffect(.clear.interactive(true), in: shape)
+            }
         case .glassButtonTintedIn(let shape, let tint):
             content.glassEffect(.regular.tint(tint).interactive(true), in: shape)
         }

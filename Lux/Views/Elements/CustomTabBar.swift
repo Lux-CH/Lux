@@ -35,7 +35,9 @@ struct CustomTabBar: View {
             }
             .padding(8)
             .adaptable(
-                ios26: .glassIn(AnyShape(Capsule(style: .continuous))),
+                ios26: .glassTintedIn(AnyShape(Capsule(style: .continuous)), (colorScheme == .dark
+                                                                              ? Color(.secondarySystemBackground)
+                                                                              : Color(.secondarySystemBackground))),
                 fallback: { view in
                     view.background(
                         ZStack {
