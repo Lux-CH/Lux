@@ -45,6 +45,15 @@ struct ShareButtonView: View {
     }
     
     var body: some View {
+        // Sharing and saving require the network and are hidden offline.
+        if OfflineRouter.shared.isOfflineActive {
+            EmptyView()
+        } else {
+            mainBody
+        }
+    }
+
+    private var mainBody: some View {
         Group {
             if compact {
                 VStack(spacing: 10) {

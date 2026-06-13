@@ -14,6 +14,7 @@ import CoreLocation
 
 struct NearbyStopsView: View {
     @EnvironmentObject var locationManager: LocationManager
+    @EnvironmentObject var offline: OfflineManager
     @State private var isLoading = false
     @State private var isWaitingForLocation = false
     @ObservedObject var settings = Settings.shared
@@ -175,7 +176,23 @@ struct NearbyStopsView: View {
                         
                     }
                     
-                    if settings.appLaunchCount < 5 && progress.numOfTimesStopViewWasOpened < 2 && !settings.firstLaunch {
+                    if offline.needsUpdate {
+                        HintIndicatorView(
+                            icon: "arrow.down.circle",
+                            message: String(localized: "Vos horaires hors ligne datent de plus de 2 semaines. Touchez pour les mettre à jour."),
+                            delay: 0.5,
+                            duration: 25
+                        ) {
+                            showingSuggestion = false
+                        }
+                        .onAppear {
+                            showingSuggestion = true
+                        }
+                        .onTapGesture {
+                            offline.startImport()
+                        }
+                        .padding(.top, 14)
+                    } else if settings.appLaunchCount < 5 && progress.numOfTimesStopViewWasOpened < 2 && !settings.firstLaunch {
                         HintIndicatorView(
                             icon: "chevron.compact.up",
                             message: String(localized: "Glissez vers le haut pour voir plus d'arrêts à proximité"),
@@ -367,7 +384,10 @@ struct NearbyStopsView: View {
             
             do {
                 var results: [SearchResult] = []
-                if settings.dataSource == .luxCom {
+                if OfflineRouter.shared.isOfflineActive {
+                    results = try await LuxData.reverseGeocode(place: (loc.latitude, loc.longitude))
+                }
+                else if settings.dataSource == .luxCom {
                     results = try await getMapSearchResults(
                         currentLoc: (loc.latitude, loc.longitude))
                 }
