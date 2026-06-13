@@ -1,3 +1,10 @@
+//
+//  LuxData.swift
+//  Lux
+//
+//  Created by Constantin Clerc on 13.06.2026.
+//
+
 import Foundation
 import LuxCom
 
