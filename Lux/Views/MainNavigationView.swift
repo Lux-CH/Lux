@@ -294,7 +294,7 @@ struct MainNavigationView: View {
                                                     removal: .move(edge: .leading).combined(with: .opacity)
                                                 ))
                                                 .animation(ultraSmoothSpring, value: stopsViewModel.isSearchMode)
-                                            
+
                                             Divider()
                                                 .animation(ultraSmoothSpring, value: stopsViewModel.isSearchMode)
                                         }
@@ -342,6 +342,7 @@ struct MainNavigationView: View {
                             CustomTabBar(selectedTab: $viewMode, onModeChange: { newMode in
                                 toggleViewMode(newMode)
                             })
+                            OfflineModeBadge()
                         }
                         .ignoresSafeArea(.keyboard)
                         .transition(.move(edge: .bottom).combined(with: .opacity))
@@ -414,6 +415,11 @@ struct MainNavigationView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: .savedItinerariesDidChange)) { _ in
             refreshUpcomingSavedItinerary()
+        }
+        .onReceive(NotificationCenter.default.publisher(for: NSNotification.Name("ReloadNearbyStops"))) { _ in
+            if viewMode == .stops && !stopsViewModel.isSearchMode {
+                stopsViewModel.loadNearbyStops(showLoading: false)
+            }
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             locationManager.resumeUpdates()
