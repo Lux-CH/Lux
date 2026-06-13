@@ -64,7 +64,7 @@ class LocationSearchViewModel: ObservableObject {
         
         Task {
             do {
-                let results = try await reverseGeocode(place: (location.coordinate.latitude, location.coordinate.longitude))
+                let results = try await LuxData.reverseGeocode(place: (location.coordinate.latitude, location.coordinate.longitude))
                 
                 if let firstResult = results.first {
                     await MainActor.run {

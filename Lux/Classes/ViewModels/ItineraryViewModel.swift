@@ -105,8 +105,8 @@ final class ItineraryViewModel: ObservableObject {
         error = nil
         
         do {
-            if settings.dataSource == .luxCom || forceLC {
-                itinerary = try await getTrip(tripId: tripId)
+            if OfflineRouter.shared.isOfflineActive || settings.dataSource == .luxCom || forceLC {
+                itinerary = try await LuxData.trip(tripId: tripId)
             }
             else {
                 itinerary = try await citaGetTrip(tripId: tripId)
@@ -191,8 +191,8 @@ final class ItineraryViewModel: ObservableObject {
         
         do {
             if !dontActuallyFetch {
-                if settings.dataSource == .luxCom || forceLC {
-                    let newItinerary = try await getTrip(tripId: tripId)
+                if OfflineRouter.shared.isOfflineActive || settings.dataSource == .luxCom || forceLC {
+                    let newItinerary = try await LuxData.trip(tripId: tripId)
                     itinerary = newItinerary
                 }
                 else {
