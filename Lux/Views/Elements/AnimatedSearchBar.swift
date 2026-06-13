@@ -59,7 +59,8 @@ struct AnimatedSearchBar: View {
             .accessibilityHidden(isTextFieldDisabled)
             .padding(.trailing, 18)
         }
-        .frame(width: 350, height: 60)
+        .frame(maxWidth: .infinity)
+        .frame(height: 60)
         .contentShape(Capsule(style: .continuous))
         .adaptable(ios26: .glassButtonClear, fallback: {
             $0.background(
