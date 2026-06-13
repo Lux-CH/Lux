@@ -20,12 +20,11 @@ struct TripsSearchHeaderView: View {
     @State private var contentOpacity: Double = 0
     var onBack: (() -> Void)?
 
-    private let statusBarSpacing: CGFloat = 48
     
+    private let statusBarSpacing: CGFloat = 48
     var body: some View {
         ZStack(alignment: .top) {
             headerBackground
-                .ignoresSafeArea(edges: .top)
 
             VStack(spacing: 22.5) {
                 topBar
@@ -37,6 +36,7 @@ struct TripsSearchHeaderView: View {
             .padding(.horizontal, 16)
             .offset(y: headerOffset)
         }
+        .ignoresSafeArea(edges: .top)
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.1)) {
                 headerOffset = 0
