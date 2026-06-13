@@ -20,27 +20,23 @@ struct TripsSearchHeaderView: View {
     @State private var contentOpacity: Double = 0
     var onBack: (() -> Void)?
 
-    private var topSafeAreaInset: CGFloat {
-        UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .first?.keyWindow?.safeAreaInsets.top ?? 44
-    }
+    private let statusBarSpacing: CGFloat = 48
     
     var body: some View {
         ZStack(alignment: .top) {
             headerBackground
-            
+                .ignoresSafeArea(edges: .top)
+
             VStack(spacing: 22.5) {
                 topBar
                     .opacity(contentOpacity)
                 inputCard
                     .opacity(contentOpacity)
             }
-            .padding(.top, topSafeAreaInset - 7)
+            .padding(.top, statusBarSpacing)
             .padding(.horizontal, 16)
             .offset(y: headerOffset)
         }
-        .ignoresSafeArea(edges: .top)
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.1)) {
                 headerOffset = 0

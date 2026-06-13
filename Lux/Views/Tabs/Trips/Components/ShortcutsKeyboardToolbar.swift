@@ -76,7 +76,9 @@ struct ShortcutsKeyboardToolbar: View {
             }
             .frame(height: 56)
             .clipShape(Capsule())
-            .glassEffect(.regular)
+            .glassEffect(.regular.tint(colorScheme == .dark
+                ? Color(red: 0.184, green: 0.184, blue: 0.188)
+                : Color(red: 0.902, green: 0.910, blue: 0.925))) //HERE
             .padding(.horizontal, 8)
             .padding(.bottom, 8)
         }
