@@ -26,8 +26,8 @@ struct TripsSearchTimePickerView: View {
     var body: some View {
         VStack(spacing: 12) {
             Picker("Type", selection: $departureType) {
-                Text("Départ").tag(DepartureType.leaveAt)
-                Text("Arrivée").tag(DepartureType.arriveBy)
+                Text("Partir à").tag(DepartureType.leaveAt)
+                Text("Arriver à").tag(DepartureType.arriveBy)
             }
             .pickerStyle(.segmented)
             .padding(.horizontal)
@@ -43,7 +43,7 @@ struct TripsSearchTimePickerView: View {
                 selection: $localDate,
                 displayedComponents: [.date, .hourAndMinute]
             )
-            .datePickerStyle(.compact)
+            .datePickerStyle(.wheel)
             .labelsHidden()
             .padding(.horizontal)
             .onChange(of: localDate) {
@@ -104,7 +104,7 @@ struct TripsSearchTimePickerView: View {
             .padding(.horizontal)
             .padding(.bottom, 12)
         }
-        .frame(width: 300)
+        .frame(width: 350)
 //        .background(
 //            colorScheme == .dark ?
 //            Color(.secondarySystemBackground) :

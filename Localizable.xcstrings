@@ -836,6 +836,16 @@
         }
       }
     },
+    "Arriver à" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrive at"
+          }
+        }
+      }
+    },
     "Astuces" : {
       "localizations" : {
         "en" : {
@@ -3730,6 +3740,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Share trip"
+          }
+        }
+      }
+    },
+    "Partir à" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave at"
           }
         }
       }
