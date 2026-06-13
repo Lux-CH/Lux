@@ -13,6 +13,7 @@ import LuxCom
 struct HybridLocationSearchService {
     private let maxCompletionRequests = 3
     private let maxReturnedPlaces = 10
+    private let scorer = SearchResultScorer()
     
     func search(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
         async let stopSearchResults = searchStops(query: query, userLocation: userLocation)
@@ -30,8 +31,8 @@ struct HybridLocationSearchService {
         }
         
         let deduplicatedByID = deduplicated(results: mergedResults)
-        let sortedResults = sortedByClosestDistance(deduplicatedByID, userLocation: userLocation)
-        return deduplicatedByNameAndProximity(sortedResults)
+        let rankedResults = scorer.ranked(deduplicatedByID, query: query, userLocation: userLocation)
+        return deduplicatedByNameAndProximity(rankedResults)
     }
     
     private func searchStops(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
@@ -75,12 +76,10 @@ struct HybridLocationSearchService {
         
         let region = makeSearchRegion(around: userLocation)
         
-        // Prefer direct MKLocalSearch first so we always return quickly.
         let directSearchOutcome = await performMapSearch(query: query, region: region)
         var mapItems = directSearchOutcome.items
         var wasRateLimited = directSearchOutcome.wasRateLimited
         
-        // Enrich with completions only when direct search yields nothing.
         if mapItems.isEmpty && !wasRateLimited {
             let completionOutcome = await completionMapItems(query: query, region: region)
             mapItems.append(contentsOf: completionOutcome.items)
@@ -461,44 +460,6 @@ struct HybridLocationSearchService {
         let lhsLocation = CLLocation(latitude: lhs.lat, longitude: lhs.lon)
         let rhsLocation = CLLocation(latitude: rhs.lat, longitude: rhs.lon)
         return lhsLocation.distance(from: rhsLocation) <= threshold
-    }
-    
-    private func sortedByClosestDistance(_ results: [SearchResult], userLocation: CLLocationCoordinate2D?) -> [SearchResult] {
-        guard let userLocation else {
-            return results
-        }
-        
-        let userCLLocation = CLLocation(latitude: userLocation.latitude, longitude: userLocation.longitude)
-        
-        return results.sorted { lhs, rhs in
-            let lhsDistanceMeters = Int(distance(from: userCLLocation, to: lhs).rounded())
-            let rhsDistanceMeters = Int(distance(from: userCLLocation, to: rhs).rounded())
-            
-            if lhsDistanceMeters != rhsDistanceMeters {
-                return lhsDistanceMeters < rhsDistanceMeters
-            }
-            
-            if lhs.type != rhs.type {
-                return lhs.type == .stop
-            }
-            
-            if lhs.score != rhs.score {
-                return lhs.score > rhs.score
-            }
-            
-            return lhs.name.localizedCaseInsensitiveCompare(rhs.name) == .orderedAscending
-        }
-    }
-    
-    private func distance(from userLocation: CLLocation, to result: SearchResult) -> CLLocationDistance {
-        let coordinate = CLLocationCoordinate2D(latitude: result.lat, longitude: result.lon)
-        
-        if !CLLocationCoordinate2DIsValid(coordinate) || (result.lat == 0.0 && result.lon == 0.0) {
-            return .greatestFiniteMagnitude
-        }
-        
-        let resultLocation = CLLocation(latitude: result.lat, longitude: result.lon)
-        return userLocation.distance(from: resultLocation)
     }
     
     private func deduplicatedMapItems(_ items: [MKMapItem]) -> [MKMapItem] {
