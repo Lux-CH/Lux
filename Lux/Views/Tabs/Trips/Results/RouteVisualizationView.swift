@@ -11,6 +11,19 @@ import LuxCom
 struct RouteVisualizationView: View {
     let legs: [Leg]
     
+
+    private enum RouteSegment {
+        case leg(leg: Leg, isFirst: Bool, isLast: Bool)
+        case wait(seconds: Int)
+
+        var weight: Int {
+            switch self {
+            case .leg(let leg, _, _): return leg.duration
+            case .wait(let seconds): return seconds
+            }
+        }
+    }
+
     private var filteredLegs: [Leg] {
         legs.filter { leg in
             if leg.mode == .walk {
@@ -21,64 +34,86 @@ struct RouteVisualizationView: View {
             return true
         }
     }
-    
-    private var totalDuration: Int {
-        filteredLegs.reduce(0) { $0 + $1.duration } + calculateTotalWaitingTime()
-    }
 
     private func calculateWaitingTime(between currentLeg: Leg, and nextLeg: Leg) -> Int {
         max(0, Int(nextLeg.startTime.timeIntervalSince(currentLeg.endTime)))
     }
 
-    private func calculateTotalWaitingTime() -> Int {
-        guard filteredLegs.count > 1 else { return 0 }
-        
-        return zip(filteredLegs, filteredLegs.dropFirst()).reduce(0) { totalWaiting, legPair in
-            let (currentLeg, nextLeg) = legPair
-            return totalWaiting + calculateWaitingTime(between: currentLeg, and: nextLeg)
-        }
-    }
-    
-    var body: some View {
-        GeometryReader { geometry in
-            HStack(spacing: 0) {
-                ForEach(0..<(filteredLegs.count * 2 - 1), id: \.self) { index in
-                    if index % 2 == 0 {
-                        let legIndex = index / 2
-                        let leg = filteredLegs[legIndex]
-                        let proportion = CGFloat(leg.duration) / CGFloat(totalDuration)
-                        let calculatedWidth = geometry.size.width * proportion
-                        let width = min(calculatedWidth, geometry.size.width - CGFloat(filteredLegs.count - 1) * 4)
-                        
-                        let finalWidth = max(width, CGFloat(10))
-                        
-                        LegSegmentView(
-                            leg: leg,
-                            isFirst: legIndex == 0,
-                            isLast: legIndex == filteredLegs.count - 1
-                        )
-                        .frame(width: finalWidth)
-                    } else {
-                        let previousLegIndex = index / 2
-                        let nextLegIndex = previousLegIndex + 1
-                        
-                        if nextLegIndex < filteredLegs.count {
-                            let waitingTime = calculateWaitingTime(between: filteredLegs[previousLegIndex], and: filteredLegs[nextLegIndex])
-                            
-                            if waitingTime > 120 {
-                                let proportion = CGFloat(waitingTime) / CGFloat(totalDuration)
-                                let calculatedWidth = geometry.size.width * proportion
-                                let finalWidth = max(calculatedWidth, 10)
-                                
-                                WaitingTimeView(seconds: waitingTime)
-                                    .frame(width: finalWidth)
-                            }
-                        }
-                    }
+    private var displayedSegments: [RouteSegment] {
+        var segments: [RouteSegment] = []
+        for (index, leg) in filteredLegs.enumerated() {
+            segments.append(.leg(leg: leg, isFirst: index == 0, isLast: index == filteredLegs.count - 1))
+
+            let nextIndex = index + 1
+            if nextIndex < filteredLegs.count {
+                let waitingTime = calculateWaitingTime(between: leg, and: filteredLegs[nextIndex])
+                if waitingTime > 120 {
+                    segments.append(.wait(seconds: waitingTime))
                 }
             }
-            .frame(height: geometry.size.height)
-            .frame(maxWidth: geometry.size.width)
+        }
+        return segments
+    }
+    
+    private func segmentWidths(for segments: [RouteSegment], availableWidth: CGFloat) -> [CGFloat] {
+        let minWidth: CGFloat = 10
+        guard !segments.isEmpty, availableWidth > 0 else {
+            return segments.map { _ in 0 }
+        }
+
+        guard availableWidth >= minWidth * CGFloat(segments.count) else {
+            return segments.map { _ in availableWidth / CGFloat(segments.count) }
+        }
+
+        var widths = [CGFloat](repeating: 0, count: segments.count)
+        var pinned = [Bool](repeating: false, count: segments.count)
+
+        while true {
+            let pinnedWidth = zip(widths, pinned).reduce(CGFloat(0)) { $0 + ($1.1 ? $1.0 : 0) }
+            let flexibleWeight = zip(segments, pinned).reduce(0) { $0 + ($1.1 ? 0 : $1.0.weight) }
+            let remaining = availableWidth - pinnedWidth
+
+            guard flexibleWeight > 0 else { break }
+
+            var changed = false
+            for i in segments.indices where !pinned[i] {
+                let width = remaining * CGFloat(segments[i].weight) / CGFloat(flexibleWeight)
+                if width < minWidth {
+                    widths[i] = minWidth
+                    pinned[i] = true
+                    changed = true
+                } else {
+                    widths[i] = width
+                }
+            }
+            if !changed { break }
+        }
+
+        return widths
+    }
+
+    @ViewBuilder
+    private func segmentView(for segment: RouteSegment) -> some View {
+        switch segment {
+        case .leg(let leg, let isFirst, let isLast):
+            LegSegmentView(leg: leg, isFirst: isFirst, isLast: isLast)
+        case .wait(let seconds):
+            WaitingTimeView(seconds: seconds)
+        }
+    }
+
+    var body: some View {
+        GeometryReader { geometry in
+            let segments = displayedSegments
+            let widths = segmentWidths(for: segments, availableWidth: geometry.size.width)
+
+            HStack(spacing: 0) {
+                ForEach(segments.indices, id: \.self) { index in
+                    segmentView(for: segments[index])
+                        .frame(width: widths[index])
+                }
+            }
+            .frame(width: geometry.size.width, height: geometry.size.height)
         }
     }
 }
