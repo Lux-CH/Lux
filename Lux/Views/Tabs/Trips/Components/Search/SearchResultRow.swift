@@ -103,7 +103,7 @@ struct SearchResultRow: View {
 
             Spacer()
 
-            if let currentLoc = locationManager.location {
+            if let currentLoc = locationManager.location, !(result.lat == 0 && result.lon == 0) {
                 let distance = currentLoc.distance(from: CLLocation(latitude: result.lat, longitude: result.lon))
                 Text(formatDistance(distance))
                     .font(.system(size: 12))
