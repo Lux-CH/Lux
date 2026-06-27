@@ -38,7 +38,7 @@ class LocationSearchViewModel: ObservableObject {
         isLoading = true
         
         searchTask = Task {
-            try? await Task.sleep(for: .milliseconds(280))
+            try? await Task.sleep(for: .milliseconds(125))
             if Task.isCancelled { return }
 
             let currentUserLocation = userLocation.map {
