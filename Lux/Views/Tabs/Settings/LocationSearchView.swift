@@ -147,8 +147,11 @@ struct LocationSearchView: View {
 
                 ForEach(Array(viewModel.searchResults.enumerated()), id: \.element.id) { index, result in
                     Button {
-                        selectedLocation = result
-                        onLocationSelected(result)
+                        Task {
+                            let resolved = await viewModel.resolve(result)
+                            selectedLocation = resolved
+                            onLocationSelected(resolved)
+                        }
                     } label: {
                         SearchResultRow(result: result)
                             .padding(.horizontal, 16)

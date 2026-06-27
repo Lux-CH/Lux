@@ -255,6 +255,14 @@ class TripsSearchViewModel: ObservableObject {
     }
     
     func selectLocation(_ location: SearchResult) {
+        Task { @MainActor in
+            let resolved = await hybridSearchService.resolve(location)
+            applySelectedLocation(resolved)
+        }
+    }
+
+    @MainActor
+    private func applySelectedLocation(_ location: SearchResult) {
         addToHistory(location)
         if activeSearchField == .from {
             selectedFrom = .searchResult(location)
@@ -360,6 +368,9 @@ class TripsSearchViewModel: ObservableObject {
         cancelBackgroundTasks()
         
         backgroundRefreshTask = Task {
+            try? await Task.sleep(for: .milliseconds(280))
+            if Task.isCancelled { return }
+
             let userCoordinate = self.locationManager?.location?.coordinate
             let results = await self.hybridSearchService.search(
                 query: query,

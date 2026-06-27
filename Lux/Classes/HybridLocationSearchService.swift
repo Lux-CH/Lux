@@ -11,7 +11,6 @@ import MapKit
 import LuxCom
 
 struct HybridLocationSearchService {
-    private let maxCompletionRequests = 3
     private let maxReturnedPlaces = 10
     private let scorer = SearchResultScorer()
     
@@ -73,53 +72,206 @@ struct HybridLocationSearchService {
         if await MapKitRateLimitState.shared.isRateLimited() {
             return PlaceSearchOutcome(results: [], wasRateLimited: true)
         }
-        
+
         let region = makeSearchRegion(around: userLocation)
-        
-        let directSearchOutcome = await performMapSearch(query: query, region: region)
-        var mapItems = directSearchOutcome.items
-        var wasRateLimited = directSearchOutcome.wasRateLimited
-        
-        if mapItems.isEmpty && !wasRateLimited {
-            let completionOutcome = await completionMapItems(query: query, region: region)
-            mapItems.append(contentsOf: completionOutcome.items)
-            wasRateLimited = completionOutcome.wasRateLimited
+
+        let completer = await MainActor.run { MapKitCompleterClient() }
+        let completions = await completer.fetchCompletions(query: query, region: region, timeout: 1.0)
+
+        if !completions.isEmpty {
+            let results = await mapCompletionsToOutcome(completions)
+            return PlaceSearchOutcome(results: results, wasRateLimited: false)
         }
-        
-        let filteredMapItems = mapItems.filter { !isMapKitTransitStop($0) }
+
+        let directOutcome = await performMapSearch(query: query, region: region)
+        if directOutcome.wasRateLimited {
+            return PlaceSearchOutcome(results: [], wasRateLimited: true)
+        }
+
+        let resolvedResults = await makeResolvedResults(from: directOutcome.items)
+        return PlaceSearchOutcome(results: resolvedResults, wasRateLimited: false)
+    }
+
+    private func mapCompletionsToOutcome(_ completions: [MKLocalSearchCompletion]) async -> [SearchResult] {
+        var results: [SearchResult] = []
+        var completionsByID: [String: MKLocalSearchCompletion] = [:]
+        var stylesByID: [String: SearchResultVisualStyle] = [:]
+        var seenIDs = Set<String>()
+
+        for (index, completion) in completions.prefix(maxReturnedPlaces).enumerated() {
+            guard let title = cleaned(completion.title) else {
+                continue
+            }
+
+            let subtitle = cleaned(completion.subtitle)
+            let identifier = completionIdentifier(title: title, subtitle: subtitle)
+            guard !seenIDs.contains(identifier) else {
+                continue
+            }
+            let score = max(0.01, 1.0 - (Double(index) * 0.01))
+
+            if let mapItem = privateMapItem(from: completion) {
+                if isMapKitTransitStop(mapItem) {
+                    continue
+                }
+                if let mapped = mapItemToSearchResult(mapItem, rank: index) {
+                    seenIDs.insert(identifier)
+                    let core = mapped.result
+                    results.append(
+                        SearchResult(
+                            type: core.type,
+                            tokens: core.tokens,
+                            name: core.name.isEmpty ? title : core.name,
+                            id: identifier,
+                            lat: core.lat,
+                            lon: core.lon,
+                            level: core.level,
+                            street: core.street,
+                            houseNumber: core.houseNumber,
+                            zip: core.zip,
+                            areas: core.areas.isEmpty ? makeAreas(fromSubtitle: subtitle) : core.areas,
+                            score: score
+                        )
+                    )
+                    if let style = mapped.visualStyle {
+                        stylesByID[identifier] = style
+                    }
+                    continue
+                }
+            }
+
+            seenIDs.insert(identifier)
+            let isAddress = completionLooksLikeAddress(completion)
+            results.append(
+                SearchResult(
+                    type: isAddress ? .adress : .place,
+                    tokens: [],
+                    name: title,
+                    id: identifier,
+                    lat: 0,
+                    lon: 0,
+                    areas: makeAreas(fromSubtitle: subtitle),
+                    score: score
+                )
+            )
+            completionsByID[identifier] = completion
+        }
+
+        if !completionsByID.isEmpty || !stylesByID.isEmpty {
+            await MainActor.run {
+                if !completionsByID.isEmpty {
+                    MapKitCompletionStore.shared.setCompletions(completionsByID)
+                }
+                if !stylesByID.isEmpty {
+                    SearchResultVisualStyleStore.shared.setStyles(stylesByID)
+                }
+            }
+        }
+
+        return results
+    }
+
+    private func privateMapItem(from completion: MKLocalSearchCompletion) -> MKMapItem? {
+        let key = "mapItem"
+        guard completion.responds(to: NSSelectorFromString(key)) else {
+            return nil
+        }
+
+        guard let mapItem = completion.value(forKey: key) as? MKMapItem else {
+            return nil
+        }
+
+        let coordinate = coordinate(of: mapItem)
+        guard CLLocationCoordinate2DIsValid(coordinate),
+              !(coordinate.latitude == 0 && coordinate.longitude == 0) else {
+            return nil
+        }
+
+        return mapItem
+    }
+
+    private func coordinate(of item: MKMapItem) -> CLLocationCoordinate2D {
+        if #available(iOS 26.0, *) {
+            return item.location.coordinate
+        }
+        return item.placemark.coordinate
+    }
+
+    private func makeResolvedResults(from items: [MKMapItem]) async -> [SearchResult] {
+        let filteredMapItems = items.filter { !isMapKitTransitStop($0) }
         let dedupedMapItems = deduplicatedMapItems(filteredMapItems)
-        
+
         let mappedResults = dedupedMapItems
             .prefix(maxReturnedPlaces)
             .enumerated()
             .compactMap { index, item in
                 mapItemToSearchResult(item, rank: index)
             }
-        
+
         let stylesByResultID = mappedResults.reduce(into: [String: SearchResultVisualStyle]()) { dictionary, mappedResult in
             if let style = mappedResult.visualStyle {
                 dictionary[mappedResult.result.id] = style
             }
-            }
-        
+        }
+
         if !stylesByResultID.isEmpty {
             await MainActor.run {
                 SearchResultVisualStyleStore.shared.setStyles(stylesByResultID)
             }
         }
-        
-        return PlaceSearchOutcome(
-            results: mappedResults.map(\.result),
-            wasRateLimited: wasRateLimited
-        )
+
+        return mappedResults.map(\.result)
     }
-    
-    private func completionMapItems(query: String, region: MKCoordinateRegion?) async -> MapKitSearchOutcome {
-        let completer = await MainActor.run { MapKitCompleterClient() }
-        let completions = await completer.fetchCompletions(query: query, region: region, timeout: 0.6)
-        return await resolveMapItems(for: completions, region: region)
+
+    func resolve(_ result: SearchResult) async -> SearchResult {
+        if result.lat != 0 || result.lon != 0 {
+            return result
+        }
+
+        guard let completion = await MapKitCompletionStore.shared.completion(for: result.id) else {
+            return result
+        }
+
+        return await resolveCompletion(completion, for: result)
     }
-    
+
+    @MainActor
+    private func resolveCompletion(_ completion: MKLocalSearchCompletion, for result: SearchResult) async -> SearchResult {
+        let request = MKLocalSearch.Request(completion: completion)
+        request.resultTypes = [.address, .pointOfInterest]
+
+        do {
+            let response = try await MKLocalSearch(request: request).start()
+            guard let item = response.mapItems.first,
+                  let mapped = mapItemToSearchResult(item, rank: 0) else {
+                return result
+            }
+
+            if let style = mapped.visualStyle {
+                SearchResultVisualStyleStore.shared.setStyles([result.id: style])
+            }
+
+            let core = mapped.result
+            return SearchResult(
+                type: result.type,
+                tokens: result.tokens,
+                name: result.name.isEmpty ? core.name : result.name,
+                id: result.id,
+                lat: core.lat,
+                lon: core.lon,
+                level: core.level,
+                street: core.street,
+                houseNumber: core.houseNumber,
+                zip: core.zip,
+                areas: core.areas.isEmpty ? result.areas : core.areas,
+                score: result.score
+            )
+        } catch {
+            _ = await handleMapKitSearchError(error, context: "completion resolve")
+            return result
+        }
+    }
+
     private func performMapSearch(query: String, region: MKCoordinateRegion?) async -> MapKitSearchOutcome {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = query
@@ -138,37 +290,8 @@ struct HybridLocationSearchService {
         }
     }
     
-    private func resolveMapItems(for completions: [MKLocalSearchCompletion], region: MKCoordinateRegion?) async -> MapKitSearchOutcome {
-        var items: [MKMapItem] = []
-        var wasRateLimited = false
-        
-        for completion in completions.prefix(maxCompletionRequests) {
-            if Task.isCancelled || wasRateLimited {
-                break
-            }
-            
-            let request = MKLocalSearch.Request(completion: completion)
-            request.resultTypes = [.address, .pointOfInterest]
-            request.pointOfInterestFilter = MKPointOfInterestFilter(excluding: [.publicTransport])
-            if let region {
-                request.region = region
-            }
-            
-            do {
-                let response = try await MKLocalSearch(request: request).start()
-                if let first = response.mapItems.first {
-                    items.append(first)
-                }
-            } catch {
-                wasRateLimited = await handleMapKitSearchError(error, context: "completion resolution")
-            }
-        }
-        
-        return MapKitSearchOutcome(items: items, wasRateLimited: wasRateLimited)
-    }
-    
     private func mapItemToSearchResult(_ item: MKMapItem, rank: Int) -> MappedSearchResult? {
-        let coordinate = item.placemark.coordinate
+        let coordinate = coordinate(of: item)
         guard CLLocationCoordinate2DIsValid(coordinate) else {
             return nil
         }
@@ -341,13 +464,45 @@ struct HybridLocationSearchService {
     }
     
     private func mapItemIdentifier(_ item: MKMapItem) -> String {
-        let coordinate = item.placemark.coordinate
+        let coordinate = coordinate(of: item)
         let roundedLatitude = String(format: "%.6f", coordinate.latitude)
         let roundedLongitude = String(format: "%.6f", coordinate.longitude)
         let normalizedName = mapItemName(item).lowercased()
         return "mk:\(roundedLatitude),\(roundedLongitude):\(normalizedName)"
     }
     
+    private func completionIdentifier(title: String, subtitle: String?) -> String {
+        let normalizedTitle = title.lowercased()
+        let normalizedSubtitle = (subtitle ?? "").lowercased()
+        return "mkc:\(normalizedTitle)|\(normalizedSubtitle)"
+    }
+
+    private func completionLooksLikeAddress(_ completion: MKLocalSearchCompletion) -> Bool {
+        let title = completion.title
+        let hasDigits = title.rangeOfCharacter(from: .decimalDigits) != nil
+        let subtitleEmpty = cleaned(completion.subtitle) == nil
+        return hasDigits || subtitleEmpty
+    }
+
+    private func makeAreas(fromSubtitle subtitle: String?) -> [SearchResult.Area] {
+        guard let subtitle else {
+            return []
+        }
+
+        let components = subtitle
+            .split(separator: ",")
+            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            .filter { !$0.isEmpty }
+
+        guard let primary = components.last else {
+            return []
+        }
+
+        return [
+            SearchResult.Area(name: primary, adminLevel: 8, matched: true, default: true)
+        ]
+    }
+
     private func makeAreas(from placemark: MKPlacemark) -> [SearchResult.Area] {
         var uniqueAreaNames = Set<String>()
         var areaItems: [(name: String, level: Int)] = []
@@ -593,6 +748,7 @@ private final class MapKitCompleterClient: NSObject {
         let completer = MKLocalSearchCompleter()
         completer.resultTypes = [.address, .pointOfInterest]
         completer.pointOfInterestFilter = MKPointOfInterestFilter(excluding: [.publicTransport])
+        completer.filterType = .locationsOnly
         return completer
     }()
     

@@ -38,15 +38,18 @@ class LocationSearchViewModel: ObservableObject {
         isLoading = true
         
         searchTask = Task {
+            try? await Task.sleep(for: .milliseconds(280))
+            if Task.isCancelled { return }
+
             let currentUserLocation = userLocation.map {
                 CLLocationCoordinate2D(latitude: $0.0, longitude: $0.1)
             }
-            
+
             let results = await hybridSearchService.search(
                 query: query,
                 userLocation: currentUserLocation
             )
-            
+
             if !Task.isCancelled {
                 await MainActor.run {
                     self.searchResults = self.filterResults(results)
@@ -54,6 +57,10 @@ class LocationSearchViewModel: ObservableObject {
                 }
             }
         }
+    }
+
+    func resolve(_ result: SearchResult) async -> SearchResult {
+        await hybridSearchService.resolve(result)
     }
     
     func useCurrentLocation(locationManager: LocationManager, completion: @escaping (SearchResult?) -> Void) {
