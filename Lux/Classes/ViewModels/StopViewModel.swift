@@ -330,8 +330,8 @@ class StopViewModel: ObservableObject {
         var newCurrentPages: [String: Int] = [:]
                 
         for (routeName, routeStopTimes) in routeGroups {
-            let groupsByHeadsign = Dictionary(grouping: routeStopTimes) { $0.headsign ?? "" }
-                .map { (headsign, times) -> GroupedStopTime in
+            let groupsByHeadsign = Dictionary(grouping: routeStopTimes) { $0.headsign?.normalizedHeadsignKey ?? "" }
+                .map { (_, times) -> GroupedStopTime in
                     let sortedTimes = times.sorted { lhs, rhs in
                         let timeA = lhs.place.departure ?? lhs.place.arrival ?? Date.distantFuture
                         let timeB = rhs.place.departure ?? rhs.place.arrival ?? Date.distantFuture
@@ -339,7 +339,7 @@ class StopViewModel: ObservableObject {
                     }
                     return GroupedStopTime(
                         routeShortName: routeName,
-                        headsign: headsign,
+                        headsign: sortedTimes.first?.headsign ?? "",
                         stopTimes: sortedTimes
                     )
                 }
@@ -360,5 +360,12 @@ class StopViewModel: ObservableObject {
     func userSelectedLine(_ routeShortName: String) {
         let trimmedLine = routeShortName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         lineScoreManager.addScore(to: trimmedLine)
+    }
+}
+
+private extension String {
+    var normalizedHeadsignKey: String {
+        folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }
