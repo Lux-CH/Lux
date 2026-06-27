@@ -368,7 +368,7 @@ class TripsSearchViewModel: ObservableObject {
         cancelBackgroundTasks()
         
         backgroundRefreshTask = Task {
-            try? await Task.sleep(for: .milliseconds(280))
+            try? await Task.sleep(for: .milliseconds(125))
             if Task.isCancelled { return }
 
             let userCoordinate = self.locationManager?.location?.coordinate
