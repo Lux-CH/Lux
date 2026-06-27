@@ -748,7 +748,6 @@ private final class MapKitCompleterClient: NSObject {
         let completer = MKLocalSearchCompleter()
         completer.resultTypes = [.address, .pointOfInterest]
         completer.pointOfInterestFilter = MKPointOfInterestFilter(excluding: [.publicTransport])
-        completer.filterType = .locationsOnly
         return completer
     }()
     
