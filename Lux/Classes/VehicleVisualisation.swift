@@ -262,7 +262,7 @@ enum VehicleVisualisation {
         var closestIndex = 0
         
         for (index, coordinate) in coordinates.enumerated() {
-            let distance = coordinate.distance(to: target)
+            let distance = coordinate.squaredDistance(to: target)
             if distance < closestDistance {
                 closestDistance = distance
                 closestIndex = index
@@ -315,9 +315,18 @@ enum VehicleVisualisation {
 
 extension CLLocationCoordinate2D {
     func distance(to other: CLLocationCoordinate2D) -> CLLocationDistance {
-        let from = CLLocation(latitude: latitude, longitude: longitude)
-        let to = CLLocation(latitude: other.latitude, longitude: other.longitude)
-        return from.distance(from: to)
+        let earthRadius = 6_371_000.0
+        let lat1 = latitude.degreesToRadians
+        let lat2 = other.latitude.degreesToRadians
+        let x = (other.longitude - longitude).degreesToRadians * cos((lat1 + lat2) / 2)
+        let y = lat2 - lat1
+        return sqrt(x * x + y * y) * earthRadius
+    }
+
+    func squaredDistance(to other: CLLocationCoordinate2D) -> Double {
+        let dLat = other.latitude - latitude
+        let dLon = (other.longitude - longitude) * cos(latitude.degreesToRadians)
+        return dLat * dLat + dLon * dLon
     }
     
     func heading(to other: CLLocationCoordinate2D) -> CLLocationDirection {
