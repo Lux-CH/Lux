@@ -48,6 +48,8 @@ final class ItineraryViewModel: ObservableObject {
     @Published var walkingDirections: [String: [MKRoute.Step]] = [:]
     @ObservedObject var settings = Settings.shared
         
+    private(set) var destinationName: String?
+
     init(tripId: String) {
         self.tripId = tripId
     }
@@ -57,9 +59,10 @@ final class ItineraryViewModel: ObservableObject {
         self.forceLC = forceLC
     }
     
-    convenience init(itinerary: Itinerary) {
+    convenience init(itinerary: Itinerary, destinationName: String? = nil) {
         self.init(tripId: "")
         self.itinerary = itinerary
+        self.destinationName = destinationName
     }
         
     func switchToTrip(tripId: String) async {
@@ -535,8 +538,14 @@ final class ItineraryViewModel: ObservableObject {
             
             let annotationColor = (!isLastLeg && leg.mode == .walk) ? getLegColor(itinerary.legs[index + 1]) : legColor
             
+
+            var terminalPlace = !isLastLeg ? itinerary.legs[index + 1].from : leg.to
+            if isLastLeg, terminalPlace.name == "END", let destinationName {
+                terminalPlace.name = destinationName
+            }
+
             annotations.append(StopAnnotation(
-                place: !isLastLeg ? itinerary.legs[index + 1].from : leg.to,
+                place: terminalPlace,
                 color: annotationColor,
                 isTerminal: isLastLeg || isTransferPoint,
                 isIntermediate: !isLastLeg && !isTransferPoint

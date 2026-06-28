@@ -111,7 +111,7 @@ struct TripResultsContent: View {
                     if !viewModel.directs.isEmpty {
                         ForEach(viewModel.directs.indices, id: \.self) { index in
                             let itinerary = viewModel.directs[index]
-                            TripResultView(itinerary: itinerary)
+                            TripResultView(itinerary: itinerary, destinationName: viewModel.selectedTo?.displayName)
                                 .id("direct-\(index)")
                                 .opacity(appearAnimation ? 1 : 0)
                                 .animation(.easeOut(duration: 0.3).delay(Double(viewModel.trips.count + index) * 0.05), value: appearAnimation)
@@ -125,7 +125,7 @@ struct TripResultsContent: View {
                     }
                     ForEach(viewModel.trips.indices, id: \.self) { index in
                         let itinerary = viewModel.trips[index]
-                        TripResultView(itinerary: itinerary)
+                        TripResultView(itinerary: itinerary, destinationName: viewModel.selectedTo?.displayName)
                             .id("trip-\(index)")
                             .opacity(appearAnimation ? 1 : 0)
                             .animation(.easeOut(duration: 0.3).delay(Double(index) * 0.05), value: appearAnimation)

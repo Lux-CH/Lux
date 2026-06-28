@@ -10,6 +10,7 @@ import LuxCom
 
 struct TripResultView: View {
     let itinerary: Itinerary
+    var destinationName: String? = nil
     @State var dontGoToView: Bool = false
     @Environment(\.colorScheme) private var colorScheme
     @State private var isPressed = false
@@ -34,7 +35,7 @@ struct TripResultView: View {
     var body: some View {
         if !dontGoToView {
             NavigationLink(destination:
-                            ItineraryView(itinerary: itinerary, fromNearby: false, forceLC: true)
+                            ItineraryView(itinerary: itinerary, fromNearby: false, forceLC: true, destinationName: destinationName)
                 .toolbarBackground(.hidden, for: .navigationBar)
                 .navigationBarBackButtonHidden(true)
             ) {
