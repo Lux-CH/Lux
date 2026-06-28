@@ -37,10 +37,11 @@ struct TripSearchBar: View {
                     .padding(.vertical, 6)
                     .submitLabel(.search)
                     .onChange(of: searchText) {
+                        // Search is triggered by TripsSearchView's onChange(of: fromQuery/toQuery)
+                        // → viewModel.onChange. Only handle the clear case here to avoid
+                        // firing performSearch twice per keystroke.
                         if searchText.isEmpty {
                             onClear()
-                        } else {
-                            onSearch()
                         }
                     }
                     .onSubmit {
@@ -72,8 +73,6 @@ struct TripSearchBar: View {
             }
         }
         .frame(height: 40)
-        .scaleEffect(1)
         .animation(.spring(response: 0.3, dampingFraction: 0.7), value: isFocused)
-        .animation(.spring(response: 0.4), value: searchText)
     }
 }
