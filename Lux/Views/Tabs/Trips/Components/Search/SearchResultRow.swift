@@ -12,6 +12,7 @@ import LuxCom
 struct SearchResultRow: View {
     @EnvironmentObject var locationManager: LocationManager
     @ObservedObject private var visualStyleStore = SearchResultVisualStyleStore.shared
+    @ObservedObject private var openStateStore = SearchResultOpenStateStore.shared
     let result: SearchResult
     
     private func getIconForType(_ type: LocationType)-> (String, Color) {
@@ -27,7 +28,7 @@ struct SearchResultRow: View {
     
     private func formattedAddress() -> String? {
         var components: [String] = []
-        
+
         if let street = result.street {
             var streetComponent = street
             if let houseNumber = result.houseNumber {
@@ -35,11 +36,13 @@ struct SearchResultRow: View {
             }
             components.append(streetComponent)
         }
-        
-        if let zip = result.zip {
-            components.append(zip)
+
+        let city = result.areas.first(where: { $0.matched })?.name
+            ?? result.areas.first(where: { $0.default == true })?.name
+        if let city {
+            components.append(city)
         }
-        
+
         return components.isEmpty ? nil : components.joined(separator: ", ")
     }
     
@@ -98,6 +101,18 @@ struct SearchResultRow: View {
                         .font(.system(size: 12))
                         .foregroundColor(.secondary)
                         .lineLimit(1)
+                }
+
+                if result.type == .place, let openState = openStateStore.openState(for: result.id) {
+                    HStack(spacing: 4) {
+                        Circle()
+                            .fill(openState.color)
+                            .frame(width: 6, height: 6)
+                        Text(openState.label)
+                            .font(.system(size: 11, weight: .medium))
+                            .foregroundColor(openState.color)
+                    }
+                    .padding(.top, 1)
                 }
             }
 

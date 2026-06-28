@@ -23,7 +23,6 @@ struct HybridLocationSearchService {
         
         var mergedResults = stopResults + placeOutcome.results
         
-        // Fallback to full Lux geocoding only when MapKit is rate-limited.
         if placeOutcome.wasRateLimited {
             let luxFallback = await searchLuxFallbackAll(query: query, userLocation: userLocation)
             mergedResults.append(contentsOf: luxFallback)
@@ -79,7 +78,7 @@ struct HybridLocationSearchService {
         let completions = await completer.fetchCompletions(query: query, region: region, timeout: 1.0)
 
         if !completions.isEmpty {
-            let results = await mapCompletionsToOutcome(completions)
+            let results = await MainActor.run { mapCompletionsToOutcome(completions) }
             return PlaceSearchOutcome(results: results, wasRateLimited: false)
         }
 
@@ -92,10 +91,12 @@ struct HybridLocationSearchService {
         return PlaceSearchOutcome(results: resolvedResults, wasRateLimited: false)
     }
 
-    private func mapCompletionsToOutcome(_ completions: [MKLocalSearchCompletion]) async -> [SearchResult] {
+    @MainActor
+    private func mapCompletionsToOutcome(_ completions: [MKLocalSearchCompletion]) -> [SearchResult] {
         var results: [SearchResult] = []
         var completionsByID: [String: MKLocalSearchCompletion] = [:]
         var stylesByID: [String: SearchResultVisualStyle] = [:]
+        var openStatesByID: [String: POIOpenState] = [:]
         var seenIDs = Set<String>()
 
         for (index, completion) in completions.prefix(maxReturnedPlaces).enumerated() {
@@ -119,9 +120,9 @@ struct HybridLocationSearchService {
                     let core = mapped.result
                     results.append(
                         SearchResult(
-                            type: core.type,
+                            type: mapItem.pointOfInterestCategory != nil ? .place : .adress,
                             tokens: core.tokens,
-                            name: core.name.isEmpty ? title : core.name,
+                            name: title,
                             id: identifier,
                             lat: core.lat,
                             lon: core.lon,
@@ -135,6 +136,9 @@ struct HybridLocationSearchService {
                     )
                     if let style = mapped.visualStyle {
                         stylesByID[identifier] = style
+                    }
+                    if let state = mapped.openState {
+                        openStatesByID[identifier] = state
                     }
                     continue
                 }
@@ -157,15 +161,14 @@ struct HybridLocationSearchService {
             completionsByID[identifier] = completion
         }
 
-        if !completionsByID.isEmpty || !stylesByID.isEmpty {
-            await MainActor.run {
-                if !completionsByID.isEmpty {
-                    MapKitCompletionStore.shared.setCompletions(completionsByID)
-                }
-                if !stylesByID.isEmpty {
-                    SearchResultVisualStyleStore.shared.setStyles(stylesByID)
-                }
-            }
+        if !completionsByID.isEmpty {
+            MapKitCompletionStore.shared.setCompletions(completionsByID)
+        }
+        if !stylesByID.isEmpty {
+            SearchResultVisualStyleStore.shared.setStyles(stylesByID)
+        }
+        if !openStatesByID.isEmpty {
+            SearchResultOpenStateStore.shared.setOpenStates(openStatesByID)
         }
 
         return results
@@ -213,10 +216,18 @@ struct HybridLocationSearchService {
                 dictionary[mappedResult.result.id] = style
             }
         }
+        let openStatesByResultID = mappedResults.reduce(into: [String: POIOpenState]()) { dictionary, mappedResult in
+            if let state = mappedResult.openState {
+                dictionary[mappedResult.result.id] = state
+            }
+        }
 
-        if !stylesByResultID.isEmpty {
-            await MainActor.run {
+        await MainActor.run {
+            if !stylesByResultID.isEmpty {
                 SearchResultVisualStyleStore.shared.setStyles(stylesByResultID)
+            }
+            if !openStatesByResultID.isEmpty {
+                SearchResultOpenStateStore.shared.setOpenStates(openStatesByResultID)
             }
         }
 
@@ -249,6 +260,9 @@ struct HybridLocationSearchService {
 
             if let style = mapped.visualStyle {
                 SearchResultVisualStyleStore.shared.setStyles([result.id: style])
+            }
+            if let state = mapped.openState {
+                SearchResultOpenStateStore.shared.setOpenStates([result.id: state])
             }
 
             let core = mapped.result
@@ -306,7 +320,8 @@ struct HybridLocationSearchService {
         let score = max(0.01, 1.0 - (Double(rank) * 0.01))
         let identifier = mapItemIdentifier(item)
         let visualStyle = mapItemVisualStyle(for: item)
-        
+        let openState = mapItemOpenState(for: item)
+
         return MappedSearchResult(
             result: SearchResult(
                 type: type,
@@ -321,7 +336,8 @@ struct HybridLocationSearchService {
                 areas: areas,
                 score: score
             ),
-            visualStyle: visualStyle
+            visualStyle: visualStyle,
+            openState: openState
         )
     }
     
@@ -331,6 +347,23 @@ struct HybridLocationSearchService {
         }
         
         return category.rawValue.lowercased().contains("publictransport")
+    }
+
+    private func mapItemOpenState(for item: MKMapItem) -> POIOpenState? {
+        let optsKey = "_openingHoursOptions"
+        guard item.responds(to: NSSelectorFromString(optsKey)) else { return nil }
+        let opts = item.value(forKey: optsKey) as? UInt64 ?? 0
+        guard opts != 0, (opts & 0x001) == 0 else { return nil }
+
+        if (opts & 0x080) != 0 { return .permanentlyClosed }
+        if (opts & 0x100) != 0 { return .temporarilyClosed }
+
+        if (opts & 0x040) != 0 { return .closingSoon(at: nil) }
+        if (opts & 0x010) != 0 { return .openAllDay }
+        if (opts & 0x002) != 0 { return .open(until: nil) }
+        if (opts & 0x020) != 0 { return .openingSoon(at: nil) }
+        if (opts & 0x004) != 0 || (opts & 0x008) != 0 { return .closed(opensAt: nil) }
+        return nil
     }
 
     private func mapItemVisualStyle(for item: MKMapItem) -> SearchResultVisualStyle? {
@@ -439,20 +472,21 @@ struct HybridLocationSearchService {
     
     private func mapItemName(_ item: MKMapItem) -> String {
         let type = mapItemType(item)
-        
-        if let name = cleaned(item.name) {
-            if type == .place {
-                return name
+        let name = cleaned(item.name).flatMap { $0 == "Unknown Location" ? nil : $0 }
+
+        if let name, type == .place {
+            return name
+        }
+
+        if let street = cleaned(item.placemark.thoroughfare) {
+            let houseNumber = cleaned(item.placemark.subThoroughfare) ?? ""
+            let addressPrefix = (street + " " + houseNumber).trimmingCharacters(in: .whitespacesAndNewlines)
+            if !addressPrefix.isEmpty {
+                return addressPrefix
             }
             
-            if let street = cleaned(item.placemark.thoroughfare) {
-                let houseNumber = cleaned(item.placemark.subThoroughfare) ?? ""
-                let addressPrefix = (street + " " + houseNumber).trimmingCharacters(in: .whitespacesAndNewlines)
-                if !addressPrefix.isEmpty {
-                    return addressPrefix
-                }
-            }
-            
+        }
+        if let name {
             return name
         }
         
@@ -703,6 +737,7 @@ struct HybridLocationSearchService {
 private struct MappedSearchResult {
     let result: SearchResult
     let visualStyle: SearchResultVisualStyle?
+    let openState: POIOpenState?
 }
 
 private struct MapKitSearchOutcome {
