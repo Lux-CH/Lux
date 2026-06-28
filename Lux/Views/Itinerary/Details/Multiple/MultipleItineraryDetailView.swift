@@ -75,6 +75,16 @@ struct MultipleItineraryDetailView: View {
         return (from: fromTransport, to: toTransport)
     }
     
+    private func arrivalText(for leg: Leg) -> Text {
+        if leg.to.name == "END" {
+            if let destinationName = viewModel.destinationName {
+                return Text("Arrivée à \(Image(systemName: "signpost.right")) \(destinationName)")
+            }
+            return Text("Vous êtes arrivé à destination")
+        }
+        return Text("Arrivée à \(Image(systemName: "signpost.right")) \(leg.to.name)")
+    }
+
     private func getWalkingDescriptionText(leg: Leg, legIndex: Int) -> Text {
         let fromName = leg.from.name
         let toName = leg.to.name
@@ -82,6 +92,9 @@ struct MultipleItineraryDetailView: View {
         if legIndex == 0 {
             return Text("Marchez jusqu'à \(Image(systemName: "signpost.right")) \(toName)")
         } else if legIndex == itinerary.legs.count - 1 {
+            if let destinationName = viewModel.destinationName {
+                return Text("Marchez jusqu'à \(Image(systemName: "signpost.right")) \(destinationName)")
+            }
             return Text("Marchez vers votre destination")
         } else {
             let fromTrack = leg.from.track
@@ -319,7 +332,7 @@ struct MultipleItineraryDetailView: View {
                                                     .clipShape(Circle())
                                                 
                                                 VStack(alignment: .leading, spacing: 4) {
-                                                    Text(leg.to.name == "END" ? "Vous êtes arrivé à destination" : "Arrivée à \(Image(systemName: "signpost.right")) \(leg.to.name)")
+                                                    arrivalText(for: leg)
                                                         .font(.subheadline)
                                                         .fontWeight(.medium)
                                                     

@@ -61,8 +61,8 @@ struct ItineraryView: View {
         self.isSingle = false // so basically, it's a bit sketchy, but we never load trips if it's a processed route (using trip search) ; so it's never single if itinerary is passed directly
     }
     
-    init(itinerary: Itinerary, fromNearby: Bool, forceLC: Bool) {
-        _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary))
+    init(itinerary: Itinerary, fromNearby: Bool, forceLC: Bool, destinationName: String? = nil) {
+        _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary, destinationName: destinationName))
         self.fromNearby = fromNearby
         self.isSingle = false
         self.forceLC = forceLC
