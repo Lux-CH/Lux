@@ -36,13 +36,16 @@ final class OfflineManager: ObservableObject {
         loadExistingStoreIfEnabled()
     }
 
-    private var luxDir: URL {
-        let base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+    private lazy var luxDir: URL = {
+        var base = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("Lux", isDirectory: true)
         try? FileManager.default.createDirectory(at: base, withIntermediateDirectories: true)
+        var rv = URLResourceValues()
+        rv.isExcludedFromBackup = true
+        try? base.setResourceValues(rv)
         return base
-    }
-    private var dbURL: URL { luxDir.appendingPathComponent("offline.sqlite") }
+    }()
+    private lazy var dbURL: URL = luxDir.appendingPathComponent("offline.sqlite")
 
     private func loadExistingStoreIfEnabled() {
         guard settings.offlineModeEnabled,
