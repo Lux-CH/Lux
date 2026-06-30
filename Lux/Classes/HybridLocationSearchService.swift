@@ -74,8 +74,8 @@ struct HybridLocationSearchService {
 
         let region = makeSearchRegion(around: userLocation)
 
-        let completer = await MainActor.run { MapKitCompleterClient() }
-        let completions = await completer.fetchCompletions(query: query, region: region, timeout: 1.0)
+        let completer = await MainActor.run { MapKitCompleterClient.shared }
+        let completions = await completer.fetchCompletions(query: query, region: region)
 
         if !completions.isEmpty {
             let results = await MainActor.run { mapCompletionsToOutcome(completions) }
@@ -779,6 +779,8 @@ actor MapKitRateLimitState {
 
 @MainActor
 private final class MapKitCompleterClient: NSObject {
+    static let shared = MapKitCompleterClient()
+    
     private let completer: MKLocalSearchCompleter = {
         let completer = MKLocalSearchCompleter()
         completer.resultTypes = [.address, .pointOfInterest]
@@ -787,7 +789,6 @@ private final class MapKitCompleterClient: NSObject {
     }()
     
     private var continuation: CheckedContinuation<[MKLocalSearchCompletion], Never>?
-    private var timeoutWorkItem: DispatchWorkItem?
     private var expectedQueryFragment = ""
     
     override init() {
@@ -797,8 +798,7 @@ private final class MapKitCompleterClient: NSObject {
     
     func fetchCompletions(
         query: String,
-        region: MKCoordinateRegion?,
-        timeout: TimeInterval = 0.3
+        region: MKCoordinateRegion?
     ) async -> [MKLocalSearchCompletion] {
         guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
             return []
@@ -814,14 +814,6 @@ private final class MapKitCompleterClient: NSObject {
                 self.continuation = continuation
                 self.expectedQueryFragment = query
                 
-                timeoutWorkItem?.cancel()
-                let timeoutItem = DispatchWorkItem { [weak self] in
-                    guard let self else { return }
-                    self.resolvePendingContinuation(with: self.completer.results)
-                }
-                timeoutWorkItem = timeoutItem
-                DispatchQueue.main.asyncAfter(deadline: .now() + timeout, execute: timeoutItem)
-                
                 completer.queryFragment = query
             }
         } onCancel: { [weak self] in
@@ -832,8 +824,6 @@ private final class MapKitCompleterClient: NSObject {
     }
     
     private func resolvePendingContinuation(with results: [MKLocalSearchCompletion]) {
-        timeoutWorkItem?.cancel()
-        timeoutWorkItem = nil
         
         guard let continuation else {
             return
@@ -850,7 +840,7 @@ extension MapKitCompleterClient: MKLocalSearchCompleterDelegate {
             guard self?.expectedQueryFragment == completer.queryFragment else {
                 return
             }
-            guard !completer.results.isEmpty else {
+            if completer.results.isEmpty && completer.isSearching {
                 return
             }
             self?.resolvePendingContinuation(with: completer.results)
