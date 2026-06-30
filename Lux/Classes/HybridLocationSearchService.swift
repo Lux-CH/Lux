@@ -617,18 +617,8 @@ struct HybridLocationSearchService {
     
     private func normalizedName(for name: String) -> String {
         let folded = name.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-        let trimmed = folded.trimmingCharacters(in: .whitespacesAndNewlines)
-        let punctuationFree = trimmed.replacingOccurrences(
-            of: "[^\\p{L}\\p{N}\\s]",
-            with: " ",
-            options: .regularExpression
-        )
-        let collapsedSpaces = punctuationFree.replacingOccurrences(
-            of: "\\s+",
-            with: " ",
-            options: .regularExpression
-        )
-        return collapsedSpaces.lowercased()
+        let components = folded.components(separatedBy: CharacterSet.alphanumerics.inverted)
+        return components.filter { !$0.isEmpty }.joined(separator: " ").lowercased()
     }
     
     private func areWithinDuplicateThreshold(
