@@ -396,6 +396,12 @@ struct MainNavigationView: View {
         .onChange(of: settings.useTimeBasedRelevance) {
             updateShortcutsWithCurrentLocation()
         }
+        .onChange(of: searchViewModel.fromQuery) {
+            searchViewModel.onChange(of: searchViewModel.fromQuery)
+        }
+        .onChange(of: searchViewModel.toQuery) {
+            searchViewModel.onChange(of: searchViewModel.toQuery)
+        }
         .onChange(of: isSearchBarFocused) {
             if isSearchBarFocused && viewMode == .home && !isSearchTransitioning {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {

@@ -23,12 +23,14 @@ class LocationSearchViewModel: ObservableObject {
         searchTask?.cancel()
         
         if query.isEmpty {
+            isLoading = false
             searchResults = []
             showMinCharactersMessage = false
             return
         }
         
         if query.count < 3 {
+            isLoading = false
             searchResults = []
             showMinCharactersMessage = true
             return
