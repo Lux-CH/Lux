@@ -176,7 +176,7 @@ final class OfflineGTFSStore: @unchecked Sendable {
         let yesterday = cal.date(byAdding: .day, value: -1, to: today)!
         let nowSec = Int(time.timeIntervalSince(today))
 
-        return try dbQueue.write { db in
+        return try dbQueue.read { db in
             let stopIds = try self.physicalStopIds(for: stopId, db: db)
             guard !stopIds.isEmpty else { return [] }
 
@@ -211,12 +211,8 @@ final class OfflineGTFSStore: @unchecked Sendable {
 
     private func rawDepartures(db: Database, stopIds: [String], serviceIds: Set<String>,
                                minDepSec: Int, serviceDay: Date, limit: Int) throws -> [GTFSDeparture] {
-        try db.execute(sql: "CREATE TEMP TABLE IF NOT EXISTS _svc(service_id TEXT PRIMARY KEY)")
-        try db.execute(sql: "DELETE FROM _svc")
-        for sid in serviceIds {
-            try db.execute(sql: "INSERT OR IGNORE INTO _svc VALUES (?)", arguments: [sid])
-        }
-
+        let serviceIdsArray = Array(serviceIds)
+        let servicePlaceholders = databaseQuestionMarks(count: serviceIdsArray.count)
         let stopPlaceholders = databaseQuestionMarks(count: stopIds.count)
         let sql = """
             SELECT st.trip_id, st.stop_id, st.dep_sec, st.arr_sec, st.headsign AS st_headsign,
@@ -225,14 +221,14 @@ final class OfflineGTFSStore: @unchecked Sendable {
                    r.short_name, r.route_type, r.agency_id
             FROM stop_time st
             JOIN trip t ON t.id = st.trip_id
-            JOIN _svc v ON v.service_id = t.service_id
             JOIN route r ON r.id = t.route_id
             JOIN stop s ON s.id = st.stop_id
             WHERE st.stop_id IN (\(stopPlaceholders)) AND st.dep_sec IS NOT NULL AND st.dep_sec >= ?
+              AND t.service_id IN (\(servicePlaceholders))
             ORDER BY st.dep_sec
             LIMIT ?
             """
-        let args = StatementArguments(stopIds) + StatementArguments([minDepSec, limit])
+        let args = StatementArguments(stopIds) + StatementArguments([minDepSec]) + StatementArguments(serviceIdsArray) + StatementArguments([limit])
         let rows = try Row.fetchAll(db, sql: sql, arguments: args)
         return rows.map { row in
             GTFSDeparture(
