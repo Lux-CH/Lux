@@ -337,10 +337,14 @@ class TripsSearchViewModel: ObservableObject {
     
     func onChange(of newSearchQuery: String) {
         if newSearchQuery.isEmpty {
+            cancelBackgroundTasks()
+            isLoading = false
             searchResults = []
             showMinCharactersMessage = false
         }
         else if newSearchQuery.count < 3 {
+            cancelBackgroundTasks()
+            isLoading = false
             showMinCharactersMessage = true
             searchResults = []
         }
@@ -351,22 +355,24 @@ class TripsSearchViewModel: ObservableObject {
     }
     
     func performSearch(_ query: String) {
+        cancelBackgroundTasks()
+        
         if query.isEmpty {
+            isLoading = false
             searchResults = []
             showMinCharactersMessage = false
             return
         }
         
         if query.count < 3 {
+            isLoading = false
             searchResults = []
             showMinCharactersMessage = true
             return
         }
         isLoading = true
         showMinCharactersMessage = false
-        
-        cancelBackgroundTasks()
-        
+
         backgroundRefreshTask = Task {
             try? await Task.sleep(for: .milliseconds(125))
             if Task.isCancelled { return }
@@ -379,11 +385,25 @@ class TripsSearchViewModel: ObservableObject {
             
             if !Task.isCancelled {
                 await MainActor.run {
+                    guard self.currentSearchQuery == query else {
+                        return
+                    }
                     self.searchResults = self.filterResults(results)
                     self.isLoading = false
                     self.backgroundRefreshTask = nil
                 }
             }
+        }
+    }
+    
+    private var currentSearchQuery: String {
+        switch activeSearchField {
+        case .from:
+            return fromQuery
+        case .to:
+            return toQuery
+        case .none:
+            return ""
         }
     }
     

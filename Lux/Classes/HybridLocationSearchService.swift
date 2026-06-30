@@ -788,6 +788,7 @@ private final class MapKitCompleterClient: NSObject {
     
     private var continuation: CheckedContinuation<[MKLocalSearchCompletion], Never>?
     private var timeoutWorkItem: DispatchWorkItem?
+    private var expectedQueryFragment = ""
     
     override init() {
         super.init()
@@ -811,6 +812,7 @@ private final class MapKitCompleterClient: NSObject {
             await withCheckedContinuation { continuation in
                 resolvePendingContinuation(with: [])
                 self.continuation = continuation
+                self.expectedQueryFragment = query
                 
                 timeoutWorkItem?.cancel()
                 let timeoutItem = DispatchWorkItem { [weak self] in
@@ -845,6 +847,12 @@ private final class MapKitCompleterClient: NSObject {
 extension MapKitCompleterClient: MKLocalSearchCompleterDelegate {
     nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         Task { @MainActor [weak self] in
+            guard self?.expectedQueryFragment == completer.queryFragment else {
+                return
+            }
+            guard !completer.results.isEmpty else {
+                return
+            }
             self?.resolvePendingContinuation(with: completer.results)
         }
     }
