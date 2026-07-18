@@ -1,5 +1,5 @@
 {
-  "originHash" : "da6ca487582b93419904800e1baefdbaeef6c9464df3089c7b91556a092b110c",
+  "originHash" : "06f0f6d21c03cf1297abefb8dc8d445a77efecb4f1e408e6a027cc507ad1b0ea",
   "pins" : [
     {
       "identity" : "codescanner",
@@ -29,30 +29,12 @@
       }
     },
     {
-      "identity" : "gzipswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/1024jp/GzipSwift",
-      "state" : {
-        "revision" : "7a7f17761c76a932662ab77028a4329f67d645a4",
-        "version" : "5.2.0"
-      }
-    },
-    {
       "identity" : "luxcom",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Lux-CH/LuxCom",
       "state" : {
         "branch" : "main",
         "revision" : "1ebef96c50aaedad4f88a64029e4621bb9dda6c7"
-      }
-    },
-    {
-      "identity" : "luxcomhafas",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Lux-CH/LuxComHAFAS",
-      "state" : {
-        "branch" : "main",
-        "revision" : "bf44d3209f0822fb8f462ca599a4142837dc2903"
       }
     },
     {
@@ -74,39 +56,12 @@
       }
     },
     {
-      "identity" : "swiftyjson",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SwiftyJSON/SwiftyJSON",
-      "state" : {
-        "revision" : "af76cf3ef710b6ca5f8c05f3a31307d44a3c5828",
-        "version" : "5.0.2"
-      }
-    },
-    {
-      "identity" : "swxmlhash",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/drmohundro/SWXMLHash",
-      "state" : {
-        "revision" : "a853604c9e9a83ad9954c7e3d2a565273982471f",
-        "version" : "7.0.2"
-      }
-    },
-    {
       "identity" : "symbolpicker",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/xnth97/SymbolPicker",
       "state" : {
         "revision" : "8bb08c982235b8e601bc500a41e770d7e198759b",
         "version" : "1.6.2"
-      }
-    },
-    {
-      "identity" : "tripkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Lux-CH/tripkit.git",
-      "state" : {
-        "branch" : "main",
-        "revision" : "22f67b4b0b61b2750c42d097609dde261b11265d"
       }
     }
   ],
