@@ -13,9 +13,7 @@ class Settings: ObservableObject, @unchecked Sendable {
     
     @AppStorage("firstLaunch") var firstLaunch: Bool = true
     @AppStorage("appLaunchCount") var appLaunchCount: Int = 1
-    @AppStorage("dataSource") var dataSource: DataSource = .luxCom
-    @AppStorage("dataSourceMode") var dataSourceMode: DataSourceMode = .auto
-    
+
     /// Shortcuts
     @AppStorage("showShortcutLabel") var showShortcutLabel: Bool = true
     @AppStorage("useTimeBasedRelevance") var useTimeBasedRelevance: Bool = true
@@ -41,17 +39,4 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("offlineModeEnabled") var offlineModeEnabled: Bool = false
     @AppStorage("offlineForceOffline") var offlineForceOffline: Bool = false
     @AppStorage("offlineLastImportDate") var offlineLastImportDate: Double = 0
-
-    var isCita: Bool { dataSource == .cita }
-}
-
-enum DataSource: String, Codable, Hashable, Sendable {
-   case luxCom = "LC"
-   case cita = "CTA"
-}
-
-enum DataSourceMode: String, Codable, Hashable, Sendable {
-   case auto = "AUTO"
-   case luxCom = "LC"
-   case cita = "CTA"
 }
