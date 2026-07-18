@@ -14,22 +14,19 @@ struct StopView: View {
     let fromStops: Bool
     let dontShowLastDivider: Bool
     let isLastStopOverall: Bool
-    let forceLC: Bool
     
     init(
         stop: SearchResult,
         maxGroupsToShow: Int,
         fromStops: Bool,
         dontShowLastDivider: Bool = true,
-        isLastStopOverall: Bool = false,
-        forceLC: Bool = false
+        isLastStopOverall: Bool = false
     ) {
         self.stop = stop
         self.maxGroupsToShow = maxGroupsToShow
         self.fromStops = fromStops
         self.dontShowLastDivider = dontShowLastDivider
         self.isLastStopOverall = isLastStopOverall
-        self.forceLC = forceLC
     }
     
     var body: some View {
@@ -37,7 +34,6 @@ struct StopView: View {
             ExpandedStopView(
                 stop: stop,
                 fromStops: true,
-                forceLC: forceLC,
                 maxGroupsToShow: maxGroupsToShow
             )
         } else {
@@ -45,8 +41,7 @@ struct StopView: View {
                 stop: stop,
                 maxGroupsToShow: maxGroupsToShow,
                 dontShowLastDivider: dontShowLastDivider,
-                isLastStopOverall: isLastStopOverall,
-                forceLC: forceLC
+                isLastStopOverall: isLastStopOverall
             )
         }
     }

@@ -236,9 +236,6 @@ struct SearchHistoryContent: View {
         case .adress:
             return ("mappin", .red)
         case .place:
-            if id == "citaStop" {
-                return ("signpost.right.fill", .accentColor)
-            }
             return ("building.fill", .blue)
         case .stop:
             return ("signpost.right.fill", .accentColor)

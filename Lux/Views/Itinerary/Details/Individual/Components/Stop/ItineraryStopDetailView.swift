@@ -10,8 +10,6 @@ import LuxCom
 
 struct ItineraryStopDetailView: View {
     let stop: Place
-    let isFromMultiple: Bool
-    let forceLC: Bool
     @Environment(\.dismiss) private var dismiss
     @ObservedObject private var settings = Settings.shared
     @State private var showTripSearch: Bool = false
@@ -22,10 +20,6 @@ struct ItineraryStopDetailView: View {
         return stopId
     }
 
-    private var shouldUsePlaceForTripSearch: Bool {
-        return settings.dataSource == .cita
-    }
-    
     var body: some View {
         NavigationStack {
             createExpandedStopView()
@@ -70,7 +64,7 @@ struct ItineraryStopDetailView: View {
                 }
                 .navigationDestination(isPresented: $showTripSearch) {
                     TripsSearchView(
-                        initialSearchResult: generateTripSearchResult(),
+                        initialSearchResult: generateStopSearchResult(),
                         initialTargetField: .to
                     )
                     .toolbarBackground(.hidden, for: .navigationBar)
@@ -96,33 +90,11 @@ struct ItineraryStopDetailView: View {
         )
     }
 
-    private func generateTripSearchResult() -> SearchResult {
-        if shouldUsePlaceForTripSearch {
-            return SearchResult(
-                type: .place,
-                tokens: [[]],
-                name: stop.name,
-                id: "citaStop",
-                lat: stop.lat,
-                lon: stop.lon,
-                level: Double(stop.level),
-                street: nil,
-                houseNumber: nil,
-                zip: nil,
-                areas: [],
-                score: 1.0
-            )
-        }
-
-        return generateStopSearchResult()
-    }
-
     private func createExpandedStopView() -> some View {
         let selectedDate = stop.departure ?? stop.arrival ?? Date()
         return ExpandedStopView(
             stop: generateStopSearchResult(),
             fromStops: true,
-            forceLC: isFromMultiple || forceLC,
             maxGroupsToShow: 50,
             time: selectedDate
         )

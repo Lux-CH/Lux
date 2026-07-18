@@ -35,7 +35,6 @@ struct ItineraryView: View {
     @State private var tripSwitchTask: Task<Void, Never>?
     @State private var shouldRenderMap = true
     let fromNearby: Bool
-    var forceLC: Bool = false
     let itineraarySharer = ItinerarySharer()
     
     @State private var trackingMode: MapTrackingMode = .none
@@ -47,25 +46,16 @@ struct ItineraryView: View {
         self.isSingle = true
     }
     
-    init(tripId: String, fromNearby: Bool, forceLC: Bool, otherTripOptions: [TripOption] = []) {
-        _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId, forceLC: forceLC))
-        self.fromNearby = fromNearby
-        self.forceLC = forceLC
-        self._otherItineraries = State(initialValue: otherTripOptions)
-        self.isSingle = true
-    }
-    
     init(itinerary: Itinerary, fromNearby: Bool) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary))
         self.fromNearby = fromNearby
         self.isSingle = false // so basically, it's a bit sketchy, but we never load trips if it's a processed route (using trip search) ; so it's never single if itinerary is passed directly
     }
     
-    init(itinerary: Itinerary, fromNearby: Bool, forceLC: Bool, destinationName: String? = nil) {
+    init(itinerary: Itinerary, fromNearby: Bool, destinationName: String? = nil) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary, destinationName: destinationName))
         self.fromNearby = fromNearby
         self.isSingle = false
-        self.forceLC = forceLC
     }
     
     var locationButtonIcon: String {
@@ -121,7 +111,6 @@ struct ItineraryView: View {
                             trackingMode: $trackingMode,
                             showDetails: $showDetails,
                             isSingle: isSingle,
-                            forceLC: forceLC,
                             detents: detents
                         )
                     } else {
@@ -208,7 +197,7 @@ struct ItineraryView: View {
                 }
                 // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
                 .sheet(isPresented: $showDetails) {
-                    ItineraryDetailSheet(viewModel: viewModel, itinerarySharer: itineraarySharer, isSingle: isSingle, forceLC: forceLC)
+                    ItineraryDetailSheet(viewModel: viewModel, itinerarySharer: itineraarySharer, isSingle: isSingle)
                         .presentationDetents([isSingle ? .fraction(detents.0) : .fraction(0.225), .medium, .large])
                         .presentationDragIndicator(.visible)
                         .presentationCornerRadius(38)
@@ -329,7 +318,6 @@ struct ItineraryMapView: View {
     @Binding var trackingMode: MapTrackingMode
     @Binding var showDetails: Bool
     let isSingle: Bool
-    let forceLC: Bool
     let detents: (CGFloat, CGFloat)
     
     @State private var position: MapCameraPosition = .automatic
@@ -344,7 +332,6 @@ struct ItineraryMapView: View {
                         StopAnnotationView(
                             annotation: annotation,
                             isTerminal: true,
-                            isMultiple: !isSingle || forceLC,
                             onOpenExpandedStop: { place in
                                 showDetails = false
                                 stopDetailDestination = StopDetailDestination(place: place)
@@ -357,7 +344,6 @@ struct ItineraryMapView: View {
                         StopAnnotationView(
                             annotation: annotation,
                             isTerminal: false,
-                            isMultiple: !isSingle || forceLC,
                             onOpenExpandedStop: { place in
                                 showDetails = false
                                 stopDetailDestination = StopDetailDestination(place: place)
@@ -424,9 +410,7 @@ struct ItineraryMapView: View {
             viewModel.selectedStop = nil
         }) { destination in
             ItineraryStopDetailView(
-                stop: destination.place,
-                isFromMultiple: !isSingle || forceLC,
-                forceLC: !isSingle || forceLC
+                stop: destination.place
             )
             .toolbarBackground(.hidden, for: .navigationBar)
             .navigationBarBackButtonHidden(true)

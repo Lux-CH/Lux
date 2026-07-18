@@ -19,10 +19,9 @@ struct IndividualItineraryDetailView: View {
     
     private let upcomingStops: [Place]
     private let nextStop: Place?
-    let forceLC: Bool
     let itineraarySharer: ItinerarySharer
     
-    init(viewModel: ItineraryViewModel, itinerary: Itinerary, isMultipleLeg: Bool, forceLC: Bool, itineraarySharer: ItinerarySharer) {
+    init(viewModel: ItineraryViewModel, itinerary: Itinerary, isMultipleLeg: Bool, itineraarySharer: ItinerarySharer) {
         self.viewModel = viewModel
         self.itinerary = itinerary
         self.mainLeg = itinerary.legs.first
@@ -35,7 +34,6 @@ struct IndividualItineraryDetailView: View {
             self.nextStop = nil
         }
         self.isMultipleLeg = isMultipleLeg
-        self.forceLC = forceLC
         self.itineraarySharer = itineraarySharer
     }
     
@@ -86,7 +84,7 @@ struct IndividualItineraryDetailView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 if let leg = mainLeg {
-                    LegHeaderView(leg: leg, legColor: legColor, isSingle: !isMultipleLeg, forceLC: forceLC, nextStop: nextStop)
+                    LegHeaderView(leg: leg, legColor: legColor, isSingle: !isMultipleLeg, nextStop: nextStop)
                         .padding(.horizontal, 20)
                         .padding(.top, 25)
                         .padding(.bottom, 17.5)
@@ -108,8 +106,7 @@ struct IndividualItineraryDetailView: View {
                                 fromStop: leg.from,
                                 toStop: leg.to,
                                 duration: leg.duration,
-                                isMultipleLeg: isMultipleLeg,
-                                forceLC: forceLC
+                                isMultipleLeg: isMultipleLeg
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)

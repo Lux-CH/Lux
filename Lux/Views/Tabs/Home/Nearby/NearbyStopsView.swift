@@ -8,7 +8,6 @@
 import SwiftUI
 import Combine
 import LuxCom
-import LuxComHAFAS
 import Network
 import CoreLocation
 
@@ -387,12 +386,9 @@ struct NearbyStopsView: View {
                 if OfflineRouter.shared.isOfflineActive {
                     results = try await LuxData.reverseGeocode(place: (loc.latitude, loc.longitude))
                 }
-                else if settings.dataSource == .luxCom {
+                else {
                     results = try await getMapSearchResults(
                         currentLoc: (loc.latitude, loc.longitude))
-                }
-                else {
-                    results = try await citaReverseGeocode(currentLoc: (loc.latitude, loc.longitude))
                 }
                 
                 if Task.isCancelled { return }
