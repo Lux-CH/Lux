@@ -8,47 +8,41 @@
 import Foundation
 import LuxCom
 
+@MainActor
 final class DisruptionManager: ObservableObject {
     @Published var disruptions: [Disruption] = []
-    private var refreshTimer: Timer?
-    
+    // Pushed by the relay WebSocket when the feed changes; the 5min HTTP poll
+    // only runs while the socket is down.
+    private let liveFeed = RelayLiveFeed<[Disruption]>()
+
     init() {
         Task {
             await fetchDisruptions()
         }
-        startAutoRefresh()
+        liveFeed.start(
+            fallbackInterval: .seconds(300),
+            stream: {
+                await RelayClient.shared.disruptions()
+            },
+            fallbackFetch: {
+                try? await getDisruptions()
+            },
+            onUpdate: { [weak self] fetched in
+                self?.disruptions = Array(Set(fetched))
+            }
+        )
     }
-    
-    deinit {
-        stopAutoRefresh()
-    }
-    
+
     func fetchDisruptions() async {
         do {
             let fetchedDisruptions = try await getDisruptions()
-            
-            await MainActor.run {
-                self.disruptions = Array(Set(fetchedDisruptions))
-            }
+            self.disruptions = Array(Set(fetchedDisruptions))
         } catch {
             print(error)
         }
     }
-    
+
     func disruptions(for line: String) -> [Disruption] {
         disruptions.filter { $0.line == line }
-    }
-    
-    private func startAutoRefresh() {
-        refreshTimer = Timer.scheduledTimer(withTimeInterval: 300, repeats: true) { [weak self] _ in
-            Task {
-                await self?.fetchDisruptions()
-            }
-        }
-    }
-    
-    private func stopAutoRefresh() {
-        refreshTimer?.invalidate()
-        refreshTimer = nil
     }
 }
