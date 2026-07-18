@@ -7,7 +7,6 @@
 
 import SwiftUI
 import LuxCom
-import LuxComHAFAS
 import CoreLocation
 
 class StopsViewModel: ObservableObject {
@@ -60,13 +59,7 @@ class StopsViewModel: ObservableObject {
         backgroundRefreshTask = Task {
             do {
                 if let coords = locationManager?.location?.coordinate {
-                    var results: [SearchResult] = []
-                    if OfflineRouter.shared.isOfflineActive || settings.dataSource == .luxCom {
-                        results = try await LuxData.geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 2)
-                    }
-                    else {
-                        results = try await citaGeocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 2)
-                    }
+                    let results = try await LuxData.geocode(text: searchQuery, type: .stop, place: (coords.latitude, coords.longitude), placeBias: 2)
                     
                     if !Task.isCancelled {
                         await MainActor.run {
@@ -129,12 +122,9 @@ class StopsViewModel: ObservableObject {
                 if OfflineRouter.shared.isOfflineActive {
                     results = try await LuxData.reverseGeocode(place: (loc.latitude, loc.longitude))
                 }
-                else if settings.dataSource == .luxCom {
+                else {
                     results = try await getMapSearchResults(
                         currentLoc: (loc.latitude, loc.longitude))
-                }
-                else {
-                    results = try await citaReverseGeocode(currentLoc: (loc.latitude, loc.longitude))
                 }
                 
                 if Task.isCancelled { return }

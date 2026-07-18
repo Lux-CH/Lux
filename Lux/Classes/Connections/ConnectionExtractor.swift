@@ -7,7 +7,6 @@
 
 import Foundation
 import SwiftUI
-import LuxComHAFAS
 
 class ConnectionExtractor: ObservableObject {
     @ObservedObject var settings = Settings.shared
@@ -28,10 +27,6 @@ class ConnectionExtractor: ObservableObject {
     }
     
     func extractSpecificKey(_ key: String) async throws -> [String]? {
-        if settings.isCita {
-            return try await getConnections(stopId: key)
-        }
-
         guard let data = mappedData else {
             throw BinaryPlistError.dataNotLoaded
         }
