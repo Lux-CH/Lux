@@ -13,9 +13,7 @@
 		791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SymbolPicker */; };
 		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
 		7981C7A72E48052500246701 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 7981C7A62E48052500246701 /* InfoPlist.xcstrings */; };
-		798605782F0DC7C4003C9CC6 /* LuxComHAFAS in Frameworks */ = {isa = PBXBuildFile; productRef = 798605772F0DC7C4003C9CC6 /* LuxComHAFAS */; };
 		7986885A2E3FEE15003FE496 /* SearchStopIntent.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 798688512E3FEE15003FE496 /* SearchStopIntent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		7986FFDD2F0D851F003C9CC6 /* LuxComHAFAS in Frameworks */ = {isa = PBXBuildFile; productRef = 7986FFDC2F0D851F003C9CC6 /* LuxComHAFAS */; };
 		799EE2962FC72228007F2852 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 799EE2952FC72228007F2852 /* LuxCom */; };
 		799EE2982FC7222E007F2852 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 799EE2972FC7222E007F2852 /* LuxCom */; };
 		799EE29A2FC72231007F2852 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 799EE2992FC72231007F2852 /* LuxCom */; };
@@ -166,8 +164,6 @@
 				79C64D402DB930DC00C01B89 /* Polyline in Frameworks */,
 				791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */,
 				790749E22DEE45A50010D818 /* CodeScanner in Frameworks */,
-				798605782F0DC7C4003C9CC6 /* LuxComHAFAS in Frameworks */,
-				7986FFDD2F0D851F003C9CC6 /* LuxComHAFAS in Frameworks */,
 				79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */,
 				AA0100000000000000000003 /* GRDB in Frameworks */,
 			);
@@ -275,8 +271,6 @@
 				79A2CC392E0EDCF80071DD44 /* LuxCom */,
 				79E806F52E10CA8E004CA0A0 /* LuxCom */,
 				79E806F82E10CAAB004CA0A0 /* LuxCom */,
-				7986FFDC2F0D851F003C9CC6 /* LuxComHAFAS */,
-				798605772F0DC7C4003C9CC6 /* LuxComHAFAS */,
 				799EE2952FC72228007F2852 /* LuxCom */,
 				AA0100000000000000000002 /* GRDB */,
 			);
@@ -344,7 +338,6 @@
 				796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */,
 				790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */,
-				798605762F0DC7C4003C9CC6 /* XCRemoteSwiftPackageReference "LuxComHAFAS" */,
 				799EE2942FC72228007F2852 /* XCRemoteSwiftPackageReference "LuxCom" */,
 				AA0100000000000000000001 /* XCRemoteSwiftPackageReference "GRDB" */,
 			);
@@ -827,14 +820,6 @@
 				minimumVersion = 0.4.7;
 			};
 		};
-		798605762F0DC7C4003C9CC6 /* XCRemoteSwiftPackageReference "LuxComHAFAS" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Lux-CH/LuxComHAFAS";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		799EE2942FC72228007F2852 /* XCRemoteSwiftPackageReference "LuxCom" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Lux-CH/LuxCom";
@@ -881,15 +866,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */;
 			productName = MessagePacker;
-		};
-		798605772F0DC7C4003C9CC6 /* LuxComHAFAS */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 798605762F0DC7C4003C9CC6 /* XCRemoteSwiftPackageReference "LuxComHAFAS" */;
-			productName = LuxComHAFAS;
-		};
-		7986FFDC2F0D851F003C9CC6 /* LuxComHAFAS */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = LuxComHAFAS;
 		};
 		799EE2952FC72228007F2852 /* LuxCom */ = {
 			isa = XCSwiftPackageProductDependency;

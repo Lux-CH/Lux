@@ -65,3 +65,5 @@ GPSTests.gpx
 /.gemini
 .DS_Store
 /Lux.xcodeproj/xcshareddata/xcodecloud
+.serena/
+.antigravitycli/
