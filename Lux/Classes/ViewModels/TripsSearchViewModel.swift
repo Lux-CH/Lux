@@ -606,17 +606,15 @@ class TripsSearchViewModel: ObservableObject {
         case .currentPosition:
             guard let coords = locationManager?.location?.coordinate else { return nil }
             
-            if settings.dataSource == .luxCom {
-                let nearbyStop = progress.searchResults.first { stop in
-                    guard stop.lat != 0.0 && stop.lon != 0.0 else { return false }
-                    let stopLocation = CLLocation(latitude: stop.lat, longitude: stop.lon)
-                    let userLocation = CLLocation(latitude: coords.latitude, longitude: coords.longitude)
-                    return userLocation.distance(from: stopLocation) <= 15.0
-                }
-                
-                if let stop = nearbyStop {
-                    return RouteOptions.RouteLocation(stopId: stop.id)
-                }
+            let nearbyStop = progress.searchResults.first { stop in
+                guard stop.lat != 0.0 && stop.lon != 0.0 else { return false }
+                let stopLocation = CLLocation(latitude: stop.lat, longitude: stop.lon)
+                let userLocation = CLLocation(latitude: coords.latitude, longitude: coords.longitude)
+                return userLocation.distance(from: stopLocation) <= 15.0
+            }
+
+            if let stop = nearbyStop {
+                return RouteOptions.RouteLocation(stopId: stop.id)
             }
             
             var floorLevel: Double? = nil
