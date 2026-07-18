@@ -20,8 +20,8 @@ struct ExpandedStopView: View {
     @Namespace private var animation
     let maxGroupsToShow: Int
     
-    init(stop: SearchResult, fromStops: Bool, forceLC: Bool, maxGroupsToShow: Int, time: Date? = nil) {
-        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: fromStops, isLC: forceLC, time: time))
+    init(stop: SearchResult, fromStops: Bool, maxGroupsToShow: Int, time: Date? = nil) {
+        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: fromStops, time: time))
         self.maxGroupsToShow = maxGroupsToShow
         self._selectedDate = State(initialValue: time ?? Date())
     }

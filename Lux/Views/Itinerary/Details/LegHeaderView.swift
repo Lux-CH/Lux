@@ -12,7 +12,6 @@ struct LegHeaderView: View {
     let leg: Leg
     let legColor: Color
     let isSingle: Bool
-    let forceLC: Bool
     let nextStop: Place?
     @State private var showTripIdView: Bool = false
     @State private var lineInfo: InfoResponse?
@@ -30,7 +29,7 @@ struct LegHeaderView: View {
                 }
                 .buttonStyle(PlainButtonStyle())
                 .fullScreenCover(isPresented: $showTripIdView) {
-                    ItineraryView(tripId: tripId, fromNearby: false, forceLC: forceLC)
+                    ItineraryView(tripId: tripId, fromNearby: false)
                 }
             } else {
                 contentView

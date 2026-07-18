@@ -16,7 +16,6 @@ struct MultipleItineraryDetailView: View {
     @State private var selectedTightConnection: (from: String, to: String)?
     @ObservedObject var viewModel: ItineraryViewModel
     let itineraarySharer: ItinerarySharer
-    let forceLC: Bool
     
     private func calculateUpcomingStops(leg: Leg) -> [Place] {
         guard let intermediateStops = leg.intermediateStops else { return [] }
@@ -159,7 +158,7 @@ struct MultipleItineraryDetailView: View {
                     ForEach(Array(itinerary.legs.enumerated()), id: \.element.legGeometry.points) { legIndex, leg in
                         if leg.mode != .walk {
                             // Transit leg
-                            LegHeaderView(leg: leg, legColor: getLegColor(leg), isSingle: false, forceLC: forceLC, nextStop: nil)
+                            LegHeaderView(leg: leg, legColor: getLegColor(leg), isSingle: false, nextStop: nil)
                                 .padding(.horizontal, 20)
                                 .padding(.top, 25)
                                 .padding(.bottom, 15)
@@ -174,8 +173,7 @@ struct MultipleItineraryDetailView: View {
                                 fromStop: leg.from,
                                 toStop: leg.to,
                                 duration: leg.duration,
-                                isMultipleLeg: true,
-                                forceLC: forceLC
+                                isMultipleLeg: true
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)

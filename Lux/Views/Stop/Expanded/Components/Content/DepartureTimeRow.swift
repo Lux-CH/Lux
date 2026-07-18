@@ -26,7 +26,7 @@ struct DepartureTimeRow: View {
                 )
             }
             
-            ItineraryView(tripId: stopTime.tripId, fromNearby: false, forceLC: viewModel.shouldLoadViaLC, otherTripOptions: otherTripOptions)
+            ItineraryView(tripId: stopTime.tripId, fromNearby: false, otherTripOptions: otherTripOptions)
                 .toolbarBackground(.hidden, for: .navigationBar)
                 .navigationBarBackButtonHidden(true)
                 .onAppear {

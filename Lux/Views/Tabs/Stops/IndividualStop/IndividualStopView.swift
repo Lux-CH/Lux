@@ -10,7 +10,6 @@ import LuxCom
 
 struct IndividualStopView: View {
     @State var stop: SearchResult
-    let forceLC: Bool
 
     private var topSafeAreaInset: CGFloat {
         UIApplication.shared.connectedScenes
@@ -18,9 +17,8 @@ struct IndividualStopView: View {
             .first?.keyWindow?.safeAreaInsets.top ?? 44
     }
 
-    init(stop: SearchResult, forceLC: Bool = false) {
+    init(stop: SearchResult) {
         self._stop = State(initialValue: stop)
-        self.forceLC = forceLC
     }
 
     var body: some View {
@@ -34,7 +32,7 @@ struct IndividualStopView: View {
                     .padding(.bottom, 20)
                 Divider()
                 VStack(alignment: .center) {
-                    StopView(stop: stop, maxGroupsToShow: 50, fromStops: true, forceLC: forceLC)
+                    StopView(stop: stop, maxGroupsToShow: 50, fromStops: true)
                         .padding(.top, -5)
                 }
             }

@@ -57,7 +57,6 @@ struct StopAnnotation: Identifiable, Equatable {
 struct StopAnnotationView: View {
     let annotation: StopAnnotation
     let isTerminal: Bool
-    let isMultiple: Bool
     let onOpenExpandedStop: (Place) -> Void
     @State private var showPopover = false
     @State private var isLaunchingStopDetail = false

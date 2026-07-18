@@ -16,7 +16,6 @@ struct ItineraryStopTimelineView: View {
     let fromStop: Place
     let toStop: Place
     let isMultipleLeg: Bool
-    let forceLC: Bool
     
     @State private var showAllStops = false
     
@@ -47,7 +46,6 @@ struct ItineraryStopTimelineView: View {
                     isArrivalStop: stop.name == toStop.name,
                     currentDate: Date(),
                     isMultiple: isMultipleLeg,
-                    forceLC: forceLC,
                     onSelect: {
                         viewModel.selectedStop = stop
                     }
@@ -133,7 +131,6 @@ struct ItineraryStopTimelineRowView: View {
     let isArrivalStop: Bool
     let currentDate: Date
     let isMultiple: Bool
-    let forceLC: Bool
     let onSelect: () -> Void
     
     private var stopStatus: StopStatus {

@@ -19,8 +19,8 @@ struct CompactStopView: View {
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
-    init(stop: SearchResult, maxGroupsToShow: Int, dontShowLastDivider: Bool, isLastStopOverall: Bool, forceLC: Bool = false) {
-        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: false, isLC: forceLC, time: nil))
+    init(stop: SearchResult, maxGroupsToShow: Int, dontShowLastDivider: Bool, isLastStopOverall: Bool) {
+        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: false, time: nil))
         self.maxGroupsToShow = maxGroupsToShow
         self.dontShowLastDivider = dontShowLastDivider
         self.isLastStopOverall = isLastStopOverall
@@ -47,7 +47,7 @@ struct CompactStopView: View {
     }
         
     private var headerView: some View {
-        NavigationLink(destination: IndividualStopView(stop: viewModel.stop, forceLC: viewModel.shouldLoadViaLC)) {
+        NavigationLink(destination: IndividualStopView(stop: viewModel.stop)) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
                     Image(systemName: "signpost.right")
