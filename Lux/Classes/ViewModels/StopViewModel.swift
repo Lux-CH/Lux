@@ -7,7 +7,6 @@
 
 import SwiftUI
 import LuxCom
-import LuxComHAFAS
 import Combine
 
 class StopViewModel: ObservableObject {
@@ -23,24 +22,20 @@ class StopViewModel: ObservableObject {
     
     let stop: SearchResult
     
-    private var refreshTimer: AnyCancellable?
+    private let liveFeed = RelayLiveFeed<StopTimes>()
     private var departureCheckTimer: AnyCancellable?
     private var backgroundRefreshTask: Task<Void, Never>?
     private var fromStops: Bool
     private var currentTime: Date = Date()
     private var isCustomTimeSelected: Bool = false
-    @Published var shouldLoadViaLC: Bool
-    
     init(stop: SearchResult, fromStops: Bool) {
         self.stop = stop
         self.fromStops = fromStops
-        self.shouldLoadViaLC = false
     }
-    
-    init(stop: SearchResult, fromStops: Bool, isLC: Bool, time: Date?) {
+
+    init(stop: SearchResult, fromStops: Bool, time: Date?) {
         self.stop = stop
         self.fromStops = fromStops
-        self.shouldLoadViaLC = isLC
         if let selectedTime = time {
             isCustomTimeSelected = true
             currentTime = selectedTime
@@ -60,14 +55,10 @@ class StopViewModel: ObservableObject {
         }
         
         if !fromStops {
-            refreshTimer = Timer.publish(every: 5, on: .main, in: .common)
-                .autoconnect()
-                .sink { [weak self] _ in
-                    Task {
-                        await self?.refreshDeparturesInBackground()
-                    }
-                }
-            
+            Task { @MainActor in
+                self.startLiveFeed()
+            }
+
             departureCheckTimer = Timer.publish(every: 10, on: .main, in: .common)
                 .autoconnect()
                 .sink { [weak self] _ in
@@ -79,9 +70,55 @@ class StopViewModel: ObservableObject {
     }
     
     func stopMonitoring() {
-        refreshTimer?.cancel()
+        Task { @MainActor in
+            self.liveFeed.stop()
+        }
         departureCheckTimer?.cancel()
         backgroundRefreshTask?.cancel()
+    }
+
+    /// Live departures via the relay WebSocket. The relay pushes a new
+    /// StopTimes payload only when it changed; the legacy 5s HTTP poll runs as
+    /// fallback while the socket is down, and exclusively in offline mode or
+    /// when browsing a custom time (the relay only serves "now").
+    @MainActor
+    private func startLiveFeed() {
+        let fallbackOnly = OfflineRouter.shared.isOfflineActive || isCustomTimeSelected
+        let stopId = stop.id
+
+        liveFeed.start(
+            fallbackOnly: fallbackOnly,
+            fallbackInterval: .seconds(5),
+            stream: {
+                await RelayClient.shared.departures(
+                    stopId: stopId,
+                    n: 50,
+                    radius: 200
+                )
+            },
+            fallbackFetch: { [weak self] in
+                guard let self else { return nil }
+                let fetchTime = self.isCustomTimeSelected ? self.currentTime : Date()
+                return try? await self.fetchDeparturesAndArrivals(for: fetchTime)
+            },
+            onUpdate: { [weak self] freshStopTimes in
+                self?.applyStopTimes(freshStopTimes)
+            }
+        )
+    }
+
+    @MainActor
+    private func applyStopTimes(_ freshStopTimes: StopTimes) {
+        self.stopTimes = freshStopTimes
+        let times = freshStopTimes.stopTimes
+        if !times.isEmpty {
+            self.groupStopTimes(times)
+            self.checkAndHandleDepartures()
+        } else {
+            self.routeGroups = [:]
+            self.routeNames = []
+            self.currentPages = [:]
+        }
     }
     
     @MainActor
@@ -97,9 +134,16 @@ class StopViewModel: ObservableObject {
         
         let now = Date()
         let isSignificantDifference = abs(time.timeIntervalSince(now)) > 60
+        let customTimeChanged = isCustomTimeSelected != isSignificantDifference
         isCustomTimeSelected = isSignificantDifference
         currentTime = time
-        
+
+        // Entering/leaving custom-time browsing switches between the relay
+        // stream (live "now" data) and local polling at the selected time.
+        if customTimeChanged && !fromStops {
+            startLiveFeed()
+        }
+
         backgroundRefreshTask = Task {
             defer {
                 if showLoading {
@@ -132,24 +176,14 @@ class StopViewModel: ObservableObject {
     }
     
     private func fetchDeparturesAndArrivals(for time: Date) async throws -> StopTimes {
-        if OfflineRouter.shared.isOfflineActive || settings.dataSource == .luxCom || shouldLoadViaLC {
-            let eventsTask = try await LuxData.departures(
-                stopId: stop.id,
-                time: time,
-                both: true,
-                direction: "LATER",
-                numberOfEvents: fromStops ? 100 : 50,
-                radius: 200
-            )
-            return eventsTask
-        }
-        let departuresTask = try await citaDepartures(
+        try await LuxData.departures(
             stopId: stop.id,
             time: time,
-            arriveBy: false,
-            numberOfEvents: fromStops ? 100 : 50
+            both: true,
+            direction: "LATER",
+            numberOfEvents: fromStops ? 100 : 50,
+            radius: 200
         )
-        return departuresTask
     }
 
     private func refreshDeparturesInBackground() async {

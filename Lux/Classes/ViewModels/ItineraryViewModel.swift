@@ -8,7 +8,6 @@
 import SwiftUI
 import MapKit
 import LuxCom
-import LuxComHAFAS
 import Polyline
 
 @MainActor
@@ -30,10 +29,9 @@ final class ItineraryViewModel: ObservableObject {
     private var walkingLegPaths: [String: WalkingPathMetrics] = [:]
     private var vehicleUpdateTask: Task<Void, Never>?
     private var walkingUpdateTask: Task<Void, Never>?
-    private var itineraryRefreshTask: Task<Void, Never>?
+    private let liveFeed = RelayLiveFeed<Itinerary>()
     
     private var shouldStop = false
-    private var forceLC: Bool = false
     
     @Published var itinerary: Itinerary?
     @Published var selectedStop: Place? = nil
@@ -52,11 +50,6 @@ final class ItineraryViewModel: ObservableObject {
 
     init(tripId: String) {
         self.tripId = tripId
-    }
-    
-    init(tripId: String, forceLC: Bool) {
-        self.tripId = tripId
-        self.forceLC = forceLC
     }
     
     convenience init(itinerary: Itinerary, destinationName: String? = nil) {
@@ -108,12 +101,7 @@ final class ItineraryViewModel: ObservableObject {
         error = nil
         
         do {
-            if OfflineRouter.shared.isOfflineActive || settings.dataSource == .luxCom || forceLC {
-                itinerary = try await LuxData.trip(tripId: tripId)
-            }
-            else {
-                itinerary = try await citaGetTrip(tripId: tripId)
-            }
+            itinerary = try await LuxData.trip(tripId: tripId)
             if itinerary != nil {
                 await processItinerary()
                 startItineraryRefresh()
@@ -168,25 +156,34 @@ final class ItineraryViewModel: ObservableObject {
         }
     }
         
+    /// Live trip updates via the relay WebSocket; the legacy 10s HTTP poll
+    /// only runs while the socket is down or in offline mode.
     private func startItineraryRefresh() {
         guard !tripId.isEmpty && !shouldStop else { return }
-        
+
         stopItineraryRefresh()
-        
-        itineraryRefreshTask = Task {
-            while !Task.isCancelled && !shouldStop {
-                try? await Task.sleep(for: .seconds(10))
-                
-                guard !Task.isCancelled && !shouldStop else { break }
-                
-                await refreshItinerary()
+
+        let tripId = tripId
+
+        liveFeed.start(
+            fallbackOnly: OfflineRouter.shared.isOfflineActive,
+            fallbackInterval: .seconds(10),
+            stream: {
+                await RelayClient.shared.trip(tripId: tripId)
+            },
+            fallbackFetch: {
+                try? await LuxData.trip(tripId: tripId)
+            },
+            onUpdate: { [weak self] newItinerary in
+                guard let self, !self.shouldStop else { return }
+                self.itinerary = newItinerary
+                Task { await self.processItinerary(shouldCalculateMapPosition: false) }
             }
-        }
+        )
     }
-    
+
     private func stopItineraryRefresh() {
-        itineraryRefreshTask?.cancel()
-        itineraryRefreshTask = nil
+        liveFeed.stop()
     }
     
     private func refreshItinerary(dontActuallyFetch: Bool = false) async {
@@ -194,14 +191,8 @@ final class ItineraryViewModel: ObservableObject {
         
         do {
             if !dontActuallyFetch {
-                if OfflineRouter.shared.isOfflineActive || settings.dataSource == .luxCom || forceLC {
-                    let newItinerary = try await LuxData.trip(tripId: tripId)
-                    itinerary = newItinerary
-                }
-                else {
-                    let newItinerary = try await citaGetTrip(tripId: tripId)
-                    itinerary = newItinerary
-                }
+                let newItinerary = try await LuxData.trip(tripId: tripId)
+                itinerary = newItinerary
             }
             else {
                 // Keep current snapshot without triggering a no-op publish.
@@ -377,10 +368,9 @@ final class ItineraryViewModel: ObservableObject {
         shouldStop = true
         vehicleUpdateTask?.cancel()
         walkingUpdateTask?.cancel()
-        itineraryRefreshTask?.cancel()
+        // liveFeed cancels its own tasks in its deinit
         vehicleUpdateTask = nil
         walkingUpdateTask = nil
-        itineraryRefreshTask = nil
     }
     
     private func stopVehicleUpdates() {
