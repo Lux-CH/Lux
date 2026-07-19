@@ -102,7 +102,7 @@ class StopViewModel: ObservableObject {
             },
             fallbackFetch: { [weak self] in
                 guard let self else { return nil }
-                let fetchTime = self.isCustomTimeSelected ? self.currentTime : Date()
+                let fetchTime = await self.isCustomTimeSelected ? self.currentTime : Date()
                 return try? await self.fetchDeparturesAndArrivals(for: fetchTime)
             },
             onUpdate: { [weak self] freshStopTimes in
