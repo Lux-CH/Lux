@@ -100,6 +100,11 @@ final class ItineraryViewModel: ObservableObject {
         isLoading = true
         error = nil
         
+        if !OfflineRouter.shared.isOfflineActive, await RelayClient.shared.isConnected {
+            startItineraryRefresh()
+            return
+        }
+
         do {
             itinerary = try await LuxData.trip(tripId: tripId)
             if itinerary != nil {
@@ -176,8 +181,10 @@ final class ItineraryViewModel: ObservableObject {
             },
             onUpdate: { [weak self] newItinerary in
                 guard let self, !self.shouldStop else { return }
+                let isInitialLoad = self.itinerary == nil
                 self.itinerary = newItinerary
-                Task { await self.processItinerary(shouldCalculateMapPosition: false) }
+                self.isLoading = false
+                Task { await self.processItinerary(shouldCalculateMapPosition: isInitialLoad) }
             }
         )
     }
