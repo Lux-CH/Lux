@@ -175,20 +175,22 @@ struct NearbyStopsView: View {
                         
                     }
                     
-                    if offline.needsUpdate {
+                    if offline.needsUpdate && !offline.isWorking {
                         HintIndicatorView(
                             icon: "arrow.down.circle",
                             message: String(localized: "Vos horaires hors ligne datent de plus de 2 semaines. Touchez pour les mettre à jour."),
                             delay: 0.5,
-                            duration: 25
-                        ) {
-                            showingSuggestion = false
-                        }
+                            duration: 25,
+                            onDismiss: {
+                                showingSuggestion = false
+                            },
+                            onTap: {
+                                showingSuggestion = false
+                                offline.startImport()
+                            }
+                        )
                         .onAppear {
                             showingSuggestion = true
-                        }
-                        .onTapGesture {
-                            offline.startImport()
                         }
                         .padding(.top, 14)
                     } else if settings.appLaunchCount < 5 && progress.numOfTimesStopViewWasOpened < 2 && !settings.firstLaunch {
@@ -357,6 +359,15 @@ struct NearbyStopsView: View {
     private func loadNearbyStops(showLoading: Bool) {
         guard !isAuthorizationNotAllowed else { return }
         
+
+        if let pending = pendingFetchLocation,
+           let current = locationManager.location,
+           backgroundRefreshTask != nil,
+           backgroundRefreshTask?.isCancelled == false,
+           current.distance(from: pending) < 10 {
+            return
+        }
+
         if showLoading { isLoading = true }
         backgroundRefreshTask?.cancel()
         

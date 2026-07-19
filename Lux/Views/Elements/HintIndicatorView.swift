@@ -13,7 +13,8 @@ struct HintIndicatorView: View {
     let delay: Double
     let duration: Double
     let onDismiss: (() -> Void)?
-    
+    var onTap: (() -> Void)? = nil
+
     @State private var isVisible = false
     @State private var bounceOffset: CGFloat = 0
     @State private var pulseOpacity: Double = 0.3
@@ -29,9 +30,6 @@ struct HintIndicatorView: View {
                         bounce()
                     }
                 }
-                .onTapGesture {
-                    bounce() // fun
-                }
                 .opacity(isVisible ? pulseOpacity - 0.1 : 0)
             
             Text(message)
@@ -41,7 +39,14 @@ struct HintIndicatorView: View {
                 .padding(.horizontal, 16)
                 .opacity(isVisible ? pulseOpacity : 0)
         }
-        
+        .contentShape(Rectangle())
+        .onTapGesture {
+            if let onTap {
+                onTap()
+            } else {
+                bounce()
+            }
+        }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 withAnimation(.easeOut(duration: 0.75)) {

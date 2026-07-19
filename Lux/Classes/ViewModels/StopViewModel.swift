@@ -43,17 +43,21 @@ class StopViewModel: ObservableObject {
     }
     
     func startMonitoring() {
-        if stopTimes == nil {
-            isLoading = true
-            Task {
+        Task { @MainActor in
+            let relayEligible = !fromStops
+                && !OfflineRouter.shared.isOfflineActive
+                && !isCustomTimeSelected
+            let relayCoversInitialLoad = relayEligible ? await RelayClient.shared.isConnected : false
+            if relayCoversInitialLoad {
+                if stopTimes == nil { isLoading = true }
+            } else if stopTimes == nil {
+                isLoading = true
                 await refreshDepartures(showLoading: true)
-            }
-        } else {
-            Task {
+            } else {
                 await refreshDeparturesInBackground()
             }
         }
-        
+
         if !fromStops {
             Task { @MainActor in
                 self.startLiveFeed()
@@ -109,6 +113,7 @@ class StopViewModel: ObservableObject {
 
     @MainActor
     private func applyStopTimes(_ freshStopTimes: StopTimes) {
+        self.isLoading = false
         self.stopTimes = freshStopTimes
         let times = freshStopTimes.stopTimes
         if !times.isEmpty {

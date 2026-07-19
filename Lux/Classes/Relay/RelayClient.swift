@@ -9,18 +9,13 @@ import Foundation
 import UIKit
 import LuxCom
 
-/// Shared WebSocket client for the lux-relay server. The relay polls the
-/// upstream APIs (MOTIS / disruptions) server-side and only pushes
-/// a message when the payload actually changed, replacing the app's HTTP
-/// polling loops. Subscriptions are exposed as AsyncStreams; the relay replays
-/// the last known payload on subscribe.
 actor RelayClient {
     static let shared = RelayClient()
 
     private static let url = URL(string: "wss://lux.cclerc.ch/ws")!
 
     private struct SubscriptionKey: Hashable {
-        let channel: String // "dep" | "trip" | "dis"
+        let channel: String
         let src: String
         let id: String
         let extra: String
@@ -38,8 +33,6 @@ actor RelayClient {
     private var suspendedForBackground = false
     private var subscribers: [SubscriptionKey: [UUID: Subscriber]] = [:]
 
-    /// True when the socket is connected; RelayLiveFeed uses this to decide
-    /// whether the HTTP fallback needs to run.
     private(set) var isConnected = false
 
     private static let decoder: JSONDecoder = {
@@ -125,8 +118,6 @@ actor RelayClient {
         subscribers[key, default: [:]][id] = subscriber
 
         connectIfNeeded()
-        // The relay dedups subs per key server-side; re-sending for an existing
-        // key just triggers a snapshot replay for everyone, which is fine.
         if isConnected || isNewKey {
             send(subscriber.subscribeMessage)
         }
@@ -184,7 +175,6 @@ actor RelayClient {
             while !Task.isCancelled {
                 let message = try await webSocketTask.receive()
                 if !isConnected {
-                    // First frame confirms the connection is live.
                     markConnected()
                 }
                 handle(message)
@@ -196,10 +186,6 @@ actor RelayClient {
     }
 
     private func runPingLoop(on webSocketTask: URLSessionWebSocketTask) async {
-        // The first successful pong is what flips isConnected when the relay
-        // has nothing to push right away. After that, pings are only a liveness
-        // check: the server heartbeats every 30s (keeping NAT mappings alive),
-        // so a slow cadence here halves radio wakeups without losing detection.
         while !Task.isCancelled, task === webSocketTask {
             let connected: Bool = await withCheckedContinuation { continuation in
                 webSocketTask.sendPing { error in
@@ -282,8 +268,6 @@ actor RelayClient {
         )
 
         for (candidate, keySubscribers) in subscribers {
-            // dep keys carry n/radius in `extra`, which the server doesn't echo
-            // back; match on channel/src/id only.
             guard candidate.channel == key.channel,
                   candidate.src == key.src,
                   candidate.id == key.id else { continue }
