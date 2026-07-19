@@ -109,7 +109,7 @@ actor RelayClient {
                 Task { await self.removeSubscriber(subscriberId, for: key) }
             }
 
-            Task { await self.addSubscriber(subscriber, id: subscriberId, for: key) }
+            Task { self.addSubscriber(subscriber, id: subscriberId, for: key) }
         }
     }
 
@@ -215,7 +215,7 @@ actor RelayClient {
         let delay = min(30.0, pow(2.0, Double(reconnectAttempt))) * .random(in: 0.8...1.2)
         Task {
             try? await Task.sleep(for: .seconds(delay))
-            await self.reconnectIfNeeded()
+            self.reconnectIfNeeded()
         }
     }
 
@@ -283,12 +283,12 @@ actor RelayClient {
         let center = NotificationCenter.default
         Task {
             for await _ in center.notifications(named: UIApplication.didEnterBackgroundNotification) {
-                await self.enterBackground()
+                self.enterBackground()
             }
         }
         Task {
             for await _ in center.notifications(named: UIApplication.willEnterForegroundNotification) {
-                await self.enterForeground()
+                self.enterForeground()
             }
         }
     }
