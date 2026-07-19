@@ -15,16 +15,6 @@
     "-" : {
       "shouldTranslate" : false
     },
-    ". Source utilisée: %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : ". Source used: %@"
-          }
-        }
-      }
-    },
     "*" : {
       "shouldTranslate" : false
     },
@@ -1478,16 +1468,6 @@
         }
       }
     },
-    "Choisissez la source des données affichées sur Lux%@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose the source of the data displayed on Lux%@"
-          }
-        }
-      }
-    },
     "Choisissez le mode d'affichage de l'app" : {
       "localizations" : {
         "en" : {
@@ -2720,17 +2700,6 @@
         }
       }
     },
-    "Importation…" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Importing…"
-          }
-        }
-      }
-    },
     "Impossible d'envoyer le SMS" : {
       "localizations" : {
         "en" : {
@@ -2997,16 +2966,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "The trip could not be opened."
-          }
-        }
-      }
-    },
-    "L’option Auto est recommandée : l'app montre les données officielles des tpg dans le canton de Genève, puis celle de Lux en dehors.\nLux est la source de données officielle de l’application. Elle garantit une meilleure compatibilité avec celle-ci et offre un meilleur respect de la vie privée.\nL'option tpg utilise le serveur officiel des Transports Publics Genevois comme source de données. Cette source peut être plus précise, mais elle est moins compatible avec l'application. Par conséquent, certaines fonctionnalités ne seront que partiellement disponibles lorsque tpg est séléctionné.\nLe calcul des itinéraires est, dans tous les cas, effectué à l'aide des serveurs de Lux.\n\nLa politique de confidentialité de Lux ne s'applique plus lorsque l'option tpg est sélectionnée. Tous droits relatifs aux noms et icônes des Transports Publics Genevois sont réservés." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The option Auto is recommended : the app will show official data from tpg in Geneva and use Lux data outside of the city.\nLux is the official data source for the application. It ensures better compatibility with the app and offers stronger privacy protection.\nThe tpg option uses the official server of the Transports Publics Genevois as its data source. This source may be more accurate, but it is less compatible with the app. As a result, some features will only be partially available when tpg is selected.\nIn all cases, route calculations are performed using Lux's servers.\n\nLux's privacy policy no longer applies when the tpg option is selected. All rights related to the names and icons of the Transports Publics Genevois are reserved."
           }
         }
       }
@@ -4817,16 +4776,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Dark"
-          }
-        }
-      }
-    },
-    "Source des données" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Data source"
           }
         }
       }
