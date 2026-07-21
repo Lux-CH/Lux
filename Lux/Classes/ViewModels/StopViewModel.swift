@@ -353,8 +353,54 @@ class StopViewModel: ObservableObject {
             }
     }
 
+    private static let duplicateWindow: TimeInterval = 3 * 60
+
+    private func deduplicatedByTrip(_ stopTimes: [StopTime]) -> [StopTime] {
+        var indicesByTrip: [String: [Int]] = [:]
+        for (index, stopTime) in stopTimes.enumerated() {
+            indicesByTrip[stopTime.tripId, default: []].append(index)
+        }
+
+        var kept = Set<Int>()
+        for (_, indices) in indicesByTrip {
+            let ordered = indices.sorted { eventTime(stopTimes[$0]) < eventTime(stopTimes[$1]) }
+            var cluster: [Int] = []
+            func keepClosestOfCluster() {
+                if let closest = cluster.min(by: {
+                    distanceToStop(stopTimes[$0].place) < distanceToStop(stopTimes[$1].place)
+                }) {
+                    kept.insert(closest)
+                }
+                cluster.removeAll()
+            }
+            for index in ordered {
+                if let first = cluster.first,
+                   eventTime(stopTimes[index]).timeIntervalSince(eventTime(stopTimes[first])) > Self.duplicateWindow {
+                    keepClosestOfCluster()
+                }
+                cluster.append(index)
+            }
+            keepClosestOfCluster()
+        }
+
+        return stopTimes.enumerated()
+            .filter { kept.contains($0.offset) }
+            .map(\.element)
+    }
+
+    private func eventTime(_ stopTime: StopTime) -> Date {
+        stopTime.place.departure ?? stopTime.place.arrival ?? .distantFuture
+    }
+
+    private func distanceToStop(_ place: Place) -> Double {
+        let deltaLat = place.lat - stop.lat
+        let deltaLon = (place.lon - stop.lon) * cos(stop.lat * .pi / 180)
+        return deltaLat * deltaLat + deltaLon * deltaLon
+    }
+
     @MainActor
-    private func groupStopTimes(_ stopTimes: [StopTime]) {
+    private func groupStopTimes(_ rawStopTimes: [StopTime]) {
+        let stopTimes = deduplicatedByTrip(rawStopTimes)
         let filteredStopTimes = isCustomTimeSelected ?
         stopTimes :
         stopTimes.filter { stopTime in
@@ -364,7 +410,8 @@ class StopViewModel: ObservableObject {
         }
         
         let routeGroups = Dictionary(grouping: filteredStopTimes) { $0.routeShortName }
-        
+        let viewedStopKey = stop.name.normalizedHeadsignKey
+
         var result: [String: [GroupedStopTime]] = [:]
         var newCurrentPages: [String: Int] = [:]
                 
@@ -382,8 +429,13 @@ class StopViewModel: ObservableObject {
                         stopTimes: sortedTimes
                     )
                 }
-                .sorted { $0.headsign < $1.headsign }
-            
+                .sorted { lhs, rhs in
+                    let lhsEndsHere = lhs.headsign.normalizedHeadsignKey == viewedStopKey
+                    let rhsEndsHere = rhs.headsign.normalizedHeadsignKey == viewedStopKey
+                    if lhsEndsHere != rhsEndsHere { return rhsEndsHere }
+                    return lhs.headsign < rhs.headsign
+                }
+
             result[routeName] = groupsByHeadsign
             newCurrentPages[routeName] = min(currentPages[routeName] ?? 0, max(0, groupsByHeadsign.count - 1))
         }
