@@ -15,8 +15,6 @@ struct CompactStopView: View {
     let maxGroupsToShow: Int
     let dontShowLastDivider: Bool
     let isLastStopOverall: Bool
-
-    @State private var skeletonPulse = false
     
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
@@ -33,7 +31,7 @@ struct CompactStopView: View {
             headerView
             
             if viewModel.isLoading && viewModel.routeGroups.isEmpty {
-                skeletonView
+                loadingView
             } else if viewModel.routeGroups.isEmpty {
                 emptyStateView
             } else {
@@ -110,38 +108,9 @@ struct CompactStopView: View {
         }
     }
     
-    private var skeletonView: some View {
-        VStack(spacing: 0) {
-            ForEach(0..<max(1, min(maxGroupsToShow, 3)), id: \.self) { index in
-                HStack(spacing: 14) {
-                    RoundedRectangle(cornerRadius: 10, style: .continuous)
-                        .frame(width: 46, height: 34)
-                    VStack(alignment: .leading, spacing: 7) {
-                        RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .frame(width: 70, height: 9)
-                        RoundedRectangle(cornerRadius: 4, style: .continuous)
-                            .frame(width: 150, height: 15)
-                    }
-                    Spacer()
-                    RoundedRectangle(cornerRadius: 4, style: .continuous)
-                        .frame(width: 34, height: 18)
-                }
-                .padding(.horizontal, 20)
-                .frame(height: 70)
-
-                if index < max(1, min(maxGroupsToShow, 3)) - 1 {
-                    Divider().padding(.horizontal)
-                }
-            }
-        }
-        .foregroundStyle(.quaternary)
-        .opacity(skeletonPulse ? 0.55 : 1.0)
-        .onAppear {
-            withAnimation(.easeInOut(duration: 0.9).repeatForever(autoreverses: true)) {
-                skeletonPulse = true
-            }
-        }
-        .accessibilityLabel("Chargement des départs")
+    private var loadingView: some View {
+        ProgressView("Chargement des départs...")
+            .padding()
     }
 
     private func errorBanner(_ message: String) -> some View {
