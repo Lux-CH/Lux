@@ -119,6 +119,7 @@ class StopViewModel: ObservableObject {
     private func applyStopTimes(_ rawStopTimes: StopTimes) {
         let freshStopTimes = filteredForStation(rawStopTimes)
         self.isLoading = false
+        self.errorMessage = nil
         self.stopTimes = freshStopTimes
         let times = freshStopTimes.stopTimes
         if !times.isEmpty {
@@ -165,7 +166,8 @@ class StopViewModel: ObservableObject {
                 let freshStopTimes = filteredForStation(try await fetchDeparturesAndArrivals(for: time))
 
                 if Task.isCancelled { return }
-                
+
+                self.errorMessage = nil
                 self.stopTimes = freshStopTimes
                 let times = freshStopTimes.stopTimes
                 if !times.isEmpty {
@@ -213,6 +215,7 @@ class StopViewModel: ObservableObject {
                 }
                 
                 await MainActor.run {
+                    self.errorMessage = nil
                     self.stopTimes = freshStopTimes
                     let times = self.stopTimes?.stopTimes ?? []
                     if !times.isEmpty {
