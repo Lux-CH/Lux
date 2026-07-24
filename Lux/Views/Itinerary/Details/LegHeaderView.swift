@@ -97,7 +97,7 @@ struct LegHeaderView: View {
                             case .tram: return "tram"
                             case .ferry: return "ferry"
                             case .bus: return "bus"
-                            case .rail, .highSpeedRail, .regionalFastRail, .regionalRail: return "tram.tunnel.fill"
+                            case .rail, .highSpeedRail, .regionalFastRail, .regionalRail, .suburban, .funicular: return "tram.tunnel.fill"
                             default: return "bus"
                             }
                         }()
