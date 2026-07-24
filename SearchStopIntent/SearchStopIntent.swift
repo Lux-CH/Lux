@@ -16,11 +16,14 @@ struct SearchStopIntent: AppIntent {
     
     func perform() async throws -> some IntentResult & ReturnsValue<[DepartureEntity]> {
         do {
-            guard let stopId = try await geocode(text: stopName, type: .stop).first?.id else {
+            guard let stop = try await geocode(text: stopName, type: .stop).first else {
                 throw $stopName.needsValueError("Aucun arrêt trouvé pour \"\(stopName)\".")
             }
-            
-            let departures = try await getDeparturesForStop(stopId: stopId, numberOfEvents: 20, radius: 200).stopTimes
+            let stopId = stop.id
+
+            let departures = try await getDeparturesForStop(stopId: stopId, numberOfEvents: 20, radius: 300)
+                .filteredToStation(stopId: stopId, lat: stop.lat, lon: stop.lon, servesRail: stop.servesRail)
+                .stopTimes
             
             if departures.isEmpty {
                 throw $stopName.needsValueError("Aucun départ trouvé pour l'arrêt \"\(departures.first?.place.name ?? stopName)\".")

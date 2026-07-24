@@ -76,6 +76,9 @@ struct Provider: TimelineProvider {
         Task {
             do {
                 let stopId: String
+                var stopLat: Double?
+                var stopLon: Double?
+                var stopServesRail = false
                 if storedStopId == "current" {
                     guard let location = await getCurrentLocation() else {
                         let errorEntry = createErrorEntry(
@@ -105,16 +108,19 @@ struct Provider: TimelineProvider {
                     }
                     
                     stopId = nearestStop.id
+                    stopLat = nearestStop.lat
+                    stopLon = nearestStop.lon
+                    stopServesRail = nearestStop.servesRail
                 } else {
                     stopId = storedStopId
                 }
-                
+
                 let stopTimes = try await getDeparturesForStop(
                     stopId: stopId,
                     time: Date(),
                     numberOfEvents: numberOfEvents * 3,
-                    radius: 200
-                )
+                    radius: 300
+                ).filteredToStation(stopId: stopId, lat: stopLat, lon: stopLon, servesRail: stopServesRail)
                 
                 let prioritizedDepartures = prioritizeDeparturesByLineScore(stopTimes.stopTimes)
                 

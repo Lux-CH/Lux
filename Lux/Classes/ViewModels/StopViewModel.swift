@@ -97,7 +97,7 @@ class StopViewModel: ObservableObject {
                 await RelayClient.shared.departures(
                     stopId: stopId,
                     n: 50,
-                    radius: 200
+                    radius: 300
                 )
             },
             fallbackFetch: { [weak self] in
@@ -111,8 +111,13 @@ class StopViewModel: ObservableObject {
         )
     }
 
+    private func filteredForStation(_ stopTimes: StopTimes) -> StopTimes {
+        stopTimes.filteredToStation(stopId: stop.id, lat: stop.lat, lon: stop.lon, servesRail: stop.servesRail)
+    }
+
     @MainActor
-    private func applyStopTimes(_ freshStopTimes: StopTimes) {
+    private func applyStopTimes(_ rawStopTimes: StopTimes) {
+        let freshStopTimes = filteredForStation(rawStopTimes)
         self.isLoading = false
         self.stopTimes = freshStopTimes
         let times = freshStopTimes.stopTimes
@@ -157,8 +162,8 @@ class StopViewModel: ObservableObject {
             }
             
             do {
-                let freshStopTimes = try await fetchDeparturesAndArrivals(for: time)
-                
+                let freshStopTimes = filteredForStation(try await fetchDeparturesAndArrivals(for: time))
+
                 if Task.isCancelled { return }
                 
                 self.stopTimes = freshStopTimes
@@ -187,7 +192,7 @@ class StopViewModel: ObservableObject {
             both: true,
             direction: "LATER",
             numberOfEvents: fromStops ? 100 : 50,
-            radius: 200
+            radius: 300
         )
     }
 
@@ -201,7 +206,7 @@ class StopViewModel: ObservableObject {
         
         backgroundRefreshTask = Task {
             do {
-                let freshStopTimes = try await fetchDeparturesAndArrivals(for: fetchTime)
+                let freshStopTimes = filteredForStation(try await fetchDeparturesAndArrivals(for: fetchTime))
                 if Task.isCancelled {
                     backgroundRefreshTask = nil
                     return
