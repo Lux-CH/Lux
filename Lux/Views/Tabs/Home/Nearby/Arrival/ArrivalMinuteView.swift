@@ -118,7 +118,7 @@ struct ArrivalMinuteView: View {
     
     private func bufferTimeForTransport() -> TimeInterval {
         switch incomingStop.mode {
-        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .ferry:
+        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .suburban, .funicular, .ferry:
             if let arrival = incomingStop.place.arrival,
                   let departure = incomingStop.place.departure,
                arrival != departure {
@@ -164,7 +164,7 @@ struct ArrivalMinuteView: View {
             case .tram: return "tram"
             case .ferry: return "ferry"
             case .bus: return "bus"
-            case .rail, .highSpeedRail, .regionalFastRail, .regionalRail: return "tram.tunnel.fill"
+            case .rail, .highSpeedRail, .regionalFastRail, .regionalRail, .suburban, .funicular: return "tram.tunnel.fill"
             default: return "bus"
             }
         }()

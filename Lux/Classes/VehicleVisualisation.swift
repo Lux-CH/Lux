@@ -36,7 +36,7 @@ enum VehicleVisualisation {
         switch mode {
         case .bus, .tram:
             return 25
-        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .subway, .ferry:
+        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .suburban, .funicular, .subway, .ferry:
             return 50
         default:
             return 30

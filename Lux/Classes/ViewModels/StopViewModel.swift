@@ -103,7 +103,12 @@ class StopViewModel: ObservableObject {
             fallbackFetch: { [weak self] in
                 guard let self else { return nil }
                 let fetchTime = await self.isCustomTimeSelected ? self.currentTime : Date()
-                return try? await self.fetchDeparturesAndArrivals(for: fetchTime)
+                do {
+                    return try await self.fetchDeparturesAndArrivals(for: fetchTime)
+                } catch {
+                    await MainActor.run { self.errorMessage = error.localizedDescription }
+                    return nil
+                }
             },
             onUpdate: { [weak self] freshStopTimes in
                 self?.applyStopTimes(freshStopTimes)
@@ -241,7 +246,7 @@ class StopViewModel: ObservableObject {
     
     private func bufferTimeForTransport(_ stopTime: StopTime) -> TimeInterval {
         switch stopTime.mode {
-        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .ferry:
+        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .suburban, .funicular, .ferry:
             if let arrival = stopTime.place.arrival,
                   let departure = stopTime.place.departure,
                arrival != departure {
