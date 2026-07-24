@@ -440,6 +440,16 @@
         }
       }
     },
+    "Actualisation impossible, horaires possiblement obsolètes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error refreshing ; departures potentially inaccurate"
+          }
+        }
+      }
+    },
     "Actualiser" : {
       "localizations" : {
         "en" : {
@@ -2454,6 +2464,26 @@
         }
       }
     },
+    "Funiculaire" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Funicular"
+          }
+        }
+      }
+    },
+    "Gare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Station"
+          }
+        }
+      }
+    },
     "Gérer les raccourcis" : {
       "localizations" : {
         "en" : {
@@ -2656,6 +2686,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Available departures"
+          }
+        }
+      }
+    },
+    "Horaires possiblement obsolètes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departures potentially inaccurate"
           }
         }
       }
@@ -4326,6 +4366,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Receive information based on your location"
+          }
+        }
+      }
+    },
+    "Recherche d'itinéraires" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching itineraries"
           }
         }
       }
