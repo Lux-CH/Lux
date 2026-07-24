@@ -143,6 +143,8 @@ extension TransportationMode {
         case .nightRail: return String(localized: "Train")
         case .regionalFastRail: return String(localized: "Train")
         case .regionalRail: return String(localized: "Train")
+        case .suburban: return String(localized: "Train")
+        case .funicular: return String(localized: "Funiculaire")
         case .other: return String(localized: "Autre")
         }
     }

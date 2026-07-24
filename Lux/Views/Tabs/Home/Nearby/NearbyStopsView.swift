@@ -162,17 +162,25 @@ struct NearbyStopsView: View {
             } else {
                 VStack(spacing: 8) {
                     VStack(spacing: 2.5) {
-                        ForEach(Array(progress.searchResults.prefix(2).enumerated()), id: \.element.id) { index, result in
-                            let isLastStop = index == min(1, progress.searchResults.count - 1)
+                        let nearbyStops = Array(progress.searchResults.prefix(2))
+                        if let station = nearbyStops.first, station.servesRail {
                             ZStack {
-                                StopView(stop: result, maxGroupsToShow: index == 0 ? 3 : (showingSuggestion ? 1 : 2), fromStops: false, isLastStopOverall: isLastStop)
+                                StopView(stop: station, maxGroupsToShow: 8, fromStops: false, isLastStopOverall: true)
                             }
                             .frame(maxWidth: .infinity)
+                        } else {
+                            ForEach(Array(nearbyStops.enumerated()), id: \.element.id) { index, result in
+                                let isLastStop = index == min(1, progress.searchResults.count - 1)
+                                ZStack {
+                                    StopView(stop: result, maxGroupsToShow: index == 0 ? 3 : (showingSuggestion ? 1 : 2), fromStops: false, isLastStopOverall: isLastStop)
+                                }
+                                .frame(maxWidth: .infinity)
+                            }
                         }
-                        
+
                         Divider()
                             .padding(.horizontal, 20)
-                        
+
                     }
                     
                     if offline.needsUpdate && !offline.isWorking {

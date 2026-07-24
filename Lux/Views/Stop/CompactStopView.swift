@@ -125,9 +125,22 @@ struct CompactStopView: View {
         }
     }
     
+    private func isRailRoute(_ routeName: String) -> Bool {
+        viewModel.routeGroups[routeName]?.first?.stopTimes.first?.mode.isRail ?? false
+    }
+
+    private var orderedRouteNames: [String] {
+        let names = viewModel.routeNames
+        guard viewModel.stop.servesRail,
+              let topRail = names.first(where: isRailRoute),
+              LineScoreManager.shared.getScore(for: topRail) > 2.0
+        else { return names }
+        return [topRail] + names.filter { $0 != topRail }
+    }
+
     private var routeGroupsContent: some View {
         VStack(spacing: 0) {
-            ForEach(viewModel.routeNames.prefix(maxGroupsToShow), id: \.self) { routeName in
+            ForEach(orderedRouteNames.prefix(maxGroupsToShow), id: \.self) { routeName in
                 if let groups = viewModel.routeGroups[routeName], !groups.isEmpty {
                     routeGroupView(for: routeName, groups: groups)
                 }
@@ -139,7 +152,7 @@ struct CompactStopView: View {
         let color = LineColors.color(for: groups.first?.routeShortName ?? "") ?? Color(hex: "EA0706")
         let lineColor = isDarkColor(color) ? lightenColor(color) : color
         
-        let isLastRoute = dontShowLastDivider && routeName == viewModel.routeNames.prefix(maxGroupsToShow).last
+        let isLastRoute = dontShowLastDivider && routeName == orderedRouteNames.prefix(maxGroupsToShow).last
         
         return VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .bottom) {
