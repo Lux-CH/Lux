@@ -117,7 +117,7 @@ class StopViewModel: ObservableObject {
     }
 
     private func filteredForStation(_ stopTimes: StopTimes) -> StopTimes {
-        stopTimes.filteredToStation(stopId: stop.id, lat: stop.lat, lon: stop.lon, servesRail: stop.servesRail)
+        stopTimes.filteredToStation(stopId: stop.id, name: stop.name, lat: stop.lat, lon: stop.lon, servesRail: stop.servesRail)
     }
 
     @MainActor
