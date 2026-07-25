@@ -76,6 +76,7 @@ struct Provider: TimelineProvider {
         Task {
             do {
                 let stopId: String
+                var stopName: String?
                 var stopLat: Double?
                 var stopLon: Double?
                 var stopServesRail = false
@@ -108,6 +109,7 @@ struct Provider: TimelineProvider {
                     }
                     
                     stopId = nearestStop.id
+                    stopName = nearestStop.name
                     stopLat = nearestStop.lat
                     stopLon = nearestStop.lon
                     stopServesRail = nearestStop.servesRail
@@ -120,7 +122,7 @@ struct Provider: TimelineProvider {
                     time: Date(),
                     numberOfEvents: numberOfEvents * 3,
                     radius: 300
-                ).filteredToStation(stopId: stopId, lat: stopLat, lon: stopLon, servesRail: stopServesRail)
+                ).filteredToStation(stopId: stopId, name: stopName, lat: stopLat, lon: stopLon, servesRail: stopServesRail)
                 
                 let prioritizedDepartures = prioritizeDeparturesByLineScore(stopTimes.stopTimes)
                 
