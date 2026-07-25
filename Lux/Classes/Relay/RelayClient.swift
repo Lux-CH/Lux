@@ -24,6 +24,7 @@ actor RelayClient {
     private struct Subscriber {
         let deliver: (Data) -> Void
         let subscribeMessage: String
+        let unsubscribeMessage: String
     }
 
     private var task: URLSessionWebSocketTask?
@@ -32,6 +33,7 @@ actor RelayClient {
     private var reconnectAttempt = 0
     private var suspendedForBackground = false
     private var subscribers: [SubscriptionKey: [UUID: Subscriber]] = [:]
+    private var idleDisconnectTask: Task<Void, Never>?
 
     private(set) var isConnected = false
 
@@ -64,8 +66,22 @@ actor RelayClient {
             "stopId": stopId,
             "n": n,
         ]
-        if let radius { payload["radius"] = radius }
-        return stream(key: key, subscribePayload: payload, as: StopTimes.self)
+        var unsubscribePayload: [String: Any] = [
+            "action": "unsub_dep",
+            "src": "motis",
+            "stopId": stopId,
+            "n": n,
+        ]
+        if let radius {
+            payload["radius"] = radius
+            unsubscribePayload["radius"] = radius
+        }
+        return stream(
+            key: key,
+            subscribePayload: payload,
+            unsubscribePayload: unsubscribePayload,
+            as: StopTimes.self
+        )
     }
 
     func trip(tripId: String) -> AsyncStream<Itinerary> {
@@ -75,12 +91,22 @@ actor RelayClient {
             "src": "motis",
             "tripId": tripId,
         ]
-        return stream(key: key, subscribePayload: payload, as: Itinerary.self)
+        return stream(
+            key: key,
+            subscribePayload: payload,
+            unsubscribePayload: ["action": "unsub_trip", "src": "motis", "tripId": tripId],
+            as: Itinerary.self
+        )
     }
 
     func disruptions() -> AsyncStream<[Disruption]> {
         let key = SubscriptionKey(channel: "dis", src: "shared", id: "global", extra: "")
-        return stream(key: key, subscribePayload: ["action": "sub_dis"], as: [Disruption].self)
+        return stream(
+            key: key,
+            subscribePayload: ["action": "sub_dis"],
+            unsubscribePayload: ["action": "unsub_dis"],
+            as: [Disruption].self
+        )
     }
 
     // MARK: - Subscription plumbing
@@ -88,9 +114,11 @@ actor RelayClient {
     private func stream<T: Decodable & Sendable>(
         key: SubscriptionKey,
         subscribePayload: [String: Any],
+        unsubscribePayload: [String: Any],
         as type: T.Type
     ) -> AsyncStream<T> {
         let subscribeMessage = Self.encode(subscribePayload)
+        let unsubscribeMessage = Self.encode(unsubscribePayload)
         let subscriberId = UUID()
 
         return AsyncStream { continuation in
@@ -102,7 +130,8 @@ actor RelayClient {
                         print("relay: failed to decode \(key.channel) payload")
                     }
                 },
-                subscribeMessage: subscribeMessage
+                subscribeMessage: subscribeMessage,
+                unsubscribeMessage: unsubscribeMessage
             )
 
             continuation.onTermination = { _ in
@@ -117,47 +146,40 @@ actor RelayClient {
         let isNewKey = subscribers[key] == nil
         subscribers[key, default: [:]][id] = subscriber
 
+        idleDisconnectTask?.cancel()
+        idleDisconnectTask = nil
         connectIfNeeded()
         if isConnected || isNewKey {
             send(subscriber.subscribeMessage)
         }
     }
 
-    func unsubscribeDepartures(stopId: String) {
-        let keys = subscribers.keys.filter { $0.channel == "dep" && $0.id == stopId }
-        guard !keys.isEmpty else { return }
-
-        for key in keys {
-            subscribers.removeValue(forKey: key)
-            send(Self.encode(["action": "unsub_dep", "src": key.src, "stopId": key.id]))
-        }
-
-        if subscribers.isEmpty {
-            disconnect()
-        }
-    }
-
     private func removeSubscriber(_ id: UUID, for key: SubscriptionKey) {
         guard var keySubscribers = subscribers[key] else { return }
-        keySubscribers.removeValue(forKey: id)
+        guard let subscriber = keySubscribers.removeValue(forKey: id) else { return }
 
         if keySubscribers.isEmpty {
             subscribers.removeValue(forKey: key)
-            let action: [String: Any]
-            switch key.channel {
-            case "dep":
-                action = ["action": "unsub_dep", "src": key.src, "stopId": key.id]
-            case "trip":
-                action = ["action": "unsub_trip", "src": key.src, "tripId": key.id]
-            default:
-                action = ["action": "unsub_dis"]
-            }
-            send(Self.encode(action))
-            if subscribers.isEmpty {
-                disconnect()
-            }
+            send(subscriber.unsubscribeMessage)
+            scheduleIdleDisconnect()
         } else {
             subscribers[key] = keySubscribers
+        }
+    }
+
+    private func scheduleIdleDisconnect() {
+        idleDisconnectTask?.cancel()
+        idleDisconnectTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            guard !Task.isCancelled, let self else { return }
+            await self.disconnectIfIdle()
+        }
+    }
+
+    private func disconnectIfIdle() {
+        idleDisconnectTask = nil
+        if subscribers.isEmpty {
+            disconnect()
         }
     }
 
