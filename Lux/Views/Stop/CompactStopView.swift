@@ -54,9 +54,10 @@ struct CompactStopView: View {
         NavigationLink(destination: IndividualStopView(stop: viewModel.stop)) {
             VStack(alignment: .leading, spacing: 0) {
                 HStack {
-                    Image(systemName: "signpost.right")
+                    Image(systemName: viewModel.stop.servesRail ? "train.side.front.car" : "signpost.right")
                         .foregroundColor(.secondary)
                         .accessibilityHidden(true)
+                        .scaleEffect(x: viewModel.stop.servesRail ? -1 : 1)
                     
                     Text(viewModel.stop.name)
                         .multilineTextAlignment(.leading)
@@ -65,13 +66,6 @@ struct CompactStopView: View {
                         .accessibilityAddTraits(.isHeader)
 
                     Spacer()
-
-                    if viewModel.stop.servesRail {
-                        Image(systemName: "train.side.front.car")
-                            .font(.caption)
-                            .foregroundColor(Color(.tertiaryLabel))
-                            .accessibilityLabel("Gare")
-                    }
 
                     Image(systemName: "chevron.forward")
                         .font(.caption)

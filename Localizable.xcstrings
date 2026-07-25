@@ -2474,16 +2474,6 @@
         }
       }
     },
-    "Gare" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Station"
-          }
-        }
-      }
-    },
     "Gérer les raccourcis" : {
       "localizations" : {
         "en" : {
