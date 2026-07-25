@@ -227,6 +227,7 @@ class StopViewModel: ObservableObject {
         await backgroundRefreshTask?.value
     }
     
+    @MainActor
     private func fetchDeparturesAndArrivals(for time: Date) async throws -> StopTimes {
         try await LuxData.departures(
             stopId: stop.id,
