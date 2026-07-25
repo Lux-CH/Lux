@@ -124,8 +124,8 @@ actor RelayClient {
         return AsyncStream { continuation in
             let subscriber = Subscriber(
                 deliver: { data in
-                    if let value = try? Self.decoder.decode(T.self, from: data) {
-                        continuation.yield(value)
+                    if let envelope = try? Self.decoder.decode(Envelope<T>.self, from: data) {
+                        continuation.yield(envelope.data)
                     } else {
                         print("relay: failed to decode \(key.channel) payload")
                     }
@@ -274,13 +274,17 @@ actor RelayClient {
 
     // MARK: - Incoming messages
 
-    private struct Envelope: Decodable {
+    private struct EnvelopeHeader: Decodable {
         let ch: String
         let src: String?
         let stopId: String?
         let tripId: String?
         let n: Int?
         let radius: Int?
+    }
+
+    private struct Envelope<T: Decodable>: Decodable {
+        let data: T
     }
 
     private func handle(_ message: URLSessionWebSocketTask.Message) {
@@ -291,17 +295,12 @@ actor RelayClient {
         @unknown default: return
         }
 
-        guard
-            let envelope = try? Self.decoder.decode(Envelope.self, from: data),
-            let object = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-            let payload = object["data"],
-            let payloadData = try? JSONSerialization.data(withJSONObject: payload)
-        else { return }
+        guard let header = try? Self.decoder.decode(EnvelopeHeader.self, from: data) else { return }
 
-        let channel = envelope.ch
-        let src = envelope.src ?? "shared"
-        let id = envelope.stopId ?? envelope.tripId ?? "global"
-        let extra = envelope.n.map { "\($0)|\(envelope.radius ?? 0)" }
+        let channel = header.ch
+        let src = header.src ?? "shared"
+        let id = header.stopId ?? header.tripId ?? "global"
+        let extra = header.n.map { "\($0)|\(header.radius ?? 0)" }
 
         for (candidate, keySubscribers) in subscribers {
             guard candidate.channel == channel,
@@ -309,7 +308,7 @@ actor RelayClient {
                   candidate.id == id else { continue }
             if let extra, candidate.extra != extra { continue }
             for subscriber in keySubscribers.values {
-                subscriber.deliver(payloadData)
+                subscriber.deliver(data)
             }
         }
     }
