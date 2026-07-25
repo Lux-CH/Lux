@@ -64,14 +64,15 @@ struct CompactStopView: View {
                         .foregroundColor(.primary)
                         .accessibilityAddTraits(.isHeader)
 
+                    Spacer()
+
                     if viewModel.stop.servesRail {
                         Image(systemName: "train.side.front.car")
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(Color(.tertiaryLabel))
                             .accessibilityLabel("Gare")
                     }
 
-                    Spacer()
                     Image(systemName: "chevron.forward")
                         .font(.caption)
                         .foregroundColor(Color(.tertiaryLabel))
