@@ -14,7 +14,7 @@ struct Provider: TimelineProvider {
     func placeholder(in context: Context) -> DepartureEntry {
         DepartureEntry(
             date: Date(),
-            stopId: "ch_Parent8587057",
+            stopId: "ch_Parentch:1:sloid:87057",
             departures: [],
             lastUpdate: Date(),
             error: nil,
@@ -37,7 +37,7 @@ struct Provider: TimelineProvider {
             sampleDepartures.append(StopTime(
                 place: Place(
                     name: "Genève, gare Cornavin",
-                    stopId: "ch_Parent8587057",
+                    stopId: "ch_Parentch:1:sloid:87057",
                     lat: 46.2101, lon: 6.1425,
                     level: 0.0,
                     arrival: nil,
@@ -165,11 +165,11 @@ struct Provider: TimelineProvider {
 
     private func getStoredStop() -> (id: String, name: String?, lat: Double?, lon: Double?, servesRail: Bool) {
         guard let sharedDefaults = UserDefaults(suiteName: "group.ch.cclerc.luxapp.shared") else {
-            return ("ch_Parent8587057", nil, nil, nil, false)
+            return ("ch_Parentch:1:sloid:87057", nil, nil, nil, false)
         }
 
         return (
-            sharedDefaults.string(forKey: "selectedStopId") ?? "ch_Parent8587057",
+            sharedDefaults.string(forKey: "selectedStopId") ?? "ch_Parentch:1:sloid:87057",
             sharedDefaults.string(forKey: "selectedStopName"),
             sharedDefaults.object(forKey: "selectedStopLat") as? Double,
             sharedDefaults.object(forKey: "selectedStopLon") as? Double,
@@ -379,7 +379,7 @@ struct StopWidget: Widget {
 } timeline: {
     DepartureEntry(
         date: .now,
-        stopId: "ch_Parent8587057",
+        stopId: "ch_Parentch:1:sloid:87057",
         departures: [],
         lastUpdate: .now,
         error: nil,
