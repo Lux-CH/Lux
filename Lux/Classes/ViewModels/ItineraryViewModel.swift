@@ -641,12 +641,7 @@ func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
                 let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR") ||
                                     routeName.hasPrefix("RE") || routeName.hasPrefix("IC") || routeName == "R"
                 
-                let squaredModes: Set<TransportationMode> = [
-                    .regionalRail, .ferry, .rail, .highSpeedRail,
-                    .longDistance, .metro, .nightRail, .regionalFastRail
-                ]
-                
-                let isSquared = squaredModes.contains(leg.mode) || isTrainDetected
+                let isSquared = leg.mode.usesSquaredPill || isTrainDetected
                 if isSquared {
                     baseColor = Color(hex: "EA0706")
                 } else {
@@ -654,8 +649,7 @@ func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
                 }
             }
         } else {
-            if leg.mode == .rail || leg.mode == .highSpeedRail ||
-               leg.mode == .regionalRail || leg.mode == .regionalFastRail {
+            if leg.mode.usesSquaredPill {
                 baseColor = Color(hex: "EA0706")
             } else {
                 baseColor = .accent

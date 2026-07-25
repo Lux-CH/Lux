@@ -17,6 +17,10 @@ extension TransportationMode {
         }
     }
 
+    var usesSquaredPill: Bool {
+        isRail || self == .ferry
+    }
+
     var dwellTime: TimeInterval {
         switch self {
         case .bus, .tram: return 25
