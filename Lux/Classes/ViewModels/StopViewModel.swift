@@ -414,12 +414,13 @@ class StopViewModel: ObservableObject {
     @MainActor
     private func groupStopTimes(_ rawStopTimes: [StopTime]) {
         let stopTimes = deduplicatedByTrip(rawStopTimes)
+        let referenceTime = getReferenceTime()
         let filteredStopTimes = isCustomTimeSelected ?
         stopTimes :
         stopTimes.filter { stopTime in
             let eventTime = stopTime.place.departure ?? stopTime.place.arrival
             guard let eventTime = eventTime else { return true }
-            return eventTime.addingTimeInterval(bufferTimeForTransport(stopTime)) > getReferenceTime()
+            return eventTime.addingTimeInterval(bufferTimeForTransport(stopTime)) > referenceTime
         }
         
         let routeGroups = Dictionary(grouping: filteredStopTimes) { $0.routeShortName }
