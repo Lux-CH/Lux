@@ -90,6 +90,7 @@ class StopViewModel: ObservableObject {
         let fallbackOnly = OfflineRouter.shared.isOfflineActive || isCustomTimeSelected
         let stopId = stop.id
         let count = departureCount
+        let radius = departureRadius
 
         liveFeed.start(
             fallbackOnly: fallbackOnly,
@@ -98,7 +99,7 @@ class StopViewModel: ObservableObject {
                 await RelayClient.shared.departures(
                     stopId: stopId,
                     n: count,
-                    radius: 300
+                    radius: radius
                 )
             },
             fallbackFetch: { [weak self] in
@@ -120,6 +121,12 @@ class StopViewModel: ObservableObject {
     private var departureCount = 50
     private var hasWidenedDepartureWindow = false
 
+    private var departureRadius: Int? {
+        if stop.servesRail { return Int(departureRadiusMeters) }
+        if stop.groupedStopIds.count > 1 { return Int(departureRadiusMeters) }
+        return stop.hasRailNeighbour == false ? nil : Int(departureRadiusMeters)
+    }
+
     private var thinDepartureThreshold: Int {
         stop.servesRail ? 45 : 30
     }
@@ -135,8 +142,6 @@ class StopViewModel: ObservableObject {
         departureCount = 100
 
         Task { @MainActor in
-            liveFeed.stop()
-            await RelayClient.shared.unsubscribeDepartures(stopId: stop.id)
             startLiveFeed()
         }
     }
@@ -226,7 +231,7 @@ class StopViewModel: ObservableObject {
             both: true,
             direction: "LATER",
             numberOfEvents: fromStops ? 100 : departureCount,
-            radius: 300
+            radius: departureRadius
         )
     }
 
