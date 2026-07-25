@@ -141,8 +141,7 @@ struct CompactStopView: View {
     private var orderedRouteNames: [String] {
         let names = viewModel.routeNames
         guard viewModel.stop.servesRail,
-              let topRail = names.first(where: isRailRoute),
-              LineScoreManager.shared.getScore(for: topRail) > 2.0
+              let topRail = names.first(where: isRailRoute)
         else { return names }
         return [topRail] + names.filter { $0 != topRail }
     }

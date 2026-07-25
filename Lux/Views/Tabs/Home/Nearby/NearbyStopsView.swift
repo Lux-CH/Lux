@@ -33,6 +33,15 @@ struct NearbyStopsView: View {
     private let significantDistance: CLLocationDistance = 100.0
     private let networkMonitorQueue = DispatchQueue(label: "NetworkMonitor")
     
+    private var groupBudget: (station: Int, first: Int, second: Int) {
+        switch UIScreen.main.bounds.height {
+        case 900...: return (7, 3, 3)
+        case 840..<900: return (6, 3, 2)
+        case 800..<840: return (5, 2, 2)
+        default: return (4, 2, 1)
+        }
+    }
+
     private func nearbyStation(among stops: [SearchResult]) -> SearchResult? {
         guard let closest = stops.first else { return nil }
         if closest.servesRail { return closest }
@@ -172,14 +181,14 @@ struct NearbyStopsView: View {
                         let nearbyStops = Array(progress.searchResults.prefix(2))
                         if let station = nearbyStation(among: nearbyStops) {
                             ZStack {
-                                StopView(stop: station, maxGroupsToShow: 6, fromStops: false, isLastStopOverall: true)
+                                StopView(stop: station, maxGroupsToShow: groupBudget.station, fromStops: false, isLastStopOverall: true)
                             }
                             .frame(maxWidth: .infinity)
                         } else {
                             ForEach(Array(nearbyStops.enumerated()), id: \.element.id) { index, result in
                                 let isLastStop = index == min(1, progress.searchResults.count - 1)
                                 ZStack {
-                                    StopView(stop: result, maxGroupsToShow: index == 0 ? 3 : (showingSuggestion ? 1 : 2), fromStops: false, isLastStopOverall: isLastStop)
+                                    StopView(stop: result, maxGroupsToShow: index == 0 ? groupBudget.first : (showingSuggestion ? max(1, groupBudget.second - 1) : groupBudget.second), fromStops: false, isLastStopOverall: isLastStop)
                                 }
                                 .frame(maxWidth: .infinity)
                             }
