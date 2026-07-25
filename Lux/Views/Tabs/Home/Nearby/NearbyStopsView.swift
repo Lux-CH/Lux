@@ -33,6 +33,13 @@ struct NearbyStopsView: View {
     private let significantDistance: CLLocationDistance = 100.0
     private let networkMonitorQueue = DispatchQueue(label: "NetworkMonitor")
     
+    private func nearbyStation(among stops: [SearchResult]) -> SearchResult? {
+        guard let closest = stops.first else { return nil }
+        if closest.servesRail { return closest }
+        guard StopGrouping.isStationForecourt(closest.name) else { return nil }
+        return stops.first { $0.servesRail }
+    }
+
     var isAuthorizationNotAllowed: Bool {
         return locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted
     }
@@ -163,7 +170,7 @@ struct NearbyStopsView: View {
                 VStack(spacing: 8) {
                     VStack(spacing: 2.5) {
                         let nearbyStops = Array(progress.searchResults.prefix(2))
-                        if let station = nearbyStops.first, station.servesRail {
+                        if let station = nearbyStation(among: nearbyStops) {
                             ZStack {
                                 StopView(stop: station, maxGroupsToShow: 7, fromStops: false, isLastStopOverall: true)
                             }
@@ -537,4 +544,5 @@ extension UIDevice {
             }
         }
     }
+
 }
