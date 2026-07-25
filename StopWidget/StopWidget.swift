@@ -69,8 +69,9 @@ struct Provider: TimelineProvider {
     }
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<Entry>) -> ()) {
-        let storedStopId = getStoredStopId()
-        
+        let storedStop = getStoredStop()
+        let storedStopId = storedStop.id
+
         let numberOfEvents = context.family == .systemLarge ? 9 : 3
         
         Task {
@@ -115,6 +116,10 @@ struct Provider: TimelineProvider {
                     stopServesRail = nearestStop.servesRail
                 } else {
                     stopId = storedStopId
+                    stopName = storedStop.name
+                    stopLat = storedStop.lat
+                    stopLon = storedStop.lon
+                    stopServesRail = storedStop.servesRail
                 }
 
                 let stopTimes = try await getDeparturesForStop(
@@ -155,10 +160,21 @@ struct Provider: TimelineProvider {
     }
     
     private func getStoredStopId() -> String {
-        if let sharedDefaults = UserDefaults(suiteName: "group.ch.cclerc.luxapp.shared") {
-            return sharedDefaults.string(forKey: "selectedStopId") ?? "ch_Parent8587057"
+        return getStoredStop().id
+    }
+
+    private func getStoredStop() -> (id: String, name: String?, lat: Double?, lon: Double?, servesRail: Bool) {
+        guard let sharedDefaults = UserDefaults(suiteName: "group.ch.cclerc.luxapp.shared") else {
+            return ("ch_Parent8587057", nil, nil, nil, false)
         }
-        return "ch_Parent8587057"
+
+        return (
+            sharedDefaults.string(forKey: "selectedStopId") ?? "ch_Parent8587057",
+            sharedDefaults.string(forKey: "selectedStopName"),
+            sharedDefaults.object(forKey: "selectedStopLat") as? Double,
+            sharedDefaults.object(forKey: "selectedStopLon") as? Double,
+            sharedDefaults.bool(forKey: "selectedStopServesRail")
+        )
     }
     
     private func getCurrentLocation() async -> CLLocation? {

@@ -367,8 +367,7 @@ struct WidgetStopSelectorView: View {
     
     private func saveSelection(_ result: SearchResult) {
         selectedStopId = result.id
-        guard let stopId = selectedStopId else { return }
-        WidgetManager.shared.setSelectedStopId(stopId)
+        WidgetManager.shared.setSelectedStop(result)
         WidgetManager.shared.requestWidgetRefresh()
     }
     
