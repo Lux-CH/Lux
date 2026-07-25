@@ -16,11 +16,6 @@ struct LinePill: View {
     var height: CGFloat = 20
     var fontSize: CGFloat = 11
     
-    private static let squaredModes: Set<TransportationMode> = [
-        .regionalRail, .ferry, .rail, .highSpeedRail,
-        .longDistance, .metro, .nightRail, .regionalFastRail
-    ]
-    
     private var isTrainDetected: Bool {
         line.hasPrefix("RL") || line.hasPrefix("IR") || line.hasPrefix("RE") || line.hasPrefix("IC") || line == "R"
     }
@@ -32,7 +27,7 @@ struct LinePill: View {
     }
 
     private var isSquared: Bool {
-        if Self.squaredModes.contains(mode) {
+        if mode.usesSquaredPill {
             return true
         }
         else if isTrainDetected {

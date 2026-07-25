@@ -282,17 +282,12 @@ struct EditableLinePill: View {
     let mode: TransportationMode
     @FocusState private var isFocused: Bool
     
-    private static let squaredModes: Set<TransportationMode> = [
-        .regionalRail, .ferry, .rail, .highSpeedRail,
-        .longDistance, .metro, .nightRail, .regionalFastRail
-    ]
-    
     private var isTrainDetected: Bool {
         lineNumber.hasPrefix("RL") || lineNumber.hasPrefix("IR") || lineNumber.hasPrefix("RE") || lineNumber.hasPrefix("IC") || lineNumber == "R"
     }
 
     private var isSquared: Bool {
-        if Self.squaredModes.contains(mode) {
+        if mode.usesSquaredPill {
             return true
         }
         else if isTrainDetected {

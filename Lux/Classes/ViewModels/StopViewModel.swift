@@ -108,7 +108,10 @@ class StopViewModel: ObservableObject {
                 do {
                     return try await self.fetchDeparturesAndArrivals(for: fetchTime)
                 } catch {
-                    await MainActor.run { self.errorMessage = error.localizedDescription }
+                    await MainActor.run {
+                        self.errorMessage = error.localizedDescription
+                        self.isLoading = false
+                    }
                     return nil
                 }
             },
