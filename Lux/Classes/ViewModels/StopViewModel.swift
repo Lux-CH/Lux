@@ -136,7 +136,7 @@ class StopViewModel: ObservableObject {
 
     @MainActor
     private func widenDepartureWindowIfNeeded(raw: StopTimes, filtered: StopTimes) {
-        guard !fromStops, !hasWidenedDepartureWindow,
+        guard !fromStops, !isCustomTimeSelected, !hasWidenedDepartureWindow,
               raw.stopTimes.count >= departureCount,
               filtered.stopTimes.count < thinDepartureThreshold
         else { return }
@@ -203,20 +203,11 @@ class StopViewModel: ObservableObject {
             }
             
             do {
-                let freshStopTimes = filteredForStation(try await fetchDeparturesAndArrivals(for: time))
+                let freshStopTimes = try await fetchDeparturesAndArrivals(for: time)
 
                 if Task.isCancelled { return }
 
-                self.errorMessage = nil
-                self.stopTimes = freshStopTimes
-                let times = freshStopTimes.stopTimes
-                if !times.isEmpty {
-                    self.groupStopTimes(times)
-                } else {
-                    self.routeGroups = [:]
-                    self.routeNames = []
-                    self.currentPages = [:]
-                }
+                self.applyStopTimes(freshStopTimes)
             } catch {
                 if !(error is CancellationError) {
                     print("failed to load departures !!!!!! \(error)")
@@ -249,24 +240,14 @@ class StopViewModel: ObservableObject {
         
         backgroundRefreshTask = Task {
             do {
-                let freshStopTimes = filteredForStation(try await fetchDeparturesAndArrivals(for: fetchTime))
+                let freshStopTimes = try await fetchDeparturesAndArrivals(for: fetchTime)
                 if Task.isCancelled {
                     backgroundRefreshTask = nil
                     return
                 }
-                
+
                 await MainActor.run {
-                    self.errorMessage = nil
-                    self.stopTimes = freshStopTimes
-                    let times = self.stopTimes?.stopTimes ?? []
-                    if !times.isEmpty {
-                        self.groupStopTimes(times)
-                        self.checkAndHandleDepartures()
-                    } else {
-                        self.routeGroups = [:]
-                        self.routeNames = []
-                        self.currentPages = [:]
-                    }
+                    self.applyStopTimes(freshStopTimes)
                 }
             } catch {
                 if !(error is CancellationError) {
