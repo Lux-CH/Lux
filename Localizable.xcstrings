@@ -4370,16 +4370,6 @@
         }
       }
     },
-    "Recherche d'itinéraires..." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Searching for routes…"
-          }
-        }
-      }
-    },
     "Recherche de destination" : {
       "localizations" : {
         "en" : {
