@@ -154,21 +154,25 @@ struct CompactStopView: View {
     }
 
     private var routeGroupsContent: some View {
-        VStack(spacing: 0) {
-            ForEach(orderedRouteNames.prefix(maxGroupsToShow), id: \.self) { routeName in
+        let shownRouteNames = Array(orderedRouteNames.prefix(maxGroupsToShow))
+
+        return VStack(spacing: 0) {
+            ForEach(shownRouteNames, id: \.self) { routeName in
                 if let groups = viewModel.routeGroups[routeName], !groups.isEmpty {
-                    routeGroupView(for: routeName, groups: groups)
+                    routeGroupView(
+                        for: routeName,
+                        groups: groups,
+                        isLastRoute: dontShowLastDivider && routeName == shownRouteNames.last
+                    )
                 }
             }
         }
     }
-    
-    private func routeGroupView(for routeName: String, groups: [GroupedStopTime]) -> some View {
+
+    private func routeGroupView(for routeName: String, groups: [GroupedStopTime], isLastRoute: Bool) -> some View {
         let color = LineColors.color(for: groups.first?.routeShortName ?? "") ?? Color(hex: "EA0706")
         let lineColor = isDarkColor(color) ? lightenColor(color) : color
-        
-        let isLastRoute = dontShowLastDivider && routeName == orderedRouteNames.prefix(maxGroupsToShow).last
-        
+
         return VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .bottom) {
                 TabView(selection: Binding(
