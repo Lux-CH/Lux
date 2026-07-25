@@ -92,16 +92,7 @@ struct LegHeaderView: View {
 //                            .truncationMode(.head)
                     }
                     else {
-                        let systemName: String = {
-                            switch leg.mode {
-                            case .tram: return "tram"
-                            case .ferry: return "ferry"
-                            case .bus: return "bus"
-                            case .rail, .highSpeedRail, .regionalFastRail, .regionalRail, .suburban, .funicular: return "tram.tunnel.fill"
-                            default: return "bus"
-                            }
-                        }()
-                        Image(systemName: systemName)
+                        Image(systemName: leg.mode.symbolName)
                             .font(.system(size: 10))
                             .foregroundColor(.secondary.opacity(0.6))
                         Text("Montez à \(formatTime(leg.startTime))")

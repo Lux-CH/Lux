@@ -117,22 +117,9 @@ struct ArrivalMinuteView: View {
     }
     
     private func bufferTimeForTransport() -> TimeInterval {
-        switch incomingStop.mode {
-        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .suburban, .funicular, .ferry:
-            if let arrival = incomingStop.place.arrival,
-                  let departure = incomingStop.place.departure,
-               arrival != departure {
-                let timeDifference = departure.timeIntervalSince(arrival)
-                if timeDifference > 0 {
-                    return timeDifference
-                }
-            }
-            return 60.0
-        default:
-            return 50.0
-        }
+        incomingStop.displayBufferTime
     }
-    
+
     private var shouldBlink: Bool {
         let eventTime = incomingStop.place.departure ?? incomingStop.place.arrival ?? now
         let secondsUntilCleanup = Int(eventTime.addingTimeInterval(bufferTime).timeIntervalSince(now))
@@ -159,17 +146,7 @@ struct ArrivalMinuteView: View {
     
     @ViewBuilder
     private var transportImage: some View {
-        let systemName: String = {
-            switch incomingStop.mode {
-            case .tram: return "tram"
-            case .ferry: return "ferry"
-            case .bus: return "bus"
-            case .rail, .highSpeedRail, .regionalFastRail, .regionalRail, .suburban, .funicular: return "tram.tunnel.fill"
-            default: return "bus"
-            }
-        }()
-        
-        Image(systemName: systemName)
+        Image(systemName: incomingStop.mode.symbolName)
             .foregroundColor(latenessColor)
             .font(.system(size: 15))
             .opacity(blinkManager.isVisible ? 1.0 : 0.0)

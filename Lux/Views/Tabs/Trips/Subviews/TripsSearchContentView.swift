@@ -188,7 +188,7 @@ struct TripResultSkeletonCard: View {
             RoundedRectangle(cornerRadius: 5, style: .continuous)
                 .frame(width: 86, height: 14)
             HStack(spacing: 8) {
-                ForEach(pillWidths, id: \.self) { width in
+                ForEach(Array(pillWidths.enumerated()), id: \.offset) { _, width in
                     RoundedRectangle(cornerRadius: 6, style: .continuous)
                         .frame(width: width, height: 22)
                 }
