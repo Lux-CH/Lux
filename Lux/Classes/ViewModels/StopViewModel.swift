@@ -89,6 +89,7 @@ class StopViewModel: ObservableObject {
     private func startLiveFeed() {
         let fallbackOnly = OfflineRouter.shared.isOfflineActive || isCustomTimeSelected
         let stopId = stop.id
+        let count = departureCount
 
         liveFeed.start(
             fallbackOnly: fallbackOnly,
@@ -96,7 +97,7 @@ class StopViewModel: ObservableObject {
             stream: {
                 await RelayClient.shared.departures(
                     stopId: stopId,
-                    n: 50,
+                    n: count,
                     radius: 300
                 )
             },
@@ -114,6 +115,30 @@ class StopViewModel: ObservableObject {
                 self?.applyStopTimes(freshStopTimes)
             }
         )
+    }
+
+    private var departureCount = 50
+    private var hasWidenedDepartureWindow = false
+
+    private var thinDepartureThreshold: Int {
+        stop.servesRail ? 45 : 30
+    }
+
+    @MainActor
+    private func widenDepartureWindowIfNeeded(raw: StopTimes, filtered: StopTimes) {
+        guard !fromStops, !hasWidenedDepartureWindow,
+              raw.stopTimes.count >= departureCount,
+              filtered.stopTimes.count < thinDepartureThreshold
+        else { return }
+
+        hasWidenedDepartureWindow = true
+        departureCount = 100
+
+        Task { @MainActor in
+            liveFeed.stop()
+            await RelayClient.shared.unsubscribeDepartures(stopId: stop.id)
+            startLiveFeed()
+        }
     }
 
     private func filteredForStation(_ stopTimes: StopTimes) -> StopTimes {
@@ -135,6 +160,8 @@ class StopViewModel: ObservableObject {
             self.routeNames = []
             self.currentPages = [:]
         }
+
+        widenDepartureWindowIfNeeded(raw: rawStopTimes, filtered: freshStopTimes)
     }
     
     @MainActor
@@ -198,7 +225,7 @@ class StopViewModel: ObservableObject {
             time: time,
             both: true,
             direction: "LATER",
-            numberOfEvents: fromStops ? 100 : 50,
+            numberOfEvents: fromStops ? 100 : departureCount,
             radius: 300
         )
     }

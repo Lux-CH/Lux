@@ -123,6 +123,20 @@ actor RelayClient {
         }
     }
 
+    func unsubscribeDepartures(stopId: String) {
+        let keys = subscribers.keys.filter { $0.channel == "dep" && $0.id == stopId }
+        guard !keys.isEmpty else { return }
+
+        for key in keys {
+            subscribers.removeValue(forKey: key)
+            send(Self.encode(["action": "unsub_dep", "src": key.src, "stopId": key.id]))
+        }
+
+        if subscribers.isEmpty {
+            disconnect()
+        }
+    }
+
     private func removeSubscriber(_ id: UUID, for key: SubscriptionKey) {
         guard var keySubscribers = subscribers[key] else { return }
         keySubscribers.removeValue(forKey: id)
