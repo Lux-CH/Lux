@@ -279,6 +279,8 @@ actor RelayClient {
         let src: String?
         let stopId: String?
         let tripId: String?
+        let n: Int?
+        let radius: Int?
     }
 
     private func handle(_ message: URLSessionWebSocketTask.Message) {
@@ -296,17 +298,16 @@ actor RelayClient {
             let payloadData = try? JSONSerialization.data(withJSONObject: payload)
         else { return }
 
-        let key = SubscriptionKey(
-            channel: envelope.ch,
-            src: envelope.src ?? "shared",
-            id: envelope.stopId ?? envelope.tripId ?? "global",
-            extra: ""
-        )
+        let channel = envelope.ch
+        let src = envelope.src ?? "shared"
+        let id = envelope.stopId ?? envelope.tripId ?? "global"
+        let extra = envelope.n.map { "\($0)|\(envelope.radius ?? 0)" }
 
         for (candidate, keySubscribers) in subscribers {
-            guard candidate.channel == key.channel,
-                  candidate.src == key.src,
-                  candidate.id == key.id else { continue }
+            guard candidate.channel == channel,
+                  candidate.src == src,
+                  candidate.id == id else { continue }
+            if let extra, candidate.extra != extra { continue }
             for subscriber in keySubscribers.values {
                 subscriber.deliver(payloadData)
             }

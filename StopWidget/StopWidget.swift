@@ -304,7 +304,7 @@ struct StopWidgetEntryView: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Divider()
                         .padding(.bottom, 5)
-                    ForEach(entry.departures) { departure in
+                    ForEach(entry.departures, id: \.rowIdentity) { departure in
                         DepartureRowView(departure: departure)
                     }
                 }
@@ -385,4 +385,10 @@ struct StopWidget: Widget {
         error: nil,
         isPreview: true
     )
+}
+
+extension StopTime {
+    var rowIdentity: String {
+        "\(tripId)|\(place.stopId ?? place.parentId ?? "")"
+    }
 }
