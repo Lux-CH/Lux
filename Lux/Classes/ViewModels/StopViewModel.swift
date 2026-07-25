@@ -127,6 +127,7 @@ class StopViewModel: ObservableObject {
     private var departureRadius: Int? {
         if stop.servesRail { return Int(departureRadiusMeters) }
         if stop.groupedStopIds.count > 1 { return Int(departureRadiusMeters) }
+        guard StopGrouping.isStationForecourt(stop.name) else { return nil }
         return stop.hasRailNeighbour == false ? nil : Int(departureRadiusMeters)
     }
 
