@@ -356,12 +356,13 @@ struct WelcomeView: View {
             type: .stop,
             tokens: [],
             name: "Bel Air",
-            id: "ch_Parent8587387",
-            lat: 0.0,
-            lon: 0.0,
+            id: "ch_Parentch:1:sloid:87387",
+            lat: 46.204728,
+            lon: 6.143048,
             level: 0.0,
             areas: [],
-            score: 0.0
+            score: 0.0,
+            modes: [.tram, .bus]
         ), maxGroupsToShow: 3, fromStops: false, dontShowLastDivider: true, isLastStopOverall: true)
         .padding(.bottom, 7.5)
         .background(Color(.systemBackground).clipShape(
