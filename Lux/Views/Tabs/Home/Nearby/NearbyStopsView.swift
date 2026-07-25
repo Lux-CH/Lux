@@ -172,7 +172,7 @@ struct NearbyStopsView: View {
                         let nearbyStops = Array(progress.searchResults.prefix(2))
                         if let station = nearbyStation(among: nearbyStops) {
                             ZStack {
-                                StopView(stop: station, maxGroupsToShow: 7, fromStops: false, isLastStopOverall: true)
+                                StopView(stop: station, maxGroupsToShow: 6, fromStops: false, isLastStopOverall: true)
                             }
                             .frame(maxWidth: .infinity)
                         } else {
