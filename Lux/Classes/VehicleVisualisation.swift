@@ -32,17 +32,6 @@ enum VehicleVisualisation {
         let isDwelling: Bool
     }
     
-    private static func defaultDwellTime(for mode: TransportationMode) -> TimeInterval {
-        switch mode {
-        case .bus, .tram:
-            return 25
-        case .rail, .highSpeedRail, .regionalRail, .regionalFastRail, .suburban, .funicular, .subway, .ferry:
-            return 50
-        default:
-            return 30
-        }
-    }
-    
     static func calculateKeyFrames(for leg: Leg, polylineString: String, precision: Double) -> [KeyFrame] {
         let polyline = Polyline(encodedPolyline: polylineString, precision: precision)
         guard let coordinates = polyline.coordinates, coordinates.count >= 2 else { return [] }
@@ -72,7 +61,7 @@ enum VehicleVisualisation {
         let mode = leg.mode
         for i in 1..<(stops.count-1) {
             if let arrivalTime = stops[i].arrivalTime, abs(arrivalTime - stops[i].departureTime) < 1.0 {
-                stops[i].departureTime = arrivalTime + defaultDwellTime(for: mode)
+                stops[i].departureTime = arrivalTime + mode.dwellTime
             }
         }
         

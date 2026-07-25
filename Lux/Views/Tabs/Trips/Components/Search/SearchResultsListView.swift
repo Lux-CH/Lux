@@ -137,28 +137,6 @@ struct SearchResultsContent: View {
     }
 }
 
-struct LoadingView: View {
-    @State private var pulseAnimation = false
-    
-    var body: some View {
-        VStack(spacing: 20) {
-            ProgressView()
-                .frame(width: 80, height: 80)
-                
-            Text("Recherche d'itinéraires...")
-                .font(.headline)
-                .foregroundColor(.secondary)
-                .opacity(pulseAnimation ? 0.7 : 1.0)
-                .animation(.easeInOut(duration: 1.5).repeatForever(autoreverses: true), value: pulseAnimation)
-                .onAppear {
-                    pulseAnimation = true
-                }
-        }
-        .padding(.top, 40)
-        .transition(.opacity)
-    }
-}
-
 struct ErrorView: View {
     let message: String
     let retryAction: () -> Void
