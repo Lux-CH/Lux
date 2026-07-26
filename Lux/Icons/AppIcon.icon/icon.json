@@ -15,6 +15,7 @@
               "value" : "normal"
             }
           ],
+          "glass" : true,
           "hidden" : false,
           "image-name" : "idk 5.svg",
           "name" : "Icon",
