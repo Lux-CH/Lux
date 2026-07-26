@@ -105,7 +105,8 @@ struct DisruptionCardView: View {
             )
         })
     }
-    private func extractTitleAndDesc(_ disr: String) -> (String, String) {
+    private func extractTitleAndDesc(_ raw: String) -> (String, String) {
+        let disr = raw.decodingHTMLEntities()
         if let range = disr.range(of: " - ") {
             let title = String(disr[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
             let desc = String(disr[range.upperBound...]).trimmingCharacters(in: .whitespaces)
@@ -113,5 +114,59 @@ struct DisruptionCardView: View {
         } else {
             return ("", disr)
         }
+    }
+}
+
+private extension String {
+    static let namedHTMLEntities: [String: Character] = [
+        "amp": "&", "lt": "<", "gt": ">", "quot": "\"", "apos": "'",
+        "nbsp": "\u{00A0}", "eacute": "é", "egrave": "è", "ecirc": "ê", "euml": "ë",
+        "agrave": "à", "acirc": "â", "ccedil": "ç", "ocirc": "ô", "ouml": "ö",
+        "ugrave": "ù", "ucirc": "û", "uuml": "ü", "icirc": "î", "iuml": "ï",
+        "Eacute": "É", "Egrave": "È", "Agrave": "À", "Ccedil": "Ç",
+        "oelig": "œ", "OElig": "Œ", "deg": "°", "laquo": "«", "raquo": "»",
+        "rsquo": "\u{2019}", "lsquo": "\u{2018}", "ldquo": "\u{201C}", "rdquo": "\u{201D}",
+        "hellip": "\u{2026}", "ndash": "\u{2013}", "mdash": "\u{2014}"
+    ]
+
+    func decodingHTMLEntities() -> String {
+        guard contains("&") else { return self }
+        var result = ""
+        result.reserveCapacity(count)
+        var index = startIndex
+        while index < endIndex {
+            let char = self[index]
+            guard char == "&",
+                  let semicolon = self[index...].prefix(10).firstIndex(of: ";"),
+                  semicolon > self.index(after: index) else {
+                result.append(char)
+                index = self.index(after: index)
+                continue
+            }
+            let entity = self[self.index(after: index)..<semicolon]
+            var decoded: Character?
+            if entity.first == "#" {
+                let numeric = entity.dropFirst()
+                let scalar: UInt32?
+                if numeric.first == "x" || numeric.first == "X" {
+                    scalar = UInt32(numeric.dropFirst(), radix: 16)
+                } else {
+                    scalar = UInt32(numeric)
+                }
+                if let scalar, let unicode = Unicode.Scalar(scalar) {
+                    decoded = Character(unicode)
+                }
+            } else {
+                decoded = Self.namedHTMLEntities[String(entity)]
+            }
+            if let decoded {
+                result.append(decoded)
+                index = self.index(after: semicolon)
+            } else {
+                result.append(char)
+                index = self.index(after: index)
+            }
+        }
+        return result
     }
 }
