@@ -35,7 +35,7 @@ struct NearbyStopsView: View {
     
     private var groupBudget: (station: Int, first: Int, second: Int) {
         switch UIScreen.main.bounds.height {
-        case 900...: return (7, 3, 3)
+        case 900...: return (7, 4, 2)
         case 840..<900: return (6, 3, 2)
         case 800..<840: return (5, 2, 2)
         default: return (4, 2, 1)
