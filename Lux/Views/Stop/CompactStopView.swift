@@ -138,11 +138,19 @@ struct CompactStopView: View {
         viewModel.routeGroups[routeName]?.first?.stopTimes.first?.mode.isRail ?? false
     }
 
+    private func soonestDeparture(_ routeName: String) -> Date {
+        viewModel.routeGroups[routeName]?
+            .compactMap { $0.stopTimes.first }
+            .compactMap { $0.place.departure ?? $0.place.arrival }
+            .min() ?? .distantFuture
+    }
+
     private var orderedRouteNames: [String] {
         let names = viewModel.routeNames
-        guard viewModel.stop.servesRail,
-              let topRail = names.first(where: isRailRoute)
-        else { return names }
+        guard viewModel.stop.servesRail else { return names }
+
+        let rail = names.filter(isRailRoute).map { (name: $0, departure: soonestDeparture($0)) }
+        guard let topRail = rail.min(by: { $0.departure < $1.departure })?.name else { return names }
         return [topRail] + names.filter { $0 != topRail }
     }
 
