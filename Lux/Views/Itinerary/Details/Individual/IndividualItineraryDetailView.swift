@@ -25,7 +25,7 @@ struct IndividualItineraryDetailView: View {
         self.viewModel = viewModel
         self.itinerary = itinerary
         self.mainLeg = itinerary.legs.first
-        self.legColor = mainLeg.flatMap { getLegColor($0) } ?? .black
+        self.legColor = mainLeg.flatMap { getLegColor($0, brightIt: true) } ?? .black
         if let leg = itinerary.legs.first {
             self.upcomingStops = Self.calculateUpcomingStops(leg: leg)
             self.nextStop = Self.calculateNextStop(leg: leg)

@@ -13,10 +13,24 @@ struct MultipleItineraryDetailView: View {
     let itinerary: Itinerary
     @State private var expandedLegIds: Set<String> = []
     @State private var showingTightConnectionAlert = false
-    @State private var selectedTightConnection: (from: String, to: String)?
+    @State private var selectedTightConnection: (from: String, to: String)? = nil
     @ObservedObject var viewModel: ItineraryViewModel
     let itineraarySharer: ItinerarySharer
-    
+    private let legColors: [String: Color]
+
+    init(itinerary: Itinerary, viewModel: ItineraryViewModel, itineraarySharer: ItinerarySharer) {
+        self.itinerary = itinerary
+        self.viewModel = viewModel
+        self.itineraarySharer = itineraarySharer
+        self.legColors = itinerary.legs.reduce(into: [String: Color]()) { colors, leg in
+            colors[Self.getLegId(leg)] = getLegColor(leg, brightIt: true)
+        }
+    }
+
+    private func legColor(for leg: Leg) -> Color {
+        legColors[Self.getLegId(leg)] ?? getLegColor(leg, brightIt: true)
+    }
+
     private func calculateUpcomingStops(leg: Leg) -> [Place] {
         guard let intermediateStops = leg.intermediateStops else { return [] }
         
@@ -33,7 +47,7 @@ struct MultipleItineraryDetailView: View {
         return upcomingStops.isEmpty ? allStops : upcomingStops
     }
     
-    private func getLegId(_ leg: Leg) -> String {
+    private static func getLegId(_ leg: Leg) -> String {
         return "\(leg.startTime.timeIntervalSince1970)-\(leg.from.name)-\(leg.to.name)"
     }
     
@@ -158,7 +172,7 @@ struct MultipleItineraryDetailView: View {
                     ForEach(Array(itinerary.legs.enumerated()), id: \.element.legGeometry.points) { legIndex, leg in
                         if leg.mode != .walk {
                             // Transit leg
-                            LegHeaderView(leg: leg, legColor: getLegColor(leg), isSingle: false, nextStop: nil)
+                            LegHeaderView(leg: leg, legColor: legColor(for: leg), isSingle: false, nextStop: nil)
                                 .padding(.horizontal, 20)
                                 .padding(.top, 25)
                                 .padding(.bottom, 15)
@@ -169,7 +183,7 @@ struct MultipleItineraryDetailView: View {
                             ItinerarySheetDetailStopsContentView(
                                 viewModel: viewModel,
                                 stops: calculateUpcomingStops(leg: leg),
-                                legColor: getLegColor(leg),
+                                legColor: legColor(for: leg),
                                 fromStop: leg.from,
                                 toStop: leg.to,
                                 duration: leg.duration,
@@ -180,7 +194,7 @@ struct MultipleItineraryDetailView: View {
                             .padding(.bottom, 10)
                         } else {
                             // Walking leg
-                            let legId = getLegId(leg)
+                            let legId = Self.getLegId(leg)
                             let isExpanded = expandedLegIds.contains(legId)
                             let walkingSteps = viewModel.walkingDirections[viewModel.getLegIdentifier(leg)] ?? []
                             let tightConnectionLegs = isTightConnection(walkingLeg: leg, legIndex: legIndex)
