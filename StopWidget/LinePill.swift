@@ -9,6 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct LinePill: View {
+    @Environment(\.colorScheme) private var colorScheme
     let line: String
     let mode: TransportationMode
     let agency: String
@@ -17,11 +18,23 @@ struct LinePill: View {
     var fontSize: CGFloat = 11
     
     private var isTrainDetected: Bool {
-        line.hasPrefix("RL") || line.hasPrefix("IR") || line.hasPrefix("RE") || line.hasPrefix("IC") || line == "R"
+        ["RL", "IR", "RE", "IC", "EC", "EXT", "ICE", "TGV", "RJ", "SN", "R"].contains {
+            line.hasPrefix($0)
+        }
+    }
+
+    private var isMetro: Bool {
+        mode == .subway || mode == .metro || ["m1", "m2"].contains(line.lowercased())
+    }
+
+    private var isMainlineRail: Bool {
+        (mode.isMainlineRail || isTrainDetected) && !isMetro
     }
     
     private var isSquared: Bool {
-        if mode.usesSquaredPill {
+        if isMetro {
+            return false
+        } else if mode.usesSquaredPill {
             return true
         }
         else if isTrainDetected {
@@ -33,7 +46,10 @@ struct LinePill: View {
     }
     
     private var formattedLine: String {
-        line.hasPrefix("RL") ? String(line.dropFirst(1)) : line
+        if isMetro, line.count == 2, line.lowercased().hasPrefix("m") {
+            return String(line.dropFirst())
+        }
+        return line.hasPrefix("RL") ? String(line.dropFirst(1)) : line
     }
     
     private var baseLineColor: Color {
@@ -46,17 +62,36 @@ struct LinePill: View {
         }
         return baseLineColor
     }
+
+    private var pillWidth: CGFloat {
+        if isMetro { return pillHeight }
+        guard isMainlineRail else { return width }
+        let textWidth = CGFloat(formattedLine.count) * fontSize * 0.7 + 12
+        return max(width, textWidth)
+    }
+
+    private var pillHeight: CGFloat {
+        isMetro ? height + 4 : height
+    }
+
+    private var labelFontSize: CGFloat {
+        isMetro ? fontSize + 2 : fontSize
+    }
+
+    private var emphasizedFillOpacity: Double {
+        colorScheme == .light ? 0.7 : 0.45
+    }
     
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
-                .fill(lineColor.opacity(0.25))
+                .fill(lineColor.opacity((isMainlineRail || isMetro) ? emphasizedFillOpacity : 0.25))
                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
-                .frame(width: width, height: height)
+                .frame(width: pillWidth, height: pillHeight)
             
             Text(formattedLine)
-                .font(.custom("NimbusSansBeckerPBla", size: fontSize))
-                .foregroundColor(baseLineColor == .black ? .white : lineColor)
+                .font(.custom("NimbusSansBeckerPBla", size: labelFontSize))
+                .foregroundColor((isMainlineRail || isMetro) ? .white.opacity(0.85) : (baseLineColor == .black ? .white : lineColor))
                 .multilineTextAlignment(.center)
         }
     }
