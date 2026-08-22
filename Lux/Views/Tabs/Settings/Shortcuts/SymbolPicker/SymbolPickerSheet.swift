@@ -18,6 +18,7 @@ struct SymbolPickerSheet: View {
     @State private var query = ""
     @State private var filter: SymbolFilter = .recommended
     @State private var displayedSymbols: [SFSymbol] = []
+    @State private var searchTask: Task<Void, Never>?
     @FocusState private var isSearchFocused: Bool
 
     var body: some View {
@@ -46,11 +47,23 @@ struct SymbolPickerSheet: View {
                 updateResults()
             }
             .onChange(of: query) { _, _ in
-                updateResults()
+                scheduleSearch()
             }
             .onChange(of: filter) { _, _ in
                 updateResults()
             }
+            .onDisappear {
+                searchTask?.cancel()
+            }
+        }
+    }
+
+    private func scheduleSearch() {
+        searchTask?.cancel()
+        searchTask = Task {
+            try? await Task.sleep(for: .milliseconds(50))
+            guard !Task.isCancelled else { return }
+            updateResults()
         }
     }
 
