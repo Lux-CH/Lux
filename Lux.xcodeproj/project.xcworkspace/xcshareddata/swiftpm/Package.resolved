@@ -56,12 +56,11 @@
       }
     },
     {
-      "identity" : "symbolpicker",
+      "identity" : "sfsymbols",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/xnth97/SymbolPicker",
+      "location" : "https://github.com/simonbs/SFSymbols",
       "state" : {
-        "revision" : "8bb08c982235b8e601bc500a41e770d7e198759b",
-        "version" : "1.6.2"
+        "revision" : "8284750726a2738fe3f20788e31ac2878a3d5d6b"
       }
     }
   ],

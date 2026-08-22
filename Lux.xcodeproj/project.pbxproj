@@ -10,7 +10,7 @@
 		790749E22DEE45A50010D818 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 790749E12DEE45A50010D818 /* CodeScanner */; };
 		790749EC2DEE598E0010D818 /* GlowGetter in Frameworks */ = {isa = PBXBuildFile; productRef = 790749EB2DEE598E0010D818 /* GlowGetter */; };
 		791994C72DE374CF00B2080C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 791994C62DE374CF00B2080C /* Localizable.xcstrings */; };
-		791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SymbolPicker */; };
+		791F49B12DC58AB4006B5565 /* SFSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SFSymbols */; };
 		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
 		7981C7A72E48052500246701 /* InfoPlist.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 7981C7A62E48052500246701 /* InfoPlist.xcstrings */; };
 		7986885A2E3FEE15003FE496 /* SearchStopIntent.appex in Embed ExtensionKit Extensions */ = {isa = PBXBuildFile; fileRef = 798688512E3FEE15003FE496 /* SearchStopIntent.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
@@ -163,7 +163,7 @@
 				79A2CC3A2E0EDCF80071DD44 /* LuxCom in Frameworks */,
 				796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */,
 				79C64D402DB930DC00C01B89 /* Polyline in Frameworks */,
-				791F49B12DC58AB4006B5565 /* SymbolPicker in Frameworks */,
+				791F49B12DC58AB4006B5565 /* SFSymbols in Frameworks */,
 				790749E22DEE45A50010D818 /* CodeScanner in Frameworks */,
 				79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */,
 				AA0100000000000000000003 /* GRDB in Frameworks */,
@@ -265,7 +265,7 @@
 			name = Lux;
 			packageProductDependencies = (
 				79C64D3F2DB930DC00C01B89 /* Polyline */,
-				791F49B02DC58AB4006B5565 /* SymbolPicker */,
+				791F49B02DC58AB4006B5565 /* SFSymbols */,
 				796BC9042DEBC6B800D0FC4A /* MessagePacker */,
 				790749E12DEE45A50010D818 /* CodeScanner */,
 				790749EB2DEE598E0010D818 /* GlowGetter */,
@@ -335,7 +335,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				79C64D3E2DB930DC00C01B89 /* XCRemoteSwiftPackageReference "Polyline" */,
-				791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */,
+				791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SFSymbols" */,
 				796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */,
 				790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */,
 				790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */,
@@ -805,12 +805,12 @@
 				minimumVersion = 1.1.1;
 			};
 		};
-		791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */ = {
+		791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SFSymbols" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/xnth97/SymbolPicker";
+			repositoryURL = "https://github.com/simonbs/SFSymbols";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.6.2;
+				kind = revision;
+				revision = 8284750726a2738fe3f20788e31ac2878a3d5d6b;
 			};
 		};
 		796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */ = {
@@ -858,10 +858,10 @@
 			package = 790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */;
 			productName = GlowGetter;
 		};
-		791F49B02DC58AB4006B5565 /* SymbolPicker */ = {
+		791F49B02DC58AB4006B5565 /* SFSymbols */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SymbolPicker" */;
-			productName = SymbolPicker;
+			package = 791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SFSymbols" */;
+			productName = SFSymbols;
 		};
 		796BC9042DEBC6B800D0FC4A /* MessagePacker */ = {
 			isa = XCSwiftPackageProductDependency;
