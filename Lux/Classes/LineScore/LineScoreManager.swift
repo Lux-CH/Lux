@@ -30,7 +30,7 @@ class LineScoreManager: ObservableObject {
     }
     
     func addScore(to routeShortName: String, points: Double = 0.1) {
-        if let existingIndex = lineScores.firstIndex(where: { $0.routeShortName == routeShortName }) {
+        if let existingIndex = lineScores.firstIndex(where: { $0.routeShortName.caseInsensitiveCompare(routeShortName) == .orderedSame }) {
             var updatedScore = lineScores[existingIndex]
             updatedScore.addScore(points)
             do {
@@ -49,7 +49,7 @@ class LineScoreManager: ObservableObject {
     }
     
     func getScore(for routeShortName: String) -> Double {
-        return lineScores.first { $0.routeShortName == routeShortName }?.totalScore ?? 0.0
+        return lineScores.first { $0.routeShortName.caseInsensitiveCompare(routeShortName) == .orderedSame }?.totalScore ?? 0.0
     }
     
     func getSortedRouteNames(_ routeNames: [String]) -> [String] {

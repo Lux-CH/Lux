@@ -104,14 +104,14 @@ class LineScoreStorage: LineScoreStorageProtocol {
     
     func updateLineScore(_ score: LineScore) throws {
         var updated = currentLineScores
-        if let index = updated.firstIndex(where: { $0.routeShortName == score.routeShortName }) {
+        if let index = updated.firstIndex(where: { $0.routeShortName.caseInsensitiveCompare(score.routeShortName) == .orderedSame }) {
             updated[index] = score
             try saveLineScores(updated)
         }
     }
     
     func deleteLineScore(for routeShortName: String) throws {
-        let updated = currentLineScores.filter { $0.routeShortName != routeShortName }
+        let updated = currentLineScores.filter { $0.routeShortName.caseInsensitiveCompare(routeShortName) != .orderedSame }
         try saveLineScores(updated)
     }
 }
