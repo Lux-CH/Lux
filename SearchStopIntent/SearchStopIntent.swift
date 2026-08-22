@@ -22,7 +22,7 @@ struct SearchStopIntent: AppIntent {
             let stopId = stop.id
 
             let departures = try await getDeparturesForStop(stopId: stopId, numberOfEvents: 20, radius: 300)
-                .filteredToStation(stopId: stopId, name: stop.name, lat: stop.lat, lon: stop.lon, servesRail: stop.servesRail)
+                .filteredToStation(stopId: stopId, name: stop.name, lat: stop.lat, lon: stop.lon, servesMainlineRail: stop.servesMainlineRail)
                 .stopTimes
             
             if departures.isEmpty {

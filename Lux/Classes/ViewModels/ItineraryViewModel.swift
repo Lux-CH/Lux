@@ -620,42 +620,20 @@ func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
     case .bike, .car:
         return .gray
     default:
-        var baseColor: Color
-        
-        let lausanneAgencies: Set<String> = ["151", "55", "764", "7256", "344", "29"]
+        let baseColor: Color
 
-        var isLausanne: Bool {
-            return lausanneAgencies.contains(leg.agencyId ?? "")
-        }
-        
-        var isTAC: Bool {
-            return leg.agencyId == "1"
-        }
-        
         if let routeName = leg.routeShortName {
-            if isTAC, let color = LineColors.tacColors(for: routeName) {
-                baseColor = color
-            } else if let color = (isLausanne ? LineColors.tlColor(for: routeName) : LineColors.color(for: routeName)) {
-                baseColor = color
-            } else {
-                let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR") ||
-                                    routeName.hasPrefix("RE") || routeName.hasPrefix("IC") || routeName == "R"
-                
-                let isSquared = leg.mode.usesSquaredPill || isTrainDetected
-                if isSquared {
-                    baseColor = Color(hex: "EA0706")
-                } else {
-                    baseColor = Color.accent
-                }
-            }
+            let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR") ||
+                                routeName.hasPrefix("RE") || routeName.hasPrefix("IC") || routeName == "R"
+            baseColor = LineColors.resolve(
+                line: routeName,
+                agency: leg.agencyId,
+                isSquared: leg.mode.usesSquaredPill || isTrainDetected
+            ).color
         } else {
-            if leg.mode.usesSquaredPill {
-                baseColor = Color(hex: "EA0706")
-            } else {
-                baseColor = .accent
-            }
+            baseColor = leg.mode.usesSquaredPill ? Color(hex: "EA0706") : .accent
         }
-        
+
         if brightIt && isDarkColor(baseColor) {
             return lightenColor(baseColor)
         }

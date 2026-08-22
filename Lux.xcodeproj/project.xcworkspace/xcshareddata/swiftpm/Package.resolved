@@ -1,5 +1,5 @@
 {
-  "originHash" : "06f0f6d21c03cf1297abefb8dc8d445a77efecb4f1e408e6a027cc507ad1b0ea",
+  "originHash" : "723e921cf9b7bcdb6b7a1aa48a14b06d6457ced3b7c891930945a493a12e37cb",
   "pins" : [
     {
       "identity" : "codescanner",
@@ -34,7 +34,7 @@
       "location" : "https://github.com/Lux-CH/LuxCom",
       "state" : {
         "branch" : "main",
-        "revision" : "14b2a02dedc34a4fc1a84f2d1806ed6dfd3b75cb"
+        "revision" : "24bf1fa4c28f2c05b0b148ce130fa05cad3f41e7"
       }
     },
     {
