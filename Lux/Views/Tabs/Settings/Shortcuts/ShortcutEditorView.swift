@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SymbolPicker
 import LuxCom
 
 struct ShortcutEditorView: View {
@@ -92,8 +91,7 @@ struct ShortcutEditorView: View {
                 }
             }
             .sheet(isPresented: $showSymbolPicker) {
-                SymbolPicker(symbol: $selectedSymbol)
-                    .navigationTitle("Choisir un symbole")
+                SymbolPickerSheet(selection: $selectedSymbol)
                     .presentationDetents([.medium, .large])
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(38)
