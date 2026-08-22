@@ -9,6 +9,7 @@ import SwiftUI
 import LuxCom
 
 struct LinePill: View {
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var settings = Settings.shared
     let line: String
     let mode: TransportationMode
@@ -18,11 +19,23 @@ struct LinePill: View {
     var fontSize: CGFloat = 11
     
     private var isTrainDetected: Bool {
-        line.hasPrefix("RL") || line.hasPrefix("IR") || line.hasPrefix("RE") || line.hasPrefix("IC") || line == "R"
+        ["RL", "IR", "RE", "IC", "EC", "EXT", "ICE", "TGV", "RJ", "SN", "R"].contains {
+            line.hasPrefix($0)
+        }
+    }
+
+    private var isMetro: Bool {
+        mode == .subway || mode == .metro || ["m1", "m2"].contains(line.lowercased())
+    }
+
+    private var isMainlineRail: Bool {
+        (mode.isMainlineRail || isTrainDetected) && !isMetro
     }
 
     private var isSquared: Bool {
-        if mode.usesSquaredPill {
+        if isMetro {
+            return false
+        } else if mode.usesSquaredPill {
             return true
         }
         else if isTrainDetected {
@@ -34,7 +47,10 @@ struct LinePill: View {
     }
     
     private var formattedLine: String {
-        line.hasPrefix("RL") ? String(line.dropFirst(1)) : line
+        if isMetro, line.count == 2, line.lowercased().hasPrefix("m") {
+            return String(line.dropFirst())
+        }
+        return line.hasPrefix("RL") ? String(line.dropFirst(1)) : line
     }
     
     private var resolved: LineColors.ResolvedLineColor {
@@ -51,11 +67,39 @@ struct LinePill: View {
         }
         return baseLineColor
     }
+
+    private var pillWidth: CGFloat {
+        if isMetro { return pillHeight }
+        guard isMainlineRail else { return width }
+        let textWidth = CGFloat(formattedLine.count) * fontSize * 0.7 + 12
+        return max(width, textWidth)
+    }
+
+    private var pillHeight: CGFloat {
+        isMetro ? height + 4 : height
+    }
+
+    private var labelFontSize: CGFloat {
+        isMetro ? fontSize + 2 : fontSize
+    }
+
+    private var emphasizedFillOpacity: Double {
+        colorScheme == .light ? 0.7 : 0.45
+    }
+
+    private var textColor: Color {
+        if isMainlineRail || isMetro { return .white.opacity(0.85) }
+        if settings.highContrastButAccurateLinePill && resolved.isBranded {
+            return resolved.textColor
+        }
+        return baseLineColor == .black ? .white : lineColor
+    }
     
     var body: some View {
+        let isEmphasizedService = isMainlineRail || isMetro
         let fillColor: Color = settings.easyOnTheEyes ?
             .clear :
-            (settings.highContrastButAccurateLinePill ? lineColor : baseLineColor.opacity(0.25))
+            (settings.highContrastButAccurateLinePill ? lineColor : baseLineColor.opacity(isEmphasizedService ? emphasizedFillOpacity : 0.25))
 
         let strokeColor: Color = settings.easyOnTheEyes ?
             lineColor :
@@ -64,15 +108,11 @@ struct LinePill: View {
             RoundedRectangle(cornerRadius: isSquared ? 2 : 50)
                 .fill(fillColor)
                 .stroke(strokeColor, lineWidth: 0.5)
-                .frame(width: width, height: height)
+                .frame(width: pillWidth, height: pillHeight)
             
             Text(formattedLine)
-                .font(.custom("NimbusSansBeckerPBla", size: fontSize))
-                .foregroundColor(
-                    settings.highContrastButAccurateLinePill && resolved.isBranded
-                        ? resolved.textColor
-                        : (baseLineColor == .black ? .white : lineColor)
-                )
+                .font(.custom("NimbusSansBeckerPBla", size: labelFontSize))
+                .foregroundColor(textColor)
                 .multilineTextAlignment(.center)
                 .shadow(color: Color.black.opacity(0.3), radius: 1, x: 0, y: 1)
         }
