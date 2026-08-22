@@ -19,6 +19,7 @@ struct SymbolPickerSheet: View {
     @State private var filter: SymbolFilter = .recommended
     @State private var displayedSymbols: [SFSymbol] = []
     @State private var searchTask: Task<Void, Never>?
+    @State private var isSearchPending = false
     @FocusState private var isSearchFocused: Bool
 
     var body: some View {
@@ -60,10 +61,12 @@ struct SymbolPickerSheet: View {
 
     private func scheduleSearch() {
         searchTask?.cancel()
+        isSearchPending = true
         searchTask = Task {
             try? await Task.sleep(for: .milliseconds(50))
             guard !Task.isCancelled else { return }
             updateResults()
+            isSearchPending = false
         }
     }
 
@@ -167,13 +170,17 @@ struct SymbolPickerSheet: View {
             ProgressView()
             Spacer()
         } else if displayedSymbols.isEmpty {
-            Spacer()
-            ContentUnavailableView(
-                String(localized: "Aucun symbole"),
-                systemImage: "magnifyingglass",
-                description: Text("Aucun résultat pour « \(query) »")
-            )
-            Spacer()
+            if isSearchPending {
+                Spacer()
+            } else {
+                Spacer()
+                ContentUnavailableView(
+                    String(localized: "Aucun symbole"),
+                    systemImage: "magnifyingglass",
+                    description: Text("Aucun résultat pour « \(query) »")
+                )
+                Spacer()
+            }
         } else {
             grid
         }
