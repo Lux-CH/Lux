@@ -100,8 +100,31 @@ enum SymbolSearch {
                 return match
             }
         }
-        return [word]
+        let partial = partialTranslations(for: word)
+        return partial.isEmpty ? [word] : partial
     }
+
+    private static func partialTranslations(for word: String) -> [String] {
+        guard word.count >= minimumPrefixLength else { return [] }
+        let keys = SymbolLexicon.translations.keys
+            .filter { $0.hasPrefix(word) }
+            .sorted { lhs, rhs in
+                lhs.count == rhs.count ? lhs < rhs : lhs.count < rhs.count
+            }
+            .prefix(maximumPrefixMatches)
+        var result: [String] = []
+        var seen: Set<String> = []
+        for key in keys {
+            for translation in SymbolLexicon.translations[key] ?? []
+            where seen.insert(translation).inserted {
+                result.append(translation)
+            }
+        }
+        return result
+    }
+
+    private static let minimumPrefixLength = 3
+    private static let maximumPrefixMatches = 4
 
     private static let stopWords: Set<String> = [
         "a", "au", "aux", "avec", "ce", "cet", "cette", "d", "dans", "de", "des",
