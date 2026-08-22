@@ -20,12 +20,6 @@ struct LinePill: View {
         line.hasPrefix("RL") || line.hasPrefix("IR") || line.hasPrefix("RE") || line.hasPrefix("IC") || line == "R"
     }
     
-    private static let lausanneAgencies: Set<String> = ["151", "55", "764", "7256", "344", "29"]
-
-    private var isLausanne: Bool {
-        return Self.lausanneAgencies.contains(agency)
-    }
-
     private var isSquared: Bool {
         if mode.usesSquaredPill {
             return true
@@ -43,10 +37,7 @@ struct LinePill: View {
     }
     
     private var baseLineColor: Color {
-        if isSquared && LineColors.color(for: line) == nil {
-            return Color(hex: "EA0706")
-        }
-        return (isLausanne ? LineColors.tlColor(for: line) : LineColors.color(for: line)) ?? .accentColor
+        LineColors.resolve(line: line, agency: agency, isSquared: isSquared).color
     }
     
     private var lineColor: Color {

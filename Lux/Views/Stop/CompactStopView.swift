@@ -135,7 +135,7 @@ struct CompactStopView: View {
     }
     
     private func isRailRoute(_ routeName: String) -> Bool {
-        viewModel.routeGroups[routeName]?.first?.stopTimes.first?.mode.isRail ?? false
+        viewModel.routeGroups[routeName]?.first?.stopTimes.first?.mode.isMainlineRail ?? false
     }
 
     private func soonestDeparture(_ routeName: String) -> Date {
@@ -147,7 +147,7 @@ struct CompactStopView: View {
 
     private var orderedRouteNames: [String] {
         let names = viewModel.routeNames
-        guard viewModel.stop.servesRail else { return names }
+        guard viewModel.stop.servesMainlineRail else { return names }
 
         let rail = names.filter(isRailRoute).map { (name: $0, departure: soonestDeparture($0)) }
         guard let topRail = rail.min(by: { $0.departure < $1.departure })?.name else { return names }
@@ -171,7 +171,15 @@ struct CompactStopView: View {
     }
 
     private func routeGroupView(for routeName: String, groups: [GroupedStopTime], isLastRoute: Bool) -> some View {
-        let color = LineColors.color(for: groups.first?.routeShortName ?? "") ?? Color(hex: "EA0706")
+        let sample = groups.first?.stopTimes.first
+        let mode = sample?.mode ?? .bus
+        let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR")
+            || routeName.hasPrefix("RE") || routeName.hasPrefix("IC") || routeName == "R"
+        let color = LineColors.resolve(
+            line: groups.first?.routeShortName ?? "",
+            agency: sample?.agencyId,
+            isSquared: mode.usesSquaredPill || isTrainDetected
+        ).color
         let lineColor = isDarkColor(color) ? lightenColor(color) : color
 
         return VStack(alignment: .leading, spacing: 0) {

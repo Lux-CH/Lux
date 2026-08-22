@@ -17,16 +17,6 @@ struct LinePill: View {
     var height: CGFloat = 20
     var fontSize: CGFloat = 11
     
-    private static let lausanneAgencies: Set<String> = ["151", "55", "764", "7256", "344", "29"]
-
-    private var isLausanne: Bool {
-        return Self.lausanneAgencies.contains(agency ?? "")
-    }
-    
-    private var isTAC: Bool {
-        return agency == "1"
-    }
-    
     private var isTrainDetected: Bool {
         line.hasPrefix("RL") || line.hasPrefix("IR") || line.hasPrefix("RE") || line.hasPrefix("IC") || line == "R"
     }
@@ -47,14 +37,12 @@ struct LinePill: View {
         line.hasPrefix("RL") ? String(line.dropFirst(1)) : line
     }
     
+    private var resolved: LineColors.ResolvedLineColor {
+        LineColors.resolve(line: line, agency: agency, isSquared: isSquared)
+    }
+
     private var baseLineColor: Color {
-        if isSquared && LineColors.color(for: line) == nil {
-            return Color(hex: "EA0706")
-        }
-        if isTAC {
-            return LineColors.tacColors(for: line) ?? .accent
-        }
-        return (isLausanne ? LineColors.tlColor(for: line) : LineColors.color(for: line)) ?? .accent
+        resolved.color
     }
     
     private var lineColor: Color {
@@ -81,8 +69,8 @@ struct LinePill: View {
             Text(formattedLine)
                 .font(.custom("NimbusSansBeckerPBla", size: fontSize))
                 .foregroundColor(
-                    settings.highContrastButAccurateLinePill && !isLausanne
-                        ? (isTAC ? LineColors.tacTextColor(for: line) : LineColors.textColor(for: line))
+                    settings.highContrastButAccurateLinePill && resolved.isBranded
+                        ? resolved.textColor
                         : (baseLineColor == .black ? .white : lineColor)
                 )
                 .multilineTextAlignment(.center)

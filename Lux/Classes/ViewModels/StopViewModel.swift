@@ -125,14 +125,14 @@ class StopViewModel: ObservableObject {
     private var hasWidenedDepartureWindow = false
 
     private var departureRadius: Int? {
-        if stop.servesRail { return Int(departureRadiusMeters) }
+        if stop.servesMainlineRail { return Int(departureRadiusMeters) }
         if stop.groupedStopIds.count > 1 { return Int(departureRadiusMeters) }
         guard StopGrouping.isStationForecourt(stop.name) else { return nil }
         return stop.hasRailNeighbour == false ? nil : Int(departureRadiusMeters)
     }
 
     private var thinDepartureThreshold: Int {
-        stop.servesRail ? 45 : 30
+        stop.servesMainlineRail ? 45 : 30
     }
 
     @MainActor
@@ -151,7 +151,7 @@ class StopViewModel: ObservableObject {
     }
 
     private func filteredForStation(_ stopTimes: StopTimes) -> StopTimes {
-        stopTimes.filteredToStation(stopId: stop.id, name: stop.name, lat: stop.lat, lon: stop.lon, servesRail: stop.servesRail)
+        stopTimes.filteredToStation(stopId: stop.id, name: stop.name, lat: stop.lat, lon: stop.lon, servesMainlineRail: stop.servesMainlineRail)
     }
 
     @MainActor

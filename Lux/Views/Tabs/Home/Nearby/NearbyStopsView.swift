@@ -44,9 +44,9 @@ struct NearbyStopsView: View {
 
     private func nearbyStation(among stops: [SearchResult]) -> SearchResult? {
         guard let closest = stops.first else { return nil }
-        if closest.servesRail { return closest }
+        if closest.servesMainlineRail { return closest }
         guard StopGrouping.isStationForecourt(closest.name) else { return nil }
-        return stops.first { $0.servesRail }
+        return stops.first { $0.servesMainlineRail }
     }
 
     var isAuthorizationNotAllowed: Bool {

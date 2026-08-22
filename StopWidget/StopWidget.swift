@@ -80,7 +80,7 @@ struct Provider: TimelineProvider {
                 var stopName: String?
                 var stopLat: Double?
                 var stopLon: Double?
-                var stopServesRail = false
+                var stopServesMainlineRail = false
                 if storedStopId == "current" {
                     guard let location = await getCurrentLocation() else {
                         let errorEntry = createErrorEntry(
@@ -113,13 +113,13 @@ struct Provider: TimelineProvider {
                     stopName = nearestStop.name
                     stopLat = nearestStop.lat
                     stopLon = nearestStop.lon
-                    stopServesRail = nearestStop.servesRail
+                    stopServesMainlineRail = nearestStop.servesMainlineRail
                 } else {
                     stopId = storedStopId
                     stopName = storedStop.name
                     stopLat = storedStop.lat
                     stopLon = storedStop.lon
-                    stopServesRail = storedStop.servesRail
+                    stopServesMainlineRail = storedStop.servesMainlineRail
                 }
 
                 let stopTimes = try await getDeparturesForStop(
@@ -127,7 +127,7 @@ struct Provider: TimelineProvider {
                     time: Date(),
                     numberOfEvents: numberOfEvents * 3,
                     radius: 300
-                ).filteredToStation(stopId: stopId, name: stopName, lat: stopLat, lon: stopLon, servesRail: stopServesRail)
+                ).filteredToStation(stopId: stopId, name: stopName, lat: stopLat, lon: stopLon, servesMainlineRail: stopServesMainlineRail)
                 
                 let prioritizedDepartures = prioritizeDeparturesByLineScore(stopTimes.stopTimes)
                 
@@ -163,7 +163,7 @@ struct Provider: TimelineProvider {
         return getStoredStop().id
     }
 
-    private func getStoredStop() -> (id: String, name: String?, lat: Double?, lon: Double?, servesRail: Bool) {
+    private func getStoredStop() -> (id: String, name: String?, lat: Double?, lon: Double?, servesMainlineRail: Bool) {
         guard let sharedDefaults = UserDefaults(suiteName: "group.ch.cclerc.luxapp.shared") else {
             return ("ch_Parentch:1:sloid:87057", nil, nil, nil, false)
         }

@@ -298,11 +298,13 @@ struct EditableLinePill: View {
         }
     }
     
+    private var resolved: LineColors.ResolvedLineColor {
+        LineColors.resolve(line: lineNumber, agency: nil, isSquared: isSquared)
+    }
+
     private var lineColor: Color {
-        if isSquared && LineColors.color(for: lineNumber) == nil {
-            return Color(hex: "EA0706")
-        }
-        return LineColors.color(for: lineNumber) ?? .gray
+        if !resolved.isBranded && !isSquared { return .gray }
+        return resolved.color
     }
     
     var body: some View {
@@ -314,7 +316,7 @@ struct EditableLinePill: View {
             
             TextField("XX", text: $lineNumber)
                 .font(.custom("NimbusSansBeckerPBla", size: 18))
-                .foregroundColor(settings.highContrastButAccurateLinePill ? LineColors.textColor(for: lineNumber) : (lineColor == .gray ? .primary : lineColor))
+                .foregroundColor(settings.highContrastButAccurateLinePill ? resolved.textColor : (lineColor == .gray ? .primary : lineColor))
                 .multilineTextAlignment(.center)
                 .textCase(.uppercase)
                 .keyboardType(.alphabet)

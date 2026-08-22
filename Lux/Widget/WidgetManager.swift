@@ -30,7 +30,7 @@ class WidgetManager {
         sharedDefaults?.set(stop.name, forKey: "selectedStopName")
         sharedDefaults?.set(stop.lat, forKey: "selectedStopLat")
         sharedDefaults?.set(stop.lon, forKey: "selectedStopLon")
-        sharedDefaults?.set(stop.servesRail, forKey: "selectedStopServesRail")
+        sharedDefaults?.set(stop.servesMainlineRail, forKey: "selectedStopServesRail")
         sharedDefaults?.synchronize()
     }
 
