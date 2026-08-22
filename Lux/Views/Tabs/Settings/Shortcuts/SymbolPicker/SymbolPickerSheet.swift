@@ -61,7 +61,7 @@ struct SymbolPickerSheet: View {
     private func scheduleSearch() {
         searchTask?.cancel()
         searchTask = Task {
-            try? await Task.sleep(for: .milliseconds(120))
+            try? await Task.sleep(for: .milliseconds(50))
             guard !Task.isCancelled else { return }
             updateResults()
         }
