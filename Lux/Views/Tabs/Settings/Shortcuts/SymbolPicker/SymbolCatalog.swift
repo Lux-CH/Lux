@@ -12,9 +12,16 @@ import SFSymbols
 final class SymbolCatalog: ObservableObject {
     @Published private(set) var symbols: [SFSymbol] = []
     @Published private(set) var categories: [SFSymbolCategory] = []
+    @Published private(set) var recommended: [SFSymbol] = []
     @Published private(set) var isLoading = true
 
-    private static var cached: (symbols: [SFSymbol], categories: [SFSymbolCategory])?
+    private static var cached: Loaded?
+
+    struct Loaded {
+        let symbols: [SFSymbol]
+        let categories: [SFSymbolCategory]
+        let recommended: [SFSymbol]
+    }
 
     func load() async {
         if let cached = Self.cached {
@@ -29,15 +36,19 @@ final class SymbolCatalog: ObservableObject {
         let symbols = catalog.symbols.filter { symbol in
             !restricted.contains(symbol.name) && !Self.isScriptVariant(symbol.name)
         }
-        let categories = Self.usableCategories(from: catalog.categories, containing: symbols)
-        let result = (symbols: symbols, categories: categories)
+        let result = Loaded(
+            symbols: symbols,
+            categories: Self.usableCategories(from: catalog.categories, containing: symbols),
+            recommended: Self.recommendedSymbols(from: symbols)
+        )
         Self.cached = result
         apply(result)
     }
 
-    private func apply(_ result: (symbols: [SFSymbol], categories: [SFSymbolCategory])) {
+    private func apply(_ result: Loaded) {
         symbols = result.symbols
         categories = result.categories
+        recommended = result.recommended
         isLoading = false
     }
 }
@@ -70,6 +81,39 @@ private extension SymbolCatalog {
         }
         return Set(restrictions.keys)
     }
+
+    static func recommendedSymbols(from symbols: [SFSymbol]) -> [SFSymbol] {
+        var byName: [String: SFSymbol] = [:]
+        byName.reserveCapacity(symbols.count)
+        for symbol in symbols {
+            byName[symbol.name] = symbol
+        }
+        return recommendedNames.compactMap { byName[$0] }
+    }
+
+    static let recommendedNames: [String] = [
+        "tram", "bus", "train.side.front.car", "car", "bicycle", "scooter", "airplane",
+        "ferry", "cablecar", "figure.walk", "fuelpump", "parkingsign", "map", "mappin",
+        "location", "signpost.right", "suitcase",
+
+        "house", "building.2", "building.columns", "briefcase", "graduationcap",
+        "books.vertical", "storefront", "cart", "bag", "fork.knife", "cup.and.saucer",
+        "wineglass", "bed.double", "cross.case", "stethoscope", "pills", "scissors",
+        "theatermasks", "film",
+
+        "person", "person.2", "person.3", "figure.2.and.child.holdinghands",
+        "figure.child", "heart", "pawprint",
+
+        "figure.run", "figure.strengthtraining.traditional", "dumbbell",
+        "figure.pool.swim", "figure.hiking", "figure.yoga", "figure.soccer", "sportscourt",
+
+        "clock", "calendar", "alarm", "ticket", "creditcard", "gift", "birthday.cake",
+        "camera", "music.note", "gamecontroller", "book", "doc.text", "envelope", "phone",
+        "wifi", "key", "lock", "star", "flag", "tag", "bell", "bolt", "basket",
+
+        "flame", "drop", "leaf", "tree", "sun.max", "moon.stars", "snowflake",
+        "beach.umbrella", "mountain.2", "water.waves", "globe"
+    ]
 
     static func usableCategories(
         from categories: [SFSymbolCategory],

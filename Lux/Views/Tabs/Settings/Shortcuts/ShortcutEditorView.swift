@@ -92,7 +92,7 @@ struct ShortcutEditorView: View {
             }
             .sheet(isPresented: $showSymbolPicker) {
                 SymbolPickerSheet(selection: $selectedSymbol)
-                    .presentationDetents([.medium, .large])
+                    .presentationDetents([.large])
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(38)
             }
