@@ -25,7 +25,7 @@ struct LinePill: View {
     }
 
     private var isMetro: Bool {
-        mode == .subway || mode == .metro || ["m1", "m2"].contains(line.lowercased())
+        mode == .subway || ["m1", "m2"].contains(line.lowercased())
     }
 
     private var isMainlineRail: Bool {
