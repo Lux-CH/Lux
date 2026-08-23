@@ -166,11 +166,42 @@ struct LegSegmentView: View {
     let isLast: Bool
     @Environment(\.colorScheme) private var colorScheme
     @State private var isAnimating = false
+
+    private var isTrainDetected: Bool {
+        guard let line = leg.routeShortName else { return false }
+        return ["RL", "IR", "RE", "IC", "EC", "EXT", "ICE", "TGV", "RJ", "SN", "R"].contains {
+            line.hasPrefix($0)
+        }
+    }
+
+    private var isMetro: Bool {
+        leg.mode == .subway
+            || ["m1", "m2"].contains((leg.routeShortName ?? "").lowercased())
+    }
+
+    private var isMainlineRail: Bool {
+        (leg.mode.isMainlineRail || isTrainDetected) && !isMetro
+    }
+
+    private var isEmphasizedService: Bool {
+        isMainlineRail || isMetro
+    }
+
+    private var emphasizedFillOpacity: Double {
+        colorScheme == .light ? 0.7 : 0.45
+    }
+
+    private var routeNameColor: Color {
+        if isEmphasizedService {
+            return .white.opacity(0.85)
+        }
+        return getLegColor(leg, brightIt: true)
+    }
     
     var body: some View {
         ZStack {
             customRoundedRectangle
-                .fill(getLegColor(leg).opacity(0.2))
+                .fill(getLegColor(leg).opacity(isEmphasizedService ? emphasizedFillOpacity : 0.2))
                 .overlay(
                     customRoundedRectangle
                         .fill(
@@ -216,7 +247,7 @@ struct LegSegmentView: View {
                 } else if let routeName = leg.routeShortName {
                     Text(routeName)
                         .font(.custom("NimbusSansBeckerPBla", size: 14))
-                        .foregroundColor(getLegColor(leg, brightIt: true))
+                        .foregroundColor(routeNameColor)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                         .padding(.horizontal, 4)
