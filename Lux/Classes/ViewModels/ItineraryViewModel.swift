@@ -613,6 +613,17 @@ final class ItineraryViewModel: ObservableObject {
     }
 }
 
+func resolvedLineColor(for leg: Leg) -> LineColors.ResolvedLineColor? {
+    guard let routeName = leg.routeShortName else { return nil }
+    let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR") ||
+                        routeName.hasPrefix("RE") || routeName.hasPrefix("IC") || routeName == "R"
+    return LineColors.resolve(
+        line: routeName,
+        agency: leg.agencyId,
+        isSquared: leg.mode.usesSquaredPill || isTrainDetected
+    )
+}
+
 func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
     switch leg.mode {
     case .walk:
@@ -622,14 +633,8 @@ func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
     default:
         let baseColor: Color
 
-        if let routeName = leg.routeShortName {
-            let isTrainDetected = routeName.hasPrefix("RL") || routeName.hasPrefix("IR") ||
-                                routeName.hasPrefix("RE") || routeName.hasPrefix("IC") || routeName == "R"
-            baseColor = LineColors.resolve(
-                line: routeName,
-                agency: leg.agencyId,
-                isSquared: leg.mode.usesSquaredPill || isTrainDetected
-            ).color
+        if let resolved = resolvedLineColor(for: leg) {
+            baseColor = resolved.color
         } else {
             baseColor = leg.mode.usesSquaredPill ? Color(hex: "EA0706") : .accent
         }
