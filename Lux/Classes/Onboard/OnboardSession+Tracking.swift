@@ -148,7 +148,8 @@ extension OnboardSession {
             offRouteStreak = 0
             if isOffRoute { withAnimation { isOffRoute = false } }
         }
-        if offRouteStreak >= 3 && !isOffRoute {
+        // indoors GPS drifts, and an Apple Maps re-route would drop the station path
+        if offRouteStreak >= 3 && !isOffRoute && !isInStation {
             withAnimation { isOffRoute = true }
             reroute()
         }
