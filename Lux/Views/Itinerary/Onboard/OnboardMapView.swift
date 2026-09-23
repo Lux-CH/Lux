@@ -65,6 +65,16 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     private var approaching: MapPin?
     private var destination: MapPin?
     private var stopPins: [MapPin] = []
+    private var levelPins: [MapPin] = []
+    private var levelSignature = ""
+    private var stationOverlays: [MKOverlay] = []
+    private var stationPins: [MapPin] = []
+    private var stationContent = StationOverlayContent()
+    private var stationLayouts: [Int: StationLayout] = [:]
+    private var stationTask: Task<Void, Never>?
+    private var stationLegsSignature = ""
+    private var stationSignature = ""
+    private var stationDetail: StationDetail = .hidden
 
     private var routeSignature = ""
     private var arrowSignature = ""
@@ -127,6 +137,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
 
     func teardown() {
         frameDriver.isRunning = false
+        stationTask?.cancel()
         NotificationCenter.default.removeObserver(self)
     }
 
@@ -174,8 +185,113 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         syncRoute()
         syncArrow()
         syncStops()
+        syncStations()
+        syncLevelChanges()
         syncMarkers()
         puckModel.style = puckStyle
+    }
+
+    // Platform edges of the stations where the trip boards or leaves a train; the
+    // tracks it uses get a tinted platform, a darker rail in the line's colour and a callout.
+    private func syncStations() {
+        let legs = session.legs
+        let legsSignature = legs.map { "\($0.tripId ?? "")|\($0.from.stopId ?? "")|\($0.to.stopId ?? "")" }.joined(separator: ",")
+        if legsSignature != stationLegsSignature {
+            stationLegsSignature = legsSignature
+            stationTask?.cancel()
+            stationTask = Task { [weak self] in
+                let layouts = await StationLayoutStore.shared.layouts(for: legs)
+                guard let self, !Task.isCancelled else { return }
+                self.stationLayouts = layouts
+                self.stationSignature = ""
+                self.syncStations()
+            }
+        }
+
+        let signature = "\(stationLayouts.keys.sorted())|" + legs.map { "\($0.from.track ?? "")>\($0.to.track ?? "")" }.joined(separator: ",")
+        guard signature != stationSignature else { return }
+        stationSignature = signature
+        stationContent = StationOverlayContent(legs: legs, layouts: stationLayouts)
+        applyStationDetail(force: true)
+    }
+
+    // Stairs, lifts and ramps of the current walk, where it changes level in a station.
+    private func syncLevelChanges() {
+        var changes: [WalkManeuver] = []
+        if session.phase == .walking, session.maneuvers.indices.contains(session.legIndex) {
+            changes = session.maneuvers[session.legIndex].filter(\.isLevelChange)
+        }
+        let path = session.currentPath
+        let signature = "\(session.legIndex)|\(path?.coordinates.count ?? 0)|" + changes.map { "\(Int($0.along))\($0.symbolName)" }.joined(separator: ",")
+        guard signature != levelSignature else { return }
+        levelSignature = signature
+        mapView.removeAnnotations(levelPins)
+        levelPins = changes.compactMap { change in
+            guard let coordinate = path?.coordinate(at: change.along) else { return nil }
+            let pin = MapPin(kind: .levelChange, coordinate: coordinate, anchorY: nil)
+            pin.content = AnyView(
+                Image(systemName: change.symbolName)
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(.white)
+                    .frame(width: 26, height: 26)
+                    .background(RoundedRectangle(cornerRadius: 7, style: .continuous).fill(Color(Self.walkBlue)))
+                    .overlay(RoundedRectangle(cornerRadius: 7, style: .continuous).stroke(.white, lineWidth: 2))
+                    .shadow(color: .black.opacity(0.25), radius: 2, y: 1)
+                    .accessibilityLabel(Text(change.instruction))
+            )
+            return pin
+        }
+        mapView.addAnnotations(levelPins)
+    }
+
+    private func applyStationDetail(force: Bool = false) {
+        let detail = StationDetail(cameraDistance: mapView.camera.centerCoordinateDistance)
+        guard force || detail != stationDetail else { return }
+        stationDetail = detail
+
+        mapView.removeOverlays(stationOverlays)
+        mapView.removeAnnotations(stationPins)
+        stationOverlays = []
+        stationPins = []
+        guard detail >= .tracks else { return }
+
+        // bottom to top: rails, platforms, our rails, platform edges
+        func area(_ coordinates: [CLLocationCoordinate2D], fill: UIColor, stroke: UIColor = .clear) -> StationArea {
+            let polygon = StationArea(coordinates: coordinates, count: coordinates.count)
+            polygon.fill = fill
+            polygon.stroke = stroke
+            return polygon
+        }
+        let idleRails: [MKOverlay] = stationContent.rails.filter { $0.color == nil }.map {
+            area($0.coordinates, fill: StationStyle.idleRail)
+        }
+        let areas: [MKOverlay] = stationContent.areas.map {
+            area(
+                $0.coordinates,
+                fill: $0.color.map { UIColor($0).withAlphaComponent(StationStyle.highlightedPlatformOpacity) } ?? StationStyle.platformFill,
+                stroke: StationStyle.platformStroke
+            )
+        }
+        let ourRails: [MKOverlay] = stationContent.rails.compactMap { rail in
+            rail.color.map { area(rail.coordinates, fill: StationStyle.ourRailColor(for: $0)) }
+        }
+        let edges: [MKOverlay] = stationContent.lines.map {
+            RouteLine.make($0.coordinates, color: StationStyle.idleEdge, width: StationStyle.idleEdgeWidth)
+        }
+        stationOverlays = idleRails + areas + ourRails + edges
+        // all under the route, so the walk between platforms stays on top
+        for overlay in stationOverlays.reversed() {
+            mapView.insertOverlay(overlay, at: 0, level: .aboveRoads)
+        }
+
+        stationPins = stationContent.visibleLabels(at: detail)
+            .map { label in
+                let kind: MapPin.Kind = label.color == nil ? .stationTrack : .stationCurrentTrack
+                let pin = MapPin(kind: kind, coordinate: label.coordinate, anchorY: StationLabelView.anchorsAtBottom(label) ? MapPin.bottom : nil)
+                pin.content = AnyView(StationLabelView(label: label))
+                return pin
+            }
+        mapView.addAnnotations(stationPins)
     }
 
     private func syncRoute() {
@@ -401,6 +517,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         }
 
         driveCamera(at: timestamp, blend: blend)
+        applyStationDetail()
 
         let camera = mapView.camera
         if let puckHeading {
@@ -462,7 +579,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
 
     private func followTarget() -> (distance: CLLocationDistance, pitch: Double) {
         switch session.phase {
-        case .walking: return (430, 40)
+        case .walking: return session.isInStation ? (260, 30) : (430, 40)
         case .waiting: return (520, 35)
         case .riding:
             let speed = max(0, session.userLocation?.speed ?? 0)
@@ -611,6 +728,13 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
                 renderer.strokeEnd = line.strokeEnd
                 return renderer
             }
+            if let area = overlay as? StationArea {
+                let renderer = MKPolygonRenderer(polygon: area)
+                renderer.fillColor = area.fill
+                renderer.strokeColor = area.stroke
+                renderer.lineWidth = 1
+                return renderer
+            }
             if let head = overlay as? ArrowHead {
                 let renderer = MKPolygonRenderer(polygon: head)
                 renderer.fillColor = head.fill
@@ -663,9 +787,14 @@ private final class ArrowHead: MKPolygon {
     }
 }
 
+private final class StationArea: MKPolygon {
+    var fill: UIColor = .clear
+    var stroke: UIColor = .clear
+}
+
 private final class MapPin: NSObject, MKAnnotation {
     enum Kind {
-        case puck, ghost, estimated, approaching, stop, destination
+        case puck, ghost, estimated, approaching, stop, destination, stationTrack, stationCurrentTrack, levelChange
 
         var zPriority: MKAnnotationViewZPriority {
             switch self {
@@ -674,13 +803,18 @@ private final class MapPin: NSObject, MKAnnotation {
             case .ghost: return MKAnnotationViewZPriority(rawValue: 600)
             case .destination: return MKAnnotationViewZPriority(rawValue: 500)
             case .stop: return .defaultUnselected
+            case .levelChange: return MKAnnotationViewZPriority(rawValue: 550)
+            case .stationCurrentTrack: return MKAnnotationViewZPriority(rawValue: 450)
+            case .stationTrack: return MKAnnotationViewZPriority(rawValue: 400)
             }
         }
     }
 
     let kind: Kind
     @objc dynamic var coordinate: CLLocationCoordinate2D
+    /// Distance from the view's top to the point on the coordinate; nil = centre, `bottom` = bottom edge.
     let anchorY: CGFloat?
+    static let bottom = CGFloat.infinity
     var content = AnyView(EmptyView())
     var contentKey = ""
 
@@ -708,7 +842,7 @@ private final class HostingAnnotationView: MKAnnotationView {
         let size = host.sizeThatFits(in: CGSize(width: 320, height: 320))
         frame.size = size
         host.view.frame = CGRect(origin: .zero, size: size)
-        centerOffset = CGPoint(x: 0, y: pin.anchorY.map { size.height / 2 - $0 } ?? 0)
+        centerOffset = CGPoint(x: 0, y: pin.anchorY.map { $0 == MapPin.bottom ? -size.height / 2 : size.height / 2 - $0 } ?? 0)
         zPriority = pin.kind.zPriority
         displayPriority = .required
         collisionMode = .none
