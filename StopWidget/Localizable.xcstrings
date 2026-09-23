@@ -1,6 +1,9 @@
 {
   "sourceLanguage" : "fr",
   "strings" : {
+    "" : {
+
+    },
     "%@ %@" : {
       "localizations" : {
         "fr" : {
@@ -11,6 +14,21 @@
         }
       },
       "shouldTranslate" : false
+    },
+    "%lld" : {
+
+    },
+    "%lld'" : {
+
+    },
+    "→ %@" : {
+
+    },
+    "+%lld'" : {
+
+    },
+    "0'" : {
+
     },
     "Actualiser les départs des Widgets" : {
       "localizations" : {
@@ -32,12 +50,62 @@
         }
       }
     },
+    "arr." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stops"
+          }
+        }
+      }
+    },
+    "arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stop"
+          }
+        }
+      }
+    },
+    "arrêts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "stops"
+          }
+        }
+      }
+    },
+    "Arrivée %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrival %@"
+          }
+        }
+      }
+    },
     "Aucun départ ulterieur" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "No upcoming departures"
+          }
+        }
+      }
+    },
+    "Départ de %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departing %@"
           }
         }
       }
@@ -52,12 +120,72 @@
         }
       }
     },
+    "Descendez" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get off"
+          }
+        }
+      }
+    },
+    "Descendez à" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get off at"
+          }
+        }
+      }
+    },
+    "Descendez au prochain arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get off at the next stop"
+          }
+        }
+      }
+    },
     "Données fictives" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fictitious data"
+          }
+        }
+      }
+    },
+    "En direct" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live"
+          }
+        }
+      }
+    },
+    "En direct · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live · %@"
+          }
+        }
+      }
+    },
+    "Ensuite" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Next"
           }
         }
       }
@@ -82,12 +210,32 @@
         }
       }
     },
+    "Préparez-vous à descendre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get ready to get off"
+          }
+        }
+      }
+    },
     "Une erreur s'est produite" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "An error occured"
+          }
+        }
+      }
+    },
+    "Vous êtes arrivé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have arrived"
           }
         }
       }

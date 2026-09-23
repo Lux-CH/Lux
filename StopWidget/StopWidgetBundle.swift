@@ -13,6 +13,7 @@ import AppIntents
 struct StopWidgetBundle: WidgetBundle {
     var body: some Widget {
         StopWidget()
+        OnboardLiveActivity()
     }
 }
 

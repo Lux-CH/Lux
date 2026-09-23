@@ -107,6 +107,7 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Classes/BlinkManager.swift,
+				Classes/Onboard/OnboardActivityAttributes.swift,
 				Classes/TransportationModeStyle.swift,
 				Models/LineScore.swift,
 				"Views/Elements/Font/tpg-font.otf",
