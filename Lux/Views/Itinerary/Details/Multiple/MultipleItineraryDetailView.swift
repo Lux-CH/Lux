@@ -187,7 +187,9 @@ struct MultipleItineraryDetailView: View {
                                 fromStop: leg.from,
                                 toStop: leg.to,
                                 duration: leg.duration,
-                                isMultipleLeg: true
+                                isMultipleLeg: true,
+                                isRealTime: leg.realTime,
+                                isCancelled: leg.cancelled
                             )
                             .padding(.horizontal, 20)
                             .padding(.top, 16)

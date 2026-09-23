@@ -101,37 +101,11 @@ struct DepartureTimeRow: View {
     }
     
     private var latenessColor: Color {
-        let scheduledArrival = stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival ?? Date()
-        let arrival = stopTime.place.departure ?? stopTime.place.arrival ?? Date()
-        
-        let scheduledDifference = calendar.dateComponents([.minute], from: scheduledArrival, to: arrival).minute ?? 0
-        
-        if stopTime.cancelled {
-            return .red
-        } else if !stopTime.realTime {
-            return .primary
-        } else if scheduledDifference < 2 && scheduledDifference >= -1 {
-            return .green
-        } else {
-            return .yellow
-        }
+        stopTime.punctuality(calendar: calendar).color
     }
     
     private var delayBorderColor: Color {
-        let scheduledArrival = stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival ?? Date()
-        let arrival = stopTime.place.departure ?? stopTime.place.arrival ?? Date()
-        
-        let scheduledDifference = calendar.dateComponents([.minute], from: scheduledArrival, to: arrival).minute ?? 0
-        
-        if stopTime.cancelled {
-            return .red
-        } else if !stopTime.realTime {
-            return Color(UIColor.separator)
-        } else if scheduledDifference < 2 && scheduledDifference >= -1 {
-            return .green.opacity(0.5)
-        } else {
-            return .yellow.opacity(0.5)
-        }
+        stopTime.punctuality(calendar: calendar).borderColor
     }
     
     private func relativeTime(for date: Date?, from currentTime: Date) -> String {

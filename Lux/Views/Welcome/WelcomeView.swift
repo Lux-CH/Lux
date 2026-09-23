@@ -278,9 +278,19 @@ struct WelcomeView: View {
             TransportTimeExplainationItem(
                 time: "4'",
                 color: .yellow,
-                title: String(localized: "Retard/Avance"),
-                description: String(localized: "Transport en retard ou en avance"),
+                title: String(localized: "Retard"),
+                description: String(localized: "Transport en retard"),
                 icon: "exclamationmark.triangle.fill"
+            )
+            
+            Divider().opacity(0.3)
+            
+            TransportTimeExplainationItem(
+                time: "2'",
+                color: .cyan,
+                title: String(localized: "Avance"),
+                description: String(localized: "Transport en avance sur l'horaire"),
+                icon: "hare.fill"
             )
             
             Divider().opacity(0.3)

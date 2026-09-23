@@ -128,20 +128,7 @@ struct ArrivalMinuteView: View {
     }
     
     private var latenessColor: Color {
-        let scheduledArrival = incomingStop.place.scheduledDeparture ?? incomingStop.place.scheduledArrival ?? Date()
-        let arrival = incomingStop.place.departure ?? incomingStop.place.arrival ?? Date()
-        
-        let scheduledDifference = calendar.dateComponents([.minute], from: scheduledArrival, to: arrival).minute ?? 0
-        
-        if incomingStop.cancelled {
-            return .red
-        } else if !incomingStop.realTime {
-            return .primary
-        } else if scheduledDifference < 2 && scheduledDifference >= -1 {
-            return .green
-        } else {
-            return .yellow
-        }
+        incomingStop.punctuality(calendar: calendar).color
     }
     
     @ViewBuilder

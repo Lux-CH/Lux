@@ -17,6 +17,8 @@ struct ItinerarySheetDetailStopsContentView: View {
     let toStop: Place
     let duration: Int
     let isMultipleLeg: Bool
+    let isRealTime: Bool
+    let isCancelled: Bool
     
     var body: some View {
         VStack(spacing: 0) {
@@ -54,7 +56,9 @@ struct ItinerarySheetDetailStopsContentView: View {
                     accentColor: accentColorManager.selectedAccentColor,
                     fromStop: fromStop,
                     toStop: toStop,
-                    isMultipleLeg: isMultipleLeg
+                    isMultipleLeg: isMultipleLeg,
+                    isRealTime: isRealTime,
+                    isCancelled: isCancelled
                 )
                 .padding(.top, 4)
             }
