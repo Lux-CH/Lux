@@ -38,6 +38,10 @@ struct ItineraryView: View {
     let itineraarySharer = ItinerarySharer()
     
     @State private var trackingMode: MapTrackingMode = .none
+    @State private var onboardSession: OnboardSession?
+    @AppStorage("onboardIntroSeen") private var onboardIntroSeen = false
+    @State private var showsOnboardIntro = false
+    @State private var showsStopPicker = false
 
     init(tripId: String, fromNearby: Bool, otherTripOptions: [TripOption] = []) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
@@ -103,6 +107,9 @@ struct ItineraryView: View {
                         .multilineTextAlignment(.center)
                         .padding()
                 }
+            } else if let onboardSession {
+                OnboardNavigationView(session: onboardSession, itineraryViewModel: viewModel, onEnd: endOnboard)
+                    .transition(.opacity)
             } else {
                 Group {
                     if shouldRenderMap {
@@ -182,6 +189,9 @@ struct ItineraryView: View {
                 }
                 .overlay(alignment: .trailing) {
                     VStack(spacing: 12) {
+                        if canStartOnboard {
+                            onboardButton
+                        }
                         if let itinerary = viewModel.itinerary {
                             ShareButtonView(
                                 itinerary: itinerary,
@@ -204,6 +214,18 @@ struct ItineraryView: View {
                         .presentationBackgroundInteraction(.enabled)
                         .interactiveDismissDisabled()
                 }
+                .sheet(isPresented: $showsStopPicker, onDismiss: {
+                    if onboardSession == nil { showDetails = true }
+                }) {
+                    if let tripLeg = viewModel.itinerary?.legs.first {
+                        OnboardStopPickerSheet(tripLeg: tripLeg, userLocation: locationManager.location) { board, alight in
+                            guard let leg = LegLiveMerger.slice(tripLeg, boardIndex: board, alightIndex: alight) else { return }
+                            startOnboard(Itinerary(duration: leg.duration, startTime: leg.startTime, endTime: leg.endTime, transfers: 0, legs: [leg]))
+                        }
+                        .presentationDetents([.medium, .large])
+                        .presentationCornerRadius(38)
+                    }
+                }
             }
         }
         .task {
@@ -221,6 +243,8 @@ struct ItineraryView: View {
             }
         }
         .onDisappear {
+            onboardSession?.stop()
+            onboardSession = nil
             locationManager.stopMonitoring()
             tripSwitchTask?.cancel()
             tripSwitchTask = nil
@@ -228,6 +252,80 @@ struct ItineraryView: View {
             shouldRenderMap = false
             trackingMode = .none
             viewModel.stopAllTasks()
+        }
+    }
+
+    private var canStartOnboard: Bool {
+        viewModel.itinerary.map { OnboardSession.canStart($0) } ?? false
+    }
+
+    private var onboardButton: some View {
+        Button {
+            HapticFeedback.mediumImpact()
+            dismissOnboardIntro()
+            guard let itinerary = viewModel.itinerary else { return }
+            if isSingle {
+                showDetails = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { showsStopPicker = true }
+            } else {
+                startOnboard(itinerary)
+            }
+        } label: {
+            Image(systemName: "location.north.line.fill")
+                .font(.headline)
+                .foregroundColor(.white)
+                .frame(width: 45, height: 45)
+                .contentShape(Circle())
+                .adaptable(ios26: .glassButtonTintedIn(AnyShape(Circle()), .accentColor), fallback: {
+                    $0.background(Color.accentColor, in: Circle())
+                })
+                .shadow(radius: 2)
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(isSingle ? "À bord" : "Démarrer"))
+        .overlay(alignment: .topTrailing) {
+            if showsOnboardIntro {
+                OnboardIntroCallout(onDismiss: dismissOnboardIntro)
+                    .fixedSize()
+                    .offset(x: -57)
+                    .transition(.scale(scale: 0.6, anchor: .trailing).combined(with: .opacity))
+            }
+        }
+        .task { await presentOnboardIntroIfNeeded() }
+    }
+
+    private func presentOnboardIntroIfNeeded() async {
+        guard !onboardIntroSeen, !showsOnboardIntro else { return }
+        try? await Task.sleep(for: .seconds(0.8))
+        guard !Task.isCancelled, !onboardIntroSeen, onboardSession == nil else { return }
+        HapticFeedback.notification(type: .success)
+        withAnimation(.spring(duration: 0.5, bounce: 0.3)) { showsOnboardIntro = true }
+        try? await Task.sleep(for: .seconds(12))
+        dismissOnboardIntro()
+    }
+
+    private func dismissOnboardIntro() {
+        guard showsOnboardIntro || !onboardIntroSeen else { return }
+        onboardIntroSeen = true
+        withAnimation(.snappy) { showsOnboardIntro = false }
+    }
+
+    private func startOnboard(_ itinerary: Itinerary) {
+        let session = OnboardSession(itinerary: itinerary, destinationName: viewModel.destinationName)
+        showDetails = false
+        trackingMode = .none
+        withAnimation(.easeInOut(duration: 0.35)) {
+            onboardSession = session
+        }
+        session.start()
+    }
+
+    private func endOnboard() {
+        withAnimation(.easeInOut(duration: 0.35)) {
+            onboardSession = nil
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+            showDetails = true
         }
     }
 

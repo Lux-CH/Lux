@@ -117,6 +117,7 @@ struct LuxApp: App {
     
     @MainActor
     private func handleIncomingURL(_ url: URL) async {
+        if url.scheme == "lux" && url.host == "onboard" { return }
         let result = await URLHandler.process(url)
         
         switch result {
