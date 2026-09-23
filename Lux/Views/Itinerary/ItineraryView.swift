@@ -73,6 +73,12 @@ struct ItineraryView: View {
         }
     }
     
+    /// On iOS 26 the system radius follows the screen's corners at the bottom; a fixed one doesn't.
+    private var sheetCornerRadius: CGFloat? {
+        if #available(iOS 26, *) { return nil }
+        return 38
+    }
+
     var detents: (CGFloat, CGFloat) {
         if #available(iOS 26, *) {
             return (0.151, 112.5)
@@ -210,7 +216,7 @@ struct ItineraryView: View {
                     ItineraryDetailSheet(viewModel: viewModel, itinerarySharer: itineraarySharer, isSingle: isSingle)
                         .presentationDetents([isSingle ? .fraction(detents.0) : .fraction(0.225), .medium, .large])
                         .presentationDragIndicator(.visible)
-                        .presentationCornerRadius(38)
+                        .presentationCornerRadius(sheetCornerRadius)
                         .presentationBackgroundInteraction(.enabled)
                         .interactiveDismissDisabled()
                 }
@@ -223,7 +229,7 @@ struct ItineraryView: View {
                             startOnboard(Itinerary(duration: leg.duration, startTime: leg.startTime, endTime: leg.endTime, transfers: 0, legs: [leg]))
                         }
                         .presentationDetents([.medium, .large])
-                        .presentationCornerRadius(38)
+                        .presentationCornerRadius(sheetCornerRadius)
                     }
                 }
             }
