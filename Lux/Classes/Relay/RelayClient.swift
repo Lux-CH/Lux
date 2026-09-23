@@ -114,6 +114,17 @@ actor RelayClient {
     }
 
 
+    /// One-shot: the relay answers once (null when the station has no layout).
+    func station(stationId: String) -> AsyncStream<StationLayout?> {
+        let key = SubscriptionKey(channel: "sta", src: "shared", id: stationId, extra: "")
+        return stream(
+            key: key,
+            subscribePayload: ["action": "sub_sta", "stationId": stationId],
+            unsubscribePayload: ["action": "unsub_sta", "stationId": stationId],
+            as: StationLayout?.self
+        )
+    }
+
     struct CrowdVehicle: Decodable, Sendable, Equatable {
         let lat: Double
         let lon: Double
