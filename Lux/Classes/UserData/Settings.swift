@@ -35,6 +35,15 @@ class Settings: ObservableObject, @unchecked Sendable {
     @AppStorage("swisspassOnHome") var swisspassOnHome: Bool = false
     @AppStorage("showDebug") var showDebug: Bool = false
 
+    @AppStorage("onboardVoiceGuidance") var onboardVoiceGuidance: Bool = true
+    @AppStorage("onboardCrowdConsent") var onboardCrowdConsent: CrowdConsent = .undecided
+
+    enum CrowdConsent: Int {
+        case undecided, granted, declined
+    }
+
+    var sharesOnboardPosition: Bool { onboardCrowdConsent == .granted }
+
     /// Offline mode (optional on-device GTFS dataset)
     @AppStorage("offlineModeEnabled") var offlineModeEnabled: Bool = false
     @AppStorage("offlineForceOffline") var offlineForceOffline: Bool = false

@@ -44,6 +44,7 @@ struct SettingsView: View {
                             }
                         }
                         customizationCard
+                        onboardCard
                         offlineModeCard
                         experimentalCard
                         aboutCard
@@ -265,6 +266,35 @@ struct SettingsView: View {
         }
     }
     
+    private var onboardCard: some View {
+        SettingsCard {
+            Section {
+                SettingsToggle(
+                    icon: "speaker.wave.2.fill",
+                    title: String(localized: "Guidage vocal"),
+                    subtitle: String(localized: "Annonce les changements de direction, les retards et quand descendre"),
+                    isOn: $settings.onboardVoiceGuidance
+                )
+                SettingsToggle(
+                    icon: "antenna.radiowaves.left.and.right",
+                    title: String(localized: "Partager la position du véhicule"),
+                    subtitle: String(localized: "À bord, envoie anonymement la position du véhicule pour calculer son retard et l'afficher en direct aux autres voyageurs"),
+                    isOn: Binding(
+                        get: { settings.onboardCrowdConsent == .granted },
+                        set: { settings.onboardCrowdConsent = $0 ? .granted : .declined }
+                    )
+                )
+            } header: {
+                SectionHeader(
+                    icon: "location.north.line.fill",
+                    iconColor: .blue,
+                    title: String(localized: "Mode À bord"),
+                    subtitle: String(localized: "Navigation pas à pas pendant votre trajet")
+                )
+            }
+        }
+    }
+
     private var offlineModeCard: some View {
         SettingsCard {
             Section {
