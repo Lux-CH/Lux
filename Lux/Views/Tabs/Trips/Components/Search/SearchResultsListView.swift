@@ -124,12 +124,15 @@ struct SearchResultsContent: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if (viewModel.activeSearchField != .none && viewModel.fromQuery.isEmpty && viewModel.toQuery.isEmpty) && viewModel.isCurrentPositionAvailable() {
+            if (viewModel.activeSearchField != .none && viewModel.allQueriesEmpty) && viewModel.isCurrentPositionAvailable() {
                 CurrentLocationOption(viewModel: viewModel)
             } else if viewModel.showMinCharactersMessage {
                 MinCharactersView()
             } else if !viewModel.searchResults.isEmpty {
                 SearchResultsListView(viewModel: viewModel)
+            } else if viewModel.isLoading {
+                SearchLoadingView()
+                    .transition(.opacity)
             } else {
                 EmptySearchView()
             }
@@ -186,6 +189,7 @@ struct ErrorView: View {
 }
 
 struct NoResultsView: View {
+    var hasVias = false
     @State private var isAnimating = false
     
     var body: some View {
@@ -202,7 +206,9 @@ struct NoResultsView: View {
                 .font(.headline)
                 .foregroundColor(.secondary)
                 
-            Text("Essayez de modifier vos critères de recherche, vos options ou l'heure de départ.")
+            Text(hasVias
+                 ? LocalizedStringKey("Aucun itinéraire ne passe par vos arrêts intermédiaires. Essayez un autre arrêt ou un temps d'arrêt plus court.")
+                 : LocalizedStringKey("Essayez de modifier vos critères de recherche, vos options ou l'heure de départ."))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
@@ -300,5 +306,20 @@ struct CurrentLocationOption: View {
                 .padding(.horizontal, 20)
         }
         .transition(.opacity.combined(with: .move(edge: .top)))
+    }
+}
+
+struct SearchLoadingView: View {
+    var body: some View {
+        VStack(spacing: 14) {
+            ProgressView()
+                .controlSize(.regular)
+                .padding(.top, 48)
+            Text("Recherche…")
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
     }
 }

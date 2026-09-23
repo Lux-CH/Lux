@@ -107,7 +107,11 @@ struct MainNavigationView: View {
                                 .fill(colorScheme == .dark
                                       ? Color(.secondarySystemBackground).opacity(0.7)
                                       : Color.white)
-                                .frame(height: headerHeight)
+                                .modifier(SearchHeaderHeight(
+                                    viewModel: searchViewModel,
+                                    baseHeight: headerHeight,
+                                    isSearching: viewMode == .search
+                                ))
                                 .clipShape(
                                     .rect(
                                         topLeadingRadius: 0,
@@ -359,7 +363,9 @@ struct MainNavigationView: View {
             .keyboardToolbarIf(viewMode == .search) {
                 ShortcutsKeyboardToolbar(
                     onShortcutSelected: { result in
-                        let targetField: TripsSearchViewModel.SearchField = isFromFocused ? .from : .to
+                        let targetField: TripsSearchViewModel.SearchField = searchViewModel.activeSearchField.isVia
+                            ? searchViewModel.activeSearchField
+                            : (isFromFocused ? .from : .to)
                         searchViewModel.handleInitialSearchResult(result, targetField: targetField)
                     },
                     onCurrentPositionSelected: {
@@ -395,12 +401,6 @@ struct MainNavigationView: View {
         }
         .onChange(of: settings.useTimeBasedRelevance) {
             updateShortcutsWithCurrentLocation()
-        }
-        .onChange(of: searchViewModel.fromQuery) {
-            searchViewModel.onChange(of: searchViewModel.fromQuery)
-        }
-        .onChange(of: searchViewModel.toQuery) {
-            searchViewModel.onChange(of: searchViewModel.toQuery)
         }
         .onChange(of: isSearchBarFocused) {
             if isSearchBarFocused && viewMode == .home && !isSearchTransitioning {

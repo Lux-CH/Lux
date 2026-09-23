@@ -56,7 +56,9 @@ struct TripsSearchView: View {
             .keyboardToolbar {
                 ShortcutsKeyboardToolbar(
                     onShortcutSelected: { result in
-                        let targetField: TripsSearchViewModel.SearchField = isFromFocused ? .from : .to
+                        let targetField: TripsSearchViewModel.SearchField = viewModel.activeSearchField.isVia
+                            ? viewModel.activeSearchField
+                            : (isFromFocused ? .from : .to)
                         viewModel.handleInitialSearchResult(result, targetField: targetField)
                     },
                     onCurrentPositionSelected: {
@@ -79,12 +81,6 @@ struct TripsSearchView: View {
         }
         .onDisappear {
             locationManager.stopMonitoring()
-        }
-        .onChange(of: viewModel.fromQuery) {
-            viewModel.onChange(of: viewModel.fromQuery)
-        }
-        .onChange(of: viewModel.toQuery) {
-            viewModel.onChange(of: viewModel.toQuery)
         }
     }
     var dragGesture: some Gesture {

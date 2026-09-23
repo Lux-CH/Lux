@@ -38,6 +38,57 @@ enum SelectedLocation: Equatable {
     }
 }
 
+struct ViaStop: Identifiable, Equatable {
+    let id = UUID()
+    var location: SearchResult?
+    /// Minimum stay in minutes. 0 lets MOTIS stay seated in the same vehicle.
+    var minimumStay: Int = 0
+
+    static func == (lhs: ViaStop, rhs: ViaStop) -> Bool {
+        lhs.id == rhs.id && lhs.location?.id == rhs.location?.id && lhs.minimumStay == rhs.minimumStay
+    }
+}
+
+/// Quick routing profiles layered on top of the user's saved route options.
+enum RoutePreset: String, CaseIterable, Identifiable {
+    case fastest, fewerTransfers, lessWalking, relaxed
+
+    var id: String { rawValue }
+
+    var title: LocalizedStringKey {
+        switch self {
+        case .fastest: "Le plus rapide"
+        case .fewerTransfers: "Moins de changements"
+        case .lessWalking: "Moins de marche"
+        case .relaxed: "Correspondances larges"
+        }
+    }
+
+    var symbol: String {
+        switch self {
+        case .fastest: "bolt.fill"
+        case .fewerTransfers: "arrow.triangle.swap"
+        case .lessWalking: "figure.walk"
+        case .relaxed: "tortoise.fill"
+        }
+    }
+
+    // Values picked by comparing MOTIS results on typical Geneva trips.
+    func maxTransfers(_ base: Int) -> Int {
+        self == .fewerTransfers ? min(base, 1) : base
+    }
+
+    /// Minutes, sent as `additionalTransferTime`.
+    func transferBuffer(_ base: Int) -> Int {
+        self == .relaxed ? max(base, 5) : base
+    }
+
+    /// Seconds for the first and last street legs; nil keeps the server default (900).
+    func maxAccessWalk(_ base: Int?) -> Int? {
+        self == .lessWalking ? min(base ?? 900, 300) : base
+    }
+}
+
 enum DepartureType: String, CaseIterable, Identifiable {
     case leaveAt = "Partir à"
     case arriveBy = "Arriver à"
@@ -52,6 +103,10 @@ class TripsSearchViewModel: ObservableObject {
     
     @Published var fromQuery = ""
     @Published var toQuery = ""
+    @Published var viaQuery = ""
+    @Published var vias: [ViaStop] = []
+    /// MOTIS accepts at most two via stops.
+    let maxVias = 2
     @Published var searchResults: [SearchResult] = []
     @Published var showMinCharactersMessage = false
     @Published var isLoading = false
@@ -107,9 +162,30 @@ class TripsSearchViewModel: ObservableObject {
     @Published var selectedDate: Date? = nil
     
     @Published var hasCustomSettings = false
+
+    @AppStorage("routePreset") private var storedRoutePreset: String = RoutePreset.fastest.rawValue
+    @Published var routePreset: RoutePreset = .fastest
+    /// True when the selected preset found nothing and the shown routes ignore it.
+    @Published var isPresetFallback = false
     
-    enum SearchField {
-        case from, to, none
+    enum SearchField: Equatable {
+        case from, to, via(UUID), none
+
+        var isVia: Bool {
+            if case .via = self { return true }
+            return false
+        }
+    }
+
+    var canAddVia: Bool {
+        vias.count < maxVias && !vias.contains { $0.location == nil }
+    }
+
+    /// Extra height the header needs for via rows, so containers can grow with it.
+    var viaRowsHeight: CGFloat { CGFloat(vias.count) * 49 }
+
+    var allQueriesEmpty: Bool {
+        fromQuery.isEmpty && toQuery.isEmpty && viaQuery.isEmpty
     }
     
     private var backgroundRefreshTask: Task<Void, Never>? = nil
@@ -130,6 +206,7 @@ class TripsSearchViewModel: ObservableObject {
     @AppStorage("routeOptionsPedestrianSpeed") private var storedPedestrianSpeed: Double = 1.2
     
     init() {
+        routePreset = RoutePreset(rawValue: storedRoutePreset) ?? .fastest
         fetchRouteOptionsPreferences()
         loadSearchHistory()
     }
@@ -176,7 +253,7 @@ class TripsSearchViewModel: ObservableObject {
     
     var isSearchActive: Bool {
         return activeSearchField != .none &&
-        (fromQuery.count >= 3 || toQuery.count >= 3 ||
+        (fromQuery.count >= 3 || toQuery.count >= 3 || viaQuery.count >= 3 ||
          !searchResults.isEmpty || showMinCharactersMessage)
     }
     
@@ -238,6 +315,8 @@ class TripsSearchViewModel: ObservableObject {
             fromQuery = ""
         } else if activeSearchField == .to {
             toQuery = ""
+        } else if activeSearchField.isVia {
+            viaQuery = ""
         }
         showMinCharactersMessage = false
         searchResults = []
@@ -245,10 +324,16 @@ class TripsSearchViewModel: ObservableObject {
     
     func setActiveSearchField(_ field: SearchField) {
         activeSearchField = field
+        // A via field can be edited while results are on screen; searching needs the content area back.
+        if field.isVia {
+            showTripResults = false
+        }
         if field == .from {
             performSearch(fromQuery)
         } else if field == .to {
             performSearch(toQuery)
+        } else if field.isVia {
+            performSearch(viaQuery)
         } else {
             searchResults = []
         }
@@ -263,6 +348,14 @@ class TripsSearchViewModel: ObservableObject {
 
     @MainActor
     private func applySelectedLocation(_ location: SearchResult) {
+        if case .via(let viaID) = activeSearchField {
+            addToHistory(location)
+            searchResults = []
+            Task { @MainActor in
+                await self.applyViaLocation(location, to: viaID)
+            }
+            return
+        }
         addToHistory(location)
         if activeSearchField == .from {
             selectedFrom = .searchResult(location)
@@ -283,6 +376,14 @@ class TripsSearchViewModel: ObservableObject {
     }
     
     func selectCurrentPosition() {
+        if case .via(let viaID) = activeSearchField {
+            guard let coords = locationManager?.location?.coordinate else { return }
+            searchResults = []
+            Task { @MainActor in
+                await self.applyViaStop(nearestTo: (coords.latitude, coords.longitude), to: viaID)
+            }
+            return
+        }
         if activeSearchField == .from {
             selectedFrom = .currentPosition
             fromQuery = ""
@@ -321,6 +422,7 @@ class TripsSearchViewModel: ObservableObject {
         let tempFrom = selectedFrom
         selectedFrom = selectedTo
         selectedTo = tempFrom
+        vias.reverse()
         
         if selectedFrom != nil && selectedTo != nil {
             searchTrips()
@@ -331,11 +433,91 @@ class TripsSearchViewModel: ObservableObject {
         }
     }
     
+    // MARK: - Via stops
+
+    func addVia() {
+        guard canAddVia else { return }
+        let via = ViaStop()
+        vias.append(via)
+        viaQuery = ""
+        // Hand the content area back to search; the current results stay loaded underneath.
+        showTripResults = false
+        setActiveSearchField(.via(via.id))
+    }
+
+    func removeVia(_ id: UUID) {
+        let hadLocation = vias.first { $0.id == id }?.location != nil
+        vias.removeAll { $0.id == id }
+        if activeSearchField == .via(id) {
+            viaQuery = ""
+            searchResults = []
+            showMinCharactersMessage = false
+            activeSearchField = selectedTo == nil ? .to : (selectedFrom == nil ? .from : .none)
+        }
+        if hadLocation {
+            refreshTripsIfReady()
+        } else if selectedFrom != nil && selectedTo != nil {
+            // An empty via never affected the route, so the previous results still apply.
+            showTripResults = true
+        }
+    }
+
+    func setViaMinimumStay(_ minutes: Int, for id: UUID) {
+        guard let index = vias.firstIndex(where: { $0.id == id }),
+              vias[index].minimumStay != minutes else { return }
+        vias[index].minimumStay = minutes
+        if vias[index].location != nil {
+            refreshTripsIfReady()
+        }
+    }
+
+    func setRoutePreset(_ preset: RoutePreset) {
+        guard preset != routePreset else { return }
+        routePreset = preset
+        storedRoutePreset = preset.rawValue
+        refreshTripsIfReady()
+    }
+
+    private func refreshTripsIfReady() {
+        if selectedFrom != nil && selectedTo != nil {
+            searchTrips()
+        }
+    }
+
+    /// Places are kept as-is: `StitchedRoutePlanner` turns them into real stopovers.
+    @MainActor
+    private func applyViaLocation(_ location: SearchResult, to viaID: UUID) async {
+        applyViaStop(location, to: viaID)
+    }
+
+    @MainActor
+    private func applyViaStop(nearestTo place: (Double, Double), to viaID: UUID) async {
+        let stop = try? await LuxData.reverseGeocode(place: place, type: .stop).first
+        applyViaStop(stop, to: viaID)
+    }
+
+    @MainActor
+    private func applyViaStop(_ stop: SearchResult?, to viaID: UUID) {
+        guard let index = vias.firstIndex(where: { $0.id == viaID }) else { return }
+        guard let stop else {
+            errorMessage = String(localized: "Aucun arrêt trouvé à proximité de ce lieu")
+            return
+        }
+        vias[index].location = stop
+        viaQuery = ""
+        searchResults = []
+        activeSearchField = selectedTo == nil ? .to : (selectedFrom == nil ? .from : .none)
+        refreshTripsIfReady()
+    }
+
     func isCurrentPositionAvailable() -> Bool {
         return locationManager?.location != nil
     }
     
     func onChange(of newSearchQuery: String) {
+        if !newSearchQuery.isEmpty {
+            showTripResults = false
+        }
         if newSearchQuery.isEmpty {
             cancelBackgroundTasks()
             isLoading = false
@@ -402,6 +584,8 @@ class TripsSearchViewModel: ObservableObject {
             return fromQuery
         case .to:
             return toQuery
+        case .via:
+            return viaQuery
         case .none:
             return ""
         }
@@ -451,31 +635,59 @@ class TripsSearchViewModel: ObservableObject {
         
         let timeForRequest = selectedDate ?? Date()
         
-        let options = RouteOptions(
-            from: fromLocation,
-            to: toLocation,
-            via: routeOptions.via,
-            viaMinimumStay: routeOptions.viaMinimumStay,
-            time: timeForRequest,
-            arriveBy: departureType == .arriveBy,
-            maxTransfers: routeOptions.maxTransfers,
-            minTransferTime: routeOptions.minTransferTime,
-            pedestrianProfile: routeOptions.pedestrianProfile,
-            pedestrianSpeed: routeOptions.pedestrianSpeed,
-            transitModes: routeOptions.transitModes,
-            numItineraries: 5,
-            pageCursor: pageCursor,
-            timetableView: true,
-            maxPreTransitTime: routeOptions.maxPreTransitTime,
-            maxPostTransitTime: routeOptions.maxPostTransitTime,
-            numLegAlternatives: 0 // 0.8
-        )
+        let plannedVias = vias.compactMap { via in
+            via.location.map { PlannedVia(location: $0, stay: via.minimumStay) }
+        }
+        let needsStitching = StitchedRoutePlanner.needsStitching(plannedVias)
+        // MOTIS takes stop vias directly; with any place via the planner splits the trip instead.
+        let viaIds = needsStitching ? [] : plannedVias.map(\.location.id)
+        let viaStays = needsStitching ? [] : plannedVias.map(\.stay)
+
+        let options = { (preset: RoutePreset) in
+            RouteOptions(
+                from: fromLocation,
+                to: toLocation,
+                via: viaIds.isEmpty ? nil : viaIds,
+                viaMinimumStay: viaStays.contains { $0 > 0 } ? viaStays : [],
+                time: timeForRequest,
+                arriveBy: self.departureType == .arriveBy,
+                maxTransfers: preset.maxTransfers(self.routeOptions.maxTransfers),
+                minTransferTime: preset.transferBuffer(self.routeOptions.minTransferTime),
+                pedestrianProfile: self.routeOptions.pedestrianProfile,
+                pedestrianSpeed: self.routeOptions.pedestrianSpeed,
+                transitModes: self.routeOptions.transitModes,
+                numItineraries: 5,
+                pageCursor: pageCursor,
+                timetableView: true,
+                maxPreTransitTime: preset.maxAccessWalk(self.routeOptions.maxPreTransitTime),
+                maxPostTransitTime: preset.maxAccessWalk(self.routeOptions.maxPostTransitTime),
+                numLegAlternatives: 0 // 0.8
+            )
+        }
+        let plan = { (preset: RoutePreset) async throws -> PlannedRoute in
+            needsStitching
+                ? try await StitchedRoutePlanner.plan(options(preset), vias: plannedVias)
+                : PlannedRoute(try await LuxData.route(options(preset)))
+        }
+        // Paging must repeat the request its cursor came from, including a fallback.
+        let preset = pageCursor != nil && isPresetFallback ? RoutePreset.fastest : routePreset
         
         Task {
             do {
-                let result = try await LuxData.route(options)
+                var result = try await plan(preset)
+                var fellBack = false
+                // A preset can rule out every route (e.g. no stop within its walking limit);
+                // show the unfiltered routes rather than an empty list.
+                if pageCursor == nil, preset != .fastest,
+                   result.itineraries.isEmpty, result.direct.isEmpty {
+                    result = try await plan(.fastest)
+                    fellBack = true
+                }
                 
                 await MainActor.run {
+                    if pageCursor == nil {
+                        self.isPresetFallback = fellBack
+                    }
                     let loadingEarlier = self.isLoadingEarlier
                     let loadingLater = self.isLoadingLater
                     
@@ -499,7 +711,8 @@ class TripsSearchViewModel: ObservableObject {
                         }
                     }
                     
-                    self.directs = result.direct
+                    // MOTIS computes direct walks/rides without the via stops, so they'd skip them.
+                    self.directs = plannedVias.isEmpty ? result.direct : []
                     
                     if loadingEarlier {
                         self.previousPageCursor = result.previousPageCursor
@@ -667,6 +880,18 @@ class TripsSearchViewModel: ObservableObject {
     func handleInitialSearchResult(_ result: SearchResult, targetField: SearchField) {
         addToHistory(result)
         let location = SelectedLocation.searchResult(result)
+
+        if case .via(let viaID) = targetField {
+            fromQuery = ""
+            toQuery = ""
+            searchResults = []
+            showMinCharactersMessage = false
+            isLoading = false
+            Task { @MainActor in
+                await self.applyViaLocation(result, to: viaID)
+            }
+            return
+        }
         
         if selectedFrom == nil && selectedTo != nil {
             selectedFrom = location

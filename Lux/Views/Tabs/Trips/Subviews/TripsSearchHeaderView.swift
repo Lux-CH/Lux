@@ -11,6 +11,7 @@ struct TripsSearchHeaderView: View {
     @ObservedObject var viewModel: TripsSearchViewModel
     @FocusState.Binding var isFromFocused: Bool
     @FocusState.Binding var isToFocused: Bool
+    @FocusState private var isViaFocused: Bool
     @Environment(\.colorScheme) private var colorScheme
     @State private var isSwapping = false
     @State private var showTimePicker = false
@@ -44,6 +45,17 @@ struct TripsSearchHeaderView: View {
             .offset(y: headerOffset)
         }
         .ignoresSafeArea(edges: .top)
+        // Query changes are handled here because this view observes the view model;
+        // MainNavigationView keeps it in @State, which doesn't publish its changes.
+        .onChange(of: viewModel.fromQuery) {
+            viewModel.onChange(of: viewModel.fromQuery)
+        }
+        .onChange(of: viewModel.toQuery) {
+            viewModel.onChange(of: viewModel.toQuery)
+        }
+        .onChange(of: viewModel.viaQuery) {
+            viewModel.onChange(of: viewModel.viaQuery)
+        }
         .onAppear {
             withAnimation(.spring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.1)) {
                 headerOffset = 0
@@ -66,7 +78,7 @@ struct TripsSearchHeaderView: View {
                 ? Color(.secondarySystemBackground).opacity(0.8)
                 : Color.white) : Color.clear
             )
-            .frame(height: 225)
+            .frame(height: 225 + viewModel.viaRowsHeight)
             .clipShape(
                 .rect(
                     topLeadingRadius: 0,
@@ -84,6 +96,7 @@ struct TripsSearchHeaderView: View {
             )
             .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.departureType)
             .animation(.spring(response: 0.35, dampingFraction: 0.8), value: viewModel.showTripResults)
+            .animation(.spring(response: 0.4, dampingFraction: 0.82), value: viewModel.vias.count)
     }
     
     @ViewBuilder
@@ -198,6 +211,38 @@ struct TripsSearchHeaderView: View {
         }
     }
     
+    private var viaButton: some View {
+        Button(action: {
+            HapticFeedback.lightImpact()
+            isFromFocused = false
+            isToFocused = false
+            withAnimation(.spring(response: 0.4, dampingFraction: 0.82)) {
+                viewModel.addVia()
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+                isViaFocused = true
+            }
+        }) {
+            Image(systemName: "point.bottomleft.forward.to.point.topright.scurvepath")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundColor(.accentColor)
+                .frame(width: 32, height: 32)
+                .contentShape(Circle())
+                .clipShape(Circle())
+                .adaptable(ios26: .glassButtonClear, fallback: {
+                    $0.background(
+                        Circle()
+                            .fill(Color(.secondarySystemFill).opacity(0.5))
+                            .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                            .shadow(color: Color.black.opacity(0.08), radius: 6, x: 0, y: 2)
+                            .background(Circle().fill(Color(.secondarySystemBackground)))
+                    )
+                })
+        }
+        .buttonStyle(ScaleButtonStyle())
+        .accessibilityLabel("Ajouter un arrêt intermédiaire")
+    }
+
     @ViewBuilder
     private var warningTimeChip: some View {
         Button(action: {
@@ -290,9 +335,19 @@ struct TripsSearchHeaderView: View {
                         fromSearchBar
                             .padding(.vertical, 8)
                     }
-                    .padding(.horizontal, 12)
+                    .padding(.leading, 12)
+                    .padding(.trailing, trailingControlsInset)
                     
                     Divider()
+
+                    ForEach(viewModel.vias) { via in
+                        viaRow(via)
+                            .transition(.asymmetric(
+                                insertion: .opacity.combined(with: .move(edge: .top)),
+                                removal: .opacity.combined(with: .scale(scale: 0.95))
+                            ))
+                        Divider()
+                    }
                     
                     HStack(spacing: 8) {
                         Image(systemName: "flag.checkered")
@@ -301,14 +356,25 @@ struct TripsSearchHeaderView: View {
                         toSearchBar
                             .padding(.vertical, 8)
                     }
-                    .padding(.horizontal, 12)
+                    .padding(.leading, 12)
+                    .padding(.trailing, trailingControlsInset)
                 }
             }
             
-            swapButton
-                .padding(.trailing, 6)
+            GlassEffectGroup(spacing: 6) {
+                HStack(spacing: 6) {
+                    if viewModel.canAddVia {
+                        viaButton
+                            .transition(.scale(scale: 0.6).combined(with: .opacity))
+                    }
+                    swapButton
+                }
+            }
+            .padding(.trailing, 6)
+            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: viewModel.canAddVia)
         }
-        .frame(height: 98)
+        .frame(height: 98 + viewModel.viaRowsHeight)
+        .animation(.spring(response: 0.4, dampingFraction: 0.82), value: viewModel.vias)
         .transition(.asymmetric(
             insertion: .opacity.combined(with: .move(edge: .bottom)).combined(with: .scale(scale: 0.95)),
             removal: .opacity.combined(with: .move(edge: .bottom)).combined(with: .scale(scale: 0.95))
@@ -330,7 +396,7 @@ struct TripsSearchHeaderView: View {
                             endPoint: .bottom
                         )
                     )
-                    .frame(width: 2, height: 30)
+                    .frame(width: 2, height: 30 + viewModel.viaRowsHeight)
                     .cornerRadius(1)
                     .animation(.easeInOut(duration: 0.3), value: viewModel.selectedFrom)
                     .animation(.easeInOut(duration: 0.3), value: viewModel.selectedTo)
@@ -354,7 +420,8 @@ struct TripsSearchHeaderView: View {
                 withAnimation(.spring(response: 0.4)) {
                     viewModel.removeFromLocation()
                 }
-            }
+            },
+            clearButtonInset: 0
         )
         .onChange(of: isFromFocused) {
             if isFromFocused {
@@ -375,7 +442,8 @@ struct TripsSearchHeaderView: View {
                 withAnimation(.spring(response: 0.4)) {
                     viewModel.removeToLocation()
                 }
-            }
+            },
+            clearButtonInset: 0
         )
         .onChange(of: isToFocused) {
             if isToFocused {
@@ -384,6 +452,101 @@ struct TripsSearchHeaderView: View {
         }
     }
     
+    private func viaRow(_ via: ViaStop) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "smallcircle.filled.circle")
+                .foregroundStyle(via.location == nil ? .secondary : Color.accentColor)
+                .frame(width: 20)
+            TripSearchBar(
+                searchText: $viewModel.viaQuery,
+                isFocused: $isViaFocused,
+                placeholderText: String(localized: "Via"),
+                selectedLocation: via.location.map { .searchResult($0) },
+                onSearch: { viewModel.performSearch(viewModel.viaQuery) },
+                onClear: { viewModel.resetSearch() },
+                onRemoveTag: {
+                    withAnimation(.spring(response: 0.4)) {
+                        viewModel.removeVia(via.id)
+                    }
+                },
+                clearButtonInset: 0
+            )
+            .padding(.vertical, 8)
+            .onChange(of: isViaFocused) {
+                if isViaFocused && via.location == nil && viewModel.activeSearchField != .via(via.id) {
+                    viewModel.setActiveSearchField(.via(via.id))
+                }
+            }
+
+            if via.location != nil {
+                viaStayMenu(via)
+                    .transition(.scale(scale: 0.8).combined(with: .opacity))
+            } else {
+                Button {
+                    HapticFeedback.lightImpact()
+                    isViaFocused = false
+                    withAnimation(.spring(response: 0.4)) {
+                        viewModel.removeVia(via.id)
+                    }
+                } label: {
+                    Image(systemName: "minus.circle.fill")
+                        .font(.system(size: 17))
+                        .foregroundStyle(.secondary)
+                        .contentShape(Circle())
+                }
+                .buttonStyle(.borderless)
+                .accessibilityLabel("Retirer l'arrêt intermédiaire")
+            }
+        }
+        .padding(.leading, 12)
+        .padding(.trailing, trailingControlsInset)
+    }
+
+    private func viaStayMenu(_ via: ViaStop) -> some View {
+        Menu {
+            Picker("Arrêt minimum", selection: Binding(
+                get: { via.minimumStay },
+                set: { minutes in
+                    HapticFeedback.lightImpact()
+                    viewModel.setViaMinimumStay(minutes, for: via.id)
+                }
+            )) {
+                Text("Simple passage").tag(0)
+                ForEach([5, 10, 15, 30, 45, 60, 90, 120], id: \.self) { minutes in
+                    Text("Rester \(minutes) min").tag(minutes)
+                }
+            }
+        } label: {
+            HStack(spacing: 3) {
+                Image(systemName: via.minimumStay > 0 ? "hourglass" : "hourglass.badge.plus")
+                    .font(.system(size: 12, weight: .semibold))
+                if via.minimumStay > 0 {
+                    Text("\(via.minimumStay) min")
+                        .font(.system(size: 12, weight: .semibold))
+                        .monospacedDigit()
+                }
+            }
+            .foregroundColor(via.minimumStay > 0 ? .accentColor : .secondary)
+            .padding(.vertical, 5)
+            .padding(.horizontal, 8)
+            .background(
+                Capsule(style: .continuous)
+                    .fill(via.minimumStay > 0 ? Color.accentColor.opacity(0.12) : Color(.tertiarySystemFill))
+            )
+            .contentShape(Capsule(style: .continuous))
+        }
+        .accessibilityLabel(via.minimumStay > 0
+            ? "Temps d'arrêt: \(via.minimumStay) minutes"
+            : "Définir un temps d'arrêt")
+    }
+
+    /// Trailing space every row keeps free so the via and swap buttons never cover its content.
+    private var trailingControlsInset: CGFloat {
+        let swapWidth: CGFloat = 38, viaWidth: CGFloat = 32, spacing: CGFloat = 6, edge: CGFloat = 6
+        let controls = viewModel.canAddVia ? viaWidth + spacing + swapWidth : swapWidth
+        return controls + edge + spacing
+    }
+
     private var swapButton: some View {
         Button(action: {
             withAnimation(.spring(duration: 0.5, bounce: 0.3)) {
@@ -465,4 +628,18 @@ struct TripsSearchHeaderView: View {
         df.timeStyle = .short
         return df
     }()
+}
+
+/// Grows the search backdrop with the via rows. A modifier so it can observe the
+/// view model, which MainNavigationView holds in @State.
+struct SearchHeaderHeight: ViewModifier {
+    @ObservedObject var viewModel: TripsSearchViewModel
+    let baseHeight: CGFloat
+    let isSearching: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .frame(height: baseHeight + (isSearching ? viewModel.viaRowsHeight : 0))
+            .animation(.spring(response: 0.4, dampingFraction: 0.82), value: viewModel.vias.count)
+    }
 }

@@ -18,6 +18,8 @@ struct TripSearchBar: View {
     var onSearch: () -> Void
     var onClear: () -> Void
     var onRemoveTag: (() -> Void)?
+    /// Room kept free for controls overlaid on the trailing edge (e.g. the swap button).
+    var clearButtonInset: CGFloat = 35
     
     var body: some View {
         HStack(spacing: 10) {
@@ -64,7 +66,7 @@ struct TripSearchBar: View {
                             .contentShape(Circle())
                     }
                     .transition(.scale.combined(with: .opacity))
-                    .padding(.trailing, 35)
+                    .padding(.trailing, clearButtonInset)
                     .animation(.spring(response: 0.4), value: searchText)
                 }
             }

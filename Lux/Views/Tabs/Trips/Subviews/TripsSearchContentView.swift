@@ -24,8 +24,7 @@ struct TripsSearchContentView: View {
                         SearchResultsContent(viewModel: viewModel)
                             .transition(.opacity.combined(with: .move(edge: .top)))
                     } else {
-                        if (viewModel.activeSearchField == .from || viewModel.activeSearchField == .to) &&
-                            viewModel.fromQuery.isEmpty && viewModel.toQuery.isEmpty &&
+                        if viewModel.activeSearchField != .none && viewModel.allQueriesEmpty &&
                             viewModel.searchResults.isEmpty && !viewModel.showMinCharactersMessage && settings.showHistory {
                             SearchHistoryContent(viewModel: viewModel)
                                 .transition(.opacity.combined(with: .move(edge: .top)))
@@ -82,6 +81,28 @@ struct TripResultsContent: View {
     @ObservedObject var viewModel: TripsSearchViewModel
 
     var body: some View {
+        VStack(spacing: 0) {
+            RoutePresetBar(viewModel: viewModel)
+                .padding(.top, 14)
+
+            if viewModel.isPresetFallback && !viewModel.isLoadingTrips {
+                Label("Aucun itinéraire avec ce profil, itinéraires standards affichés", systemImage: "info.circle")
+                    .font(.system(size: 12, weight: .medium))
+                    .foregroundColor(.secondary)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+
+            tripsState
+                .frame(maxHeight: .infinity, alignment: .top)
+        }
+        .frame(maxHeight: .infinity, alignment: .top)
+        .animation(.easeInOut(duration: 0.25), value: viewModel.isPresetFallback)
+    }
+
+    private var tripsState: some View {
         ZStack {
             if viewModel.isLoadingTrips {
                 TripResultsSkeletonView()
@@ -91,7 +112,7 @@ struct TripResultsContent: View {
                     viewModel.searchTrips()
                 }
             } else if viewModel.trips.isEmpty && viewModel.directs.isEmpty {
-                NoResultsView()
+                NoResultsView(hasVias: !viewModel.vias.isEmpty)
             } else {
                 resultsList
                     .transition(.opacity)
@@ -123,7 +144,8 @@ struct TripResultsContent: View {
                             .id("trip-\(index)")
                     }
                 }
-                .padding(.vertical, 20)
+                .padding(.top, 12)
+                .padding(.bottom, 20)
             }
             .safeAreaInset(edge: .bottom) {
                 Spacer().frame(height: 80)
@@ -347,5 +369,60 @@ struct EmptyStateContent: View {
         .onDisappear {
             isAnimating = false
         }
+    }
+}
+
+struct RoutePresetBar: View {
+    @ObservedObject var viewModel: TripsSearchViewModel
+    @Namespace private var selection
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(RoutePreset.allCases) { preset in
+                    chip(for: preset)
+                }
+            }
+            .padding(.horizontal, 16)
+        }
+        .scrollClipDisabled()
+    }
+
+    private func chip(for preset: RoutePreset) -> some View {
+        let isSelected = viewModel.routePreset == preset
+        return Button {
+            HapticFeedback.lightImpact()
+            withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                viewModel.setRoutePreset(preset)
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: preset.symbol)
+                    .font(.system(size: 12, weight: .semibold))
+                Text(preset.title)
+                    .font(.system(size: 13, weight: .medium))
+                    .lineLimit(1)
+            }
+            .foregroundColor(isSelected ? .accentColor : .secondary)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 14)
+            .background {
+                if isSelected {
+                    Capsule(style: .continuous)
+                        .fill(Color.accentColor.opacity(0.14))
+                        .overlay(
+                            Capsule(style: .continuous)
+                                .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                        )
+                        .matchedGeometryEffect(id: "presetSelection", in: selection)
+                } else {
+                    Capsule(style: .continuous)
+                        .fill(Color(.secondarySystemFill).opacity(0.5))
+                }
+            }
+            .contentShape(Capsule(style: .continuous))
+        }
+        .buttonStyle(ScaleButtonStyle())
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
