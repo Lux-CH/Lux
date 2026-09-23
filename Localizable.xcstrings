@@ -26,7 +26,14 @@
       "shouldTranslate" : false
     },
     "· Puis" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "· Then"
+          }
+        }
+      }
     },
     "*" : {
       "shouldTranslate" : false
@@ -1085,7 +1092,14 @@
       }
     },
     "Arrivée %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arriving on %@"
+          }
+        }
+      }
     },
     "Arrivée à %@" : {
       "localizations" : {
@@ -2574,7 +2588,14 @@
       }
     },
     "Départ %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departing from %@"
+          }
+        }
+      }
     },
     "Départ à : %@" : {
       "localizations" : {
@@ -2718,7 +2739,14 @@
       }
     },
     "Descendez au niveau inférieur" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go down one level"
+          }
+        }
+      }
     },
     "Descendez au prochain arrêt" : {
       "localizations" : {
@@ -2751,13 +2779,34 @@
       }
     },
     "Descendez les escaliers" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the stairs down"
+          }
+        }
+      }
     },
     "Descendez les escaliers vers %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the stairs down to %@"
+          }
+        }
+      }
     },
     "Descendez vers %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go down to %@"
+          }
+        }
+      }
     },
     "Descente dans 2 arrêts" : {
       "localizations" : {
@@ -4071,7 +4120,14 @@
       }
     },
     "la sortie" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "the exit"
+          }
+        }
+      }
     },
     "La vitesse choisie n'est plus sélectionnable." : {
       "localizations" : {
@@ -4084,7 +4140,14 @@
       }
     },
     "la voie %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "platform %@"
+          }
+        }
+      }
     },
     "Laissez Lux vous guider" : {
       "localizations" : {
@@ -4167,7 +4230,14 @@
       }
     },
     "le quai %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "track %@"
+          }
+        }
+      }
     },
     "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention." : {
       "localizations" : {
@@ -4874,16 +4944,44 @@
       }
     },
     "Montez au niveau supérieur" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go up one level"
+          }
+        }
+      }
     },
     "Montez les escaliers" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the stairs up"
+          }
+        }
+      }
     },
     "Montez les escaliers vers %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the stairs up to %@"
+          }
+        }
+      }
     },
     "Montez vers %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go up to %@"
+          }
+        }
+      }
     },
     "Mouette" : {
       "shouldTranslate" : false
@@ -5740,7 +5838,14 @@
       }
     },
     "Prenez l'ascenseur jusqu'à %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the elevator to %@"
+          }
+        }
+      }
     },
     "Prenez les escaliers" : {
       "localizations" : {
@@ -5874,7 +5979,14 @@
       }
     },
     "Quai" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Track"
+          }
+        }
+      }
     },
     "Quai %@" : {
       "localizations" : {
@@ -6202,7 +6314,14 @@
       }
     },
     "Rejoignez %@" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go to %@"
+          }
+        }
+      }
     },
     "Remet à zéro tous les scores des lignes" : {
       "localizations" : {
@@ -7592,7 +7711,14 @@
       }
     },
     "Voie" : {
-
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platform"
+          }
+        }
+      }
     },
     "Voie %@" : {
       "localizations" : {
@@ -7872,6 +7998,148 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "XX"
+          }
+        }
+      }
+    },
+    "Escaliers" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stairs"
+          }
+        }
+      }
+    },
+    "Escalier roulant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escalator"
+          }
+        }
+      }
+    },
+    "Ascenseur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elevator"
+          }
+        }
+      }
+    },
+    "Montez par l'escalier roulant vers %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the escalator up to %@"
+          }
+        }
+      }
+    },
+    "Montez par l'escalier roulant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the escalator up"
+          }
+        }
+      }
+    },
+    "Descendez par l'escalier roulant vers %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the escalator down to %@"
+          }
+        }
+      }
+    },
+    "Descendez par l'escalier roulant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the escalator down"
+          }
+        }
+      }
+    },
+    "Changement de voie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platform change"
+          }
+        }
+      }
+    },
+    "%@ part de %@ au lieu de %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ now leaves from %2$@ instead of %3$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ part de %2$@ au lieu de %3$@"
+          }
+        }
+      }
+    },
+    "Arrivée sur une autre voie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arriving on another platform"
+          }
+        }
+      }
+    },
+    "%@ arrive sur %@ au lieu de %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ now arrives on %2$@ instead of %3$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ arrive sur %2$@ au lieu de %3$@"
+          }
+        }
+      }
+    },
+    "arrivée du train" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "train arrives"
+          }
+        }
+      }
+    },
+    "train en gare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "train in station"
           }
         }
       }
