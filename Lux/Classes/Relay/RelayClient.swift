@@ -6,6 +6,8 @@
 //
 
 import Foundation
+import CoreLocation
+import os
 import UIKit
 import LuxCom
 
@@ -34,6 +36,8 @@ actor RelayClient {
     private var suspendedForBackground = false
     private var subscribers: [SubscriptionKey: [UUID: Subscriber]] = [:]
     private var idleDisconnectTask: Task<Void, Never>?
+    private var crowdAckContinuations: [UUID: AsyncStream<CrowdAck>.Continuation] = [:]
+    private var backgroundKeepAliveCount = 0
 
     private(set) var isConnected = false
 
@@ -107,6 +111,92 @@ actor RelayClient {
             unsubscribePayload: ["action": "unsub_dis"],
             as: [Disruption].self
         )
+    }
+
+
+    struct CrowdVehicle: Decodable, Sendable, Equatable {
+        let lat: Double
+        let lon: Double
+        let bearing: Double?
+        let speed: Double?
+        let ts: Double
+        let riders: Int
+        let delay: Int?
+
+        var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: lat, longitude: lon) }
+        var date: Date { Date(timeIntervalSince1970: ts / 1000) }
+        var isFresh: Bool { Date().timeIntervalSince(date) < 45 }
+    }
+
+    struct CrowdAck: Decodable, Sendable {
+        let tripId: String
+        let status: String
+        let delay: Int?
+        let riders: Int?
+        let likelyTripId: String?
+    }
+
+    func reportOnboardPosition(
+        tripId: String,
+        latitude: Double,
+        longitude: Double,
+        accuracy: Double,
+        speed: Double?,
+        boardStopId: String?,
+        boardedAt: Date?,
+        timestamp: Date
+    ) {
+        guard isConnected else { return }
+        var payload: [String: Any] = [
+            "action": "crowd_pos",
+            "tripId": tripId,
+            "lat": latitude,
+            "lon": longitude,
+            "acc": accuracy,
+            "ts": Int(timestamp.timeIntervalSince1970 * 1000),
+            "pos": true,
+        ]
+        if let speed, speed >= 0 { payload["spd"] = speed }
+        if let boardStopId, let boardedAt {
+            payload["board"] = ["stopId": boardStopId, "at": Int(boardedAt.timeIntervalSince1970 * 1000)]
+        }
+        send(Self.encode(payload))
+    }
+
+    func vehicle(tripId: String) -> AsyncStream<CrowdVehicle?> {
+        let key = SubscriptionKey(channel: "veh", src: "shared", id: tripId, extra: "")
+        return stream(
+            key: key,
+            subscribePayload: ["action": "sub_veh", "tripId": tripId],
+            unsubscribePayload: ["action": "unsub_veh", "tripId": tripId],
+            as: CrowdVehicle?.self
+        )
+    }
+
+    func stopOnboardReports() {
+        send(Self.encode(["action": "crowd_stop"]))
+    }
+
+    func crowdAcks() -> AsyncStream<CrowdAck> {
+        let id = UUID()
+        return AsyncStream { continuation in
+            continuation.onTermination = { _ in
+                Task { await self.removeCrowdAckContinuation(id) }
+            }
+            Task { self.addCrowdAckContinuation(continuation, id: id) }
+        }
+    }
+
+    private func addCrowdAckContinuation(_ continuation: AsyncStream<CrowdAck>.Continuation, id: UUID) {
+        crowdAckContinuations[id] = continuation
+    }
+
+    private func removeCrowdAckContinuation(_ id: UUID) {
+        crowdAckContinuations.removeValue(forKey: id)
+    }
+
+    func setBackgroundKeepAlive(_ enabled: Bool) {
+        backgroundKeepAliveCount = max(0, backgroundKeepAliveCount + (enabled ? 1 : -1))
     }
 
     // MARK: - Subscription plumbing
@@ -224,8 +314,17 @@ actor RelayClient {
     private func runPingLoop(on webSocketTask: URLSessionWebSocketTask) async {
         while !Task.isCancelled, task === webSocketTask {
             let connected: Bool = await withCheckedContinuation { continuation in
+                // sendPing can invoke its handler more than once (e.g. again when the task
+                // is cancelled mid-ping), and resuming a continuation twice traps.
+                let resumed = OSAllocatedUnfairLock(initialState: false)
                 webSocketTask.sendPing { error in
-                    continuation.resume(returning: error == nil)
+                    let isFirst = resumed.withLock { done in
+                        defer { done = true }
+                        return !done
+                    }
+                    if isFirst {
+                        continuation.resume(returning: error == nil)
+                    }
                 }
             }
             guard task === webSocketTask else { return }
@@ -298,6 +397,14 @@ actor RelayClient {
         guard let header = try? Self.decoder.decode(EnvelopeHeader.self, from: data) else { return }
 
         let channel = header.ch
+        if channel == "crowd" {
+            if let ack = try? Self.decoder.decode(CrowdAck.self, from: data) {
+                for continuation in crowdAckContinuations.values {
+                    continuation.yield(ack)
+                }
+            }
+            return
+        }
         let src = header.src ?? "shared"
         let id = header.stopId ?? header.tripId ?? "global"
         let extra = header.n.map { "\($0)|\(header.radius ?? 0)" }
@@ -330,6 +437,7 @@ actor RelayClient {
     }
 
     private func enterBackground() {
+        guard backgroundKeepAliveCount == 0 else { return }
         suspendedForBackground = true
         disconnect()
     }
