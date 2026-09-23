@@ -34,6 +34,7 @@ final class ItineraryViewModel: ObservableObject {
     private let liveFeed = RelayLiveFeed<Itinerary>()
     private var liveVehicles: [String: RelayClient.CrowdVehicle] = [:]
     private var liveVehicleTasks: [String: Task<Void, Never>] = [:]
+    private var stationTask: Task<Void, Never>?
     
     private var shouldStop = false
     
@@ -48,6 +49,8 @@ final class ItineraryViewModel: ObservableObject {
     @Published var isLoading: Bool = true
     @Published var error: String?
     @Published var walkingDirections: [String: [MKRoute.Step]] = [:]
+    @Published var stationOverlay = StationOverlayContent()
+    @Published var stationDetail: StationDetail = .hidden
     @ObservedObject var settings = Settings.shared
         
     private(set) var destinationName: String?
@@ -76,6 +79,7 @@ final class ItineraryViewModel: ObservableObject {
         self.walkingDirections = [:]
         self.legKeyFrames = [:]
         self.walkingLegPaths = [:]
+        self.stationOverlay = StationOverlayContent()
         self.error = nil
         self.shouldStop = false
         self.selectedStop = nil
@@ -87,6 +91,8 @@ final class ItineraryViewModel: ObservableObject {
         liveVehicleTasks.values.forEach { $0.cancel() }
         liveVehicleTasks.removeAll()
         liveVehicles.removeAll()
+        stationTask?.cancel()
+        stationTask = nil
         shouldStop = true
         stopItineraryRefresh()
         stopVehicleUpdates()
@@ -220,8 +226,21 @@ final class ItineraryViewModel: ObservableObject {
     
     func updateZoomLevel(distance: CLLocationDistance) {
         let shouldShowIntermediateStops = distance < zoomThreshold
+        let detail = StationDetail(cameraDistance: distance)
+        if detail != stationDetail { stationDetail = detail }
         guard shouldShowIntermediateStops != showingIntermediateStops else { return }
         showingIntermediateStops = shouldShowIntermediateStops
+    }
+
+    /// Platform edges of the stations where the itinerary boards or leaves a train;
+    /// refreshed with every itinerary update since realtime can change the track.
+    private func loadStationLayouts(for legs: [Leg]) {
+        stationTask?.cancel()
+        stationTask = Task { [weak self] in
+            let layouts = await StationLayoutStore.shared.layouts(for: legs)
+            guard let self, !Task.isCancelled, !self.shouldStop else { return }
+            self.stationOverlay = StationOverlayContent(legs: legs, layouts: layouts)
+        }
     }
     
     private func processItinerary(shouldCalculateMapPosition: Bool = true) async {
@@ -233,6 +252,7 @@ final class ItineraryViewModel: ObservableObject {
         let (annotations, overlays) = createAnnotationsAndOverlays(for: itinerary)
         mapAnnotations = annotations
         routeOverlays = overlays
+        loadStationLayouts(for: itinerary.legs)
 
         if shouldCalculateMapPosition {
             calculateMapPosition()
@@ -388,6 +408,7 @@ final class ItineraryViewModel: ObservableObject {
         shouldStop = true
         vehicleUpdateTask?.cancel()
         walkingUpdateTask?.cancel()
+        stationTask?.cancel()
         liveVehicleTasks.values.forEach { $0.cancel() }
         // liveFeed cancels its own tasks in its deinit
         vehicleUpdateTask = nil

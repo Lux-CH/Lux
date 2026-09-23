@@ -452,6 +452,8 @@ struct ItineraryMapView: View {
                 }
             }
             
+            StationMapContent(content: viewModel.stationOverlay, detail: viewModel.stationDetail)
+
             ForEach(viewModel.routeOverlays) { overlay in
                 MapPolyline(coordinates: overlay.coordinates)
                     .stroke(overlay.color, lineWidth: 4)
