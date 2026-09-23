@@ -39,6 +39,18 @@ struct VehicleAnnotationView: View {
                     .foregroundColor(.white)
             }
         }
+        .overlay(alignment: .topTrailing) {
+            if annotation.isLive {
+                Image(systemName: "dot.radiowaves.up.forward")
+                    .font(.system(size: 8, weight: .bold))
+                    .foregroundStyle(annotation.color)
+                    .frame(width: 16, height: 16)
+                    .background(Circle().fill(.white))
+                    .shadow(color: .black.opacity(0.2), radius: 1.5)
+                    .offset(x: 5, y: -5)
+                    .accessibilityLabel(Text("Position en direct"))
+            }
+        }
         .frame(width: 64, height: 64)
         .onAppear {
             isPulsing = true

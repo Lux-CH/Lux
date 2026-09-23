@@ -26,10 +26,14 @@ final class ItineraryViewModel: ObservableObject {
     }
 
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
+    /// Last drawn live (crowd-sourced) vehicle positions, eased towards each new report.
+    private var displayedVehiclePositions: [String: CLLocationCoordinate2D] = [:]
     private var walkingLegPaths: [String: WalkingPathMetrics] = [:]
     private var vehicleUpdateTask: Task<Void, Never>?
     private var walkingUpdateTask: Task<Void, Never>?
     private let liveFeed = RelayLiveFeed<Itinerary>()
+    private var liveVehicles: [String: RelayClient.CrowdVehicle] = [:]
+    private var liveVehicleTasks: [String: Task<Void, Never>] = [:]
     
     private var shouldStop = false
     
@@ -80,6 +84,9 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     func stopAllTasks() {
+        liveVehicleTasks.values.forEach { $0.cancel() }
+        liveVehicleTasks.removeAll()
+        liveVehicles.removeAll()
         shouldStop = true
         stopItineraryRefresh()
         stopVehicleUpdates()
@@ -238,6 +245,7 @@ final class ItineraryViewModel: ObservableObject {
         prepareWalkingLegCoordinates(for: itinerary.legs)
         prepareVehicleKeyframes(for: itinerary.legs)
         
+        subscribeToLiveVehicles(for: itinerary.legs)
         startVehicleUpdates()
         startWalkingUpdates()
     }
@@ -335,8 +343,13 @@ final class ItineraryViewModel: ObservableObject {
         return reducedCoordinates
     }
     
+    /// Stable across live updates: a delay moves `startTime`, and an ID that changed with it
+    /// made the vehicle marker vanish and reappear instead of sliding to its new position.
     func getLegIdentifier(_ leg: Leg) -> String {
-        "\(leg.routeShortName ?? "")_\(leg.headsign ?? "")_\(leg.startTime.timeIntervalSince1970)"
+        if let tripId = leg.tripId, !tripId.isEmpty {
+            return "trip_\(tripId)"
+        }
+        return "\(leg.routeShortName ?? "")_\(leg.headsign ?? "")_\(leg.scheduledStartTime.timeIntervalSince1970)"
     }
     
     private func startVehicleUpdates() {
@@ -375,6 +388,7 @@ final class ItineraryViewModel: ObservableObject {
         shouldStop = true
         vehicleUpdateTask?.cancel()
         walkingUpdateTask?.cancel()
+        liveVehicleTasks.values.forEach { $0.cancel() }
         // liveFeed cancels its own tasks in its deinit
         vehicleUpdateTask = nil
         walkingUpdateTask = nil
@@ -390,6 +404,21 @@ final class ItineraryViewModel: ObservableObject {
         walkingUpdateTask = nil
     }
 
+    private func subscribeToLiveVehicles(for legs: [Leg]) {
+        guard !shouldStop, !OfflineRouter.shared.isOfflineActive else { return }
+        for leg in legs where leg.mode != .walk && leg.mode != .bike {
+            guard let tripId = leg.tripId, !tripId.isEmpty else { continue }
+            let legId = getLegIdentifier(leg)
+            guard liveVehicleTasks[legId] == nil else { continue }
+            liveVehicleTasks[legId] = Task { [weak self] in
+                for await vehicle in await RelayClient.shared.vehicle(tripId: tripId) {
+                    guard let self, !Task.isCancelled else { return }
+                    self.liveVehicles[legId] = vehicle
+                }
+            }
+        }
+    }
+
     private func updateVehiclePositions() {
         guard let itinerary = itinerary, !shouldStop else { return }
         
@@ -399,9 +428,21 @@ final class ItineraryViewModel: ObservableObject {
         let newVehicleAnnotations = itinerary.legs.compactMap { leg -> VehicleAnnotation? in
             guard leg.mode != .walk && leg.mode != .bike else { return nil }
             
-            guard leg.startTime <= currentTime && leg.endTime >= currentTime else { return nil }
-            
             let legId = getLegIdentifier(leg)
+
+            if let live = liveVehicles[legId], live.isFresh, leg.endTime.addingTimeInterval(300) >= currentTime {
+                let position = eased(from: displayedVehiclePositions[legId], to: live.coordinate)
+                displayedVehiclePositions[legId] = position
+                return VehicleAnnotation(
+                    id: legId,
+                    coordinate: position,
+                    routeShortName: leg.routeShortName,
+                    color: getLegColor(leg),
+                    isLive: true
+                )
+            }
+
+            guard leg.startTime <= currentTime && leg.endTime >= currentTime else { return nil }
             
             guard let keyFrames = legKeyFrames[legId],
                   let position = VehicleVisualisation.interpolatePosition(
@@ -420,6 +461,17 @@ final class ItineraryViewModel: ObservableObject {
         withAnimation(.easeInOut(duration: 0.5)) {
             vehicleAnnotations = newVehicleAnnotations
         }
+    }
+
+    /// Moves a quarter of the remaining gap per update so a new live report slides the marker
+    /// instead of teleporting it. Implausible jumps just snap.
+    private func eased(from current: CLLocationCoordinate2D?, to target: CLLocationCoordinate2D) -> CLLocationCoordinate2D {
+        guard let current, current.distance(to: target) < 2_000 else { return target }
+        let factor = 0.25
+        return CLLocationCoordinate2D(
+            latitude: current.latitude + (target.latitude - current.latitude) * factor,
+            longitude: current.longitude + (target.longitude - current.longitude) * factor
+        )
     }
     
     private func updateWalkingPositions() {
