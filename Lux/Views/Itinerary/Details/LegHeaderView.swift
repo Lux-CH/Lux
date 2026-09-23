@@ -14,10 +14,6 @@ struct LegHeaderView: View {
     let isSingle: Bool
     let nextStop: Place?
     @State private var showTripIdView: Bool = false
-    @State private var lineInfo: InfoResponse?
-    @State private var showReportCard: Bool = false
-    @EnvironmentObject var locationManager: LocationManager
-    @ObservedObject var settings = Settings.shared
     
     var body: some View {
         Group {
@@ -33,11 +29,6 @@ struct LegHeaderView: View {
                 }
             } else {
                 contentView
-            }
-        }
-        .onAppear {
-            if settings.crowdbackAllowed {
-                loadLineInfo()
             }
         }
     }
@@ -62,24 +53,19 @@ struct LegHeaderView: View {
                         .fontWeight(.semibold)
                     
                     Spacer()
-                    
-                    if settings.crowdbackAllowed {
-                        Button {
-                            showReportCard = true
-                        } label: {
-                            Image(systemName: "exclamationmark.bubble")
-                                .font(.system(size: 16))
-                        }
-                        .foregroundStyle(.gray)
-                        .sheet(isPresented: $showReportCard, onDismiss: {loadLineInfo()}) {
-                            ReportView(leg: leg)
-                                .presentationDetents([.fraction(0.6)])
-                                .presentationCornerRadius(38)
-                        }
-                    }
                 }
                 HStack(spacing: 4) {
-                    if let nextStop = nextStop {
+                    if leg.cancelled {
+                        Image(systemName: "xmark.octagon.fill")
+                            .font(.system(size: 10))
+                            .foregroundColor(.red)
+
+                        Text("Course supprimée")
+                            .bold()
+                            .font(.caption)
+                            .foregroundColor(.red)
+                    }
+                    else if let nextStop = nextStop {
                         Image(systemName: "arrow.down")
                             .font(.system(size: 10))
                             .foregroundColor(.secondary.opacity(0.6))
@@ -98,44 +84,14 @@ struct LegHeaderView: View {
                         Text("Montez à \(formatTime(leg.startTime))")
                             .bold()
                             .font(.caption)
-                            .foregroundColor(.secondary)
+                            .foregroundColor(boardingTimeColor)
                     }
-                }
-                if settings.crowdbackAllowed {
-                    LineInfoView(info: lineInfo)
                 }
             }
         }
     }
     
-    private func loadLineInfo() {
-        guard let tripId = leg.tripId,
-              let routeShortName = leg.routeShortName,
-              let location = locationManager.location else { return }
-                
-        Task {
-            do {
-                let info = try await getLCBInfo(
-                    tripId: tripId,
-                    routeShortName: routeShortName,
-                    latitude: location.coordinate.latitude,
-                    longitude: location.coordinate.longitude
-                )
-                
-                await MainActor.run {
-                    self.lineInfo = info
-                }
-            } catch {
-                await MainActor.run {
-                    self.lineInfo = nil
-                }
-                if case APIError.requestFailed(404, _) = error {
-                    return
-                }
-                else {
-                    print("error loading line info : \(error)")
-                }
-            }
-        }
+    private var boardingTimeColor: Color {
+        leg.from.punctuality(realTime: leg.realTime, cancelled: leg.cancelled).highlightColor ?? .secondary
     }
 }
