@@ -120,7 +120,15 @@ extension OnboardSession {
             tripKeyFrames[index] = (VehicleVisualisation.calculateKeyFrames(for: tripLeg, polylineString: tripLeg.legGeometry.points, precision: 1e6), Date())
         }
         guard isRunning, legs.indices.contains(index), let merged = LegLiveMerger.merge(legs[index], with: trip) else { return }
+        let previous = legs[index]
         legs[index] = merged
+        if merged.from.track != previous.from.track || merged.to.track != previous.to.track {
+            // the walks to and from this train now lead to another track
+            let rebuilt = Self.buildManeuvers(legs: legs, paths: paths)
+            for walk in [index - 1, index + 1] where maneuvers.indices.contains(walk) && !reroutedWalks.contains(walk) {
+                maneuvers[walk] = rebuilt[walk]
+            }
+        }
 
         guard index >= legIndex else { return }
         checkCancellation(of: merged, at: index)

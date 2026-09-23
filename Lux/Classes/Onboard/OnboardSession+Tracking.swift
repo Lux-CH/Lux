@@ -526,6 +526,7 @@ extension OnboardSession {
             guard !path.isEmpty else { return }
             self.paths[index] = path
             self.maneuvers[index] = WalkManeuverBuilder.maneuvers(for: route.steps, on: path)
+            self.reroutedWalks.insert(index)
             self.alongInLeg = 0
             self.offRouteStreak = 0
             self.spokenManeuvers.removeAll()

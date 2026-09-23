@@ -24,6 +24,8 @@ final class OnboardSession {
     var paths: [RoutePath]
     @ObservationIgnored var stopAlongs: [[CLLocationDistance]]
     @ObservationIgnored var maneuvers: [[WalkManeuver]]
+    /// Walks re-routed with Apple Maps: their instructions no longer come from MOTIS.
+    @ObservationIgnored var reroutedWalks: Set<Int> = []
 
     var phase: OnboardPhase = .walking
     var legIndex = 0
@@ -120,17 +122,44 @@ final class OnboardSession {
 
         var paths: [RoutePath] = []
         var stopAlongs: [[CLLocationDistance]] = []
-        var maneuvers: [[WalkManeuver]] = []
         for leg in legs {
             let (path, alongs) = Self.buildPath(for: leg)
             paths.append(path)
             stopAlongs.append(alongs)
-            maneuvers.append(leg.isTransit ? [] : WalkManeuverBuilder.maneuvers(for: leg.steps ?? [], on: path))
         }
         self.paths = paths
         self.stopAlongs = stopAlongs
-        self.maneuvers = maneuvers
+        self.maneuvers = Self.buildManeuvers(legs: legs, paths: paths)
         self.remainingDistance = paths.reduce(0) { $0 + $1.length }
+    }
+
+    /// Walk instructions per leg; walks inside a station are phrased around its levels
+    /// and tracks, so they're rebuilt when a neighbouring train changes track.
+    static func buildManeuvers(legs: [Leg], paths: [RoutePath]) -> [[WalkManeuver]] {
+        legs.indices.map { index in
+            guard !legs[index].isTransit, paths.indices.contains(index) else { return [] }
+            return WalkManeuverBuilder.maneuvers(
+                for: legs[index].steps ?? [],
+                on: paths[index],
+                station: StationWalk(legs: legs, index: index)
+            )
+        }
+    }
+
+    /// The current walk, when it happens inside a railway station.
+    var stationWalk: StationWalk? {
+        phase == .walking ? StationWalk(legs: legs, index: legIndex) : nil
+    }
+
+    /// Close enough to the station part of the walk for the station view: a whole
+    /// transfer, or the last / first stretch of a walk to / from a platform.
+    var isInStation: Bool {
+        guard let walk = stationWalk, let path = currentPath else { return false }
+        switch walk.kind {
+        case .transfer: return true
+        case .entering: return path.length - alongInLeg < 250
+        case .leaving: return alongInLeg < 250
+        }
     }
 
     static func canStart(_ itinerary: Itinerary, at date: Date = Date()) -> Bool {

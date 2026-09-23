@@ -101,6 +101,9 @@ struct OnboardInstructionBanner: View {
     private var walkingInstruction: String {
         if session.isOffRoute { return String(localized: "Recalcul de l'itinéraire…") }
         if let maneuver = session.nextManeuver { return maneuver.instruction }
+        if session.isInStation, let walk = session.stationWalk, walk.kind != .leaving, let track = walk.toTrack {
+            return String(localized: "Rejoignez \(StationWalk.trackPhrase(track))")
+        }
         guard let leg = session.currentLeg else { return "" }
         let isLast = session.legIndex == session.legs.count - 1
         return String(localized: "Marchez jusqu'à \(session.placeName(leg.to, isDestination: isLast))")
@@ -189,7 +192,32 @@ struct OnboardInstructionBanner: View {
         }
     }
 
+    /// "Voie 3 → Voie 7" on a transfer, "Départ voie 7" on the way in, "Arrivée voie 3" on the way out.
+    private func stationTracksText(_ walk: StationWalk) -> String? {
+        switch walk.kind {
+        case .transfer:
+            guard let to = walk.toTrack else { return nil }
+            guard let from = walk.fromTrack, from != to else { return getTrackType(to) }
+            return "\(getTrackType(from)) → \(getTrackType(to))"
+        case .entering:
+            return walk.toTrack.map { String(localized: "Départ \(getTrackType($0).lowercased())") }
+        case .leaving:
+            return walk.fromTrack.map { String(localized: "Arrivée \(getTrackType($0).lowercased())") }
+        }
+    }
+
     private var footerText: AnyView? {
+        // in a station GPS is usually weak anyway: the tracks matter more
+        if session.isInStation, let walk = session.stationWalk, let tracks = stationTracksText(walk) {
+            return AnyView(Group {
+                Image(systemName: "train.side.front.car")
+                Text(tracks)
+                if let then = session.followingManeuver {
+                    Text("· Puis")
+                    Image(systemName: then.symbolName)
+                }
+            })
+        }
         if session.followsTimetable && session.phase == .riding {
             return AnyView(Group {
                 Image(systemName: "dot.radiowaves.up.forward")

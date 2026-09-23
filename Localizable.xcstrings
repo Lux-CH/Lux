@@ -25,6 +25,9 @@
     "-" : {
       "shouldTranslate" : false
     },
+    "· Puis" : {
+
+    },
     "*" : {
       "shouldTranslate" : false
     },
@@ -47,7 +50,9 @@
     "%.2f €" : {
       "shouldTranslate" : false
     },
-    "%@ ·" : {},
+    "%@ ·" : {
+
+    },
     "%@ · %@" : {
       "localizations" : {
         "fr" : {
@@ -282,7 +287,9 @@
         }
       }
     },
-    "%llds" : {},
+    "%llds" : {
+
+    },
     "•" : {
       "localizations" : {
         "en" : {
@@ -294,7 +301,9 @@
       },
       "shouldTranslate" : false
     },
-    "+%lld min" : {},
+    "+%lld min" : {
+
+    },
     "~450Mo · connexion Wi-Fi recommandée" : {
       "localizations" : {
         "en" : {
@@ -1074,6 +1083,9 @@
           }
         }
       }
+    },
+    "Arrivée %@" : {
+
     },
     "Arrivée à %@" : {
       "localizations" : {
@@ -2561,6 +2573,9 @@
         }
       }
     },
+    "Départ %@" : {
+
+    },
     "Départ à : %@" : {
       "localizations" : {
         "en" : {
@@ -2702,6 +2717,9 @@
         }
       }
     },
+    "Descendez au niveau inférieur" : {
+
+    },
     "Descendez au prochain arrêt" : {
       "localizations" : {
         "en" : {
@@ -2731,6 +2749,15 @@
           }
         }
       }
+    },
+    "Descendez les escaliers" : {
+
+    },
+    "Descendez les escaliers vers %@" : {
+
+    },
+    "Descendez vers %@" : {
+
     },
     "Descente dans 2 arrêts" : {
       "localizations" : {
@@ -4043,6 +4070,9 @@
         }
       }
     },
+    "la sortie" : {
+
+    },
     "La vitesse choisie n'est plus sélectionnable." : {
       "localizations" : {
         "en" : {
@@ -4052,6 +4082,9 @@
           }
         }
       }
+    },
+    "la voie %@" : {
+
     },
     "Laissez Lux vous guider" : {
       "localizations" : {
@@ -4132,6 +4165,9 @@
           }
         }
       }
+    },
+    "le quai %@" : {
+
     },
     "Le temps d'expiration sélectionné est élevé. Lux ne peut garantir une telle période de rétention." : {
       "localizations" : {
@@ -4836,6 +4872,18 @@
           }
         }
       }
+    },
+    "Montez au niveau supérieur" : {
+
+    },
+    "Montez les escaliers" : {
+
+    },
+    "Montez les escaliers vers %@" : {
+
+    },
+    "Montez vers %@" : {
+
     },
     "Mouette" : {
       "shouldTranslate" : false
@@ -5630,6 +5678,7 @@
       }
     },
     "Position prévue" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5689,6 +5738,9 @@
           }
         }
       }
+    },
+    "Prenez l'ascenseur jusqu'à %@" : {
+
     },
     "Prenez les escaliers" : {
       "localizations" : {
@@ -5820,6 +5872,9 @@
           }
         }
       }
+    },
+    "Quai" : {
+
     },
     "Quai %@" : {
       "localizations" : {
@@ -6145,6 +6200,9 @@
           }
         }
       }
+    },
+    "Rejoignez %@" : {
+
     },
     "Remet à zéro tous les scores des lignes" : {
       "localizations" : {
@@ -7532,6 +7590,9 @@
           }
         }
       }
+    },
+    "Voie" : {
+
     },
     "Voie %@" : {
       "localizations" : {

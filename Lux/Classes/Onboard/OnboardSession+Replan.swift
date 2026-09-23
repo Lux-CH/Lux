@@ -108,17 +108,19 @@ extension OnboardSession {
         legs = Array(legs[..<keep]) + proposal.legs
         paths = Array(paths[..<keep])
         stopAlongs = Array(stopAlongs[..<keep])
-        maneuvers = Array(maneuvers[..<keep])
         for leg in proposal.legs {
             let (path, alongs) = Self.buildPath(for: leg)
             paths.append(path)
             stopAlongs.append(alongs)
-            maneuvers.append(leg.isTransit ? [] : WalkManeuverBuilder.maneuvers(for: leg.steps ?? [], on: path))
         }
+        // from the walk leading into the new part too: its "vers la voie X" named the old train
+        let rebuildFrom = keep > 0 && !reroutedWalks.contains(keep - 1) ? keep - 1 : keep
+        maneuvers = Array(maneuvers[..<rebuildFrom]) + Self.buildManeuvers(legs: legs, paths: paths)[rebuildFrom...]
         announcedCancellations = announcedCancellations.filter { $0 < keep }
         missedDepartureAlerted = missedDepartureAlerted.filter { $0 < keep }
         announcedStopAlerts = announcedStopAlerts.filter { (Int($0.split(separator: "-").first ?? "") ?? 0) < keep }
         retargetedLegs = retargetedLegs.filter { $0 < keep }
+        reroutedWalks = reroutedWalks.filter { $0 < keep }
         announcedRisk = .comfortable
         startLiveFeeds()
 

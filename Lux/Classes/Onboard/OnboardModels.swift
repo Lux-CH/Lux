@@ -22,6 +22,8 @@ struct WalkManeuver: Equatable {
     let instruction: String
     let shortInstruction: String
     let along: CLLocationDistance
+    /// Stairs / lift / ramp inside a station, marked on the onboard map.
+    var isLevelChange = false
 }
 
 struct OnboardAlert: Identifiable, Equatable {
@@ -64,8 +66,11 @@ enum ConnectionRisk: Equatable {
 }
 
 enum WalkManeuverBuilder {
-    static func maneuvers(for steps: [StepInstruction], on path: RoutePath) -> [WalkManeuver] {
+    static func maneuvers(for steps: [StepInstruction], on path: RoutePath, station: StationWalk? = nil) -> [WalkManeuver] {
         guard !path.isEmpty else { return [] }
+        if let station {
+            return stationManeuvers(for: steps, on: path, walk: station)
+        }
 
         var named: [(along: CLLocationDistance, street: String)] = []
         var explicit: [WalkManeuver] = []
@@ -101,6 +106,117 @@ enum WalkManeuverBuilder {
             )
         }
         return (explicit + turns).sorted { $0.along < $1.along }
+    }
+
+    /// Inside a station, what matters is going up or down and where to: stairs, lifts
+    /// and ramps, the last one naming the track (or the exit). MOTIS reports some level
+    /// changes only as a jump between two steps, and indoor corridors have no names, so
+    /// levels are compared across steps. On transfers, corridor bends aren't announced.
+    private static func stationManeuvers(for steps: [StepInstruction], on path: RoutePath, walk: StationWalk) -> [WalkManeuver] {
+        let starts = steps.map { step -> CLLocationCoordinate2D? in
+            let precision = pow(10, Double(step.polyline.precision > 0 ? step.polyline.precision : 7))
+            return RoutePath(encoded: step.polyline.points, precision: precision).coordinates.first
+        }
+        let located = zip(steps, starts).compactMap { step, start in start.map { (step, $0) } }
+        let positions = path.projectSequence(located.map(\.1))
+
+        struct LevelChange {
+            let along: CLLocationDistance
+            let up: Bool
+            let direction: Direction
+        }
+        // A stairs / ramp step carries its way's level *range* (low to high, whatever the
+        // walking direction), so direction comes from the flat levels before and after it.
+        var changes: [LevelChange] = []
+        var turns: [WalkManeuver] = []
+        var level: Double?
+        var transition: (along: CLLocationDistance, direction: Direction, range: (Double, Double))?
+        // the far end of a stairway's range from a known level (walks that start or end on stairs)
+        func otherEnd(of range: (Double, Double), from known: Double) -> Double {
+            abs(range.0 - known) > abs(range.1 - known) ? range.0 : range.1
+        }
+        for ((step, _), along) in zip(located, positions) {
+            guard step.fromLevel == step.toLevel else {
+                if transition == nil { transition = (along, step.relativeDirection, (step.fromLevel, step.toLevel)) }
+                continue
+            }
+            let previous = level ?? transition.map { otherEnd(of: $0.range, from: step.toLevel) }
+            if let previous, step.toLevel != previous {
+                let via = transition.map { ($0.along, $0.direction) } ?? (along, step.relativeDirection)
+                changes.append(LevelChange(along: max(via.0, 1), up: step.toLevel > previous, direction: via.1))
+            }
+            level = step.toLevel
+            transition = nil
+            if walk.kind != .transfer, ![.continueStraight, .depart, .stairs, .elevator].contains(step.relativeDirection), along > 3 {
+                let street = step.streetName.trimmingCharacters(in: .whitespaces)
+                turns.append(WalkManeuver(
+                    symbolName: symbol(for: step.relativeDirection),
+                    instruction: instruction(for: step.relativeDirection, street: street, exit: step.exit),
+                    shortInstruction: instruction(for: step.relativeDirection, street: "", exit: step.exit),
+                    along: along
+                ))
+            }
+        }
+
+        if let transition, let level {
+            let end = otherEnd(of: transition.range, from: level)
+            if end != level {
+                changes.append(LevelChange(along: max(transition.along, 1), up: end > level, direction: transition.direction))
+            }
+        }
+
+        let levelManeuvers = changes.enumerated().map { index, change -> WalkManeuver in
+            let isLast = index == changes.count - 1
+            let target: String? = switch walk.kind {
+            case .leaving: isLast ? String(localized: "la sortie") : nil
+            case .transfer, .entering: isLast ? walk.toTrack.map(StationWalk.trackPhrase) : nil
+            }
+            let text = levelInstruction(direction: change.direction, up: change.up, target: target)
+            return WalkManeuver(
+                symbolName: levelSymbol(direction: change.direction, up: change.up),
+                instruction: text,
+                shortInstruction: text,
+                along: change.along,
+                isLevelChange: true
+            )
+        }
+
+        var result = levelManeuvers + turns.filter { turn in !levelManeuvers.contains { abs($0.along - turn.along) < 15 } }
+        if walk.kind != .transfer {
+            result += geometricTurns(on: path).compactMap { turn -> WalkManeuver? in
+                guard !result.contains(where: { abs($0.along - turn.along) < 15 }) else { return nil }
+                return WalkManeuver(
+                    symbolName: symbol(for: turn.direction),
+                    instruction: instruction(for: turn.direction, street: "", exit: ""),
+                    shortInstruction: instruction(for: turn.direction, street: "", exit: ""),
+                    along: turn.along
+                )
+            }
+        }
+        return result.sorted { $0.along < $1.along }
+    }
+
+    private static func levelInstruction(direction: Direction, up: Bool, target: String?) -> String {
+        switch (direction, up, target) {
+        case (.elevator, _, let target?): return String(localized: "Prenez l'ascenseur jusqu'à \(target)")
+        case (.elevator, _, nil): return String(localized: "Prenez l'ascenseur")
+        case (.stairs, true, let target?): return String(localized: "Montez les escaliers vers \(target)")
+        case (.stairs, true, nil): return String(localized: "Montez les escaliers")
+        case (.stairs, false, let target?): return String(localized: "Descendez les escaliers vers \(target)")
+        case (.stairs, false, nil): return String(localized: "Descendez les escaliers")
+        case (_, true, let target?): return String(localized: "Montez vers \(target)")
+        case (_, true, nil): return String(localized: "Montez au niveau supérieur")
+        case (_, false, let target?): return String(localized: "Descendez vers \(target)")
+        case (_, false, nil): return String(localized: "Descendez au niveau inférieur")
+        }
+    }
+
+    static func levelSymbol(direction: Direction, up: Bool) -> String {
+        switch direction {
+        case .elevator: return "arrow.up.arrow.down.square"
+        case .stairs: return "figure.stairs"
+        default: return up ? "arrow.up.forward.circle" : "arrow.down.forward.circle"
+        }
     }
 
     static func geometricTurns(on path: RoutePath) -> [(along: CLLocationDistance, direction: Direction)] {
