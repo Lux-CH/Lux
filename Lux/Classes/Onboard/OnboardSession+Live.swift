@@ -124,7 +124,7 @@ extension OnboardSession {
         legs[index] = merged
         if merged.from.track != previous.from.track || merged.to.track != previous.to.track {
             // the walks to and from this train now lead to another track
-            let rebuilt = Self.buildManeuvers(legs: legs, paths: paths)
+            let rebuilt = Self.buildManeuvers(legs: legs, paths: paths, stations: stationLayouts)
             for walk in [index - 1, index + 1] where maneuvers.indices.contains(walk) && !reroutedWalks.contains(walk) {
                 maneuvers[walk] = rebuilt[walk]
             }

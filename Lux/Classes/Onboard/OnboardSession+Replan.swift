@@ -115,7 +115,7 @@ extension OnboardSession {
         }
         // from the walk leading into the new part too: its "vers la voie X" named the old train
         let rebuildFrom = keep > 0 && !reroutedWalks.contains(keep - 1) ? keep - 1 : keep
-        maneuvers = Array(maneuvers[..<rebuildFrom]) + Self.buildManeuvers(legs: legs, paths: paths)[rebuildFrom...]
+        maneuvers = Array(maneuvers[..<rebuildFrom]) + Self.buildManeuvers(legs: legs, paths: paths, stations: stationLayouts)[rebuildFrom...]
         announcedCancellations = announcedCancellations.filter { $0 < keep }
         missedDepartureAlerted = missedDepartureAlerted.filter { $0 < keep }
         announcedStopAlerts = announcedStopAlerts.filter { (Int($0.split(separator: "-").first ?? "") ?? 0) < keep }
@@ -123,6 +123,7 @@ extension OnboardSession {
         reroutedWalks = reroutedWalks.filter { $0 < keep }
         announcedRisk = .comfortable
         startLiveFeeds()
+        loadStationLayouts()
 
         if keep <= legIndex {
             enterLeg(keep)

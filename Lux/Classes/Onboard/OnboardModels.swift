@@ -66,10 +66,15 @@ enum ConnectionRisk: Equatable {
 }
 
 enum WalkManeuverBuilder {
-    static func maneuvers(for steps: [StepInstruction], on path: RoutePath, station: StationWalk? = nil) -> [WalkManeuver] {
+    static func maneuvers(
+        for steps: [StepInstruction],
+        on path: RoutePath,
+        station: StationWalk? = nil,
+        access: [StationLayout.Access] = []
+    ) -> [WalkManeuver] {
         guard !path.isEmpty else { return [] }
         if let station {
-            return stationManeuvers(for: steps, on: path, walk: station)
+            return stationManeuvers(for: steps, on: path, walk: station, access: access)
         }
 
         var named: [(along: CLLocationDistance, street: String)] = []
@@ -112,7 +117,12 @@ enum WalkManeuverBuilder {
     /// and ramps, the last one naming the track (or the exit). MOTIS reports some level
     /// changes only as a jump between two steps, and indoor corridors have no names, so
     /// levels are compared across steps. On transfers, corridor bends aren't announced.
-    private static func stationManeuvers(for steps: [StepInstruction], on path: RoutePath, walk: StationWalk) -> [WalkManeuver] {
+    private static func stationManeuvers(
+        for steps: [StepInstruction],
+        on path: RoutePath,
+        walk: StationWalk,
+        access: [StationLayout.Access]
+    ) -> [WalkManeuver] {
         let starts = steps.map { step -> CLLocationCoordinate2D? in
             let precision = pow(10, Double(step.polyline.precision > 0 ? step.polyline.precision : 7))
             return RoutePath(encoded: step.polyline.points, precision: precision).coordinates.first
@@ -171,9 +181,10 @@ enum WalkManeuverBuilder {
             case .leaving: isLast ? String(localized: "la sortie") : nil
             case .transfer, .entering: isLast ? walk.toTrack.map(StationWalk.trackPhrase) : nil
             }
-            let text = levelInstruction(direction: change.direction, up: change.up, target: target)
+            let means = LevelMeans(direction: change.direction, at: path.coordinate(at: change.along), access: access)
+            let text = levelInstruction(means: means, up: change.up, target: target)
             return WalkManeuver(
-                symbolName: levelSymbol(direction: change.direction, up: change.up),
+                symbolName: levelSymbol(means: means, up: change.up),
                 instruction: text,
                 shortInstruction: text,
                 along: change.along,
@@ -196,14 +207,51 @@ enum WalkManeuverBuilder {
         return result.sorted { $0.along < $1.along }
     }
 
-    private static func levelInstruction(direction: Direction, up: Bool, target: String?) -> String {
-        switch (direction, up, target) {
+    /// How a level change is made: MOTIS says stairs or lift for some, and the station's
+    /// mapped stairs / escalators / lifts right there fill in the rest.
+    private enum LevelMeans {
+        case stairs, escalator, elevator, unknown
+
+        init(direction: Direction, at coordinate: CLLocationCoordinate2D?, access: [StationLayout.Access]) {
+            let nearby = coordinate.map { here in
+                access
+                    .map { ($0.kind, here.distance(to: $0.coordinate)) }
+                    .filter { $0.1 < 20 }
+                    .sorted { $0.1 < $1.1 }
+            } ?? []
+            let kinds = nearby.map(\.0)
+            switch direction {
+            case .elevator:
+                self = .elevator
+            case .stairs:
+                // escalators are mapped as conveying stairs and MOTIS only says "stairs";
+                // they often run side by side, so only an escalator on its own counts
+                self = kinds.contains(.escalator) && !kinds.contains(.stairs) ? .escalator : .stairs
+            default:
+                // wheelchair routes get an explicit lift step from MOTIS: on foot, a lift
+                // right there is only the answer when there are no stairs nor escalator
+                switch kinds.first(where: { $0 != .elevator }) ?? kinds.first {
+                case .stairs: self = .stairs
+                case .escalator: self = .escalator
+                case .elevator: self = .elevator
+                case nil: self = .unknown
+                }
+            }
+        }
+    }
+
+    private static func levelInstruction(means: LevelMeans, up: Bool, target: String?) -> String {
+        switch (means, up, target) {
         case (.elevator, _, let target?): return String(localized: "Prenez l'ascenseur jusqu'à \(target)")
         case (.elevator, _, nil): return String(localized: "Prenez l'ascenseur")
         case (.stairs, true, let target?): return String(localized: "Montez les escaliers vers \(target)")
         case (.stairs, true, nil): return String(localized: "Montez les escaliers")
         case (.stairs, false, let target?): return String(localized: "Descendez les escaliers vers \(target)")
         case (.stairs, false, nil): return String(localized: "Descendez les escaliers")
+        case (.escalator, true, let target?): return String(localized: "Montez par l'escalier roulant vers \(target)")
+        case (.escalator, true, nil): return String(localized: "Montez par l'escalier roulant")
+        case (.escalator, false, let target?): return String(localized: "Descendez par l'escalier roulant vers \(target)")
+        case (.escalator, false, nil): return String(localized: "Descendez par l'escalier roulant")
         case (_, true, let target?): return String(localized: "Montez vers \(target)")
         case (_, true, nil): return String(localized: "Montez au niveau supérieur")
         case (_, false, let target?): return String(localized: "Descendez vers \(target)")
@@ -211,11 +259,11 @@ enum WalkManeuverBuilder {
         }
     }
 
-    static func levelSymbol(direction: Direction, up: Bool) -> String {
-        switch direction {
+    private static func levelSymbol(means: LevelMeans, up: Bool) -> String {
+        switch means {
         case .elevator: return "arrow.up.arrow.down.square"
-        case .stairs: return "figure.stairs"
-        default: return up ? "arrow.up.forward.circle" : "arrow.down.forward.circle"
+        case .stairs, .escalator: return "figure.stairs"
+        case .unknown: return up ? "arrow.up.forward.circle" : "arrow.down.forward.circle"
         }
     }
 

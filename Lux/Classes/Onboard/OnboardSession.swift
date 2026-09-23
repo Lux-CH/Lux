@@ -26,6 +26,7 @@ final class OnboardSession {
     @ObservationIgnored var maneuvers: [[WalkManeuver]]
     /// Walks re-routed with Apple Maps: their instructions no longer come from MOTIS.
     @ObservationIgnored var reroutedWalks: Set<Int> = []
+    @ObservationIgnored var stationLayouts: [Int: StationLayout] = [:]
 
     var phase: OnboardPhase = .walking
     var legIndex = 0
@@ -135,14 +136,33 @@ final class OnboardSession {
 
     /// Walk instructions per leg; walks inside a station are phrased around its levels
     /// and tracks, so they're rebuilt when a neighbouring train changes track.
-    static func buildManeuvers(legs: [Leg], paths: [RoutePath]) -> [[WalkManeuver]] {
+    static func buildManeuvers(legs: [Leg], paths: [RoutePath], stations: [Int: StationLayout] = [:]) -> [[WalkManeuver]] {
         legs.indices.map { index in
             guard !legs[index].isTransit, paths.indices.contains(index) else { return [] }
+            let walk = StationWalk(legs: legs, index: index)
             return WalkManeuverBuilder.maneuvers(
                 for: legs[index].steps ?? [],
                 on: paths[index],
-                station: StationWalk(legs: legs, index: index)
+                station: walk,
+                access: walk.flatMap { stations[$0.uic]?.access } ?? []
             )
+        }
+    }
+
+    /// Station layouts tell which level changes are stairs, escalators or lifts: once
+    /// loaded, walks inside stations get their instructions rebuilt (except re-routed ones).
+    func loadStationLayouts() {
+        let legs = legs
+        Task { [weak self] in
+            let layouts = await StationLayoutStore.shared.layouts(for: legs)
+            guard let self, self.isRunning, !layouts.isEmpty else { return }
+            self.stationLayouts = layouts
+            let rebuilt = Self.buildManeuvers(legs: self.legs, paths: self.paths, stations: layouts)
+            for index in rebuilt.indices where self.maneuvers.indices.contains(index)
+                && !self.reroutedWalks.contains(index) && StationWalk(legs: self.legs, index: index) != nil {
+                self.maneuvers[index] = rebuilt[index]
+            }
+            self.updateManeuvers()
         }
     }
 
@@ -183,6 +203,7 @@ final class OnboardSession {
         enqueueRelay { await RelayClient.shared.setBackgroundKeepAlive(true) }
         startLiveFeeds()
         startCrowdAcks()
+        loadStationLayouts()
 
         tickTask = Task { [weak self] in
             while !Task.isCancelled {
