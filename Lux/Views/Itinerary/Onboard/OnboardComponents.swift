@@ -125,8 +125,21 @@ struct OnboardInstructionBanner: View {
                     .lineLimit(1)
             }
             Spacer(minLength: 4)
-            countdown(to: leg.startTime, caption: String(localized: "départ"))
+            // a train that stops a while before leaving: count down to it pulling in first
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                if let arrival = trainArrival(of: leg), arrival > context.date {
+                    countdown(to: arrival, caption: String(localized: "arrivée du train"))
+                } else {
+                    countdown(to: leg.startTime, caption: String(localized: "départ"))
+                }
+            }
         }
+    }
+
+    /// When the train reaches the platform, if it waits there at least a minute.
+    private func trainArrival(of leg: Leg) -> Date? {
+        guard let arrival = leg.from.arrival, leg.startTime.timeIntervalSince(arrival) >= 60 else { return nil }
+        return arrival
     }
 
     @ViewBuilder
@@ -243,6 +256,9 @@ struct OnboardInstructionBanner: View {
             guard let leg = session.currentLeg else { return nil }
             var parts: [String] = [formatTime(leg.startTime)]
             if let track = leg.from.track, !track.isEmpty { parts.append(getTrackType(track)) }
+            if let arrival = trainArrival(of: leg), arrival <= Date(), leg.startTime > Date() {
+                parts.append(String(localized: "train en gare"))
+            }
             let delay = leg.departureDelayMinutes
             if let distance = session.approachingVehicleDistance {
                 parts.append(String(localized: "en direct à \(formatDistance(distance))"))

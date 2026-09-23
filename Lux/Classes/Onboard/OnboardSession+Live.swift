@@ -133,7 +133,43 @@ extension OnboardSession {
         guard index >= legIndex else { return }
         checkCancellation(of: merged, at: index)
         checkDelay(of: merged, at: index)
+        checkTrackChange(from: previous, to: merged, at: index)
         evaluate()
+    }
+
+    /// A train leaving from (or arriving on) another track than announced: the rider may
+    /// be waiting on the wrong platform, so this is loud. The station map, the "VOIE"
+    /// callout and the walk instructions follow on their own.
+    func checkTrackChange(from previous: Leg, to leg: Leg, at index: Int) {
+        func track(_ place: Place) -> String? {
+            let track = (place.track ?? place.scheduledTrack)?.trimmingCharacters(in: .whitespaces)
+            return track?.isEmpty == false ? track : nil
+        }
+        let name = leg.spokenLineName.capitalizedFirstLetter
+        let boarded = index == legIndex && phase == .riding
+
+        if !boarded, leg.startTime > now,
+           let old = track(previous.from), let new = track(leg.from), old != new {
+            HapticFeedback.notification(type: .warning)
+            let title = String(localized: "Changement de voie")
+            let message = String(localized: "\(name) part de \(StationWalk.trackPhrase(new)) au lieu de \(StationWalk.trackPhrase(old))")
+            showAlert(
+                OnboardAlert(severity: .critical, symbolName: "exclamationmark.arrow.triangle.2.circlepath", title: title, message: message),
+                spoken: "\(title). \(message).",
+                urgency: .critical,
+                persistent: true
+            )
+        } else if leg.endTime > now, index + 1 < legs.count,
+                  let old = track(previous.to), let new = track(leg.to), old != new {
+            // only worth saying when the rider then walks on from that platform
+            let title = String(localized: "Arrivée sur une autre voie")
+            let message = String(localized: "\(name) arrive sur \(StationWalk.trackPhrase(new)) au lieu de \(StationWalk.trackPhrase(old))")
+            showAlert(
+                OnboardAlert(severity: .warning, symbolName: "arrow.triangle.swap", title: title, message: message),
+                spoken: "\(title). \(message).",
+                urgency: .notice
+            )
+        }
     }
 
     func checkCancellation(of leg: Leg, at index: Int) {
