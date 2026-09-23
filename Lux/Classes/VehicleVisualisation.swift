@@ -16,6 +16,7 @@ struct VehicleAnnotation: Identifiable {
     var coordinate: CLLocationCoordinate2D
     let routeShortName: String?
     let color: Color
+    var isLive = false
 }
 
 struct WalkingAnnotation: Identifiable {
@@ -67,9 +68,13 @@ enum VehicleVisualisation {
         
         var mappedStops: [(arrivalTime: TimeInterval?, departureTime: TimeInterval, index: Int)] = []
         
+        // Stops are served in order, so each is searched for only after the previous one;
+        // otherwise a stop on a street the route uses twice can snap to the wrong pass.
+        var searchStart = 0
         for stop in stops {
-            let closestIndex = findClosestPointIndex(coordinates: coordinates, to: stop.coordinate)
+            let closestIndex = findClosestPointIndex(coordinates: coordinates, to: stop.coordinate, from: searchStart)
             mappedStops.append((stop.arrivalTime, stop.departureTime, closestIndex))
+            searchStart = closestIndex
         }
         
         var keyFrames: [KeyFrame] = []
@@ -246,19 +251,20 @@ enum VehicleVisualisation {
         return 1 - pow(1 - x, 3)
     }
     
-    private static func findClosestPointIndex(coordinates: [CLLocationCoordinate2D], to target: CLLocationCoordinate2D) -> Int {
-        var closestDistance = Double.infinity
-        var closestIndex = 0
-        
-        for (index, coordinate) in coordinates.enumerated() {
-            let distance = coordinate.squaredDistance(to: target)
-            if distance < closestDistance {
-                closestDistance = distance
-                closestIndex = index
-            }
-        }
-        
-        return closestIndex
+    /// Earliest point from `start` onwards that is about as close to `target` as the closest
+    /// one, so a later pass along the same street doesn't win over the one actually served.
+    private static func findClosestPointIndex(
+        coordinates: [CLLocationCoordinate2D],
+        to target: CLLocationCoordinate2D,
+        from start: Int = 0
+    ) -> Int {
+        let range = min(start, coordinates.count - 1)..<coordinates.count
+        let distances = range.map { coordinates[$0].distance(to: target) }
+        guard let closest = distances.min() else { return start }
+
+        let tolerance: CLLocationDistance = 25
+        let offset = distances.firstIndex { $0 <= closest + tolerance } ?? 0
+        return range.lowerBound + offset
     }
     
     static func interpolatePosition(at timestamp: TimeInterval, using keyFrames: [KeyFrame]) -> CLLocationCoordinate2D? {
