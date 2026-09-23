@@ -100,6 +100,24 @@
           }
         }
       }
+    },
+    "NSMotionUsageDescription" : {
+      "comment" : "Privacy - Motion Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux detects when you're on a bus or train to follow your trip automatically, even without a good GPS signal."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Lux détecte quand vous êtes à bord d'un bus ou d'un train pour suivre votre trajet automatiquement, même sans bon signal GPS."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
