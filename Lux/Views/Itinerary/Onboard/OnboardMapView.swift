@@ -278,7 +278,11 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         let edges: [MKOverlay] = stationContent.lines.map {
             RouteLine.make($0.coordinates, color: StationStyle.idleEdge, width: StationStyle.idleEdgeWidth)
         }
-        stationOverlays = idleRails + areas + ourRails + edges
+        let stairs: [MKOverlay] = stationContent.visibleStairs(at: detail).flatMap { stairway -> [MKOverlay] in
+            [area(stairway.band, fill: StationStyle.stairBand)]
+                + (stairway.treads.count >= 3 ? [area(stairway.treads, fill: StationStyle.stairTread)] : [])
+        }
+        stationOverlays = idleRails + areas + ourRails + stairs + edges
         // all under the route, so the walk between platforms stays on top
         for overlay in stationOverlays.reversed() {
             mapView.insertOverlay(overlay, at: 0, level: .aboveRoads)
@@ -289,6 +293,11 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
                 let kind: MapPin.Kind = label.color == nil ? .stationTrack : .stationCurrentTrack
                 let pin = MapPin(kind: kind, coordinate: label.coordinate, anchorY: StationLabelView.anchorsAtBottom(label) ? MapPin.bottom : nil)
                 pin.content = AnyView(StationLabelView(label: label))
+                return pin
+            }
+            + stationContent.visibleAccess(at: detail).map { point in
+                let pin = MapPin(kind: .stationAccess, coordinate: point.coordinate, anchorY: nil)
+                pin.content = AnyView(StationAccessView(kind: point.kind))
                 return pin
             }
         mapView.addAnnotations(stationPins)
@@ -794,7 +803,7 @@ private final class StationArea: MKPolygon {
 
 private final class MapPin: NSObject, MKAnnotation {
     enum Kind {
-        case puck, ghost, estimated, approaching, stop, destination, stationTrack, stationCurrentTrack, levelChange
+        case puck, ghost, estimated, approaching, stop, destination, stationTrack, stationCurrentTrack, stationAccess, levelChange
 
         var zPriority: MKAnnotationViewZPriority {
             switch self {
@@ -806,6 +815,7 @@ private final class MapPin: NSObject, MKAnnotation {
             case .levelChange: return MKAnnotationViewZPriority(rawValue: 550)
             case .stationCurrentTrack: return MKAnnotationViewZPriority(rawValue: 450)
             case .stationTrack: return MKAnnotationViewZPriority(rawValue: 400)
+            case .stationAccess: return MKAnnotationViewZPriority(rawValue: 380)
             }
         }
     }

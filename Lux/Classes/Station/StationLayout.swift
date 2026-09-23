@@ -21,6 +21,28 @@ struct StationLayout: Decodable, Sendable, Equatable {
     let tracks: [Track]
     let platforms: [Platform]?
     let rails: [Rail]?
+    /// Stairs, escalators and lifts serving the platforms (OSM).
+    let access: [Access]?
+
+    struct Access: Decodable, Sendable, Equatable {
+        enum Kind: String, Decodable, Sendable {
+            case stairs, escalator, elevator
+        }
+
+        let kind: Kind
+        let lat: Double
+        let lon: Double
+        /// A stairway as mapped: the line walked along, or its outline, and its width (m).
+        let line: [[Double]]?
+        let ring: [[Double]]?
+        let width: Double?
+
+        var coordinate: CLLocationCoordinate2D { CLLocationCoordinate2D(latitude: lat, longitude: lon) }
+
+        static func coordinates(_ points: [[Double]]?) -> [CLLocationCoordinate2D] {
+            (points ?? []).compactMap { $0.count >= 2 ? CLLocationCoordinate2D(latitude: $0[0], longitude: $0[1]) : nil }
+        }
+    }
     let empty: Bool
 
     /// OSM rail around the station; `track` when it runs along a platform edge.
@@ -206,10 +228,25 @@ struct StationOverlayContent {
     var areas: [Area] = []
     /// Rail outlines (band + sleepers, `RailShape`), sized on the ground like the map itself.
     var rails: [Area] = []
+    var access: [AccessPoint] = []
+    /// Stairways and escalators drawn at their real size: a band with its treads.
+    var stairs: [Stairway] = []
+
+    struct Stairway: Identifiable {
+        let id: String
+        let band: [CLLocationCoordinate2D]
+        let treads: [CLLocationCoordinate2D]
+    }
+
+    struct AccessPoint: Identifiable {
+        let id: String
+        let coordinate: CLLocationCoordinate2D
+        let kind: StationLayout.Access.Kind
+    }
     var lines: [Line] = []
     var labels: [Label] = []
 
-    var isEmpty: Bool { areas.isEmpty && rails.isEmpty && lines.isEmpty && labels.isEmpty }
+    var isEmpty: Bool { areas.isEmpty && rails.isEmpty && lines.isEmpty && labels.isEmpty && access.isEmpty && stairs.isEmpty }
 
     init() {}
 
@@ -241,26 +278,53 @@ struct StationOverlayContent {
                 guard outline.count >= 3 else { continue }
                 rails.append(Area(id: "\(uic)-r-\(index)", coordinates: outline, color: color))
             }
+            // stairs, escalators and lifts around the platforms the itinerary uses (all of
+            // them if it uses none we know of), one icon per group of the same kind
+            let usedPlatforms = (layout.platforms ?? [])
+                .filter { ($0.tracks ?? []).contains { highlighted[$0] != nil } }
+                .map(\.ringCoordinates)
+            var stationAccess: [AccessPoint] = []
+            for (index, point) in (layout.access ?? []).enumerated() {
+                if let stairway = Self.stairway(point, id: "\(uic)-s-\(index)") {
+                    stairs.append(stairway)
+                    continue
+                }
+                let coordinate = point.coordinate
+                if !usedPlatforms.isEmpty, !usedPlatforms.contains(where: { Self.distance(from: coordinate, to: $0) < 30 }) { continue }
+                if stationAccess.contains(where: { $0.kind == point.kind && $0.coordinate.distance(to: coordinate) < 20 }) { continue }
+                stationAccess.append(AccessPoint(id: "\(uic)-a-\(index)", coordinate: coordinate, kind: point.kind))
+            }
+            access += stationAccess
             for platform in layout.platforms ?? [] {
                 let ring = platform.ringCoordinates
                 guard ring.count >= 3 else { continue }
                 let color = (platform.tracks ?? []).lazy.compactMap { highlighted[$0] }.first
                 areas.append(Area(id: "\(uic)-p-\(platform.name ?? "\(areas.count)")", coordinates: ring, color: color))
             }
-            for (trackIndex, track) in layout.tracks.enumerated() {
+            // signs are placed one by one, the itinerary's first, each keeping clear of
+            // the ones already placed
+            var placedSigns: [CLLocationCoordinate2D] = []
+            let orderedTracks = layout.tracks.enumerated().sorted {
+                (highlighted[$0.element.track] == nil ? 1 : 0, $0.offset) < (highlighted[$1.element.track] == nil ? 1 : 0, $1.offset)
+            }
+            for (trackIndex, track) in orderedTracks {
                 let color = highlighted[track.track]
                 let edges = track.edgeCoordinates.filter { $0.count >= 2 }
                 for (index, edge) in edges.enumerated() {
                     lines.append(Line(id: "\(uic)-\(track.track)-\(index)", coordinates: edge))
                 }
+                let sign = Self.signCoordinate(
+                    for: track,
+                    edges: edges,
+                    staggered: trackIndex.isMultiple(of: 2),
+                    avoidingPins: stationPins,
+                    signs: placedSigns,
+                    access: stationAccess.map(\.coordinate)
+                )
+                placedSigns.append(sign)
                 labels.append(Label(
                     id: "\(uic)-\(track.track)",
-                    coordinate: Self.signCoordinate(
-                        for: track,
-                        edges: edges,
-                        staggered: trackIndex.isMultiple(of: 2),
-                        avoiding: stationPins
-                    ),
+                    coordinate: sign,
                     text: track.track,
                     color: color,
                     accessibilityText: getTrackType(track.track)
@@ -273,23 +337,66 @@ struct StationOverlayContent {
         rails.sort { ($0.color == nil ? 0 : 1) < ($1.color == nil ? 0 : 1) }
     }
 
-    /// Like SBB's plans: signs sit on the track, alternating between the two halves of
-    /// the platform so neighbours don't line up, and never on top of a stop pin.
+    /// Like SBB's plans: signs sit on the track, preferably a third of the way along
+    /// (alternating ends between neighbours), clear of stop pins (45 m), of the signs
+    /// already placed (35 m) and of stairs / lift icons (15 m).
     private static func signCoordinate(
         for track: StationLayout.Track,
         edges: [[CLLocationCoordinate2D]],
         staggered: Bool,
-        avoiding pins: [CLLocationCoordinate2D]
+        avoidingPins pins: [CLLocationCoordinate2D],
+        signs: [CLLocationCoordinate2D],
+        access: [CLLocationCoordinate2D]
     ) -> CLLocationCoordinate2D {
         guard let edge = edges.max(by: { length(of: $0) < length(of: $1) }) else { return track.coordinate }
         let preferred = staggered ? 0.3 : 0.7
         let candidates = stride(from: 0.1, through: 0.9, by: 0.025)
             .sorted { abs($0 - preferred) < abs($1 - preferred) }
             .map { point(on: edge, at: $0) }
-        func clearance(_ coordinate: CLLocationCoordinate2D) -> CLLocationDistance {
-            pins.map { coordinate.distance(to: $0) }.min() ?? .infinity
+        func clearance(_ coordinate: CLLocationCoordinate2D, from others: [CLLocationCoordinate2D]) -> CLLocationDistance {
+            others.map { coordinate.distance(to: $0) }.min() ?? .infinity
         }
-        return candidates.first { clearance($0) >= 45 } ?? candidates.max { clearance($0) < clearance($1) } ?? track.coordinate
+        func score(_ coordinate: CLLocationCoordinate2D) -> Double {
+            min(clearance(coordinate, from: pins) / 45, clearance(coordinate, from: signs) / 35, clearance(coordinate, from: access) / 15)
+        }
+        return candidates.first { score($0) >= 1 } ?? candidates.max { score($0) < score($1) } ?? track.coordinate
+    }
+
+    /// A stairway's band at its real width (OSM `width`, else a typical one) with a tread
+    /// every 0.55 m, or its mapped outline when it's an area.
+    private static func stairway(_ access: StationLayout.Access, id: String) -> Stairway? {
+        guard access.kind != .elevator else { return nil }
+        let ring = StationLayout.Access.coordinates(access.ring)
+        if ring.count >= 3 {
+            return Stairway(id: id, band: ring, treads: [])
+        }
+        let line = StationLayout.Access.coordinates(access.line)
+        guard line.count >= 2 else { return nil }
+        let width = access.width ?? (access.kind == .escalator ? 1.2 : 2.5)
+        let band = RailShape.outline(of: line, style: StationStyle.Rail(band: width, tieLength: width, tieThickness: 0, tieSpacing: .greatestFiniteMagnitude))
+        let treads = RailShape.outline(of: line, style: StationStyle.Rail(band: 0.06, tieLength: width, tieThickness: 0.16, tieSpacing: 0.55))
+        guard band.count >= 3 else { return nil }
+        return Stairway(id: id, band: band, treads: treads)
+    }
+
+    /// Distance from a point to an outline (closed or not), in metres.
+    private static func distance(from point: CLLocationCoordinate2D, to outline: [CLLocationCoordinate2D]) -> CLLocationDistance {
+        guard let first = outline.first else { return .infinity }
+        let metresPerLat = 111_132.0
+        let metresPerLon = 111_320.0 * cos(point.latitude * .pi / 180)
+        func xy(_ c: CLLocationCoordinate2D) -> (Double, Double) {
+            ((c.longitude - point.longitude) * metresPerLon, (c.latitude - point.latitude) * metresPerLat)
+        }
+        var best = CLLocationDistance.infinity
+        for (a, b) in zip(outline, outline.dropFirst() + [first]) {
+            let (ax, ay) = xy(a)
+            let (bx, by) = xy(b)
+            let (dx, dy) = (bx - ax, by - ay)
+            let length2 = dx * dx + dy * dy
+            let t = length2 > 0 ? max(0, min(1, -(ax * dx + ay * dy) / length2)) : 0
+            best = min(best, hypot(ax + dx * t, ay + dy * t))
+        }
+        return best
     }
 
     private static func length(of line: [CLLocationCoordinate2D]) -> CLLocationDistance {
@@ -315,10 +422,11 @@ struct StationOverlayContent {
 
 /// How much of a station to draw for a given camera distance.
 enum StationDetail: Int, Comparable {
-    case hidden, tracks, labels, allLabels
+    case hidden, tracks, labels, allLabels, access
 
     init(cameraDistance distance: CLLocationDistance) {
         switch distance {
+        case ..<700: self = .access
         case ..<1400: self = .allLabels
         case ..<2800: self = .labels
         case ..<6000: self = .tracks
@@ -336,7 +444,67 @@ extension StationOverlayContent {
         switch detail {
         case .hidden, .tracks: return []
         case .labels: return labels.filter { $0.color != nil }
-        case .allLabels: return labels
+        case .allLabels, .access: return labels
+        }
+    }
+
+    /// Lift icons only when zoomed right in, like SBB's plans.
+    func visibleAccess(at detail: StationDetail) -> [AccessPoint] {
+        detail >= .access ? access : []
+    }
+
+    /// Stairways are real-size shapes: small from afar, so they can show earlier.
+    func visibleStairs(at detail: StationDetail) -> [Stairway] {
+        detail >= .allLabels ? stairs : []
+    }
+}
+
+/// SBB-style pictogram for stairs, escalators and lifts: a dark grey square with a thin
+/// white inner frame and a white symbol.
+struct StationAccessView: View {
+    let kind: StationLayout.Access.Kind
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 3, style: .continuous)
+                .fill(Color(white: 0.38))
+            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                .inset(by: 2)
+                .stroke(.white, lineWidth: 1)
+            pictogram
+                .foregroundStyle(.white)
+        }
+        .frame(width: 17, height: 17)
+        .shadow(color: .black.opacity(0.2), radius: 1, y: 0.5)
+        .accessibilityElement()
+        .accessibilityLabel(Text(accessibilityText))
+    }
+
+    @ViewBuilder
+    private var pictogram: some View {
+        switch kind {
+        case .stairs:
+            Image(systemName: "stairs")
+                .font(.system(size: 9, weight: .bold))
+        case .escalator:
+            Image(systemName: "stairs")
+                .font(.system(size: 9, weight: .bold))
+                .overlay(alignment: .topTrailing) {
+                    Image(systemName: "arrow.up.right")
+                        .font(.system(size: 5, weight: .black))
+                        .offset(x: 2, y: -2)
+                }
+        case .elevator:
+            Image(systemName: "arrow.up.arrow.down")
+                .font(.system(size: 8, weight: .bold))
+        }
+    }
+
+    private var accessibilityText: String {
+        switch kind {
+        case .stairs: String(localized: "Escaliers")
+        case .escalator: String(localized: "Escalier roulant")
+        case .elevator: String(localized: "Ascenseur")
         }
     }
 }
@@ -366,6 +534,18 @@ enum StationStyle {
     }
     static let highlightedPlatformOpacity: CGFloat = 0.25
 
+    /// Stairways: a light band with darker treads, readable on both map themes.
+    static let stairBand = UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor.white.withAlphaComponent(0.32)
+            : UIColor(white: 0.62, alpha: 0.9)
+    }
+    static let stairTread = UIColor { traits in
+        traits.userInterfaceStyle == .dark
+            ? UIColor.black.withAlphaComponent(0.5)
+            : UIColor.white.withAlphaComponent(0.95)
+    }
+
     /// Rails (OSM), drawn like Apple Maps: a thin band crossed by sleepers. All sizes
     /// are metres on the ground, so rails zoom with the map like any other feature.
     struct Rail {
@@ -393,8 +573,8 @@ enum StationStyle {
     }
 }
 
-/// SBB-style track sign (dark blue, white number, "Voie"/"Quai" caption); the
-/// itinerary's tracks get a callout ringed in the line's colour.
+/// SBB-style track sign (dark blue, white number); the itinerary's tracks get a
+/// "VOIE 3" callout ringed in the line's colour.
 struct StationLabelView: View {
     let label: StationOverlayContent.Label
 
@@ -409,18 +589,13 @@ struct StationLabelView: View {
             if isHighlighted {
                 callout
             } else {
-                VStack(spacing: -1) {
-                    Text(caption)
-                        .font(.system(size: 5, weight: .semibold))
-                        .textCase(.uppercase)
-                    Text(label.text)
-                        .font(.system(size: 12, weight: .bold))
-                        .monospacedDigit()
-                }
-                .foregroundStyle(.white)
-                .padding(.horizontal, 3)
-                .padding(.vertical, 2)
-                .frame(minWidth: 20)
+                // the number alone: a caption on every sign doubles its width ("PLATFORM")
+                Text(label.text)
+                    .font(.system(size: 11, weight: .bold))
+                    .monospacedDigit()
+                    .foregroundStyle(.white)
+                    .padding(.horizontal, 3)
+                    .frame(minWidth: 17, minHeight: 17)
                 .background(RoundedRectangle(cornerRadius: 3, style: .continuous).fill(StationStyle.signBlue))
                 .padding(1)
                 .background(RoundedRectangle(cornerRadius: 4, style: .continuous).fill(.white))
@@ -497,10 +672,24 @@ struct StationMapContent: MapContent {
                 MapPolygon(coordinates: rail.coordinates)
                     .foregroundStyle(Color(StationStyle.ourRailColor(for: rail.color ?? .red)))
             }
+            ForEach(content.visibleStairs(at: detail)) { stairway in
+                MapPolygon(coordinates: stairway.band)
+                    .foregroundStyle(Color(StationStyle.stairBand))
+                if stairway.treads.count >= 3 {
+                    MapPolygon(coordinates: stairway.treads)
+                        .foregroundStyle(Color(StationStyle.stairTread))
+                }
+            }
             ForEach(content.lines) { line in
                 MapPolyline(coordinates: line.coordinates)
                     .stroke(Color(StationStyle.idleEdge), style: StrokeStyle(lineWidth: StationStyle.idleEdgeWidth, lineCap: .round))
             }
+        }
+        ForEach(content.visibleAccess(at: detail)) { point in
+            Annotation("", coordinate: point.coordinate, anchor: .center) {
+                StationAccessView(kind: point.kind)
+            }
+            .annotationTitles(.hidden)
         }
         if detail >= .labels {
             ForEach(content.visibleLabels(at: detail)) { label in
