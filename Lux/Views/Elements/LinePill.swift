@@ -46,7 +46,7 @@ struct LinePill: View {
         }
     }
     
-    private var formattedLine: String {
+    var formattedLine: String {
         if isMetro, line.count == 2, line.lowercased().hasPrefix("m") {
             return String(line.dropFirst())
         }
@@ -61,7 +61,7 @@ struct LinePill: View {
         resolved.color
     }
     
-    private var lineColor: Color {
+    var lineColor: Color {
         if isDarkColor(baseLineColor) && !settings.highContrastButAccurateLinePill {
             return lightenColor(baseLineColor)
         }
@@ -85,6 +85,11 @@ struct LinePill: View {
 
     private var emphasizedFillOpacity: Double {
         colorScheme == .light ? 0.7 : 0.45
+    }
+
+    var textColorOnLineColor: Color {
+        if isMainlineRail || isMetro { return .white }
+        return resolved.textColor
     }
 
     private var textColor: Color {
