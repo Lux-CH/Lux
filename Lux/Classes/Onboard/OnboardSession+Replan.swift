@@ -17,7 +17,7 @@ extension OnboardSession {
     }
 
     enum ReplanReason: Equatable {
-        case connection, missedDeparture, cancelled
+        case connection, missedDeparture, cancelled, earlier
     }
 
     struct ReplanProposal: Identifiable, Equatable {
@@ -27,7 +27,7 @@ extension OnboardSession {
         let legs: [Leg]
         let arrival: Date
         let lateBy: TimeInterval
-        let autoApplyAt: Date
+        let autoApplyAt: Date?
 
         var firstTransit: Leg? { legs.first(where: \.isTransit) }
 
@@ -54,10 +54,7 @@ extension OnboardSession {
             return
         }
         guard replaceFrom < legs.count else { return }
-        let target = destination.vertexType == .transit && destination.stopId != nil
-            ? RouteOptions.RouteLocation(stopId: destination.stopId!)
-            : RouteOptions.RouteLocation(coordinates: (destination.lat, destination.lon))
-        let options = Self.savedRouteOptions(from: origin, to: target, time: departure)
+        let options = Self.savedRouteOptions(from: origin, to: Self.routeTarget(destination), time: departure)
         let currentArrival = arrivalDate
         let currentNext = legs[replaceFrom...].first(where: \.isTransit)?.tripId
 
@@ -144,8 +141,100 @@ extension OnboardSession {
     }
 
     func declineReplan() {
-        declinedReplanLegs.insert(legIndex)
+        if replan?.reason == .earlier {
+            declinedEarlierLegs.insert(legIndex)
+        } else {
+            declinedReplanLegs.insert(legIndex)
+        }
         withAnimation(.spring(duration: 0.4)) { replan = nil }
+    }
+
+    static func routeTarget(_ destination: Place) -> RouteOptions.RouteLocation {
+        destination.vertexType == .transit && destination.stopId != nil
+            ? RouteOptions.RouteLocation(stopId: destination.stopId!)
+            : RouteOptions.RouteLocation(coordinates: (destination.lat, destination.lon))
+    }
+
+    /// At the stop well ahead of the planned departure: an earlier departure from there
+    /// that gets to the destination sooner is offered (never applied on its own).
+    func lookForEarlierDeparture() {
+        guard isRunning, phase == .waiting, replan == nil, !isReplanning, earlierTask == nil,
+              !OfflineRouter.shared.isOfflineActive, !declinedEarlierLegs.contains(legIndex),
+              now.timeIntervalSince(lastEarlierCheckAt) > 180,
+              let leg = currentLeg, leg.isTransit, !leg.cancelled, leg.startTime.timeIntervalSince(now) > 180,
+              let stopId = leg.from.stopId, let destination = legs.last?.to,
+              let location = usableLocation,
+              CLLocation(latitude: leg.from.lat, longitude: leg.from.lon).distance(from: location) < 120 else { return }
+
+        lastEarlierCheckAt = now
+        let index = legIndex
+        let plannedDeparture = leg.startTime
+        let options = Self.savedRouteOptions(from: RouteOptions.RouteLocation(stopId: stopId), to: Self.routeTarget(destination), time: now)
+        earlierTask = Task { [weak self] in
+            let result = try? await LuxData.route(options)
+            guard let self else { return }
+            self.earlierTask = nil
+            guard !Task.isCancelled, self.isRunning, self.phase == .waiting, self.legIndex == index, self.replan == nil else { return }
+            let now = Date()
+            let candidates = (result?.itineraries ?? []).filter { itinerary in
+                guard let first = itinerary.legs.first(where: \.isTransit), !first.cancelled else { return false }
+                return first.startTime > now.addingTimeInterval(45)
+                    && first.startTime < plannedDeparture.addingTimeInterval(-60)
+                    && itinerary.endTime < self.arrivalDate.addingTimeInterval(-120)
+            }
+            guard let best = candidates.min(by: { $0.endTime < $1.endTime }), let transit = best.legs.first(where: \.isTransit) else { return }
+            let proposal = ReplanProposal(
+                reason: .earlier,
+                replaceFrom: index,
+                legs: best.legs,
+                arrival: best.endTime,
+                lateBy: best.endTime.timeIntervalSince(self.arrivalDate),
+                autoApplyAt: nil
+            )
+            withAnimation(.spring(duration: 0.45)) { self.replan = proposal }
+            self.announcer.announce(
+                String(localized: "Départ plus tôt possible : \(transit.spokenLineName), \(self.spokenDeparture(transit.startTime)), arrivée à \(formatTime(proposal.arrival))."),
+                notificationTitle: String(localized: "Départ plus tôt possible"),
+                urgency: .notice
+            )
+        }
+    }
+
+    /// Left the stop along the line well before the planned departure: the rider took the
+    /// vehicle before. The trip that just left the stop on that line becomes the leg.
+    func boardEarlierVehicle(_ leg: Leg) {
+        let index = legIndex
+        guard !earlierBoardingLegs.contains(index) else { return }
+        earlierBoardingLegs.insert(index)
+        board(verifiable: false)
+        guard let stopId = leg.from.stopId else { return }
+        let plannedTrip = leg.tripId
+        // a bus or tram is the same line; a train can be any train that also stops at the
+        // rider's destination, so each candidate trip is checked against the leg
+        let isRail = leg.mode.isMainlineRail
+        Task { [weak self] in
+            let departures = try? await LuxData.departures(stopId: stopId, time: Date().addingTimeInterval(-15 * 60), numberOfEvents: 30)
+            let now = Date()
+            let candidates = (departures?.stopTimes ?? [])
+                .filter { $0.tripId != plannedTrip && !$0.cancelled }
+                .filter { isRail ? $0.mode.isMainlineRail : $0.routeShortName == leg.routeShortName }
+                .filter { isRail || $0.headsign == nil || leg.headsign == nil || $0.headsign == leg.headsign }
+                .compactMap { stopTime -> (tripId: String, departure: Date)? in
+                    guard let departure = stopTime.place.departure ?? stopTime.place.scheduledDeparture,
+                          departure <= now.addingTimeInterval(60), departure > now.addingTimeInterval(-12 * 60) else { return nil }
+                    return (stopTime.tripId, departure)
+                }
+                .sorted { $0.departure > $1.departure }
+                .prefix(3)
+            for candidate in candidates {
+                guard let trip = try? await LuxData.trip(tripId: candidate.tripId) else { continue }
+                guard let self, self.legIndex == index, self.phase == .riding else { return }
+                if LegLiveMerger.merge(self.legs[index], with: trip, retargetingTo: candidate.tripId) != nil {
+                    self.retargetCurrentLeg(to: candidate.tripId)
+                    return
+                }
+            }
+        }
     }
 
     static func savedRouteOptions(from: RouteOptions.RouteLocation, to: RouteOptions.RouteLocation, time: Date) -> RouteOptions {

@@ -2746,6 +2746,32 @@
         }
       }
     },
+    "Départ plus tôt possible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Earlier departure available"
+          }
+        }
+      }
+    },
+    "Départ plus tôt possible : %@, %@, arrivée à %@." : {
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Départ plus tôt possible : %1$@, %2$@, arrivée à %3$@."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Earlier departure available: %1$@, %2$@, arriving at %3$@."
+          }
+        }
+      }
+    },
     "Déplacez-vous facilement dans Genève" : {
       "localizations" : {
         "en" : {

@@ -208,7 +208,22 @@ extension OnboardSession {
         assign(\.alongInLeg, 0)
 
         if leg.mode.isMainlineRail {
-            if now > leg.startTime.addingTimeInterval(20) { board() }
+            if now > leg.startTime.addingTimeInterval(20) {
+                board()
+                return
+            }
+            // an earlier train: well clear of the platform, at a speed no one runs at
+            if let location = usableLocation, let projection = path.project(location.coordinate, hint: 0) {
+                if CLLocation(latitude: leg.from.lat, longitude: leg.from.lon).distance(from: location) < 250 {
+                    lastAtBoardingStop = now
+                }
+                let boardAlong = stopAlongs[legIndex].first ?? 0
+                let leaving = projection.offset < 60 && projection.along > boardAlong + 200 && location.speed > 7
+                if leaving && now < leg.startTime.addingTimeInterval(-120)
+                    && lastAtBoardingStop.map({ now.timeIntervalSince($0) < 600 }) == true {
+                    boardEarlierVehicle(leg)
+                }
+            }
             return
         }
 
@@ -222,6 +237,10 @@ extension OnboardSession {
                 && location.speed > 2
             if movingAway && now > leg.startTime.addingTimeInterval(-120) {
                 board()
+                return
+            }
+            if movingAway && lastAtBoardingStop.map({ now.timeIntervalSince($0) < 600 }) == true {
+                boardEarlierVehicle(leg)
                 return
             }
 

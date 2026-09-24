@@ -102,6 +102,10 @@ final class OnboardSession {
     @ObservationIgnored var relayQueue: Task<Void, Never>?
     @ObservationIgnored var lastReplanAt: Date = .distantPast
     @ObservationIgnored var declinedReplanLegs: Set<Int> = []
+    @ObservationIgnored var earlierTask: Task<Void, Never>?
+    @ObservationIgnored var lastEarlierCheckAt: Date = .distantPast
+    @ObservationIgnored var declinedEarlierLegs: Set<Int> = []
+    @ObservationIgnored var earlierBoardingLegs: Set<Int> = []
     @ObservationIgnored var liveVehicles: [Int: RelayClient.CrowdVehicle] = [:]
     @ObservationIgnored var tickTask: Task<Void, Never>?
     @ObservationIgnored var crowdAckTask: Task<Void, Never>?
@@ -381,9 +385,14 @@ final class OnboardSession {
         if let leg = currentLeg {
             locationProvider.isSaving = phase == .waiting && !leg.mode.isMainlineRail && leg.startTime.timeIntervalSince(now) > 120
         }
-        if let replan, now >= replan.autoApplyAt {
+        if let replan, let autoApplyAt = replan.autoApplyAt, now >= autoApplyAt {
             acceptReplan()
         }
+        if let replan, replan.reason == .earlier,
+           phase != .waiting || (replan.firstTransit?.startTime ?? now) <= now.addingTimeInterval(20) {
+            withAnimation(.spring(duration: 0.4)) { self.replan = nil }
+        }
+        lookForEarlierDeparture()
         catchUpWithVehicle()
         updateEstimates()
         refreshFormationIfNeeded()

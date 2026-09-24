@@ -320,13 +320,15 @@ struct ReplanCard: View {
                     } label: {
                         HStack(spacing: 6) {
                             Text("Utiliser")
-                            TimelineView(.periodic(from: .now, by: 1)) { context in
-                                let seconds = max(0, Int(proposal.autoApplyAt.timeIntervalSince(context.date).rounded(.up)))
-                                Text("\(seconds)s")
-                                    .monospacedDigit()
-                                    .opacity(0.75)
-                                    .contentTransition(.numericText(countsDown: true))
-                                    .animation(.snappy, value: seconds)
+                            if let autoApplyAt = proposal.autoApplyAt {
+                                TimelineView(.periodic(from: .now, by: 1)) { context in
+                                    let seconds = max(0, Int(autoApplyAt.timeIntervalSince(context.date).rounded(.up)))
+                                    Text("\(seconds)s")
+                                        .monospacedDigit()
+                                        .opacity(0.75)
+                                        .contentTransition(.numericText(countsDown: true))
+                                        .animation(.snappy, value: seconds)
+                                }
                             }
                         }
                         .font(.subheadline.weight(.semibold))
@@ -355,11 +357,11 @@ struct ReplanCard: View {
 
     private func header(for reason: OnboardSession.ReplanReason) -> some View {
         HStack(spacing: 10) {
-            Image(systemName: reason == .cancelled ? "xmark.octagon.fill" : "arrow.triangle.branch")
+            Image(systemName: symbol(for: reason))
                 .font(.system(size: 17, weight: .bold))
                 .foregroundStyle(.white)
                 .frame(width: 34, height: 34)
-                .background(Circle().fill(reason == .cancelled ? Color.red.gradient : Color.orange.gradient))
+                .background(Circle().fill(tint(for: reason).gradient))
             VStack(alignment: .leading, spacing: 1) {
                 Text(title(for: reason))
                     .font(.headline)
@@ -376,6 +378,23 @@ struct ReplanCard: View {
         case .connection: return String(localized: "Correspondance compromise")
         case .missedDeparture: return String(localized: "Départ manqué")
         case .cancelled: return String(localized: "Véhicule supprimé")
+        case .earlier: return String(localized: "Départ plus tôt possible")
+        }
+    }
+
+    private func symbol(for reason: OnboardSession.ReplanReason) -> String {
+        switch reason {
+        case .cancelled: return "xmark.octagon.fill"
+        case .earlier: return "hare.fill"
+        default: return "arrow.triangle.branch"
+        }
+    }
+
+    private func tint(for reason: OnboardSession.ReplanReason) -> Color {
+        switch reason {
+        case .cancelled: return .red
+        case .earlier: return .green
+        default: return .orange
         }
     }
 
