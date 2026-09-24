@@ -415,8 +415,12 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         guard signature != stopSignature else { return }
         stopSignature = signature
         mapView.removeAnnotations(stopPins)
+        // the destination flag already names the trip's last stop
+        let destination = session.legs.last.map { CLLocationCoordinate2D(latitude: $0.to.lat, longitude: $0.to.lon) }
         stopPins = stops.enumerated().map { stopIndex, stop in
             let isEnd = stopIndex == 0 || stopIndex == stops.count - 1
+            let coordinate = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon)
+            let isDestination = destination.map { coordinate.distance(to: $0) < 80 } ?? false
             let size: CGFloat = isEnd ? 16 : 9
             let ring = Color(stopIndex < passed ? .gray : color)
             let pin = MapPin(kind: .stop, coordinate: CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon), anchorY: size / 2)
@@ -427,7 +431,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
                         .frame(width: size, height: size)
                         .overlay(Circle().stroke(ring, lineWidth: isEnd ? 4 : 2.5))
                         .shadow(color: .black.opacity(0.2), radius: 1.5)
-                    if isEnd {
+                    if isEnd && !isDestination {
                         MapLabel(text: stop.name)
                     }
                 }
