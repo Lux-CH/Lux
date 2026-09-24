@@ -93,12 +93,10 @@ struct IndividualItineraryDetailView: View {
                         .frame(minHeight: 1)
                     ScrollViewReader { proxy in
                         ScrollView {
-                            if let actualName = leg.routeShortName, (leg.agencyId == "881" || leg.agencyId == "Transports Publics Genevois") {
-                                DisruptionSectionView(disruptions: disruptionManager.disruptions(for: actualName))
+                            DisruptionSectionView(disruptions: disruptionManager.disruptions(for: leg))
                                 .padding(.horizontal, 20)
                                 .padding(.top, 15)
                                 .padding(.bottom, -10)
-                            }
                             ItinerarySheetDetailStopsContentView(
                                 viewModel: viewModel,
                                 stops: upcomingStops,

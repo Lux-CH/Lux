@@ -42,7 +42,20 @@ final class DisruptionManager: ObservableObject {
         }
     }
 
-    func disruptions(for line: String) -> [Disruption] {
-        disruptions.filter { $0.line == line }
+    func disruptions(for leg: Leg) -> [Disruption] {
+        let agencyId = leg.agencyId == "Transports Publics Genevois" ? "881" : leg.agencyId
+        var result: [Disruption] = []
+        if let line = leg.routeShortName, let agencyId {
+            result += disruptions.filter { $0.line == line && ($0.agencyId ?? "881") == agencyId }
+        }
+        if let tripKey = Self.tripKey(leg.tripId) {
+            result += disruptions.filter { $0.tripIds?.contains(tripKey) == true }
+        }
+        return result
+    }
+
+    private static func tripKey(_ tripId: String?) -> String? {
+        guard let parts = tripId?.split(separator: "_", maxSplits: 3), parts.count == 4 else { return nil }
+        return "\(parts[0])_\(parts[3])"
     }
 }
