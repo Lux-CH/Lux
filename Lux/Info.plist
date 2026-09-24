@@ -28,10 +28,6 @@
 			</array>
 		</dict>
 	</array>
-	<key>NSMotionUsageDescription</key>
-	<string>Lux détecte quand vous êtes à bord d'un bus ou d'un train pour suivre votre trajet automatiquement, même sans bon signal GPS.</string>
-	<key>NSSupportsLiveActivities</key>
-	<true/>
 	<key>UIAppFonts</key>
 	<array>
 		<string>tpg-font.otf</string>

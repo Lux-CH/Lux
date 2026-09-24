@@ -621,6 +621,8 @@
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Lux a besoin d'accéder à votre calendrier pour sauvegarder des itinéraires";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Pour ajouter votre SwissPass à LuxPass, Lux a besoin d'accéder à votre caméra";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Lux a besoin d'accéder à votre position pour afficher les arrêts à proximité et vous aider à planifier vos trajets.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Lux détecte quand vous êtes à bord d'un bus ou d'un train pour suivre votre trajet automatiquement, même sans bon signal GPS.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -666,6 +668,8 @@
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Lux a besoin d'accéder à votre calendrier pour sauvegarder des itinéraires";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Pour ajouter votre SwissPass à LuxPass, Lux a besoin d'accéder à votre caméra";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Lux a besoin d'accéder à votre position pour afficher les arrêts à proximité et vous aider à planifier vos trajets.";
+				INFOPLIST_KEY_NSMotionUsageDescription = "Lux détecte quand vous êtes à bord d'un bus ou d'un train pour suivre votre trajet automatiquement, même sans bon signal GPS.";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
