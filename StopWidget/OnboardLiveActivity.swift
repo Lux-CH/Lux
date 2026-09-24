@@ -184,7 +184,6 @@ private struct OnboardLockScreenView: View {
                     }
                     Countdown(target: state.targetDate, minutes: state.countdownMinutes, size: 15)
                         .foregroundStyle(state.accent)
-                    DelayChip(minutes: state.delayMinutes)
                 }
             } else {
                 HStack(spacing: 6) {
@@ -337,7 +336,6 @@ private struct ExpandedBottom: View {
                         )
                     }
                     Spacer(minLength: 0)
-                    DelayChip(minutes: state.delayMinutes)
                 }
             case .walking:
                 if let line = state.line {
@@ -493,7 +491,9 @@ private struct LineHeader: View {
                     .font(.caption.weight(.bold))
                     .foregroundStyle(state.isUrgent ? .white : state.accent)
             }
-            DelayChip(minutes: state.delayMinutes)
+            if state.phase == .riding {
+                DelayChip(minutes: state.delayMinutes)
+            }
         }
     }
 }

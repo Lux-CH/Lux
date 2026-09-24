@@ -257,7 +257,6 @@ struct OnboardInstructionBanner: View {
             if let arrival = trainArrival(of: leg), arrival <= Date(), leg.startTime > Date() {
                 parts.append(String(localized: "train en gare"))
             }
-            let delay = leg.departureDelayMinutes
             if let distance = session.approachingVehicleDistance {
                 parts.append(String(localized: "en direct à \(formatDistance(distance))"))
             }
@@ -266,8 +265,6 @@ struct OnboardInstructionBanner: View {
                 Text(parts.joined(separator: " · "))
                 if leg.cancelled {
                     DelayBadge(text: String(localized: "Supprimé"), color: .red)
-                } else if delay != 0 {
-                    DelayBadge(text: delay > 0 ? "+\(delay) min" : "\(delay) min", color: delay > 0 ? .orange : .cyan)
                 }
             })
         case .riding:
