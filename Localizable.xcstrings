@@ -241,6 +241,16 @@
         }
       }
     },
+    "%lld perturbations" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld disruptions"
+          }
+        }
+      }
+    },
     "%lld transfer%@" : {
       "localizations" : {
         "en" : {
@@ -358,6 +368,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 month"
+          }
+        }
+      }
+    },
+    "1 perturbation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 disruption"
           }
         }
       }
@@ -5622,6 +5642,36 @@
         }
       }
     },
+    "Perturbation" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disruption"
+          }
+        }
+      }
+    },
+    "Perturbation sur %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disruption on %@."
+          }
+        }
+      }
+    },
+    "Perturbations" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Disruptions"
+          }
+        }
+      }
+    },
     "Perturbations (%lld)" : {
       "localizations" : {
         "en" : {
@@ -6328,6 +6378,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Editing"
+          }
+        }
+      }
+    },
+    "Retour" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
           }
         }
       }
