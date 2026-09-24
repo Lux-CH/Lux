@@ -107,7 +107,6 @@ private struct FormationLayout {
         let letter: String?
         let span: Span
         let isCovered: Bool
-        let hasFirstClass: Bool
     }
 
     let coaches: [TrainFormation.Coach]
@@ -177,14 +176,12 @@ private struct FormationLayout {
         self.blocks = blocks
 
         let covered = formation.coveredSectors
-        let firstClass = Set(formation.sectors.first)
         self.sectors = axis.enumerated().map { index, letter in
             Sector(
                 id: index,
                 letter: letter,
                 span: Span(x: CGFloat(index) * sectorWidth, width: sectorWidth),
-                isCovered: covered.contains(letter),
-                hasFirstClass: firstClass.contains(letter)
+                isCovered: covered.contains(letter)
             )
         }
     }
@@ -247,7 +244,7 @@ private struct SectorRuler: View {
             ZStack(alignment: .topLeading) {
                 ForEach(sectors, id: \.id) { sector in
                     if let letter = sector.letter {
-                        SectorChipView(letter: letter, covered: sector.isCovered ? nil : false, firstClass: sector.hasFirstClass)
+                        SectorChipView(letter: letter, covered: sector.isCovered ? nil : false, firstClass: false)
                             .frame(width: sector.span.width)
                             .offset(x: sector.span.x)
                     }
