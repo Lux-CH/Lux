@@ -104,10 +104,10 @@ actor RelayClient {
     }
 
     func disruptions() -> AsyncStream<[Disruption]> {
-        let key = SubscriptionKey(channel: "dis", src: "shared", id: "global", extra: "")
+        let key = SubscriptionKey(channel: "dis", src: "all", id: "global", extra: "")
         return stream(
             key: key,
-            subscribePayload: ["action": "sub_dis"],
+            subscribePayload: ["action": "sub_dis_all"],
             unsubscribePayload: ["action": "unsub_dis"],
             as: [Disruption].self
         )
