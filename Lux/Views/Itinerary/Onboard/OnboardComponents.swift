@@ -512,6 +512,7 @@ struct OnboardBottomPanel: View {
             VStack(alignment: .leading, spacing: 10) {
                 if let formation = session.formation {
                     TrainFormationView(formation: formation)
+                        .padding(.bottom, 8)
                         .transition(.opacity)
                 }
                 if let info = session.rideInfo {

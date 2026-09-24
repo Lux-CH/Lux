@@ -7,65 +7,45 @@
 
 import SwiftUI
 
-/// Where to stand on the platform: the train's coaches in platform order under their
-/// sector letters (1st class with SBB's yellow band), and where 1st / 2nd class, the
-/// restaurant, bikes and wheelchair spaces are.
 struct TrainFormationView: View {
     let formation: TrainFormation
 
+    @State private var page = 0
+    @State private var availableWidth: CGFloat = 320
+
+    static let secondClass = Color(hex: "2E45A8")
+    static let firstClass = Color(red: 0.8, green: 0.12, blue: 0.16)
+    static let gap: CGFloat = 3
+    static let coachHeight: CGFloat = 30
+
+    private var hasServices: Bool {
+        formation.coaches.contains { !$0.services.isEmpty }
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .bottom, spacing: 3) {
-                    ForEach(Array(formation.coaches.enumerated()), id: \.offset) { index, coach in
-                        VStack(spacing: 3) {
-                            Text(startsSector(at: index) ? coach.s ?? "" : " ")
-                                .font(.caption2.weight(.heavy))
-                                .foregroundStyle(.secondary)
-                            CoachView(coach: coach)
-                        }
-                    }
-                }
-                .padding(.horizontal, 1)
+        let layout = FormationLayout(formation: formation, availableWidth: availableWidth)
+        ScrollView(.horizontal, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 4) {
+                SectorRuler(sectors: layout.sectors, total: layout.total)
+                TrainRow(blocks: layout.blocks, labels: layout.labels(on: page), total: layout.total)
+                RailTrack()
+                    .fill(.secondary.opacity(0.45))
+                    .frame(width: layout.total, height: 5)
             }
-            summary
+            .frame(minWidth: availableWidth)
         }
+        .scrollDisabled(layout.total <= availableWidth)
+        .onGeometryChange(for: CGFloat.self, of: { $0.size.width }) { availableWidth = $0 }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(accessibilityText))
-    }
-
-    private func startsSector(at index: Int) -> Bool {
-        index == 0 || formation.coaches[index - 1].s != formation.coaches[index].s
-    }
-
-    private var summary: some View {
-        let sectors = formation.sectors
-        let items: [(icon: String?, label: String?, sectors: [String])] = [
-            (nil, String(localized: "1re"), sectors.first),
-            (nil, String(localized: "2e"), sectors.second),
-            ("fork.knife", nil, sectors.restaurant),
-            ("bicycle", nil, sectors.bike),
-            ("figure.roll", nil, sectors.wheelchair),
-        ]
-        return HStack(spacing: 12) {
-            ForEach(Array(items.enumerated()), id: \.offset) { _, item in
-                if !item.sectors.isEmpty {
-                    HStack(spacing: 3) {
-                        if let icon = item.icon {
-                            Image(systemName: icon)
-                        }
-                        if let label = item.label {
-                            Text(label).fontWeight(.bold)
-                        }
-                        Text(TrainFormation.sectorText(item.sectors))
-                            .foregroundStyle(.secondary)
-                    }
-                }
+        .task(id: formation) {
+            guard hasServices else { return }
+            while !Task.isCancelled {
+                try? await Task.sleep(for: .seconds(4))
+                guard !Task.isCancelled else { return }
+                withAnimation(.smooth(duration: 0.6)) { page = (page + 1) % 2 }
             }
         }
-        .font(.subheadline.weight(.semibold))
-        .lineLimit(1)
-        .minimumScaleFactor(0.8)
     }
 
     private var accessibilityText: String {
@@ -90,59 +70,321 @@ struct TrainFormationView: View {
     }
 }
 
-private struct CoachView: View {
-    let coach: TrainFormation.Coach
-
-    private static let firstClassYellow = Color(red: 0.99, green: 0.8, blue: 0.1)
-
-    var body: some View {
-        VStack(spacing: 2) {
-            ZStack(alignment: .top) {
-                RoundedRectangle(cornerRadius: coach.isLocomotive ? 7 : 4, style: .continuous)
-                    .fill(coach.isLocomotive ? Color.secondary.opacity(0.35) : Color(.tertiarySystemFill))
-                if coach.isFirstClass {
-                    Self.firstClassYellow
-                        .frame(height: 4)
-                        .clipShape(UnevenRoundedRectangle(topLeadingRadius: 4, topTrailingRadius: 4, style: .continuous))
-                }
-                label
-                    .frame(maxHeight: .infinity)
-            }
-            .frame(width: coach.isLocomotive ? 18 : 26, height: 22)
-            .opacity(coach.closed ? 0.35 : 1)
-
-            HStack(spacing: 1) {
-                if coach.o.contains("bike") { Image(systemName: "bicycle") }
-                if coach.o.contains("wheelchair") { Image(systemName: "figure.roll") }
-            }
-            .font(.system(size: 7, weight: .semibold))
-            .foregroundStyle(.secondary)
-            .frame(height: 8)
-        }
+private struct FormationLayout {
+    struct Span {
+        let x: CGFloat
+        let width: CGFloat
     }
 
-    @ViewBuilder
-    private var label: some View {
-        if coach.isLocomotive {
-            EmptyView()
-        } else if coach.isRestaurant {
-            Image(systemName: "fork.knife")
-                .font(.system(size: 10, weight: .bold))
-        } else if coach.t == "FA" {
-            Image(systemName: "figure.2.and.child.holdinghands")
-                .font(.system(size: 10, weight: .bold))
-        } else {
-            Text(coach.t == "12" ? "1·2" : coach.t)
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+    struct Block {
+        let id: Int
+        let coaches: [TrainFormation.Coach]
+        let widths: [CGFloat]
+        let span: Span
+        let isFront: Bool
+        let isRear: Bool
+    }
+
+    struct Label {
+        let id: String
+        let span: Span
+        let content: RunLabel.Content
+    }
+
+    struct Sector {
+        let id: Int
+        let letter: String?
+        let span: Span
+    }
+
+    let coaches: [TrainFormation.Coach]
+    let blocks: [Block]
+    let sectors: [Sector]
+    let total: CGFloat
+    private let x: [CGFloat]
+    private let widths: [CGFloat]
+
+    init(formation: TrainFormation, availableWidth: CGFloat) {
+        let coaches = formation.coaches
+        self.coaches = coaches
+        let blockRanges: [ClosedRange<Int>] = Self.runs(of: coaches.map { Optional($0.bodyKind) })
+
+        let units: CGFloat = coaches.reduce(0) { $0 + ($1.isLocomotive ? 0.75 : 1) }
+        let gaps = CGFloat(max(0, blockRanges.count - 1)) * TrainFormationView.gap
+        let coachWidth: CGFloat = min(32, max(20, (availableWidth - gaps) / max(units, 1)))
+
+        var x: [CGFloat] = []
+        var widths: [CGFloat] = []
+        var cursor: CGFloat = 0
+        for range in blockRanges {
+            for index in range {
+                let width: CGFloat = coaches[index].isLocomotive ? (coachWidth * 0.75).rounded() : coachWidth
+                x.append(cursor)
+                widths.append(width)
+                cursor += width
+            }
+            cursor += TrainFormationView.gap
+        }
+        self.x = x
+        self.widths = widths
+        self.total = max(0, cursor - TrainFormationView.gap)
+
+        var blocks: [Block] = []
+        for (offset, range) in blockRanges.enumerated() {
+            blocks.append(Block(
+                id: offset,
+                coaches: Array(coaches[range]),
+                widths: Array(widths[range]),
+                span: Self.span(range, x: x, widths: widths),
+                isFront: offset == 0,
+                isRear: offset == blockRanges.count - 1
+            ))
+        }
+        self.blocks = blocks
+
+        var sectors: [Sector] = []
+        for (offset, range) in Self.runs(of: coaches.map(\.s)).enumerated() {
+            sectors.append(Sector(id: offset, letter: coaches[range.lowerBound].s, span: Self.span(range, x: x, widths: widths)))
+        }
+        self.sectors = sectors
+    }
+
+    func labels(on page: Int) -> [Label] {
+        let contents: [RunLabel.Content?] = coaches.map { Self.content(of: $0, on: page) }
+        var labels: [Label] = []
+        for range in Self.runs(of: contents) {
+            guard let content = contents[range.lowerBound] else { continue }
+            labels.append(Label(
+                id: "\(range.lowerBound)-\(range.upperBound)-\(content.key)",
+                span: Self.span(range, x: x, widths: widths),
+                content: content
+            ))
+        }
+        return labels
+    }
+
+    static func content(of coach: TrainFormation.Coach, on page: Int) -> RunLabel.Content? {
+        if coach.isLocomotive { return nil }
+        if page == 1, !coach.services.isEmpty { return .services(coach.services) }
+        if coach.isRestaurant { return .services(["fork.knife"]) }
+        return .text(coach.t == "12" ? "1·2" : coach.t == "FA" ? "2" : coach.t)
+    }
+
+    static func runs<Key: Equatable>(of keys: [Key?]) -> [ClosedRange<Int>] {
+        var runs: [ClosedRange<Int>] = []
+        for (index, key) in keys.enumerated() {
+            if let last = runs.last, key != nil, keys[last.upperBound] == key, last.upperBound == index - 1 {
+                runs[runs.count - 1] = last.lowerBound...index
+            } else {
+                runs.append(index...index)
+            }
+        }
+        return runs
+    }
+
+    static func span(_ range: ClosedRange<Int>, x: [CGFloat], widths: [CGFloat]) -> Span {
+        let start = x[range.lowerBound]
+        return Span(x: start, width: x[range.upperBound] + widths[range.upperBound] - start)
+    }
+}
+
+private struct SectorRuler: View {
+    let sectors: [FormationLayout.Sector]
+    let total: CGFloat
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            ForEach(sectors, id: \.id) { sector in
+                SectorMark(letter: sector.letter)
+                    .frame(width: sector.span.width)
+                    .offset(x: sector.span.x)
+            }
+        }
+        .frame(width: total, alignment: .topLeading)
+    }
+}
+
+private struct SectorMark: View {
+    let letter: String?
+
+    var body: some View {
+        VStack(spacing: 3) {
+            if let letter {
+                SectorChipView(letter: letter, covered: nil, firstClass: false)
+            }
+            SectorBracket()
+                .stroke(.secondary.opacity(0.7), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, lineJoin: .round))
+                .frame(height: 7)
         }
     }
 }
 
-/// A sector letter on the boarding platform: solid where the train stops, faded where it
-/// doesn't, with the 1st-class yellow band where 1st class stops.
+private struct TrainRow: View {
+    let blocks: [FormationLayout.Block]
+    let labels: [FormationLayout.Label]
+    let total: CGFloat
+
+    var body: some View {
+        ZStack(alignment: .topLeading) {
+            ForEach(blocks, id: \.id) { block in
+                BlockBody(coaches: block.coaches, widths: block.widths, isFront: block.isFront, isRear: block.isRear)
+                    .frame(width: block.span.width, height: TrainFormationView.coachHeight)
+                    .offset(x: block.span.x)
+            }
+            ForEach(labels, id: \.id) { label in
+                RunLabel(content: label.content)
+                    .frame(width: label.span.width, height: TrainFormationView.coachHeight)
+                    .offset(x: label.span.x)
+                    .transition(.asymmetric(insertion: .move(edge: .top), removal: .move(edge: .bottom)))
+            }
+        }
+        .frame(width: total, height: TrainFormationView.coachHeight, alignment: .topLeading)
+        .clipped()
+    }
+}
+
+private extension TrainFormation.Coach {
+    var services: [String] {
+        var symbols: [String] = []
+        if isRestaurant { symbols.append("fork.knife") }
+        if o.contains("wheelchair") { symbols.append("figure.roll") }
+        if o.contains("bike") { symbols.append("bicycle") }
+        if t == "FA" || o.contains("family") { symbols.append("figure.2.and.child.holdinghands") }
+        return symbols
+    }
+
+    var bodyKind: String {
+        let kind = isLocomotive ? "L" : t == "12" ? "M" : isFirstClass ? "1" : "2"
+        return closed ? kind + "-" : kind
+    }
+}
+
+private struct BlockBody: View {
+    let coaches: [TrainFormation.Coach]
+    let widths: [CGFloat]
+    let isFront: Bool
+    let isRear: Bool
+
+    var body: some View {
+        let coach = coaches[0]
+        Group {
+            if coach.isLocomotive {
+                Color(white: 0.32)
+            } else if coach.t == "12" {
+                HStack(spacing: 0) {
+                    ForEach(widths.indices, id: \.self) { index in
+                        HStack(spacing: 0) {
+                            TrainFormationView.firstClass
+                            TrainFormationView.secondClass
+                        }
+                        .frame(width: widths[index])
+                    }
+                }
+            } else {
+                coach.isFirstClass ? TrainFormationView.firstClass : TrainFormationView.secondClass
+            }
+        }
+        .clipShape(CoachShape(slantsLeading: isFront, slantsTrailing: isRear))
+        .opacity(coach.closed ? 0.35 : 1)
+    }
+}
+
+private struct RunLabel: View {
+    enum Content: Equatable {
+        case text(String)
+        case services([String])
+
+        var key: String {
+            switch self {
+            case .text(let text): "t" + text
+            case .services(let symbols): "s" + symbols.joined(separator: ",")
+            }
+        }
+    }
+
+    let content: Content
+
+    var body: some View {
+        Group {
+            switch content {
+            case .text(let text):
+                Text(text)
+                    .font(.system(size: text.count > 1 ? 12 : 15, weight: .heavy, design: .rounded))
+                    .minimumScaleFactor(0.7)
+            case .services(let symbols):
+                HStack(spacing: 3) {
+                    ForEach(symbols.prefix(3), id: \.self) { symbol in
+                        Image(systemName: symbol)
+                    }
+                }
+                .font(.system(size: 12, weight: .bold))
+                .minimumScaleFactor(0.6)
+            }
+        }
+        .lineLimit(1)
+        .foregroundStyle(.white)
+        .padding(.horizontal, 2)
+    }
+}
+
+private struct CoachShape: Shape {
+    let slantsLeading: Bool
+    let slantsTrailing: Bool
+
+    func path(in rect: CGRect) -> Path {
+        let radius: CGFloat = 4
+        let slant: CGFloat = min(8, rect.width * 0.35)
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX + (slantsLeading ? slant : radius), y: rect.minY))
+        path.addLine(to: CGPoint(x: rect.maxX - (slantsTrailing ? slant : radius), y: rect.minY))
+        if slantsTrailing {
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.minY + slant))
+        } else {
+            path.addQuadCurve(to: CGPoint(x: rect.maxX, y: rect.minY + radius), control: CGPoint(x: rect.maxX, y: rect.minY))
+        }
+        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY - radius))
+        path.addQuadCurve(to: CGPoint(x: rect.maxX - radius, y: rect.maxY), control: CGPoint(x: rect.maxX, y: rect.maxY))
+        path.addLine(to: CGPoint(x: rect.minX + radius, y: rect.maxY))
+        path.addQuadCurve(to: CGPoint(x: rect.minX, y: rect.maxY - radius), control: CGPoint(x: rect.minX, y: rect.maxY))
+        if slantsLeading {
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + slant))
+        } else {
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + radius))
+            path.addQuadCurve(to: CGPoint(x: rect.minX + radius, y: rect.minY), control: CGPoint(x: rect.minX, y: rect.minY))
+        }
+        path.closeSubpath()
+        return path
+    }
+}
+
+private struct SectorBracket: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: CGPoint(x: rect.minX + 1, y: rect.midY))
+        path.addLine(to: CGPoint(x: rect.maxX - 1, y: rect.midY))
+        for x in [rect.minX + 1, rect.maxX - 1] {
+            path.move(to: CGPoint(x: x, y: rect.minY))
+            path.addLine(to: CGPoint(x: x, y: rect.maxY))
+        }
+        return path
+    }
+}
+
+private struct RailTrack: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.addRect(CGRect(x: rect.minX, y: rect.midY - 0.6, width: rect.width, height: 1.2))
+        var x = rect.minX + 2
+        while x < rect.maxX - 1 {
+            path.addRect(CGRect(x: x, y: rect.minY, width: 1, height: rect.height))
+            x += 5
+        }
+        return path
+    }
+}
+
 struct SectorChipView: View {
     let letter: String
-    /// nil while the formation isn't known.
     let covered: Bool?
     let firstClass: Bool
 
