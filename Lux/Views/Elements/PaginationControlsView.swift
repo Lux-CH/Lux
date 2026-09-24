@@ -74,7 +74,7 @@ struct PaginationControlsView: View {
                         : Color.gray.opacity(0.1),
                         lineWidth: 0.75
                     )
-                    .glassEffect(.clear.interactive(true))
+                    .glassEffect(.regular.tint(colorScheme == .dark ? Color.black.opacity(0.35) : nil).interactive(true))
                     .shadow(
                         color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
                         radius: 7.5,
@@ -91,7 +91,7 @@ struct PaginationControlsView: View {
                         : Color.gray.opacity(0.1),
                         lineWidth: 0.75
                     )
-                    .glassEffect(.regular.interactive(true))
+                    .glassEffect(.regular.tint(colorScheme == .dark ? Color.black.opacity(0.35) : nil).interactive(true))
                     .shadow(
                         color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.15),
                         radius: 7.5,
