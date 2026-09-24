@@ -109,7 +109,6 @@ final class OnboardSession {
     @ObservationIgnored var lastEarlierCheckAt: Date = .distantPast
     @ObservationIgnored var declinedEarlierLegs: Set<Int> = []
     @ObservationIgnored var earlierBoardingLegs: Set<Int> = []
-    /// Platform maps of the railway stations near the rider, beyond the itinerary's own.
     var nearbyStationLayouts: [Int: StationLayout] = [:]
     @ObservationIgnored var nearbyStationsCheck: (coordinate: CLLocationCoordinate2D, at: Date)?
     @ObservationIgnored var nearbyStationsTask: Task<Void, Never>?
@@ -193,8 +192,6 @@ final class OnboardSession {
         }
     }
 
-    /// Railway stations within a few hundred metres while walking or waiting, looked up
-    /// again after 200 m or 5 minutes; the map draws their platforms like the itinerary's.
     func updateNearbyStations() {
         guard phase == .walking || phase == .waiting, nearbyStationsTask == nil,
               !OfflineRouter.shared.isOfflineActive, let location = usableLocation else { return }

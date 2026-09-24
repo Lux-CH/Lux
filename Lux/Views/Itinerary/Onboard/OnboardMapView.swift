@@ -199,8 +199,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         puckModel.style = puckStyle
     }
 
-    // Platform edges of the stations where the trip boards or leaves a train; the
-    // tracks it uses get a tinted platform, a darker rail in the line's colour and a callout.
     private func syncStations() {
         let legs = session.legs
         let legsSignature = legs.map { "\($0.tripId ?? "")|\($0.from.stopId ?? "")|\($0.to.stopId ?? "")" }.joined(separator: ",")
@@ -224,8 +222,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         applyStationDetail(force: true)
     }
 
-    // Sector letters on the platform of the train about to be boarded, up close: solid
-    // where its coaches stop (1st class with the yellow band), faded elsewhere.
     private func syncSectors() {
         var sectors: [StationLayout.Sector] = []
         var covered: Set<String>?
@@ -256,7 +252,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         mapView.addAnnotations(sectorPins)
     }
 
-    // Stairs, lifts and ramps of the current walk, where it changes level in a station.
     private func syncLevelChanges() {
         var changes: [WalkManeuver] = []
         if session.phase == .walking, session.maneuvers.indices.contains(session.legIndex) {
@@ -326,7 +321,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         stationOverlays = []
         guard detail >= .tracks else { return }
 
-        // bottom to top: rails, platforms, our rails, platform edges
         func area(_ coordinates: [CLLocationCoordinate2D], fill: UIColor, stroke: UIColor = .clear) -> StationArea {
             let polygon = StationArea(coordinates: coordinates, count: coordinates.count)
             polygon.fill = fill
@@ -599,8 +593,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         return nil
     }
 
-    // the estimate is drawn on the ground, so it is redrawn (a small area) as it moves
-    // or as the camera turns, at most 10 times a second
     private func moveEstimatedVehicle(at timestamp: CFTimeInterval, date: Date) {
         guard let estimated, timestamp - lastEstimatedDraw > 0.1,
               let coordinate = session.estimatedVehicleCoordinate(at: date) else { return }
@@ -968,7 +960,6 @@ private final class GroundDots: NSObject, MKOverlay {
             rect = rect.union(MKMapRect(x: dot.point.x, y: dot.point.y, width: 1, height: 1))
         }
         coordinate = MKMapPoint(x: rect.midX, y: rect.midY).coordinate
-        // dots keep their size on screen, so they cover more ground when zoomed out
         let padding = MKMapPointsPerMeterAtLatitude(coordinate.latitude) * 2000
         boundingMapRect = rect.insetBy(dx: -padding, dy: -padding)
     }
@@ -1041,7 +1032,6 @@ private final class GroundVehicleRenderer: MKOverlayRenderer {
         let width = max(height, textSize.width + 16)
         let badge = CGRect(x: -width / 2, y: -height / 2, width: width, height: height)
 
-        // upright for the camera that was looking when it was last redrawn
         let center = point(for: state.point)
         context.saveGState()
         context.translateBy(x: center.x, y: center.y)

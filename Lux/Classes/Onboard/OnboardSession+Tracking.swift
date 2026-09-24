@@ -214,7 +214,6 @@ extension OnboardSession {
                 board()
                 return
             }
-            // an earlier train: well clear of the platform, at a speed no one runs at
             if let location = usableLocation, let projection = path.project(location.coordinate, hint: 0) {
                 if CLLocation(latitude: leg.from.lat, longitude: leg.from.lon).distance(from: location) < 250 {
                     lastAtBoardingStop = now

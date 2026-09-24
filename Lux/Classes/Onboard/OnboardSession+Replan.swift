@@ -155,8 +155,6 @@ extension OnboardSession {
             : RouteOptions.RouteLocation(coordinates: (destination.lat, destination.lon))
     }
 
-    /// At the stop well ahead of the planned departure: an earlier departure from there
-    /// that gets to the destination sooner is offered (never applied on its own).
     func lookForEarlierDeparture() {
         guard isRunning, phase == .waiting, replan == nil, !isReplanning, earlierTask == nil,
               !OfflineRouter.shared.isOfflineActive, !declinedEarlierLegs.contains(legIndex),
@@ -200,8 +198,6 @@ extension OnboardSession {
         }
     }
 
-    /// Left the stop along the line well before the planned departure: the rider took the
-    /// vehicle before. The trip that just left the stop on that line becomes the leg.
     func boardEarlierVehicle(_ leg: Leg) {
         let index = legIndex
         guard !earlierBoardingLegs.contains(index) else { return }
@@ -209,8 +205,6 @@ extension OnboardSession {
         board(verifiable: false)
         guard let stopId = leg.from.stopId else { return }
         let plannedTrip = leg.tripId
-        // a bus or tram is the same line; a train can be any train that also stops at the
-        // rider's destination, so each candidate trip is checked against the leg
         let isRail = leg.mode.isMainlineRail
         Task { [weak self] in
             let departures = try? await LuxData.departures(stopId: stopId, time: Date().addingTimeInterval(-15 * 60), numberOfEvents: 30)
