@@ -92,10 +92,6 @@ private struct OnboardLockScreenView: View {
                 .frame(height: 22)
 
             HStack {
-                if !state.isUrgent {
-                    Text(state.fromName ?? "")
-                        .lineLimit(1)
-                }
                 Spacer()
                 if let target = state.targetDate {
                     Text("Arrivée \(target, style: .time)")
