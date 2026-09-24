@@ -204,7 +204,7 @@ private struct FormationLayout {
     }
 
     static func content(of coach: TrainFormation.Coach, on page: Int) -> RunLabel.Content? {
-        if coach.isLocomotive { return nil }
+        if coach.isLocomotive || coach.closed { return nil }
         if page == 1, !coach.services.isEmpty { return .services(coach.services) }
         if coach.isRestaurant { return .services(["fork.knife"]) }
         return .text(coach.t == "12" ? "1·2" : coach.t == "FA" ? "2" : coach.t)
@@ -312,6 +312,8 @@ private struct BlockBody: View {
         Group {
             if coach.isLocomotive {
                 Color(white: 0.32)
+            } else if coach.closed {
+                Color(white: 0.55)
             } else if coach.t == "12" {
                 HStack(spacing: 0) {
                     ForEach(widths.indices, id: \.self) { index in
@@ -327,7 +329,6 @@ private struct BlockBody: View {
             }
         }
         .clipShape(CoachShape(slantsLeading: isFront, slantsTrailing: isRear))
-        .opacity(coach.closed ? 0.35 : 1)
     }
 }
 
