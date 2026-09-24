@@ -962,12 +962,12 @@ struct NavigationPuck: View {
 
     static func vehicleSymbol(for mode: TransportationMode) -> String {
         switch mode {
-        case .tram: return "tram.fill"
+        case .tram: return "lightrail.fill"
         case .ferry: return "ferry.fill"
         case .subway, .metro: return "tram.tunnel.fill"
         case .funicular: return "cablecar.fill"
         case .bus, .coach: return "bus.fill"
-        default: return mode.isRail ? "train.side.front.car" : "bus.fill"
+        default: return mode.isRail ? "tram.fill" : "bus.fill"
         }
     }
 
