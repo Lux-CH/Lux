@@ -822,7 +822,7 @@ private enum CompletionOutcome {
 private final class MapKitCompleterClient: NSObject {
     static let shared = MapKitCompleterClient()
 
-    private let timeout: Duration = .milliseconds(1250)
+    private let timeout: Duration = .seconds(1)
 
     private let completer: MKLocalSearchCompleter = {
         let completer = MKLocalSearchCompleter()
