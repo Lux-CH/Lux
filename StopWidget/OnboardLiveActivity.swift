@@ -419,10 +419,15 @@ private struct MinimalView: View {
                 Circle().stroke(state.accent.opacity(0.3), lineWidth: 2.5)
                 Circle()
                     .trim(from: 0, to: state.progress)
-                    .stroke(state.isUrgent ? Color.urgentRed : state.accent, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
+                    .stroke(state.accent, style: StrokeStyle(lineWidth: 2.5, lineCap: .round))
                     .rotationEffect(.degrees(-90))
-                Text("\(state.stopsRemaining ?? 0)")
-                    .font(.system(size: 11, weight: .bold, design: .rounded))
+                if state.isUrgent {
+                    Image(systemName: "figure.walk.departure")
+                        .font(.system(size: 10, weight: .bold))
+                } else {
+                    Text("\(state.stopsRemaining ?? 0)")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                }
             }
             .padding(1)
         case .waiting:
