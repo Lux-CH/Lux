@@ -185,8 +185,9 @@ enum VehicleVisualisation {
             let decelerationDistance = isArrivingAtStop ? min(totalDistance * 0.15, 200.0) : 0
             let cruisingDistance = totalDistance - accelerationDistance - decelerationDistance
             
-            let accelerationTime = isDepartingFromStop ? segmentDuration * 0.12 : 0
-            let decelerationTime = isArrivingAtStop ? segmentDuration * 0.12 : 0
+            let cruisingSpeed = (2 * accelerationDistance + cruisingDistance + 2 * decelerationDistance) / segmentDuration
+            let accelerationTime = cruisingSpeed > 0 ? 2 * accelerationDistance / cruisingSpeed : 0
+            let decelerationTime = cruisingSpeed > 0 ? 2 * decelerationDistance / cruisingSpeed : 0
             let cruisingTime = segmentDuration - accelerationTime - decelerationTime
             
             for i in 0..<segmentCoordinates.count {
