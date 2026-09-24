@@ -15,6 +15,7 @@ struct MultipleItineraryDetailView: View {
     @State private var showingTightConnectionAlert = false
     @State private var selectedTightConnection: (from: String, to: String)? = nil
     @ObservedObject var viewModel: ItineraryViewModel
+    @EnvironmentObject private var disruptionManager: DisruptionManager
     let itineraarySharer: ItinerarySharer
     private let legColors: [String: Color]
 
@@ -179,6 +180,13 @@ struct MultipleItineraryDetailView: View {
                             
                             Divider()
                                 .padding(.horizontal, 20)
+
+                            let legDisruptions = disruptionManager.disruptions(for: leg)
+                            if !legDisruptions.isEmpty {
+                                DisruptionSectionView(disruptions: legDisruptions)
+                                    .padding(.horizontal, 20)
+                                    .padding(.top, 14)
+                            }
                             
                             ItinerarySheetDetailStopsContentView(
                                 viewModel: viewModel,

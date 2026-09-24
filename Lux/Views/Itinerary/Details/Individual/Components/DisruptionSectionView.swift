@@ -8,127 +8,248 @@
 import SwiftUI
 import LuxCom
 
+struct DisruptionGroup: Identifiable {
+    let id: String
+    let leg: Leg?
+    let disruptions: [Disruption]
+}
+
+private struct OpenDisruptionsKey: EnvironmentKey {
+    static let defaultValue: (([DisruptionGroup]) -> Void)? = nil
+}
+
+extension EnvironmentValues {
+    var openDisruptions: (([DisruptionGroup]) -> Void)? {
+        get { self[OpenDisruptionsKey.self] }
+        set { self[OpenDisruptionsKey.self] = newValue }
+    }
+}
+
 struct DisruptionSectionView: View {
     let disruptions: [Disruption]
-    @State private var isExpanded: Bool = false
-    @Environment(\.colorScheme) private var colorScheme
-    
+
     var body: some View {
-        if !disruptions.isEmpty {
-            VStack(alignment: .leading, spacing: 0) {
-                Button(action: {
+        DisruptionsRow(groups: [DisruptionGroup(id: "leg", leg: nil, disruptions: disruptions)])
+    }
+}
+
+struct DisruptionsRow: View {
+    let groups: [DisruptionGroup]
+    var action: (() -> Void)?
+    @Environment(\.openDisruptions) private var openDisruptions
+
+    private var all: [Disruption] { groups.flatMap(\.disruptions) }
+
+    var body: some View {
+        if !all.isEmpty {
+            if action != nil || openDisruptions != nil {
+                Button {
                     HapticFeedback.lightImpact()
-                    withAnimation(.spring(response: 0.4, dampingFraction: 0.8)) {
-                        isExpanded.toggle()
-                    }
-                }) {
-                    HStack {
-                        Circle()
-                            .fill(Color.red)
-                            .frame(width: 8, height: 8)
-                        
-                        Text("Perturbations (\(disruptions.count))")
-                            .font(.subheadline)
-                            .fontWeight(.medium)
-                            .foregroundColor(.red)
-                        
-                        Spacer()
-                        
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundColor(.red)
-                            .rotationEffect(.degrees(isExpanded ? 90 : 0))
-                    }
-                    .padding(.horizontal, 20)
-                    .padding(.vertical, 12)
+                    if let action { action() } else { openDisruptions?(groups) }
+                } label: {
+                    label
                 }
-                
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(Array(disruptions.enumerated()), id: \.element.id) { index, disruption in
-                        DisruptionCardView(disruption: disruption)
-                            .opacity(isExpanded ? 1 : 0)
-                            .scaleEffect(isExpanded ? 1 : 0.95, anchor: .top)
-                            .animation(
-                                .spring(response: 0.4, dampingFraction: 0.8)
-                                .delay(Double(index) * 0.05),
-                                value: isExpanded
-                            )
-                    }
+                .buttonStyle(.plain)
+            } else {
+                NavigationLink {
+                    DisruptionsListView(groups: groups)
+                } label: {
+                    label
                 }
-                .padding(.horizontal, 20)
-                .padding(.bottom, isExpanded ? 12 : 0)
-                .frame(maxHeight: isExpanded ? .infinity : 0)
-                .clipped()
-                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isExpanded)
+                .buttonStyle(.plain)
+                .simultaneousGesture(TapGesture().onEnded { HapticFeedback.lightImpact() })
             }
-            .adaptable(ios26: .glassIn(sectionShape), fallback: {
-                $0.background(
-                    RoundedRectangle(cornerRadius: 20, style: .continuous)
-                        .fill(colorScheme == .dark ? Color(.secondarySystemBackground) : Color(.systemGray6))
-                )
-            })
-            .contentShape(sectionShape)
         }
     }
 
-    private var sectionShape: AnyShape {
+    private var label: some View {
+        let count = all.count
+        return HStack(spacing: 12) {
+            Image(systemName: "exclamationmark.triangle.fill")
+                .font(.system(size: 17, weight: .semibold))
+                .foregroundStyle(.orange)
+            Text(count == 1 ? String(localized: "1 perturbation") : String(localized: "\(count) perturbations"))
+                .font(.subheadline.weight(.semibold))
+                .foregroundStyle(.primary)
+            Spacer(minLength: 8)
+            Image(systemName: "chevron.right")
+                .font(.footnote.weight(.semibold))
+                .foregroundStyle(.tertiary)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 11)
+        .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .contentShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+}
+
+struct DisruptionsListView: View {
+    let groups: [DisruptionGroup]
+    @Environment(\.dismiss) private var dismiss
+
+    private struct Entry: Identifiable {
+        let id: String
+        let leg: Leg?
+        let disruption: Disruption
+    }
+
+    private struct Category: Identifiable {
+        let id: String
+        let entries: [Entry]
+
+        var symbol: String {
+            let name = id.lowercased()
+            if name.contains("travaux") || name.contains("chantier") { return "wrench.and.screwdriver.fill" }
+            if name.contains("manifestation") || name.contains("événement") { return "flag.fill" }
+            if name.contains("dévi") { return "arrow.triangle.turn.up.right.diamond.fill" }
+            if name.contains("information") || name.contains("info") { return "info.circle.fill" }
+            return "exclamationmark.triangle.fill"
+        }
+
+        var color: Color {
+            let name = id.lowercased()
+            if name.contains("manifestation") || name.contains("événement") { return .purple }
+            if name.contains("information") || name.contains("info") || name.contains("dévi") { return .blue }
+            if name.contains("travaux") || name.contains("chantier") { return .orange }
+            return .red
+        }
+    }
+
+    private var showsLines: Bool { groups.count > 1 }
+
+    private var categories: [Category] {
+        var order: [String] = []
+        var entries: [String: [Entry]] = [:]
+        for group in groups {
+            for disruption in group.disruptions {
+                let name = disruption.shortTitle.prefix(1).uppercased() + disruption.shortTitle.dropFirst()
+                if entries[name] == nil { order.append(name) }
+                entries[name, default: []].append(Entry(id: "\(group.id)-\(disruption.id)", leg: group.leg, disruption: disruption))
+            }
+        }
+        return order.map { Category(id: $0, entries: entries[$0] ?? []) }
+    }
+
+    var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 22) {
+                ForEach(categories) { category in
+                    VStack(alignment: .leading, spacing: 8) {
+                        HStack(spacing: 7) {
+                            Image(systemName: category.symbol)
+                                .foregroundStyle(category.color)
+                            Text(category.id)
+                            Text("\(category.entries.count)")
+                                .foregroundStyle(.secondary)
+                        }
+                        .font(.subheadline.weight(.semibold))
+                        .padding(.leading, 4)
+
+                        VStack(spacing: 0) {
+                            ForEach(Array(category.entries.enumerated()), id: \.element.id) { index, entry in
+                                row(entry)
+                                if index < category.entries.count - 1 {
+                                    Divider().padding(.leading, showsLines ? 58 : 14)
+                                }
+                            }
+                        }
+                        .adaptable(ios26: .glassTintedIn(AnyShape(RoundedRectangle(cornerRadius: 16, style: .continuous)), Color(.systemBackground).opacity(0.35)), fallback: {
+                            $0.background(Color(.tertiarySystemBackground).opacity(0.9), in: RoundedRectangle(cornerRadius: 16, style: .continuous))
+                        })
+                    }
+                }
+            }
+            .padding(.horizontal, 20)
+            .padding(.bottom, 20)
+        }
+        .safeAreaInset(edge: .top, spacing: 0) { header }
+        .toolbar(.hidden, for: .navigationBar)
+        .modifier(ClearNavigationBackground())
+    }
+
+    private var header: some View {
+        ZStack {
+            Text("Perturbations")
+                .font(.headline)
+            HStack {
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.primary)
+                        .frame(width: 36, height: 36)
+                        .adaptable(ios26: .glassButton, fallback: {
+                            $0.background(Color(.secondarySystemFill), in: Circle())
+                        })
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text("Retour"))
+                Spacer()
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.top, 14)
+        .padding(.bottom, 10)
+    }
+
+    private func row(_ entry: Entry) -> some View {
+        let title = entry.disruption.displayTitle
+        let headline = title.count > 28 ? title : nil
+        return HStack(alignment: .top, spacing: 10) {
+            if showsLines, let leg = entry.leg {
+                LinePill(line: leg.routeShortName ?? "", mode: leg.mode, agency: leg.agencyId, width: 34, height: 20, fontSize: 11)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                if let headline {
+                    Text(headline)
+                        .font(.subheadline.weight(.semibold))
+                }
+                Text(entry.disruption.displayText)
+                    .font(headline == nil ? .subheadline : .footnote)
+                    .foregroundStyle(headline == nil ? .primary : .secondary)
+            }
+            .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 14)
+        .padding(.vertical, 12)
+    }
+}
+
+private struct ClearNavigationBackground: ViewModifier {
+    func body(content: Content) -> some View {
         if #available(iOS 26, *) {
-            AnyShape(ConcentricRectangle(corners: .concentric(minimum: 20), isUniform: true))
+            content.containerBackground(.clear, for: .navigation)
         } else {
-            AnyShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            content
         }
     }
 }
 
-struct DisruptionCardView: View {
-    let disruption: Disruption
-    @Environment(\.colorScheme) private var colorScheme
-    
-    var body: some View {
-        HStack(alignment: .top, spacing: 12) {
-            let (title, description) = titleAndDescription
-            VStack(alignment: .leading, spacing: 4) {
-                if !title.isEmpty {
-                    Text(title)
-                        .font(.subheadline)
-                        .fontWeight(.medium)
-                        .foregroundColor(.primary)
-                }
-                
-                Text(description)
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-                    .lineLimit(nil)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            
-            Spacer()
-        }
-        .padding(12)
-        .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
-        .adaptable(ios26: .glassTintedIn(AnyShape(RoundedRectangle(cornerRadius: 14, style: .continuous)), colorScheme == .dark ? Color(.tertiarySystemBackground) : Color.white), fallback: {
-            $0.background(
-                RoundedRectangle(cornerRadius: 14, style: .continuous)
-                    .fill(colorScheme == .dark ? Color(.tertiarySystemBackground) : Color.white)
-            )
-        })
-    }
-    private var titleAndDescription: (String, String) {
-        if let text = disruption.text {
-            return ((disruption.title ?? "").decodingHTMLEntities(), text.decodingHTMLEntities())
-        }
-        return extractTitleAndDesc(disruption.lineDisruption)
+extension Disruption {
+    var displayTitle: String {
+        if text != nil { return (title ?? "").decodingHTMLEntities() }
+        let raw = lineDisruption.decodingHTMLEntities()
+        guard let range = raw.range(of: " - ") else { return "" }
+        return String(raw[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
     }
 
-    private func extractTitleAndDesc(_ raw: String) -> (String, String) {
-        let disr = raw.decodingHTMLEntities()
-        if let range = disr.range(of: " - ") {
-            let title = String(disr[..<range.lowerBound]).trimmingCharacters(in: .whitespaces)
-            let desc = String(disr[range.upperBound...]).trimmingCharacters(in: .whitespaces)
-            return (title, desc)
-        } else {
-            return ("", disr)
-        }
+    var displayText: String {
+        if let text { return text.decodingHTMLEntities() }
+        let raw = lineDisruption.decodingHTMLEntities()
+        guard let range = raw.range(of: " - ") else { return raw }
+        return String(raw[range.upperBound...]).trimmingCharacters(in: .whitespaces)
+    }
+
+    var shortTitle: String {
+        let title = displayTitle
+        return title.isEmpty || title.count > 28 ? String(localized: "Perturbation") : title
+    }
+
+    var summary: String {
+        let title = displayTitle
+        return title.count > 28 ? title : displayText
     }
 }
 

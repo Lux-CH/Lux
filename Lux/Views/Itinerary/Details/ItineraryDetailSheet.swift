@@ -13,14 +13,28 @@ struct ItineraryDetailSheet: View {
     @ObservedObject var viewModel: ItineraryViewModel
     let itinerarySharer: ItinerarySharer
     let isSingle: Bool
-    
+    @Binding var detent: PresentationDetent
+    let compactDetent: PresentationDetent
+
+    @State private var path: [Int] = []
+    @State private var disruptionGroups: [DisruptionGroup] = []
+
     var body: some View {
         if let itinerary = viewModel.itinerary {
-            if isSingle {
-                IndividualItineraryDetailView(viewModel: viewModel, itinerary: itinerary, isMultipleLeg: false, itineraarySharer: itinerarySharer)
-            } else {
-                MultipleItineraryDetailView(itinerary: itinerary, viewModel: viewModel, itineraarySharer: itinerarySharer)
+            NavigationStack(path: $path) {
+                Group {
+                    if isSingle {
+                        IndividualItineraryDetailView(viewModel: viewModel, itinerary: itinerary, isMultipleLeg: false, itineraarySharer: itinerarySharer)
+                    } else {
+                        MultipleItineraryDetailView(itinerary: itinerary, viewModel: viewModel, itineraarySharer: itinerarySharer)
+                    }
+                }
+                .toolbar(.hidden, for: .navigationBar)
+                .navigationDestination(for: Int.self) { _ in
+                    DisruptionsListView(groups: disruptionGroups)
+                }
             }
+            .environment(\.openDisruptions, openDisruptions)
         } else {
             ContentUnavailableView {
                 Label("Itinéraire indisponible", systemImage: "map.fill")
@@ -28,6 +42,16 @@ struct ItineraryDetailSheet: View {
                 Text("Les informations de l'itinéraire ne sont pas disponibles pour le moment.")
             }
         }
+    }
+
+    private func openDisruptions(_ groups: [DisruptionGroup]) {
+        disruptionGroups = groups
+        guard detent == compactDetent else {
+            path.append(0)
+            return
+        }
+        withAnimation(.smooth(duration: 0.3)) { detent = .medium }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { path.append(0) }
     }
 }
 

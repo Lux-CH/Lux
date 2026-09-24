@@ -42,24 +42,34 @@ struct ItineraryView: View {
     @AppStorage("onboardIntroSeen") private var onboardIntroSeen = false
     @State private var showsOnboardIntro = false
     @State private var showsStopPicker = false
+    @State private var detailDetent: PresentationDetent
+
+    private static func compactDetent(isSingle: Bool) -> PresentationDetent {
+        guard isSingle else { return .fraction(0.225) }
+        if #available(iOS 26, *) { return .fraction(0.151) }
+        return .fraction(0.1)
+    }
 
     init(tripId: String, fromNearby: Bool, otherTripOptions: [TripOption] = []) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
         self.fromNearby = fromNearby
         self._otherItineraries = State(initialValue: otherTripOptions)
         self.isSingle = true
+        self._detailDetent = State(initialValue: Self.compactDetent(isSingle: true))
     }
     
     init(itinerary: Itinerary, fromNearby: Bool) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary))
         self.fromNearby = fromNearby
         self.isSingle = false // so basically, it's a bit sketchy, but we never load trips if it's a processed route (using trip search) ; so it's never single if itinerary is passed directly
+        self._detailDetent = State(initialValue: Self.compactDetent(isSingle: false))
     }
     
     init(itinerary: Itinerary, fromNearby: Bool, destinationName: String? = nil) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary, destinationName: destinationName))
         self.fromNearby = fromNearby
         self.isSingle = false
+        self._detailDetent = State(initialValue: Self.compactDetent(isSingle: false))
     }
     
     var locationButtonIcon: String {
@@ -212,8 +222,8 @@ struct ItineraryView: View {
                 }
                 // my saviour !! https://www.reddit.com/r/SwiftUI/comments/18xxmod/comment/kgl7z16/?utm_source=share&utm_medium=web3x&utm_name=web3xcss
                 .sheet(isPresented: $showDetails) {
-                    ItineraryDetailSheet(viewModel: viewModel, itinerarySharer: itineraarySharer, isSingle: isSingle)
-                        .presentationDetents([isSingle ? .fraction(detents.0) : .fraction(0.225), .medium, .large])
+                    ItineraryDetailSheet(viewModel: viewModel, itinerarySharer: itineraarySharer, isSingle: isSingle, detent: $detailDetent, compactDetent: Self.compactDetent(isSingle: isSingle))
+                        .presentationDetents([Self.compactDetent(isSingle: isSingle), .medium, .large], selection: $detailDetent)
                         .presentationDragIndicator(.visible)
                         .presentationCornerRadius(sheetCornerRadius)
                         .presentationBackgroundInteraction(.enabled)
