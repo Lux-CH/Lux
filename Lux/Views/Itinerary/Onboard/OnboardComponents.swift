@@ -416,7 +416,7 @@ struct OnboardBottomPanel: View {
                         .padding(.top, 12)
                 }
                 .padding(.top, 24)
-                .padding(.bottom, 16)
+                .padding(.bottom, session.phase == .waiting ? 2 : 16)
                 .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { onCompactHeightChange($0) }
 
                 if session.phase != .arrived {
@@ -511,8 +511,8 @@ struct OnboardBottomPanel: View {
         case .waiting:
             VStack(alignment: .leading, spacing: 10) {
                 if let formation = session.formation {
-                        .padding(.bottom, 28)
                     TrainFormationView(formation: formation, platformSectors: session.formationPlatformSectors)
+                        .padding(.bottom, 2)
                         .transition(.opacity)
                 }
                 if let info = session.rideInfo {

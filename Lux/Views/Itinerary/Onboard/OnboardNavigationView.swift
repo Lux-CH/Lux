@@ -93,7 +93,7 @@ struct OnboardNavigationView: View {
         }
         .sheet(isPresented: .constant(true)) {
             OnboardBottomPanel(session: session, itineraryViewModel: itineraryViewModel, isExpanded: detent == .large, onEnd: end) { height in
-                let compact = (height + 14).rounded()
+                let compact = (height + (session.phase == .waiting ? 0 : 14)).rounded()
                 guard abs(compact - compactHeight) > 1 else { return }
                 let wasCompact = detent == .height(compactHeight)
                 compactHeight = compact
