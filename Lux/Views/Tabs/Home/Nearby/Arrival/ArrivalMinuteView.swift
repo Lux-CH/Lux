@@ -121,6 +121,7 @@ struct ArrivalMinuteView: View {
     }
 
     private var shouldBlink: Bool {
+        guard !incomingStop.cancelled else { return false }
         let eventTime = incomingStop.place.departure ?? incomingStop.place.arrival ?? now
         let secondsUntilCleanup = Int(eventTime.addingTimeInterval(bufferTime).timeIntervalSince(now))
         
