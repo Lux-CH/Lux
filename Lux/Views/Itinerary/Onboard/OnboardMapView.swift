@@ -215,10 +215,11 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
             }
         }
 
-        let signature = "\(stationLayouts.keys.sorted())|" + legs.map { "\($0.from.track ?? "")>\($0.to.track ?? "")" }.joined(separator: ",")
+        let layouts = stationLayouts.merging(session.nearbyStationLayouts) { itinerary, _ in itinerary }
+        let signature = "\(layouts.keys.sorted())|" + legs.map { "\($0.from.track ?? "")>\($0.to.track ?? "")" }.joined(separator: ",")
         guard signature != stationSignature else { return }
         stationSignature = signature
-        stationContent = StationOverlayContent(legs: legs, layouts: stationLayouts)
+        stationContent = StationOverlayContent(legs: legs, layouts: layouts)
         applyStationDetail(force: true)
     }
 

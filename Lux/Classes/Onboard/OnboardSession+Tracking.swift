@@ -44,6 +44,7 @@ extension OnboardSession {
             resolveStartingPoint(from: location)
         }
         evaluate()
+        updateNearbyStations()
     }
 
     func handle(_ heading: CLHeading) {

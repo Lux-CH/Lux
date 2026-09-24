@@ -106,6 +106,10 @@ final class OnboardSession {
     @ObservationIgnored var lastEarlierCheckAt: Date = .distantPast
     @ObservationIgnored var declinedEarlierLegs: Set<Int> = []
     @ObservationIgnored var earlierBoardingLegs: Set<Int> = []
+    /// Platform maps of the railway stations near the rider, beyond the itinerary's own.
+    var nearbyStationLayouts: [Int: StationLayout] = [:]
+    @ObservationIgnored var nearbyStationsCheck: (coordinate: CLLocationCoordinate2D, at: Date)?
+    @ObservationIgnored var nearbyStationsTask: Task<Void, Never>?
     @ObservationIgnored var liveVehicles: [Int: RelayClient.CrowdVehicle] = [:]
     @ObservationIgnored var tickTask: Task<Void, Never>?
     @ObservationIgnored var crowdAckTask: Task<Void, Never>?
@@ -183,6 +187,38 @@ final class OnboardSession {
                 self.maneuvers[index] = rebuilt[index]
             }
             self.updateManeuvers()
+        }
+    }
+
+    /// Railway stations within a few hundred metres while walking or waiting, looked up
+    /// again after 200 m or 5 minutes; the map draws their platforms like the itinerary's.
+    func updateNearbyStations() {
+        guard phase == .walking || phase == .waiting, nearbyStationsTask == nil,
+              !OfflineRouter.shared.isOfflineActive, let location = usableLocation else { return }
+        let coordinate = location.coordinate
+        if let check = nearbyStationsCheck, check.coordinate.distance(to: coordinate) < 200, now.timeIntervalSince(check.at) < 300 { return }
+        nearbyStationsCheck = (coordinate, now)
+        nearbyStationsTask = Task { [weak self] in
+            let here = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
+            let stops = (try? await LuxData.reverseGeocode(place: (coordinate.latitude, coordinate.longitude), type: .stop)) ?? []
+            let stations = stops
+                .filter { $0.servesMainlineRail || $0.modes.isEmpty }
+                .filter { here.distance(from: CLLocation(latitude: $0.lat, longitude: $0.lon)) < 400 }
+                .prefix(3)
+            var found: [Int: StationLayout] = [:]
+            for station in stations {
+                if let layout = await StationLayoutStore.shared.layout(for: station.id) { found[layout.uic] = layout }
+            }
+            guard let self else { return }
+            self.nearbyStationsTask = nil
+            guard self.isRunning, !found.isEmpty else { return }
+            let merged = self.nearbyStationLayouts.merging(found) { $1 }
+            let kept = merged.count <= 4 ? merged : Dictionary(uniqueKeysWithValues: merged.sorted { lhs, rhs in
+                found[lhs.key] != nil && found[rhs.key] == nil
+            }.prefix(4).map { ($0.key, $0.value) })
+            if Set(kept.keys) != Set(self.nearbyStationLayouts.keys) {
+                self.nearbyStationLayouts = kept
+            }
         }
     }
 
