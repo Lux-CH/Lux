@@ -8143,6 +8143,86 @@
           }
         }
       }
+    },
+    "1re" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1st"
+          }
+        }
+      }
+    },
+    "2e" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2nd"
+          }
+        }
+      }
+    },
+    "1re classe secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1st class sector %@"
+          }
+        }
+      }
+    },
+    "2e classe secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2nd class sector %@"
+          }
+        }
+      }
+    },
+    "restaurant secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "restaurant sector %@"
+          }
+        }
+      }
+    },
+    "vélos secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bikes sector %@"
+          }
+        }
+      }
+    },
+    "fauteuils roulants secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wheelchairs sector %@"
+          }
+        }
+      }
+    },
+    "Secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sector %@"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
