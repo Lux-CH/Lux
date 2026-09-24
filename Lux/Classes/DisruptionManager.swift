@@ -11,7 +11,7 @@ import LuxCom
 @MainActor
 final class DisruptionManager: ObservableObject {
     @Published var disruptions: [Disruption] = []
-    // Pushed by the relay WebSocket when the feed changes; the 5min HTTP poll
+    // Pushed by the relay WebSocket when the feed changes; the 1min HTTP poll
     // only runs while the socket is down.
     private let liveFeed = RelayLiveFeed<[Disruption]>()
 
@@ -20,7 +20,7 @@ final class DisruptionManager: ObservableObject {
             await fetchDisruptions()
         }
         liveFeed.start(
-            fallbackInterval: .seconds(300),
+            fallbackInterval: .seconds(60),
             stream: {
                 await RelayClient.shared.disruptions()
             },
