@@ -259,7 +259,8 @@ extension OnboardSession {
         if let location = usableLocation,
            let projection = path.project(location.coordinate, hint: alongInLeg),
            projection.offset < max(80, location.horizontalAccuracy) {
-            assign(\.alongInLeg, max(alongInLeg - 15, projection.along))
+            let clearlyBehind = location.horizontalAccuracy <= 30 && alongInLeg - projection.along > 40
+            assign(\.alongInLeg, clearlyBehind ? projection.along : max(alongInLeg - 15, projection.along))
             locatedByGPS = true
         } else {
             assign(\.alongInLeg, max(alongInLeg, estimatedAlongByTime(leg: leg, alongs: alongs)))
@@ -330,8 +331,12 @@ extension OnboardSession {
         }
 
         if locked {
-            let along = gpsAlong ?? trainFix.along + trainFix.speed * now.timeIntervalSince(trainGPSAt)
-            assign(\.alongInLeg, max(alongInLeg - 30, along))
+            if let gpsAlong, alongInLeg - gpsAlong > 60 {
+                assign(\.alongInLeg, gpsAlong)
+            } else {
+                let along = gpsAlong ?? trainFix.along + trainFix.speed * now.timeIntervalSince(trainGPSAt)
+                assign(\.alongInLeg, max(alongInLeg - 30, along))
+            }
         } else {
             assign(\.alongInLeg, timetable)
         }
