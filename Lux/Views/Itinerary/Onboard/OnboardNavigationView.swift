@@ -55,10 +55,10 @@ struct OnboardNavigationView: View {
 
                 if !isFollowing && !showsOverview {
                     HStack {
-                        recenterButton
                         Spacer()
+                        recenterButton
                     }
-                    .transition(.move(edge: .leading).combined(with: .opacity))
+                    .transition(.move(edge: .trailing).combined(with: .opacity))
                     .padding(.bottom, compactHeight + 56)
                 }
             }
