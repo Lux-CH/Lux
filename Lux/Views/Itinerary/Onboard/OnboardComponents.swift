@@ -87,7 +87,6 @@ struct OnboardInstructionBanner: View {
             if let distance = session.distanceToManeuver {
                 Text(formatDistance(distance))
                     .font(.system(size: 32, weight: .bold, design: .rounded))
-                    .monospacedDigit()
                     .contentTransition(.numericText(countsDown: true))
                     .animation(.snappy, value: formatDistance(distance))
             }
@@ -160,7 +159,6 @@ struct OnboardInstructionBanner: View {
             VStack(spacing: 0) {
                 Text("\(session.stopsRemaining)")
                     .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .monospacedDigit()
                     .contentTransition(.numericText(countsDown: true))
                     .animation(.snappy, value: session.stopsRemaining)
                 Text(session.stopsRemaining > 1 ? String(localized: "arrêts") : String(localized: "arrêt"))
@@ -325,8 +323,7 @@ struct CountdownText: View {
     var body: some View {
         TimelineView(.periodic(from: .now, by: 1)) { context in
             let text = text(at: context.date)
-            Text(text)
-                .monospacedDigit()
+            (text.contains(":") ? Text(text).monospacedDigit() : Text(text))
                 .contentTransition(.numericText(countsDown: true))
                 .animation(.snappy, value: text)
         }

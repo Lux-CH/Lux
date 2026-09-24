@@ -564,7 +564,6 @@ private struct StopsCounter: View {
         VStack(alignment: .trailing, spacing: -3) {
             Text("\(state.stopsRemaining ?? 0)")
                 .font(.system(size: large ? 34 : 20, weight: .heavy, design: .rounded))
-                .monospacedDigit()
                 .contentTransition(.numericText(countsDown: true))
                 .foregroundStyle(state.isUrgent ? .white : state.accent)
             Text((state.stopsRemaining ?? 0) > 1 ? "arrêts" : "arrêt")
@@ -584,7 +583,6 @@ private struct Countdown: View {
         if let minutes, minutes > 0, let target, target.timeIntervalSinceNow >= 60 {
             Text("\(minutes)'")
                 .font(.system(size: size, weight: .bold, design: .rounded))
-                .monospacedDigit()
                 .contentTransition(.numericText(countsDown: true))
                 .multilineTextAlignment(.trailing)
         } else if let target, target > .now {
