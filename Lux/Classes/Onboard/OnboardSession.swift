@@ -56,6 +56,11 @@ final class OnboardSession {
     @ObservationIgnored var positionDelayAt: Date = .distantPast
     var hasEstimatedVehicle = false
     var isReplanning = false
+    /// Where the coaches of the next train to board stop on its platform (mainline rail).
+    var formation: TrainFormation?
+    @ObservationIgnored var formationTarget = ""
+    @ObservationIgnored var formationFetchedAt: Date = .distantPast
+    @ObservationIgnored var formationTask: Task<Void, Never>?
 
     var needsSharingConsent: Bool { Settings.shared.onboardCrowdConsent == .undecided }
 
@@ -222,6 +227,7 @@ final class OnboardSession {
     }
 
     func stop() {
+        formationTask?.cancel()
         guard isRunning else { return }
         isRunning = false
         tickTask?.cancel()
@@ -363,12 +369,44 @@ final class OnboardSession {
         }
         catchUpWithVehicle()
         updateEstimates()
+        refreshFormationIfNeeded()
         if let lastFixAt, now.timeIntervalSince(lastFixAt) > 45 {
             assign(\.hasWeakGPS, true)
         } else if lastFixAt == nil, now.timeIntervalSince(legs.first?.startTime ?? now) > 0 {
             assign(\.hasWeakGPS, true)
         }
         evaluate()
+    }
+
+    /// The train to board next, while walking to it or waiting for it: its formation is
+    /// fetched when that train changes and refreshed every 3 minutes (coaches get coupled,
+    /// closed or swapped during the day).
+    func refreshFormationIfNeeded() {
+        var target = ""
+        if phase == .walking || phase == .waiting, let (_, leg) = nextTransitLeg, leg.mode.isMainlineRail,
+           let tripId = leg.tripId, let stopId = leg.from.stopId, !OfflineRouter.shared.isOfflineActive {
+            target = "\(tripId)|\(stopId)"
+        }
+        if target != formationTarget {
+            formationTarget = target
+            formationTask?.cancel()
+            formationFetchedAt = .distantPast
+            if formation != nil { withAnimation { formation = nil } }
+        }
+        guard !target.isEmpty, now.timeIntervalSince(formationFetchedAt) > 180 else { return }
+        formationFetchedAt = now
+        let parts = target.split(separator: "|", maxSplits: 1).map(String.init)
+        formationTask?.cancel()
+        formationTask = Task { [weak self] in
+            let stream = await RelayClient.shared.formation(tripId: parts[0], stopId: parts[1])
+            var received: TrainFormation?? = nil
+            for await value in stream {
+                received = .some(value)
+                break
+            }
+            guard let self, !Task.isCancelled, self.formationTarget == target, let received else { return }
+            withAnimation(.snappy) { self.formation = received }
+        }
     }
 
     deinit {

@@ -500,10 +500,20 @@ struct OnboardBottomPanel: View {
         switch session.phase {
         case .walking:
             if let (_, next) = session.nextTransitLeg {
-                nextTransitRow(next)
+                VStack(alignment: .leading, spacing: 10) {
+                    nextTransitRow(next)
+                    // on the way to the platform, where to stand is worth knowing already
+                    if session.isInStation, let formation = session.formation {
+                        TrainFormationView(formation: formation)
+                    }
+                }
             }
         case .waiting:
             VStack(alignment: .leading, spacing: 10) {
+                if let formation = session.formation {
+                    TrainFormationView(formation: formation)
+                        .transition(.opacity)
+                }
                 if let info = session.rideInfo {
                     RideCommunityStrip(info: info)
                 }
