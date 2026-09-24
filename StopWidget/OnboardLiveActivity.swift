@@ -728,4 +728,11 @@ extension OnboardActivityAttributes.ContentState {
     OnboardActivityAttributes.ContentState.previewTrain
     OnboardActivityAttributes.ContentState.previewArrived
 }
+
+#Preview("Island", as: .dynamicIsland(.expanded), using: OnboardActivityAttributes(destinationName: "Genève")) {
+    OnboardLiveActivity()
+} contentStates: {
+    OnboardActivityAttributes.ContentState.previewTrain
+    OnboardActivityAttributes.ContentState.previewWaiting
+}
 #endif
