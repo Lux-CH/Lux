@@ -125,6 +125,18 @@ actor RelayClient {
         )
     }
 
+    /// One-shot: where each coach of the train stops at `stopId` (null when unknown).
+    func formation(tripId: String, stopId: String) -> AsyncStream<TrainFormation?> {
+        let id = "\(tripId)|\(stopId)"
+        let key = SubscriptionKey(channel: "form", src: "shared", id: id, extra: "")
+        return stream(
+            key: key,
+            subscribePayload: ["action": "sub_form", "tripId": tripId, "stopId": stopId, "key": id],
+            unsubscribePayload: ["action": "unsub_form", "key": id],
+            as: TrainFormation?.self
+        )
+    }
+
     struct CrowdVehicle: Decodable, Sendable, Equatable {
         let lat: Double
         let lon: Double
@@ -391,6 +403,8 @@ actor RelayClient {
         let tripId: String?
         let n: Int?
         let radius: Int?
+        /// Set by requests keyed on more than a stop or a trip (formations).
+        let key: String?
     }
 
     private struct Envelope<T: Decodable>: Decodable {
@@ -417,7 +431,7 @@ actor RelayClient {
             return
         }
         let src = header.src ?? "shared"
-        let id = header.stopId ?? header.tripId ?? "global"
+        let id = header.key ?? header.stopId ?? header.tripId ?? "global"
         let extra = header.n.map { "\($0)|\(header.radius ?? 0)" }
 
         for (candidate, keySubscribers) in subscribers {
