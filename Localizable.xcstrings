@@ -58,7 +58,7 @@
       "shouldTranslate" : false
     },
     "%@ ·" : {
-
+      "shouldTranslate" : false
     },
     "%@ · %@" : {
       "localizations" : {
@@ -68,7 +68,8 @@
             "value" : "%1$@ · %2$@"
           }
         }
-      }
+      },
+      "shouldTranslate" : false
     },
     "%@ a %lld min d'avance" : {
       "localizations" : {
@@ -86,6 +87,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%@ is %lld min late"
+          }
+        }
+      }
+    },
+    "%@ arrive sur %@ au lieu de %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ now arrives on %2$@ instead of %3$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ arrive sur %2$@ au lieu de %3$@"
           }
         }
       }
@@ -150,6 +167,22 @@
         }
       }
     },
+    "%@ part de %@ au lieu de %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ now leaves from %2$@ instead of %3$@"
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ part de %2$@ au lieu de %3$@"
+          }
+        }
+      }
+    },
     "%@%lld'" : {
       "localizations" : {
         "fr" : {
@@ -208,17 +241,6 @@
         }
       }
     },
-    "%lld rapport(s) n'ont pas pu être envoyés. Les autres ont été transmis avec succès." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld report(s) could not be sent. The others were transmitted successfully."
-          }
-        }
-      }
-    },
     "%lld transfer%@" : {
       "localizations" : {
         "en" : {
@@ -247,17 +269,6 @@
           "stringUnit" : {
             "state" : "new",
             "value" : "%1$lld/%2$lld affichés"
-          }
-        }
-      }
-    },
-    "%lld/5" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld/5"
           }
         }
       }
@@ -295,7 +306,7 @@
       }
     },
     "%llds" : {
-
+      "shouldTranslate" : false
     },
     "•" : {
       "localizations" : {
@@ -309,7 +320,7 @@
       "shouldTranslate" : false
     },
     "+%lld min" : {
-
+      "shouldTranslate" : false
     },
     "~450Mo · connexion Wi-Fi recommandée" : {
       "localizations" : {
@@ -347,6 +358,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 month"
+          }
+        }
+      }
+    },
+    "1re classe secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1st class sector %@"
+          }
+        }
+      }
+    },
+    "2e classe secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2nd class sector %@"
           }
         }
       }
@@ -1137,6 +1168,16 @@
         }
       }
     },
+    "arrivée du train" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "train arrives"
+          }
+        }
+      }
+    },
     "Arrivée prévue : %@" : {
       "localizations" : {
         "en" : {
@@ -1157,12 +1198,32 @@
         }
       }
     },
+    "Arrivée sur une autre voie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arriving on another platform"
+          }
+        }
+      }
+    },
     "Arriver à" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Arrive at"
+          }
+        }
+      }
+    },
+    "Ascenseur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Elevator"
           }
         }
       }
@@ -1836,6 +1897,16 @@
         }
       }
     },
+    "Changement de voie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Platform change"
+          }
+        }
+      }
+    },
     "Changer" : {
       "localizations" : {
         "en" : {
@@ -2219,17 +2290,6 @@
         }
       }
     },
-    "Continuer" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Continue"
-          }
-        }
-      }
-    },
     "Continuez sur %@" : {
       "localizations" : {
         "en" : {
@@ -2426,17 +2486,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "S"
-          }
-        }
-      }
-    },
-    "Dans %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "In %@"
           }
         }
       }
@@ -2727,17 +2776,6 @@
         }
       }
     },
-    "Descendez à %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Get off at %@"
-          }
-        }
-      }
-    },
     "Descendez au niveau inférieur" : {
       "localizations" : {
         "en" : {
@@ -2794,6 +2832,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Take the stairs down to %@"
+          }
+        }
+      }
+    },
+    "Descendez par l'escalier roulant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the escalator down"
+          }
+        }
+      }
+    },
+    "Descendez par l'escalier roulant vers %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the escalator down to %@"
           }
         }
       }
@@ -3138,17 +3196,6 @@
         }
       }
     },
-    "Erreur de rapport" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Report error"
-          }
-        }
-      }
-    },
     "Erreur de scan" : {
       "localizations" : {
         "en" : {
@@ -3165,6 +3212,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "An error occurred while saving : %@"
+          }
+        }
+      }
+    },
+    "Escalier roulant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Escalator"
+          }
+        }
+      }
+    },
+    "Escaliers" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stairs"
           }
         }
       }
@@ -3229,17 +3296,6 @@
         }
       }
     },
-    "Évaluez le niveau actuel" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rate the current level"
-          }
-        }
-      }
-    },
     "Ex: Maison, Travail, École..." : {
       "localizations" : {
         "en" : {
@@ -3276,6 +3332,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Make a U-turn"
+          }
+        }
+      }
+    },
+    "fauteuils roulants secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "wheelchairs sector %@"
           }
         }
       }
@@ -3366,28 +3432,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Shapes"
-          }
-        }
-      }
-    },
-    "Forte" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Strong"
-          }
-        }
-      }
-    },
-    "Forte odeur" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Strong smell"
           }
         }
       }
@@ -3764,17 +3808,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unable to send the SMS"
-          }
-        }
-      }
-    },
-    "Impossible d'envoyer les rapports. Veuillez réessayer plus tard." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Unable to send reports. Please try again later."
           }
         }
       }
@@ -4295,17 +4328,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Color legend"
-          }
-        }
-      }
-    },
-    "Légère" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Light"
           }
         }
       }
@@ -4882,17 +4904,6 @@
         }
       }
     },
-    "Modéré" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Moderate"
-          }
-        }
-      }
-    },
     "Modérée" : {
       "localizations" : {
         "en" : {
@@ -4969,6 +4980,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Take the stairs up to %@"
+          }
+        }
+      }
+    },
+    "Montez par l'escalier roulant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the escalator up"
+          }
+        }
+      }
+    },
+    "Montez par l'escalier roulant vers %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the escalator up to %@"
           }
         }
       }
@@ -5162,17 +5193,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Obtain walking directions"
-          }
-        }
-      }
-    },
-    "Occupé" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Occupied"
           }
         }
       }
@@ -5476,17 +5496,6 @@
         }
       }
     },
-    "Pas d'odeur" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No smell"
-          }
-        }
-      }
-    },
     "Pas maintenant" : {
       "localizations" : {
         "en" : {
@@ -5549,17 +5558,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "While you're on board, Lux can anonymously share the vehicle's position."
-          }
-        }
-      }
-    },
-    "Perceptible" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Noticeable"
           }
         }
       }
@@ -5630,17 +5628,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Disruptions (%lld)"
-          }
-        }
-      }
-    },
-    "Peu occupé" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lightly occupied"
           }
         }
       }
@@ -5775,17 +5762,6 @@
         }
       }
     },
-    "Position prévue" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Expected position"
-          }
-        }
-      }
-    },
     "Positionnez l'arrière de votre carte SwissPass dans le cadre pour l'ajouter à LuxPass" : {
       "localizations" : {
         "en" : {
@@ -5802,17 +5778,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "To display nearby stops, please allow location access in Settings."
-          }
-        }
-      }
-    },
-    "Précédent" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Back"
           }
         }
       }
@@ -5883,17 +5848,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Next: %@"
-          }
-        }
-      }
-    },
-    "Prochain arrêt" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Next stop"
           }
         }
       }
@@ -6028,17 +5982,6 @@
         }
       }
     },
-    "Quitter le mode À bord ?" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Exit Onboard mode?"
-          }
-        }
-      }
-    },
     "raccourci" : {
       "localizations" : {
         "en" : {
@@ -6085,50 +6028,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fast"
-          }
-        }
-      }
-    },
-    "Rapport en cours..." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reporting…"
-          }
-        }
-      }
-    },
-    "Rapport partiel" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Partial report"
-          }
-        }
-      }
-    },
-    "Rapport: %@" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Report: %@"
-          }
-        }
-      }
-    },
-    "Rapports envoyés !" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Reports sent!"
           }
         }
       }
@@ -6339,6 +6238,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Estimated fix time: %@"
+          }
+        }
+      }
+    },
+    "restaurant secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "restaurant sector %@"
           }
         }
       }
@@ -6633,6 +6542,16 @@
         }
       }
     },
+    "Secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sector %@"
+          }
+        }
+      }
+    },
     "Sélectionner" : {
       "localizations" : {
         "en" : {
@@ -6739,17 +6658,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Weak GPS · estimated position"
-          }
-        }
-      }
-    },
-    "Signaler une situation" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Report a situation"
           }
         }
       }
@@ -6934,17 +6842,6 @@
         }
       }
     },
-    "sur" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "out of"
-          }
-        }
-      }
-    },
     "Symbole sélectionné" : {
       "localizations" : {
         "en" : {
@@ -7031,17 +6928,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Temperature"
-          }
-        }
-      }
-    },
-    "Tempéré" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Mild"
           }
         }
       }
@@ -7256,6 +7142,16 @@
         }
       }
     },
+    "train en gare" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "train in station"
+          }
+        }
+      }
+    },
     "Train suivi avec le temps réel officiel" : {
       "localizations" : {
         "en" : {
@@ -7372,39 +7268,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Very noisy"
-          }
-        }
-      }
-    },
-    "Très chaud" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Very hot"
-          }
-        }
-      }
-    },
-    "Très forte" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Very strong"
-          }
-        }
-      }
-    },
-    "Très propre" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Very clean"
           }
         }
       }
@@ -7599,6 +7462,16 @@
         }
       }
     },
+    "vélos secteur %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "bikes sector %@"
+          }
+        }
+      }
+    },
     "Ven" : {
       "localizations" : {
         "en" : {
@@ -7679,17 +7552,6 @@
         }
       }
     },
-    "Via (arrêt)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Via (stop)"
-          }
-        }
-      }
-    },
     "Vide" : {
       "localizations" : {
         "en" : {
@@ -7746,17 +7608,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your offline data is more than 2 weeks old. Tap to update them."
-          }
-        }
-      }
-    },
-    "Vos rapports ont été transmis avec succès.\nMerci pour votre contribution !" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your reports were transmitted successfully.\nThank you for your contribution!"
           }
         }
       }
@@ -7931,17 +7782,6 @@
         }
       }
     },
-    "Vous ne recevrez plus d'alertes pour ce trajet." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You won't get alerts for this trip anymore."
-          }
-        }
-      }
-    },
     "Vous partagez la position du véhicule" : {
       "localizations" : {
         "en" : {
@@ -7998,208 +7838,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "XX"
-          }
-        }
-      }
-    },
-    "Escaliers" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stairs"
-          }
-        }
-      }
-    },
-    "Escalier roulant" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Escalator"
-          }
-        }
-      }
-    },
-    "Ascenseur" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elevator"
-          }
-        }
-      }
-    },
-    "Montez par l'escalier roulant vers %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take the escalator up to %@"
-          }
-        }
-      }
-    },
-    "Montez par l'escalier roulant" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take the escalator up"
-          }
-        }
-      }
-    },
-    "Descendez par l'escalier roulant vers %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take the escalator down to %@"
-          }
-        }
-      }
-    },
-    "Descendez par l'escalier roulant" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take the escalator down"
-          }
-        }
-      }
-    },
-    "Changement de voie" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Platform change"
-          }
-        }
-      }
-    },
-    "%@ part de %@ au lieu de %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ now leaves from %2$@ instead of %3$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ part de %2$@ au lieu de %3$@"
-          }
-        }
-      }
-    },
-    "Arrivée sur une autre voie" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arriving on another platform"
-          }
-        }
-      }
-    },
-    "%@ arrive sur %@ au lieu de %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%1$@ now arrives on %2$@ instead of %3$@"
-          }
-        },
-        "fr" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@ arrive sur %2$@ au lieu de %3$@"
-          }
-        }
-      }
-    },
-    "arrivée du train" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "train arrives"
-          }
-        }
-      }
-    },
-    "train en gare" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "train in station"
-          }
-        }
-      }
-    },
-    "1re classe secteur %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1st class sector %@"
-          }
-        }
-      }
-    },
-    "2e classe secteur %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2nd class sector %@"
-          }
-        }
-      }
-    },
-    "restaurant secteur %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "restaurant sector %@"
-          }
-        }
-      }
-    },
-    "vélos secteur %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "bikes sector %@"
-          }
-        }
-      }
-    },
-    "fauteuils roulants secteur %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "wheelchairs sector %@"
-          }
-        }
-      }
-    },
-    "Secteur %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sector %@"
           }
         }
       }
