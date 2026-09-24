@@ -86,7 +86,7 @@ struct DisruptionCardView: View {
     
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
-            let (title, description) = extractTitleAndDesc(disruption.lineDisruption)
+            let (title, description) = titleAndDescription
             VStack(alignment: .leading, spacing: 4) {
                 if !title.isEmpty {
                     Text(title)
@@ -113,6 +113,13 @@ struct DisruptionCardView: View {
             )
         })
     }
+    private var titleAndDescription: (String, String) {
+        if let text = disruption.text {
+            return ((disruption.title ?? "").decodingHTMLEntities(), text.decodingHTMLEntities())
+        }
+        return extractTitleAndDesc(disruption.lineDisruption)
+    }
+
     private func extractTitleAndDesc(_ raw: String) -> (String, String) {
         let disr = raw.decodingHTMLEntities()
         if let range = disr.range(of: " - ") {
