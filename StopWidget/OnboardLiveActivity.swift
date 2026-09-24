@@ -58,8 +58,8 @@ private struct OnboardLockScreenView: View {
             case .arrived: arrived
             }
         }
-        .padding(.horizontal, 18)
-        .padding(.vertical, 16)
+        .padding(.horizontal, 22)
+        .padding(.vertical, 20)
         .foregroundStyle(state.isUrgent ? .white : .primary)
         .background {
             if state.isUrgent {
@@ -69,7 +69,7 @@ private struct OnboardLockScreenView: View {
     }
 
     private var riding: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 10) {
             LineHeader(state: state)
 
             HStack(alignment: .lastTextBaseline) {
