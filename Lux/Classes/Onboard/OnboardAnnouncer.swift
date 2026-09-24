@@ -19,6 +19,7 @@ final class OnboardAnnouncer: NSObject, AVSpeechSynthesizerDelegate {
 
     private let synthesizer = AVSpeechSynthesizer()
     private var lastSpoken: (text: String, at: Date)?
+    private var generation = 0
     var voiceEnabled: Bool
     var alertSink: ((_ title: String, _ body: String?) -> Bool)?
 
@@ -70,11 +71,19 @@ final class OnboardAnnouncer: NSObject, AVSpeechSynthesizerDelegate {
         guard voiceEnabled else { return }
         if let lastSpoken, lastSpoken.text == text, Date().timeIntervalSince(lastSpoken.at) < 20 { return }
         lastSpoken = (text, Date())
+        let generation = generation
 
         Self.audioQueue.async { [weak self] in
             try? AVAudioSession.sharedInstance().setActive(true)
             Task { @MainActor in
-                guard let self, self.voiceEnabled else { return }
+                guard let self else {
+                    try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+                    return
+                }
+                guard self.voiceEnabled, self.generation == generation else {
+                    self.releaseAudio()
+                    return
+                }
                 let utterance = AVSpeechUtterance(string: text)
                 utterance.voice = Self.bestVoice
                 utterance.rate = AVSpeechUtteranceDefaultSpeechRate * 1.02
@@ -84,13 +93,26 @@ final class OnboardAnnouncer: NSObject, AVSpeechSynthesizerDelegate {
     }
 
     func stop() {
+        generation += 1
         synthesizer.stopSpeaking(at: .immediate)
-        Self.deactivateAudioSession()
+        releaseAudio(force: true)
     }
 
-    private nonisolated static func deactivateAudioSession() {
-        audioQueue.async {
-            try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    private func releaseAudio(attempt: Int = 0, force: Bool = false) {
+        if !force && synthesizer.isSpeaking {
+            guard attempt < 6 else { return }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
+                self?.releaseAudio(attempt: attempt + 1)
+            }
+            return
+        }
+        Self.audioQueue.asyncAfter(deadline: .now() + (attempt == 0 ? 0 : 0.3)) { [weak self] in
+            do {
+                try AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+            } catch {
+                guard attempt < 6 else { return }
+                Task { @MainActor in self?.releaseAudio(attempt: attempt + 1, force: force) }
+            }
         }
     }
 
@@ -130,9 +152,10 @@ final class OnboardAnnouncer: NSObject, AVSpeechSynthesizerDelegate {
     }
 
     nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didFinish utterance: AVSpeechUtterance) {
-        Task { @MainActor in
-            guard !self.synthesizer.isSpeaking else { return }
-            Self.deactivateAudioSession()
-        }
+        Task { @MainActor in self.releaseAudio() }
+    }
+
+    nonisolated func speechSynthesizer(_ synthesizer: AVSpeechSynthesizer, didCancel utterance: AVSpeechUtterance) {
+        Task { @MainActor in self.releaseAudio() }
     }
 }
