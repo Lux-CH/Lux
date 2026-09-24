@@ -77,6 +77,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     private var stationLegsSignature = ""
     private var stationSignature = ""
     private var stationDetail: StationDetail = .hidden
+    private var stationShapeTier = -1
 
     private var routeSignature = ""
     private var arrowSignature = ""
@@ -276,15 +277,44 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     }
 
     private func applyStationDetail(force: Bool = false) {
-        let detail = StationDetail(cameraDistance: mapView.camera.centerCoordinateDistance)
+        let detail = settledStationDetail(at: mapView.camera.centerCoordinateDistance)
         guard force || detail != stationDetail else { return }
         stationDetail = detail
         syncSectors()
 
-        mapView.removeOverlays(stationOverlays)
+        let tier = detail >= .allLabels ? 2 : detail >= .tracks ? 1 : 0
+        if force || tier != stationShapeTier {
+            stationShapeTier = tier
+            rebuildStationShapes(at: detail)
+        }
+
         mapView.removeAnnotations(stationPins)
+        stationPins = stationContent.visibleLabels(at: detail)
+            .map { label in
+                let kind: MapPin.Kind = label.color == nil ? .stationTrack : .stationCurrentTrack
+                let pin = MapPin(kind: kind, coordinate: label.coordinate, anchorY: StationLabelView.anchorsAtBottom(label) ? MapPin.bottom : nil)
+                pin.content = AnyView(StationLabelView(label: label))
+                return pin
+            }
+            + stationContent.visibleAccess(at: detail).map { point in
+                let pin = MapPin(kind: .stationAccess, coordinate: point.coordinate, anchorY: nil)
+                pin.content = AnyView(StationAccessView(kind: point.kind))
+                return pin
+            }
+        mapView.addAnnotations(stationPins)
+    }
+
+    private func settledStationDetail(at distance: CLLocationDistance) -> StationDetail {
+        let detail = StationDetail(cameraDistance: distance)
+        guard detail != stationDetail else { return detail }
+        let farther = StationDetail(cameraDistance: distance * 1.12)
+        let nearer = StationDetail(cameraDistance: distance / 1.12)
+        return (farther...nearer).contains(stationDetail) ? stationDetail : detail
+    }
+
+    private func rebuildStationShapes(at detail: StationDetail) {
+        mapView.removeOverlays(stationOverlays)
         stationOverlays = []
-        stationPins = []
         guard detail >= .tracks else { return }
 
         // bottom to top: rails, platforms, our rails, platform edges
@@ -319,20 +349,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         for overlay in stationOverlays.reversed() {
             mapView.insertOverlay(overlay, at: 0, level: .aboveRoads)
         }
-
-        stationPins = stationContent.visibleLabels(at: detail)
-            .map { label in
-                let kind: MapPin.Kind = label.color == nil ? .stationTrack : .stationCurrentTrack
-                let pin = MapPin(kind: kind, coordinate: label.coordinate, anchorY: StationLabelView.anchorsAtBottom(label) ? MapPin.bottom : nil)
-                pin.content = AnyView(StationLabelView(label: label))
-                return pin
-            }
-            + stationContent.visibleAccess(at: detail).map { point in
-                let pin = MapPin(kind: .stationAccess, coordinate: point.coordinate, anchorY: nil)
-                pin.content = AnyView(StationAccessView(kind: point.kind))
-                return pin
-            }
-        mapView.addAnnotations(stationPins)
     }
 
     private func syncRoute() {

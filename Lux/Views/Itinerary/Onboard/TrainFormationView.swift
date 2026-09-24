@@ -192,29 +192,31 @@ private struct SectorRuler: View {
     let sectors: [FormationLayout.Sector]
     let total: CGFloat
 
-    var body: some View {
-        ZStack(alignment: .topLeading) {
-            ForEach(sectors, id: \.id) { sector in
-                SectorMark(letter: sector.letter)
-                    .frame(width: sector.span.width)
-                    .offset(x: sector.span.x)
-            }
+    private var ticks: [CGFloat] {
+        guard let first = sectors.first, let last = sectors.last else { return [] }
+        var ticks: [CGFloat] = [first.span.x]
+        for (previous, next) in zip(sectors, sectors.dropFirst()) {
+            ticks.append((previous.span.x + previous.span.width + next.span.x) / 2)
         }
-        .frame(width: total, alignment: .topLeading)
+        ticks.append(last.span.x + last.span.width)
+        return ticks
     }
-}
-
-private struct SectorMark: View {
-    let letter: String?
 
     var body: some View {
-        VStack(spacing: 3) {
-            if let letter {
-                SectorChipView(letter: letter, covered: nil, firstClass: false)
+        VStack(alignment: .leading, spacing: 3) {
+            ZStack(alignment: .topLeading) {
+                ForEach(sectors, id: \.id) { sector in
+                    if let letter = sector.letter {
+                        SectorChipView(letter: letter, covered: nil, firstClass: false)
+                            .frame(width: sector.span.width)
+                            .offset(x: sector.span.x)
+                    }
+                }
             }
-            SectorBracket()
+            .frame(width: total, alignment: .topLeading)
+            SectorRulerLine(ticks: ticks)
                 .stroke(.secondary.opacity(0.7), style: StrokeStyle(lineWidth: 1.2, lineCap: .round, lineJoin: .round))
-                .frame(height: 7)
+                .frame(width: total, height: 7)
         }
     }
 }
@@ -357,14 +359,18 @@ private struct CoachShape: Shape {
     }
 }
 
-private struct SectorBracket: Shape {
+private struct SectorRulerLine: Shape {
+    let ticks: [CGFloat]
+
     func path(in rect: CGRect) -> Path {
         var path = Path()
-        path.move(to: CGPoint(x: rect.minX + 1, y: rect.midY))
-        path.addLine(to: CGPoint(x: rect.maxX - 1, y: rect.midY))
-        for x in [rect.minX + 1, rect.maxX - 1] {
-            path.move(to: CGPoint(x: x, y: rect.minY))
-            path.addLine(to: CGPoint(x: x, y: rect.maxY))
+        guard let first = ticks.first, let last = ticks.last else { return path }
+        let inset: (CGFloat) -> CGFloat = { min(max($0, rect.minX + 1), rect.maxX - 1) }
+        path.move(to: CGPoint(x: inset(first), y: rect.midY))
+        path.addLine(to: CGPoint(x: inset(last), y: rect.midY))
+        for x in ticks {
+            path.move(to: CGPoint(x: inset(x), y: rect.minY))
+            path.addLine(to: CGPoint(x: inset(x), y: rect.maxY))
         }
         return path
     }
