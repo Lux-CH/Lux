@@ -97,6 +97,13 @@ struct TripResultsContent: View {
 
             tripsState
                 .frame(maxHeight: .infinity, alignment: .top)
+                .mask {
+                    VStack(spacing: 0) {
+                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
+                            .frame(height: 14)
+                        Color.black
+                    }
+                }
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .animation(.easeInOut(duration: 0.25), value: viewModel.isPresetFallback)
