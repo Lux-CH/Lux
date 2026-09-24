@@ -66,6 +66,8 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     private var destination: MapPin?
     private var stopPins: [MapPin] = []
     private var levelPins: [MapPin] = []
+    private var sectorPins: [MapPin] = []
+    private var sectorSignature = ""
     private var levelSignature = ""
     private var stationOverlays: [MKOverlay] = []
     private var stationPins: [MapPin] = []
@@ -187,6 +189,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         syncStops()
         syncStations()
         syncLevelChanges()
+        syncSectors()
         syncMarkers()
         puckModel.style = puckStyle
     }
@@ -213,6 +216,38 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         stationSignature = signature
         stationContent = StationOverlayContent(legs: legs, layouts: stationLayouts)
         applyStationDetail(force: true)
+    }
+
+    // Sector letters on the platform of the train about to be boarded, up close: solid
+    // where its coaches stop (1st class with the yellow band), faded elsewhere.
+    private func syncSectors() {
+        var sectors: [StationLayout.Sector] = []
+        var covered: Set<String>?
+        var firstClass: Set<String> = []
+        if stationDetail >= .allLabels, session.phase == .walking || session.phase == .waiting,
+           let (_, leg) = session.nextTransitLeg, leg.mode.isMainlineRail,
+           let uic = StationLayout.uic(fromStopId: leg.from.stopId), let layout = stationLayouts[uic],
+           let track = layout.track(named: leg.from.track ?? leg.from.scheduledTrack, stopId: leg.from.stopId) {
+            sectors = track.sectors
+            if let formation = session.formation {
+                covered = formation.coveredSectors
+                firstClass = Set(formation.sectors.first)
+            }
+        }
+        let signature = sectors.map(\.s).joined() + "|" + (covered.map { $0.sorted().joined() } ?? "?") + "|" + firstClass.sorted().joined()
+        guard signature != sectorSignature else { return }
+        sectorSignature = signature
+        mapView.removeAnnotations(sectorPins)
+        sectorPins = sectors.map { sector in
+            let pin = MapPin(kind: .sector, coordinate: sector.coordinate, anchorY: nil)
+            pin.content = AnyView(SectorChipView(
+                letter: sector.s,
+                covered: covered.map { $0.contains(sector.s) },
+                firstClass: firstClass.contains(sector.s)
+            ))
+            return pin
+        }
+        mapView.addAnnotations(sectorPins)
     }
 
     // Stairs, lifts and ramps of the current walk, where it changes level in a station.
@@ -248,6 +283,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         let detail = StationDetail(cameraDistance: mapView.camera.centerCoordinateDistance)
         guard force || detail != stationDetail else { return }
         stationDetail = detail
+        syncSectors()
 
         mapView.removeOverlays(stationOverlays)
         mapView.removeAnnotations(stationPins)
@@ -803,7 +839,7 @@ private final class StationArea: MKPolygon {
 
 private final class MapPin: NSObject, MKAnnotation {
     enum Kind {
-        case puck, ghost, estimated, approaching, stop, destination, stationTrack, stationCurrentTrack, stationAccess, levelChange
+        case puck, ghost, estimated, approaching, stop, destination, stationTrack, stationCurrentTrack, stationAccess, levelChange, sector
 
         var zPriority: MKAnnotationViewZPriority {
             switch self {
@@ -813,6 +849,7 @@ private final class MapPin: NSObject, MKAnnotation {
             case .destination: return MKAnnotationViewZPriority(rawValue: 500)
             case .stop: return .defaultUnselected
             case .levelChange: return MKAnnotationViewZPriority(rawValue: 550)
+            case .sector: return MKAnnotationViewZPriority(rawValue: 420)
             case .stationCurrentTrack: return MKAnnotationViewZPriority(rawValue: 450)
             case .stationTrack: return MKAnnotationViewZPriority(rawValue: 400)
             case .stationAccess: return MKAnnotationViewZPriority(rawValue: 380)
