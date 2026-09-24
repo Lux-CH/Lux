@@ -43,19 +43,26 @@ final class DisruptionManager: ObservableObject {
     }
 
     func disruptions(for leg: Leg) -> [Disruption] {
-        let agencyId = leg.agencyId == "Transports Publics Genevois" ? "881" : leg.agencyId
-        var result: [Disruption] = []
-        if let line = leg.routeShortName, let agencyId {
-            result += disruptions.filter { $0.line == line && ($0.agencyId ?? "881") == agencyId }
+        guard let agencyId = leg.agencyId == "Transports Publics Genevois" ? "881" : leg.agencyId else { return [] }
+        let line = leg.routeShortName ?? ""
+        let tripKey = Self.tripKey(leg.tripId)
+        let stations = Set(([leg.from, leg.to] + (leg.intermediateStops ?? [])).compactMap { Self.station($0.stopId ?? $0.parentId) })
+
+        return disruptions.filter { disruption in
+            guard (disruption.agencyId ?? "881") == agencyId else { return false }
+            if !line.isEmpty && disruption.line == line { return true }
+            if let tripKey, disruption.tripIds?.contains(tripKey) == true { return true }
+            return disruption.stopIds?.contains(where: stations.contains) == true
         }
-        if let tripKey = Self.tripKey(leg.tripId) {
-            result += disruptions.filter { $0.tripIds?.contains(tripKey) == true }
-        }
-        return result
     }
 
     private static func tripKey(_ tripId: String?) -> String? {
         guard let parts = tripId?.split(separator: "_", maxSplits: 3), parts.count == 4 else { return nil }
         return "\(parts[0])_\(parts[3])"
+    }
+
+    private static func station(_ stopId: String?) -> String? {
+        guard let stopId, let range = stopId.range(of: #"ch:1:sloid:\d+"#, options: .regularExpression) else { return nil }
+        return String(stopId[range])
     }
 }
