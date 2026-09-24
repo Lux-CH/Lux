@@ -61,13 +61,21 @@ struct DisruptionSectionView: View {
                 .clipped()
                 .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isExpanded)
             }
-            .adaptable(ios26: .glassIn(AnyShape(RoundedRectangle(cornerRadius: 20, style: .continuous))), fallback: {
+            .adaptable(ios26: .glassIn(sectionShape), fallback: {
                 $0.background(
                     RoundedRectangle(cornerRadius: 20, style: .continuous)
                         .fill(colorScheme == .dark ? Color(.secondarySystemBackground) : Color(.systemGray6))
                 )
             })
-            .contentShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
+            .contentShape(sectionShape)
+        }
+    }
+
+    private var sectionShape: AnyShape {
+        if #available(iOS 26, *) {
+            AnyShape(ConcentricRectangle(corners: .concentric(minimum: 20), isUniform: true))
+        } else {
+            AnyShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
         }
     }
 }
