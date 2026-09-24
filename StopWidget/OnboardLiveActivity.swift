@@ -229,7 +229,6 @@ private struct ExpandedLeading: View {
         Group {
             if let line = state.line, state.phase == .riding || state.phase == .waiting {
                 SolidLinePill(line: line, colorHex: state.lineColorHex, mode: state.lineMode, height: 30, fontSize: 16)
-                    .frame(height: state.phase == .riding ? 41 : 31)
             } else {
                 ManeuverBadge(symbol: state.symbolName, size: 38)
             }
