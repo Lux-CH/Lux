@@ -29,8 +29,10 @@ final class DisruptionManager: ObservableObject {
                 try? await getDisruptions()
             },
             onUpdate: { [weak self] fetched in
-                self?.disruptions = Array(Set(fetched))
-                self?.hasLoaded = true
+                guard let self else { return }
+                let unique = Set(fetched)
+                if Set(self.disruptions) != unique { self.disruptions = Array(unique) }
+                if !self.hasLoaded { self.hasLoaded = true }
             }
         )
     }
