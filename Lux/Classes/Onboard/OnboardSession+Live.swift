@@ -111,14 +111,11 @@ extension OnboardSession {
     }
 
     func estimatedVehicleCoordinate(at date: Date) -> CLLocationCoordinate2D? {
-        guard phase == .walking || phase == .waiting, approachingVehicle == nil, let (index, leg) = nextTransitLeg,
+        guard phase == .walking || phase == .waiting, approachingVehicle == nil, let (index, _) = nextTransitLeg,
               let frames = tripKeyFrames[index]?.frames,
               let position = VehicleVisualisation.interpolatePosition(at: date.timeIntervalSince1970, using: frames) else { return nil }
-        guard phase == .waiting, let trip = tripPaths[index], let location = userLocation,
-              CLLocation(latitude: leg.from.lat, longitude: leg.from.lon).distance(from: location) < 80,
-              let projection = trip.path.project(position, hint: trip.boardAlong),
-              projection.along > trip.boardAlong else { return position }
-        return trip.path.coordinate(at: trip.boardAlong) ?? position
+        guard let trip = tripPaths[index], let projection = trip.path.project(position, hint: trip.boardAlong) else { return position }
+        return projection.along < trip.boardAlong - 10 ? position : nil
     }
 
     func updateEstimates() {
