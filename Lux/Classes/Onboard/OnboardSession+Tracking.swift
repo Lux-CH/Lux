@@ -394,6 +394,7 @@ extension OnboardSession {
     }
 
     func estimatedAlongByTime(leg: Leg, alongs: [CLLocationDistance]) -> CLLocationDistance {
+        if let along = keyFrameAlong(leg: leg) { return along }
         let stops = leg.allStops
         let times: [Date] = stops.enumerated().map { index, stop in
             (index == 0 ? stop.departure ?? stop.arrival : stop.arrival ?? stop.departure)
@@ -410,6 +411,18 @@ extension OnboardSession {
             }
         }
         return alongs.last ?? 0
+    }
+
+    private func keyFrameAlong(leg: Leg) -> CLLocationDistance? {
+        let times = leg.allStops.compactMap { ($0.arrival ?? $0.departure)?.timeIntervalSince1970 }.reduce(0, +)
+        let key = "\(legIndex)|\(leg.tripId ?? "")|\(times)"
+        if legKeyFrames?.key != key {
+            legKeyFrames = (key, VehicleVisualisation.calculateKeyFrames(for: leg, polylineString: leg.legGeometry.points, precision: 1e6))
+        }
+        guard let frames = legKeyFrames?.frames, !frames.isEmpty, let path = currentPath,
+              let position = VehicleVisualisation.interpolatePosition(at: now.timeIntervalSince1970, using: frames),
+              let projection = path.project(position, hint: alongInLeg) else { return nil }
+        return projection.along
     }
 
     func announceStopsIfNeeded(leg: Leg) {

@@ -39,6 +39,7 @@ final class OnboardSession {
     var legDisruptions: [LegDisruption] = []
     @ObservationIgnored var tripPaths: [Int: (path: RoutePath, boardAlong: CLLocationDistance)] = [:]
     @ObservationIgnored var walkOffset: CLLocationDistance = .infinity
+    @ObservationIgnored var legKeyFrames: (key: String, frames: [VehicleVisualisation.KeyFrame])?
     @ObservationIgnored var knownDisruptions: [Disruption]?
     @ObservationIgnored var announcedDisruptionIds: Set<String>?
     var nextManeuver: WalkManeuver?
