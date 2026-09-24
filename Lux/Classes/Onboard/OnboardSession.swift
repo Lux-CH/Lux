@@ -37,6 +37,8 @@ final class OnboardSession {
     var hasWeakGPS = false
     var hasTrainGPS = false
     var legDisruptions: [LegDisruption] = []
+    @ObservationIgnored var tripPaths: [Int: (path: RoutePath, boardAlong: CLLocationDistance)] = [:]
+    @ObservationIgnored var walkOffset: CLLocationDistance = .infinity
     @ObservationIgnored var knownDisruptions: [Disruption]?
     @ObservationIgnored var announcedDisruptionIds: Set<String>?
     var nextManeuver: WalkManeuver?
@@ -340,11 +342,14 @@ final class OnboardSession {
 
     var followsTimetable: Bool {
         guard let leg = currentLeg, leg.isTransit else { return false }
-        return leg.mode.isMainlineRail && (phase == .waiting || (phase == .riding && !hasTrainGPS))
+        return (leg.mode.isMainlineRail && phase == .waiting) || (leg.ridesByTimetable && phase == .riding && !hasTrainGPS)
     }
 
     var riderCoordinate: CLLocationCoordinate2D? {
-        if phase == .riding, currentLeg?.mode.isMainlineRail == true, let point = currentPath?.coordinate(at: alongInLeg) {
+        if phase == .riding, currentLeg?.ridesByTimetable == true, let point = currentPath?.coordinate(at: alongInLeg) {
+            return point
+        }
+        if phase == .walking, !isOffRoute, walkOffset <= 20, let point = currentPath?.coordinate(at: alongInLeg) {
             return point
         }
         return userLocation?.coordinate
@@ -372,6 +377,9 @@ final class OnboardSession {
     func tick() {
         guard isRunning else { return }
         now = Date()
+        if let leg = currentLeg {
+            locationProvider.isSaving = phase == .waiting && !leg.mode.isMainlineRail && leg.startTime.timeIntervalSince(now) > 120
+        }
         if let replan, now >= replan.autoApplyAt {
             acceptReplan()
         }

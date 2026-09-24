@@ -27,6 +27,13 @@ extension OnboardSession {
         }
     }
 
+    func spokenDeparture(_ date: Date) -> String {
+        let minutes = Int((date.timeIntervalSince(Date()) / 60).rounded(.up))
+        if minutes <= 0 { return String(localized: "départ imminent") }
+        if minutes == 1 { return String(localized: "départ dans 1 minute") }
+        return String(localized: "départ dans \(minutes) minutes")
+    }
+
     func startAnnouncement() -> String {
         switch phase {
         case .walking:
@@ -35,7 +42,7 @@ extension OnboardSession {
             }
         case .waiting:
             if let leg = currentLeg {
-                return String(localized: "C'est parti. Prenez \(leg.spokenLineName), départ à \(formatTime(leg.startTime)).")
+                return String(localized: "C'est parti. Prenez \(leg.spokenLineName), \(spokenDeparture(leg.startTime)).")
             }
         case .riding:
             if let leg = currentLeg {

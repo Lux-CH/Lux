@@ -101,10 +101,24 @@ extension OnboardSession {
         scheduledWalkerAlong(at: date).flatMap { currentPath?.coordinate(at: $0) }
     }
 
+    func remainingApproach(at date: Date) -> (index: Int, coordinates: [CLLocationCoordinate2D])? {
+        guard phase == .walking || phase == .waiting, let (index, _) = nextTransitLeg, let trip = tripPaths[index] else { return nil }
+        let vehicle = approachingVehicle.map { CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lon) } ?? estimatedVehicleCoordinate(at: date)
+        guard let vehicle, let projection = trip.path.project(vehicle, hint: trip.boardAlong),
+              projection.along < trip.boardAlong - 10 else { return nil }
+        let coordinates = trip.path.slice(from: projection.along, to: trip.boardAlong)
+        return coordinates.count >= 2 ? (index, coordinates) : nil
+    }
+
     func estimatedVehicleCoordinate(at date: Date) -> CLLocationCoordinate2D? {
-        guard phase == .walking || phase == .waiting, approachingVehicle == nil, let (index, _) = nextTransitLeg,
-              let frames = tripKeyFrames[index]?.frames else { return nil }
-        return VehicleVisualisation.interpolatePosition(at: date.timeIntervalSince1970, using: frames)
+        guard phase == .walking || phase == .waiting, approachingVehicle == nil, let (index, leg) = nextTransitLeg,
+              let frames = tripKeyFrames[index]?.frames,
+              let position = VehicleVisualisation.interpolatePosition(at: date.timeIntervalSince1970, using: frames) else { return nil }
+        guard phase == .waiting, let trip = tripPaths[index], let location = userLocation,
+              CLLocation(latitude: leg.from.lat, longitude: leg.from.lon).distance(from: location) < 80,
+              let projection = trip.path.project(position, hint: trip.boardAlong),
+              projection.along > trip.boardAlong else { return position }
+        return trip.path.coordinate(at: trip.boardAlong) ?? position
     }
 
     func updateEstimates() {
@@ -118,6 +132,13 @@ extension OnboardSession {
         if let tripLeg = trip.legs.first(where: { $0.tripId != nil }) ?? trip.legs.first,
            Date().timeIntervalSince(tripKeyFrames[index]?.at ?? .distantPast) > 20 {
             tripKeyFrames[index] = (VehicleVisualisation.calculateKeyFrames(for: tripLeg, polylineString: tripLeg.legGeometry.points, precision: 1e6), Date())
+            if legs.indices.contains(index) {
+                let tripPath = RoutePath(encoded: tripLeg.legGeometry.points, precision: 1e6)
+                let board = legs[index].from
+                if let projection = tripPath.project(CLLocationCoordinate2D(latitude: board.lat, longitude: board.lon)) {
+                    tripPaths[index] = (tripPath, projection.along)
+                }
+            }
         }
         guard isRunning, legs.indices.contains(index), let merged = LegLiveMerger.merge(legs[index], with: trip) else { return }
         let previous = legs[index]
@@ -214,7 +235,7 @@ extension OnboardSession {
             : String(localized: "Départ de \(placeName(leg.from)) à \(formatTime(leg.startTime))")
         showAlert(
             OnboardAlert(severity: severity, symbolName: delay >= 2 ? "clock.badge.exclamationmark.fill" : "clock.fill", title: title, message: message),
-            spoken: "\(title). \(message).",
+            spoken: boarded ? "\(title). \(message)." : String(localized: "\(title). Départ de \(placeName(leg.from)), \(spokenDeparture(leg.startTime))."),
             urgency: .notice
         )
     }

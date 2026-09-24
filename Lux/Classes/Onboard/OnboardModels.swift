@@ -322,21 +322,6 @@ enum WalkManeuverBuilder {
         }
     }
 
-    static func maneuvers(for steps: [MKRoute.Step], on path: RoutePath) -> [WalkManeuver] {
-        let usable = steps.filter { !$0.instructions.isEmpty && $0.polyline.pointCount > 0 }
-        let starts = usable.map { $0.polyline.points()[0].coordinate }
-        let positions = path.projectSequence(starts)
-        return zip(usable, positions).compactMap { step, along in
-            guard along > 1 else { return nil }
-            return WalkManeuver(
-                symbolName: symbol(forInstruction: step.instructions),
-                instruction: step.instructions,
-                shortInstruction: step.instructions,
-                along: along
-            )
-        }
-    }
-
     static func symbol(for direction: Direction) -> String {
         switch direction {
         case .depart: return "figure.walk"
@@ -384,20 +369,11 @@ enum WalkManeuverBuilder {
             return String(localized: "Faites demi-tour")
         }
     }
-
-    static func symbol(forInstruction text: String) -> String {
-        let text = text.lowercased()
-        let slight = text.contains("slight") || text.contains("légèrement") || text.contains("serrez")
-        if text.contains("u-turn") || text.contains("demi-tour") { return "arrow.uturn.left" }
-        if text.contains("roundabout") || text.contains("rond-point") { return "arrow.clockwise.circle" }
-        if text.contains("left") || text.contains("gauche") { return slight ? "arrow.up.left" : "arrow.turn.up.left" }
-        if text.contains("right") || text.contains("droite") { return slight ? "arrow.up.right" : "arrow.turn.up.right" }
-        if text.contains("stairs") || text.contains("escalier") { return "figure.stairs" }
-        return "arrow.up"
-    }
 }
 
 extension Leg {
+    var ridesByTimetable: Bool { mode.isMainlineRail || mode == .subway || mode == .metro }
+
     var isTransit: Bool { mode != .walk && mode != .bike && mode != .car && mode != .rental && mode != .carParking }
 
     var allStops: [Place] {

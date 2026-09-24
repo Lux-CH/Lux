@@ -136,10 +136,12 @@ extension OnboardSession {
     func evaluateWalking() {
         guard let leg = currentLeg, let path = currentPath else { return }
         guard let location = usableLocation, let projection = path.project(location.coordinate, hint: alongInLeg) else {
+            walkOffset = .infinity
             updateManeuvers()
             return
         }
 
+        walkOffset = projection.offset
         assign(\.alongInLeg, projection.along)
         let tolerance = max(offRouteDistance, location.horizontalAccuracy)
         if projection.offset > tolerance {
@@ -248,7 +250,7 @@ extension OnboardSession {
         let alongs = stopAlongs[legIndex]
         guard alongs.count >= 2 else { return }
 
-        if leg.mode.isMainlineRail {
+        if leg.ridesByTimetable {
             evaluateRidingTrain(leg: leg, alongs: alongs)
             return
         }
@@ -416,6 +418,16 @@ extension OnboardSession {
         let remaining = stopsRemaining
         let key = "\(legIndex)"
 
+        let alongs = stopAlongs.indices.contains(legIndex) ? stopAlongs[legIndex] : []
+        if alongs.count >= 2, phase == .riding, !announcedStopAlerts.contains(key + "-final") {
+            let alight = alongs[alongs.count - 1]
+            let previous = alongs[alongs.count - 2]
+            if alight - previous > 300, alongInLeg > previous, alight - alongInLeg <= 20 {
+                announcedStopAlerts.insert(key + "-final")
+                announcer.speak(String(localized: "Descendez maintenant, \(alightName)."))
+            }
+        }
+
         if remaining == 1, !announcedStopAlerts.contains(key + "-next") {
             announcedStopAlerts.insert(key + "-next")
             announcedStopAlerts.insert(key + "-two")
@@ -466,7 +478,7 @@ extension OnboardSession {
             if announce {
                 let direction = leg.headsign.map { String(localized: " direction \($0)") } ?? ""
                 announcer.announce(
-                    String(localized: "Prenez \(leg.spokenLineName)\(direction), départ à \(formatTime(leg.startTime))."),
+                    String(localized: "Prenez \(leg.spokenLineName)\(direction), \(spokenDeparture(leg.startTime))."),
                     notificationTitle: String(localized: "Prochaine étape"),
                     urgency: .notice
                 )
@@ -563,7 +575,7 @@ extension OnboardSession {
             let path = RoutePath(coordinates: coordinates)
             guard !path.isEmpty else { return }
             self.paths[index] = path
-            self.maneuvers[index] = WalkManeuverBuilder.maneuvers(for: route.steps, on: path)
+            self.maneuvers[index] = WalkManeuverBuilder.maneuvers(for: [StepInstruction](), on: path)
             self.reroutedWalks.insert(index)
             self.alongInLeg = 0
             self.offRouteStreak = 0

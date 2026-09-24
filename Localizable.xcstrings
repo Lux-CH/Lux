@@ -183,6 +183,16 @@
         }
       }
     },
+    "%@. Départ de %@, %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@. Departing %@, %@."
+          }
+        }
+      }
+    },
     "%@%lld'" : {
       "localizations" : {
         "fr" : {
@@ -1814,12 +1824,12 @@
         }
       }
     },
-    "C'est parti. Prenez %@, départ à %@." : {
+    "C'est parti. Prenez %@, %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Let's go. Take %@, departing at %@."
+            "value" : "Let's go. Take %@, %@."
           }
         }
       }
@@ -2676,12 +2686,42 @@
         }
       }
     },
+    "départ dans %lld minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "departing in %lld minutes"
+          }
+        }
+      }
+    },
+    "départ dans 1 minute" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "departing in 1 minute"
+          }
+        }
+      }
+    },
     "Départ de %@ à %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Departing %@ at %@"
+          }
+        }
+      }
+    },
+    "départ imminent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "departing now"
           }
         }
       }
@@ -2852,6 +2892,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Take the stairs down to %@"
+          }
+        }
+      }
+    },
+    "Descendez maintenant, %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get off now, %@."
           }
         }
       }
@@ -5137,12 +5187,12 @@
         }
       }
     },
-    "Nouvel itinéraire : prenez %@ à %@, arrivée à %@." : {
+    "Nouvel itinéraire : prenez %@, %@, arrivée à %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "New route: take %@ at %@, arriving at %@."
+            "value" : "New route: take %@, %@, arriving at %@."
           }
         }
       }
@@ -5673,6 +5723,7 @@
       }
     },
     "Perturbations (%lld)" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -5832,12 +5883,12 @@
         }
       }
     },
-    "Prenez %@%@, départ à %@." : {
+    "Prenez %@%@, %@." : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Take %@%@, departing at %@."
+            "value" : "Take %@%@, %@."
           }
         }
       }

@@ -91,7 +91,7 @@ extension OnboardSession {
             withAnimation(.spring(duration: 0.45)) { self.replan = proposal }
             if let transit = proposal.firstTransit {
                 self.announcer.announce(
-                    String(localized: "Nouvel itinéraire : prenez \(transit.spokenLineName) à \(formatTime(transit.startTime)), arrivée à \(formatTime(proposal.arrival))."),
+                    String(localized: "Nouvel itinéraire : prenez \(transit.spokenLineName), \(self.spokenDeparture(transit.startTime)), arrivée à \(formatTime(proposal.arrival))."),
                     notificationTitle: String(localized: "Nouvel itinéraire proposé"),
                     urgency: .critical
                 )
