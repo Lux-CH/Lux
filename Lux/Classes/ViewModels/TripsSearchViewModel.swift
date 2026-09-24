@@ -563,12 +563,12 @@ class TripsSearchViewModel: ObservableObject {
             let results = await self.hybridSearchService.search(
                 query: query,
                 userLocation: userCoordinate
-            ) { stopResults in
+            ) { earlyResults in
                 await MainActor.run {
                     guard self.currentSearchQuery == query else {
                         return
                     }
-                    self.searchResults = self.filterResults(stopResults)
+                    self.searchResults = self.filterResults(earlyResults)
                 }
             }
             

@@ -15,28 +15,39 @@ struct HybridLocationSearchService {
     private let scorer = SearchResultScorer()
     private let placesGracePeriod: Duration = .milliseconds(350)
 
+    private static let streetKeywords: Set<String> = [
+        "rue", "route", "rte", "chemin", "ch", "avenue", "av", "ave", "boulevard", "bd", "blvd",
+        "place", "pl", "quai", "promenade", "allee", "impasse", "passage", "sentier", "square",
+        "rampe", "esplanade", "cours", "strasse", "str", "weg", "gasse", "platz",
+        "via", "viale", "piazza", "corso", "vicolo",
+    ]
+    private static let streetSuffixes = ["strasse", "weg", "gasse", "platz"]
+
     func search(
         query: String,
         userLocation: CLLocationCoordinate2D?,
-        onStopResults: (@Sendable ([SearchResult]) async -> Void)? = nil
+        onEarlyResults: (@Sendable ([SearchResult]) async -> Void)? = nil
     ) async -> [SearchResult] {
         let placesTask = Task {
             await searchPlaces(query: query, userLocation: userLocation)
         }
 
         return await withTaskCancellationHandler {
-            let stopResults = await searchStops(query: query, userLocation: userLocation)
+            async let stopSearch = luxGeocode(query: query, type: .stop, userLocation: userLocation)
+            async let addressSearch = searchAddresses(query: query, userLocation: userLocation)
+            let stopResults = await stopSearch
+            let addressResults = await addressSearch
 
             var earlyDelivery: Task<Void, Never>?
-            if let onStopResults, !stopResults.isEmpty {
-                let earlyResults = rankedAndDeduplicated([stopResults], query: query, userLocation: userLocation)
+            if let onEarlyResults, !stopResults.isEmpty || !addressResults.isEmpty {
+                let earlyResults = rankedAndDeduplicated([stopResults, addressResults], query: query, userLocation: userLocation)
                 let gracePeriod = placesGracePeriod
                 earlyDelivery = Task {
                     try? await Task.sleep(for: gracePeriod)
                     guard !Task.isCancelled else {
                         return
                     }
-                    await onStopResults(earlyResults)
+                    await onEarlyResults(earlyResults)
                 }
             }
 
@@ -44,10 +55,10 @@ struct HybridLocationSearchService {
             earlyDelivery?.cancel()
             await earlyDelivery?.value
 
-            var sources = [stopResults, placeOutcome.results]
+            var sources = [stopResults, placeOutcome.results, addressResults]
 
             if placeOutcome.needsFallback {
-                sources.append(await searchLuxFallbackAll(query: query, userLocation: userLocation))
+                sources.append(await luxGeocode(query: query, type: nil, userLocation: userLocation))
             }
 
             return rankedAndDeduplicated(sources, query: query, userLocation: userLocation)
@@ -64,37 +75,50 @@ struct HybridLocationSearchService {
         let rankedResults = scorer.ranked(sources, query: query, userLocation: userLocation)
         return deduplicatedByNameAndProximity(deduplicated(results: rankedResults))
     }
-    
-    private func searchStops(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
-        do {
-            if let userLocation {
-                return try await LuxData.geocode(
-                    text: query,
-                    type: .stop,
-                    place: (userLocation.latitude, userLocation.longitude),
-                    placeBias: 2
-                )
-            }
-            return try await LuxData.geocode(text: query, type: .stop)
-        } catch {
-            print("stop geocode error: \(error.localizedDescription)")
+
+    private func searchAddresses(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
+        guard looksLikeAddress(query) else {
             return []
         }
+
+        return await luxGeocode(query: query, type: .adress, userLocation: userLocation)
     }
-    
-    private func searchLuxFallbackAll(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
+
+    private func looksLikeAddress(_ query: String) -> Bool {
+        if query.rangeOfCharacter(from: .decimalDigits) != nil {
+            return true
+        }
+
+        let tokens = query
+            .folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+            .components(separatedBy: CharacterSet.alphanumerics.inverted)
+            .filter { !$0.isEmpty }
+
+        return tokens.contains { token in
+            Self.streetKeywords.contains(token) || Self.streetSuffixes.contains { token.hasSuffix($0) }
+        }
+    }
+
+    private func serverQuery(for query: String) -> String {
+        query
+            .replacingOccurrences(of: #"(?i)\bsainte\b"#, with: "ste", options: .regularExpression)
+            .replacingOccurrences(of: #"(?i)\bsaint\b"#, with: "st", options: .regularExpression)
+    }
+
+    private func luxGeocode(query: String, type: LocationType?, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
+        let text = serverQuery(for: query)
         do {
             if let userLocation {
                 return try await LuxData.geocode(
-                    text: query,
+                    text: text,
+                    type: type,
                     place: (userLocation.latitude, userLocation.longitude),
                     placeBias: 2
                 )
             }
-            
-            return try await LuxData.geocode(text: query)
+            return try await LuxData.geocode(text: text, type: type)
         } catch {
-            print("lux fallback geocode error: \(error.localizedDescription)")
+            print("lux geocode error (\(type?.rawValue ?? "all")): \(error.localizedDescription)")
             return []
         }
     }
@@ -572,13 +596,25 @@ struct HybridLocationSearchService {
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
 
-        guard let primary = components.last else {
+        guard let country = components.last else {
             return []
         }
 
-        return [
-            SearchResult.Area(name: primary, adminLevel: 8, matched: true, default: true)
-        ]
+        var areas: [SearchResult.Area] = []
+        if components.count >= 2, let city = cityName(from: components[components.count - 2]) {
+            areas.append(SearchResult.Area(name: city, adminLevel: 8, matched: true, default: true))
+        }
+        areas.append(
+            SearchResult.Area(name: country, adminLevel: 2, matched: areas.isEmpty, default: areas.isEmpty ? true : nil)
+        )
+        return areas
+    }
+
+    private func cityName(from component: String) -> String? {
+        let words = component
+            .split(separator: " ")
+            .filter { !$0.allSatisfy(\.isNumber) }
+        return words.isEmpty ? nil : words.joined(separator: " ")
     }
 
     private func makeAreas(from placemark: MKPlacemark) -> [SearchResult.Area] {
@@ -633,6 +669,7 @@ struct HybridLocationSearchService {
     
     private func deduplicatedByNameAndProximity(_ results: [SearchResult]) -> [SearchResult] {
         let duplicateDistanceThreshold: CLLocationDistance = 120.0
+        let addressDuplicateDistanceThreshold: CLLocationDistance = 400.0
         var keptByNormalizedName: [String: [SearchResult]] = [:]
         var deduplicated: [SearchResult] = []
         
@@ -645,7 +682,12 @@ struct HybridLocationSearchService {
             
             let existing = keptByNormalizedName[normalizedName] ?? []
             let isDuplicate = existing.contains { existingResult in
-                areWithinDuplicateThreshold(existingResult, result, threshold: duplicateDistanceThreshold)
+                let bothAddresses = existingResult.type == .adress && result.type == .adress
+                return areWithinDuplicateThreshold(
+                    existingResult,
+                    result,
+                    threshold: bothAddresses ? addressDuplicateDistanceThreshold : duplicateDistanceThreshold
+                )
             }
             
             if isDuplicate {

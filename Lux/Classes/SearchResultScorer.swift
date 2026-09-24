@@ -20,10 +20,16 @@ struct SearchResultScorer {
         "mt": "mont",
     ]
 
+    private static let stationWords: Set<String> = ["gare", "bahnhof", "stazione", "station", "hb", "hbf", "bf"]
+
+    private static let hubModes: Set<TransportationMode> = [.longDistance, .highSpeedRail]
+
     private let textWeight = 0.55
-    private let proximityWeight = 0.30
+    private let proximityWeight = 0.22
     private let sourceRankWeight = 0.15
     private let stopWeight = 0.08
+    private let importanceWeight = 0.08
+    private let looseMatchScore = 0.75
     private let proximityHorizonKilometers = 300.0
     private let unknownPlaceProximity = 0.3
 
@@ -54,7 +60,7 @@ struct SearchResultScorer {
                 + proximityWeight * proximityScore
                 + sourceRankWeight * sourceRankScore(for: entry.sourceRank)
             if entry.result.type == .stop {
-                composite += stopWeight * textScore
+                composite += (stopWeight + importanceWeight * importance(of: entry.result)) * textScore
             }
 
             return (entry.result, composite, distance)
@@ -82,10 +88,14 @@ struct SearchResultScorer {
         }
 
         let localNameTokens = localNameTokens(for: result, nameTokens: nameTokens)
-        let phraseScore = max(
-            phraseScore(candidate: localNameTokens, queryTokens: queryTokens),
-            phraseScore(candidate: nameTokens, queryTokens: queryTokens)
-        )
+        var candidates = [localNameTokens, nameTokens]
+        if result.type == .stop {
+            let withoutStationWords = localNameTokens.filter { !Self.stationWords.contains($0) }
+            if !withoutStationWords.isEmpty, withoutStationWords.count < localNameTokens.count {
+                candidates.append(withoutStationWords)
+            }
+        }
+        let phraseScore = candidates.map { phraseScore(candidate: $0, queryTokens: queryTokens) }.max() ?? 0
 
         let areaTokens = Set(result.areas.flatMap { tokenize($0.name) })
         var matchTotal = 0.0
@@ -94,7 +104,7 @@ struct SearchResultScorer {
             let areaMatch = areaTokens.map { tokenSimilarity(query: queryToken, candidate: $0) }.max() ?? 0
             matchTotal += max(nameMatch, 0.9 * areaMatch)
         }
-        let coverageScore = 0.85 * matchTotal / Double(queryTokens.count)
+        let coverageScore = looseMatchScore * matchTotal / Double(queryTokens.count)
 
         return max(phraseScore, coverageScore)
     }
@@ -122,19 +132,30 @@ struct SearchResultScorer {
             return 0
         }
 
-        let candidatePhrase = candidate.joined(separator: " ")
-        let queryPhrase = queryTokens.joined(separator: " ")
+        let orderedQueryTokens = houseNumberLast(queryTokens)
+        let candidatePhrase = " " + candidate.joined(separator: " ") + " "
+        let queryPhrase = " " + orderedQueryTokens.joined(separator: " ")
+        let endsWithNumber = orderedQueryTokens.last.map(isNumber) ?? false
+        let boundedQueryPhrase = endsWithNumber ? queryPhrase + " " : queryPhrase
 
-        if candidatePhrase == queryPhrase {
+        if candidatePhrase == queryPhrase + " " {
             return 1.0
         }
-        if candidatePhrase.hasPrefix(queryPhrase) {
+        if candidatePhrase.hasPrefix(boundedQueryPhrase) {
             return 0.95
         }
-        if (" " + candidatePhrase).contains(" " + queryPhrase) {
-            return 0.85
+        if candidatePhrase.contains(boundedQueryPhrase) {
+            return looseMatchScore
         }
         return 0
+    }
+
+    private func houseNumberLast(_ tokens: [String]) -> [String] {
+        guard tokens.count > 1, let first = tokens.first, isNumber(first) else {
+            return tokens
+        }
+
+        return Array(tokens.dropFirst()) + [first]
     }
 
     private func tokenSimilarity(query: String, candidate: String) -> Double {
@@ -142,9 +163,64 @@ struct SearchResultScorer {
             return 1.0
         }
         if candidate.hasPrefix(query) {
-            return query.count >= 2 ? 0.9 : 0.5
+            return query.count >= 2 && !isNumber(query) ? 0.9 : 0.5
+        }
+        if isTypo(of: candidate, query: query) {
+            return 0.7
         }
         return 0
+    }
+
+    private func isTypo(of candidate: String, query: String) -> Bool {
+        guard query.count >= 4, candidate.count >= 4, !isNumber(query) else {
+            return false
+        }
+
+        let allowedEdits = query.count >= 8 ? 2 : 1
+        guard abs(candidate.count - query.count) <= allowedEdits else {
+            return false
+        }
+
+        return editDistance(Array(query), Array(candidate), limit: allowedEdits) <= allowedEdits
+    }
+
+    private func editDistance(_ lhs: [Character], _ rhs: [Character], limit: Int) -> Int {
+        var previousPrevious = [Int](repeating: 0, count: rhs.count + 1)
+        var previous = Array(0...rhs.count)
+        var current = [Int](repeating: 0, count: rhs.count + 1)
+
+        for i in 1...lhs.count {
+            current[0] = i
+            var rowMinimum = current[0]
+            for j in 1...rhs.count {
+                let cost = lhs[i - 1] == rhs[j - 1] ? 0 : 1
+                current[j] = min(previous[j] + 1, current[j - 1] + 1, previous[j - 1] + cost)
+                if i > 1, j > 1, lhs[i - 1] == rhs[j - 2], lhs[i - 2] == rhs[j - 1] {
+                    current[j] = min(current[j], previousPrevious[j - 2] + 1)
+                }
+                rowMinimum = min(rowMinimum, current[j])
+            }
+            if rowMinimum > limit {
+                return rowMinimum
+            }
+            (previousPrevious, previous, current) = (previous, current, previousPrevious)
+        }
+
+        return previous[rhs.count]
+    }
+
+    private func importance(of result: SearchResult) -> Double {
+        if result.modes.contains(where: Self.hubModes.contains) {
+            return 1.0
+        }
+        if result.servesMainlineRail {
+            return 0.5
+        }
+        return 0
+    }
+
+    private func isNumber(_ token: String) -> Bool {
+        !token.isEmpty && token.allSatisfy(\.isNumber)
     }
 
     private func proximityScore(for distance: CLLocationDistance, hasUserLocation: Bool) -> Double {
