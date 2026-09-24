@@ -13,7 +13,6 @@ import LuxCom
 struct HybridLocationSearchService {
     private let maxReturnedPlaces = 10
     private let scorer = SearchResultScorer()
-    private let placesGracePeriod: Duration = .milliseconds(350)
 
     private static let streetKeywords: Set<String> = [
         "rue", "route", "rte", "chemin", "ch", "avenue", "av", "ave", "boulevard", "bd", "blvd",
@@ -23,48 +22,22 @@ struct HybridLocationSearchService {
     ]
     private static let streetSuffixes = ["strasse", "weg", "gasse", "platz"]
 
-    func search(
-        query: String,
-        userLocation: CLLocationCoordinate2D?,
-        onEarlyResults: (@Sendable ([SearchResult]) async -> Void)? = nil
-    ) async -> [SearchResult] {
-        let placesTask = Task {
-            await searchPlaces(query: query, userLocation: userLocation)
+    func search(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
+        async let stopSearch = luxGeocode(query: query, type: .stop, userLocation: userLocation)
+        async let addressSearch = searchAddresses(query: query, userLocation: userLocation)
+        async let placeSearch = searchPlaces(query: query, userLocation: userLocation)
+
+        let stopResults = await stopSearch
+        let addressResults = await addressSearch
+        let placeOutcome = await placeSearch
+
+        var sources = [stopResults, placeOutcome.results, addressResults]
+
+        if placeOutcome.needsFallback {
+            sources.append(await luxGeocode(query: query, type: nil, userLocation: userLocation))
         }
 
-        return await withTaskCancellationHandler {
-            async let stopSearch = luxGeocode(query: query, type: .stop, userLocation: userLocation)
-            async let addressSearch = searchAddresses(query: query, userLocation: userLocation)
-            let stopResults = await stopSearch
-            let addressResults = await addressSearch
-
-            var earlyDelivery: Task<Void, Never>?
-            if let onEarlyResults, !stopResults.isEmpty || !addressResults.isEmpty {
-                let earlyResults = rankedAndDeduplicated([stopResults, addressResults], query: query, userLocation: userLocation)
-                let gracePeriod = placesGracePeriod
-                earlyDelivery = Task {
-                    try? await Task.sleep(for: gracePeriod)
-                    guard !Task.isCancelled else {
-                        return
-                    }
-                    await onEarlyResults(earlyResults)
-                }
-            }
-
-            let placeOutcome = await placesTask.value
-            earlyDelivery?.cancel()
-            await earlyDelivery?.value
-
-            var sources = [stopResults, placeOutcome.results, addressResults]
-
-            if placeOutcome.needsFallback {
-                sources.append(await luxGeocode(query: query, type: nil, userLocation: userLocation))
-            }
-
-            return rankedAndDeduplicated(sources, query: query, userLocation: userLocation)
-        } onCancel: {
-            placesTask.cancel()
-        }
+        return rankedAndDeduplicated(sources, query: query, userLocation: userLocation)
     }
 
     private func rankedAndDeduplicated(
