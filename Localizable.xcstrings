@@ -7978,6 +7978,16 @@
           }
         }
       }
+    },
+    "Vous avez dépassé votre arrêt. Descendez au prochain arrêt, %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've passed your stop. Get off at the next stop, %@."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

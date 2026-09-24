@@ -44,6 +44,7 @@ extension OnboardSession {
             resolveStartingPoint(from: location)
         }
         evaluate()
+        checkStillOnBoard()
         updateNearbyStations()
     }
 
@@ -152,7 +153,7 @@ extension OnboardSession {
             if isOffRoute { withAnimation { isOffRoute = false } }
         }
         // indoors GPS drifts, and an Apple Maps re-route would drop the station path
-        if offRouteStreak >= 3 && !isOffRoute && !isInStation {
+        if offRouteStreak >= 3 && !isOffRoute && !isInStation && alightWatch?.onBoardSince == nil {
             withAnimation { isOffRoute = true }
             reroute()
         }
@@ -310,20 +311,6 @@ extension OnboardSession {
             let atAlight = location.distance(from: alight) < 45
             if atAlight && (location.speed < 1.5 || alongInLeg >= alightAlong - 10) {
                 completeLeg()
-                return
-            }
-            if alongInLeg > alightAlong + 150 {
-                showAlert(
-                    OnboardAlert(
-                        severity: .critical,
-                        symbolName: "exclamationmark.octagon.fill",
-                        title: String(localized: "Vous avez dépassé votre arrêt"),
-                        message: String(localized: "Descendez au prochain arrêt et suivez le nouvel itinéraire à pied.")
-                    ),
-                    spoken: String(localized: "Vous avez dépassé votre arrêt. Descendez au prochain arrêt."),
-                    urgency: .critical
-                )
-                completeLeg(announce: false)
                 return
             }
         } else if now > leg.endTime.addingTimeInterval(45) {
@@ -565,6 +552,9 @@ extension OnboardSession {
     func completeLeg(announce: Bool = true) {
         if phase == .riding, isSharingPosition {
             enqueueRelay { await RelayClient.shared.stopOnboardReports() }
+        }
+        if phase == .riding, let leg = currentLeg {
+            alightWatch = AlightWatch(legIndex: legIndex, leg: leg, since: now)
         }
         if legIndex >= legs.count - 1 {
             arrive()

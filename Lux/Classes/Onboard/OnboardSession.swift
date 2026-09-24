@@ -40,6 +40,8 @@ final class OnboardSession {
     @ObservationIgnored var tripPaths: [Int: (path: RoutePath, boardAlong: CLLocationDistance)] = [:]
     @ObservationIgnored var walkOffset: CLLocationDistance = .infinity
     @ObservationIgnored var ridesOffPath = false
+    @ObservationIgnored var alightWatch: AlightWatch?
+    @ObservationIgnored var tripLegs: [Int: Leg] = [:]
     @ObservationIgnored var legKeyFrames: (key: String, frames: [VehicleVisualisation.KeyFrame])?
     @ObservationIgnored var knownDisruptions: [Disruption]?
     @ObservationIgnored var announcedDisruptionIds: Set<String>?
@@ -414,6 +416,7 @@ final class OnboardSession {
             board()
         } else {
             completeLeg()
+            alightWatch = nil
         }
     }
 

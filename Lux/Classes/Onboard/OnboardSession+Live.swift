@@ -24,6 +24,7 @@ extension OnboardSession {
 
     func startLiveFeed(for index: Int) {
         tripKeyFrames[index] = nil
+        tripLegs[index] = nil
         liveFeeds[index]?.stop()
         vehicleTasks[index]?.cancel()
         let leg = legs[index]
@@ -129,6 +130,7 @@ extension OnboardSession {
         if let tripLeg = trip.legs.first(where: { $0.tripId != nil }) ?? trip.legs.first,
            Date().timeIntervalSince(tripKeyFrames[index]?.at ?? .distantPast) > 20 {
             tripKeyFrames[index] = (VehicleVisualisation.calculateKeyFrames(for: tripLeg, polylineString: tripLeg.legGeometry.points, precision: 1e6), Date())
+            tripLegs[index] = tripLeg
             if legs.indices.contains(index) {
                 let tripPath = RoutePath(encoded: tripLeg.legGeometry.points, precision: 1e6)
                 let board = legs[index].from
@@ -235,5 +237,83 @@ extension OnboardSession {
             spoken: boarded ? "\(title). \(message)." : String(localized: "\(title). Départ de \(placeName(leg.from)), \(spokenDeparture(leg.startTime))."),
             urgency: .notice
         )
+    }
+
+    struct AlightWatch {
+        let legIndex: Int
+        let leg: Leg
+        let since: Date
+        var onBoardSince: Date?
+    }
+
+    func checkStillOnBoard() {
+        guard var watch = alightWatch else { return }
+        guard now.timeIntervalSince(watch.since) < 180, phase != .riding,
+              let trip = tripPaths[watch.legIndex] else {
+            alightWatch = nil
+            return
+        }
+        let alight = CLLocationCoordinate2D(latitude: watch.leg.to.lat, longitude: watch.leg.to.lon)
+        guard let location = usableLocation, location.horizontalAccuracy <= 30,
+              let alightOnTrip = trip.path.project(alight, hint: trip.boardAlong),
+              let projection = trip.path.project(location.coordinate, hint: alightOnTrip.along) else {
+            watch.onBoardSince = nil
+            alightWatch = watch
+            return
+        }
+        let vehicleSpeed: CLLocationSpeed = watch.leg.mode.isMainlineRail ? 6 : 4
+        let onBoard = projection.offset < 25
+            && projection.along > alightOnTrip.along + 15
+            && location.speed > vehicleSpeed
+        if !onBoard {
+            watch.onBoardSince = nil
+        } else if watch.onBoardSince == nil {
+            watch.onBoardSince = now
+        } else if let since = watch.onBoardSince, now.timeIntervalSince(since) >= 7.5 {
+            alightWatch = nil
+            resumeRide(watch, at: projection.along - alightOnTrip.along)
+            return
+        }
+        alightWatch = watch
+    }
+
+    private func resumeRide(_ watch: AlightWatch, at pastAlight: CLLocationDistance) {
+        let index = watch.legIndex
+        guard legs.indices.contains(index), let tripLeg = tripLegs[index] else { return }
+        let stops = tripLeg.allStops
+        func position(of place: Place, after lower: Int) -> Int? {
+            stops.indices.first { candidate in
+                candidate > lower && (place.stopId.map { stops[candidate].stopId == $0 } ?? (stops[candidate].name == place.name))
+            }
+        }
+        guard let boardIndex = position(of: watch.leg.from, after: -1),
+              let alightIndex = position(of: watch.leg.to, after: boardIndex),
+              alightIndex + 1 < stops.count,
+              let extended = LegLiveMerger.slice(tripLeg, boardIndex: boardIndex, alightIndex: alightIndex + 1) else { return }
+
+        arrivalTask?.cancel()
+        legs[index] = extended
+        let (path, alongs) = Self.buildPath(for: extended)
+        paths[index] = path
+        stopAlongs[index] = alongs
+        announcedStopAlerts = announcedStopAlerts.filter { !$0.hasPrefix("\(index)-") }
+        enterLeg(index, announce: false)
+        board(announce: false, verifiable: false)
+        let alightAlong = alongs.count >= 2 ? alongs[alongs.count - 2] : 0
+        alongInLeg = min(path.length, alightAlong + max(0, pastAlight))
+        announcedStopAlerts.insert("\(index)-next")
+        announcedStopAlerts.insert("\(index)-two")
+        let next = placeName(extended.to)
+        showAlert(
+            OnboardAlert(
+                severity: .critical,
+                symbolName: "exclamationmark.octagon.fill",
+                title: String(localized: "Vous avez dépassé votre arrêt"),
+                message: String(localized: "Descendez au prochain arrêt, \(next).")
+            ),
+            spoken: String(localized: "Vous avez dépassé votre arrêt. Descendez au prochain arrêt, \(next)."),
+            urgency: .critical
+        )
+        evaluate()
     }
 }
