@@ -81,6 +81,10 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
 
     private var routeSignature = ""
     private var arrowSignature = ""
+    private var approachSignature = ""
+    private var approachLine: RouteLine?
+    private var lastArrowCheck: CFTimeInterval = 0
+    private var lastApproachUpdate: CFTimeInterval = 0
     private var stopSignature = ""
     private var routeLines: [RouteLine] = []
     private var arrowOverlays: [MKOverlay] = []
@@ -182,6 +186,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         lastPhase = phase
 
         syncRoute()
+        syncApproach()
         syncArrow()
         syncStops()
         syncStations()
@@ -392,10 +397,34 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         }
     }
 
+    private func syncApproach() {
+        var coordinates: [CLLocationCoordinate2D] = []
+        var color = UIColor.gray
+        if let approach = session.remainingApproach(at: Date()), session.legs.indices.contains(approach.index) {
+            coordinates = approach.coordinates
+            color = UIColor(getLegColor(session.legs[approach.index]))
+        }
+        let start = coordinates.first ?? CLLocationCoordinate2D()
+        let signature = "\(coordinates.count)-\(Int(start.latitude * 1e4))-\(Int(start.longitude * 1e4))"
+        guard signature != approachSignature else { return }
+        approachSignature = signature
+        if let approachLine { mapView.removeOverlay(approachLine) }
+        approachLine = nil
+        guard coordinates.count >= 2 else { return }
+        let line = RouteLine.make(coordinates, color: color.withAlphaComponent(0.35), width: 5)
+        if let below = routeLines.first {
+            mapView.insertOverlay(line, below: below)
+        } else {
+            mapView.addOverlay(line, level: .aboveRoads)
+        }
+        approachLine = line
+    }
+
     private func syncArrow() {
         var signature = ""
         var arrow: TurnArrow?
-        if session.phase == .walking, !session.isOffRoute, let path = session.currentPath, let maneuver = session.nextManeuver {
+        if session.phase == .walking, !session.isOffRoute, let path = session.currentPath, let maneuver = session.nextManeuver,
+           maneuver.along < path.length - 20, path.length - session.alongInLeg > 25 {
             arrow = TurnArrow(path: path, along: maneuver.along)
             signature = "\(session.legIndex)-\(maneuver.along)-\(path.coordinates.count)"
         }
@@ -562,6 +591,14 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     private func frame(at timestamp: CFTimeInterval) {
         let dt = min(0.1, max(0, timestamp - (lastFrame ?? timestamp - 1.0 / 60)))
         lastFrame = timestamp
+        if timestamp - lastArrowCheck > 0.5 {
+            lastArrowCheck = timestamp
+            syncArrow()
+        }
+        if timestamp - lastApproachUpdate > 1 {
+            lastApproachUpdate = timestamp
+            syncApproach()
+        }
         func blend(_ timeConstant: Double) -> Double { 1 - exp(-dt / timeConstant) }
 
         glidePuck(blend: blend)
