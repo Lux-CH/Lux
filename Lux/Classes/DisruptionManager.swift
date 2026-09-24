@@ -11,6 +11,7 @@ import LuxCom
 @MainActor
 final class DisruptionManager: ObservableObject {
     @Published var disruptions: [Disruption] = []
+    @Published private(set) var hasLoaded = false
     // Pushed by the relay WebSocket when the feed changes; the 1min HTTP poll
     // only runs while the socket is down.
     private let liveFeed = RelayLiveFeed<[Disruption]>()
@@ -29,6 +30,7 @@ final class DisruptionManager: ObservableObject {
             },
             onUpdate: { [weak self] fetched in
                 self?.disruptions = Array(Set(fetched))
+                self?.hasLoaded = true
             }
         )
     }
@@ -37,12 +39,17 @@ final class DisruptionManager: ObservableObject {
         do {
             let fetchedDisruptions = try await getDisruptions()
             self.disruptions = Array(Set(fetchedDisruptions))
+            self.hasLoaded = true
         } catch {
             print(error)
         }
     }
 
     func disruptions(for leg: Leg) -> [Disruption] {
+        Self.matching(disruptions, leg: leg)
+    }
+
+    static func matching(_ disruptions: [Disruption], leg: Leg) -> [Disruption] {
         guard let agencyId = leg.agencyId == "Transports Publics Genevois" ? "881" : leg.agencyId else { return [] }
         let line = leg.routeShortName ?? ""
         let tripKey = Self.tripKey(leg.tripId)
