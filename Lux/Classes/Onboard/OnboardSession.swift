@@ -39,6 +39,7 @@ final class OnboardSession {
     var legDisruptions: [LegDisruption] = []
     @ObservationIgnored var tripPaths: [Int: (path: RoutePath, boardAlong: CLLocationDistance)] = [:]
     @ObservationIgnored var walkOffset: CLLocationDistance = .infinity
+    @ObservationIgnored var ridesOffPath = false
     @ObservationIgnored var legKeyFrames: (key: String, frames: [VehicleVisualisation.KeyFrame])?
     @ObservationIgnored var knownDisruptions: [Disruption]?
     @ObservationIgnored var announcedDisruptionIds: Set<String>?
@@ -386,11 +387,16 @@ final class OnboardSession {
         return (leg.mode.isMainlineRail && phase == .waiting) || (leg.ridesByTimetable && phase == .riding && !hasTrainGPS)
     }
 
-    var riderCoordinate: CLLocationCoordinate2D? {
-        if phase == .riding, currentLeg?.ridesByTimetable == true, let point = currentPath?.coordinate(at: alongInLeg) {
-            return point
+    var riderIsOnPath: Bool {
+        switch phase {
+        case .riding: return currentLeg?.ridesByTimetable == true || !ridesOffPath
+        case .walking: return !isOffRoute && walkOffset <= 20
+        default: return false
         }
-        if phase == .walking, !isOffRoute, walkOffset <= 20, let point = currentPath?.coordinate(at: alongInLeg) {
+    }
+
+    var riderCoordinate: CLLocationCoordinate2D? {
+        if riderIsOnPath, let point = currentPath?.coordinate(at: alongInLeg) {
             return point
         }
         return userLocation?.coordinate

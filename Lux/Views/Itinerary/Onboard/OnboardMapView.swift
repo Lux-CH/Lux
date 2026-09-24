@@ -98,6 +98,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
 
     private var lastFrame: CFTimeInterval?
     private var puckCoordinate: CLLocationCoordinate2D?
+    private var puckAlong: (leg: Int, along: CLLocationDistance)?
     private var puckHeading: CLLocationDirection?
     private var followDistance: CLLocationDistance = 430
     private var followPitch: Double = 40
@@ -678,13 +679,27 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
 
     private func glidePuck(blend: (Double) -> Double) {
         guard let target = session.riderCoordinate else { return }
-        if let current = puckCoordinate, current.distance(to: target) < 250 {
+        if session.riderIsOnPath, let path = session.currentPath {
+            let goal = session.alongInLeg
+            var along = goal
+            if let previous = puckAlong, previous.leg == session.legIndex, abs(goal - previous.along) < 250 {
+                along = previous.along + (goal - previous.along) * blend(0.27)
+            }
+            puckAlong = (session.legIndex, along)
+            if let onPath = path.coordinate(at: along), puckCoordinate.map({ $0.distance(to: onPath) < 60 }) ?? true {
+                puckCoordinate = onPath
+            } else {
+                puckCoordinate = target
+            }
+        } else if let current = puckCoordinate, current.distance(to: target) < 250 {
+            puckAlong = nil
             let factor = blend(0.27)
             puckCoordinate = CLLocationCoordinate2D(
                 latitude: current.latitude + (target.latitude - current.latitude) * factor,
                 longitude: current.longitude + (target.longitude - current.longitude) * factor
             )
         } else {
+            puckAlong = nil
             puckCoordinate = target
         }
         if let puckCoordinate { puck?.coordinate = puckCoordinate }

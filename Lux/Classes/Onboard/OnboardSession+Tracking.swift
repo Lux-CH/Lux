@@ -276,15 +276,18 @@ extension OnboardSession {
         }
 
         var locatedByGPS = false
+        var offset = CLLocationDistance.infinity
         if let location = usableLocation,
            let projection = path.project(location.coordinate, hint: alongInLeg),
            projection.offset < max(80, location.horizontalAccuracy) {
+            offset = projection.offset
             let clearlyBehind = location.horizontalAccuracy <= 30 && alongInLeg - projection.along > 40
             assign(\.alongInLeg, clearlyBehind ? projection.along : max(alongInLeg - 15, projection.along))
             locatedByGPS = true
         } else {
             assign(\.alongInLeg, max(alongInLeg, estimatedAlongByTime(leg: leg, alongs: alongs)))
         }
+        ridesOffPath = usableLocation != nil && offset > (ridesOffPath ? 10 : 15)
 
         assign(\.dwellingStopIndex, alongs.firstIndex { abs($0 - alongInLeg) <= stopRadius })
         let next = alongs.firstIndex { $0 > alongInLeg + stopRadius * 0.7 } ?? (alongs.count - 1)
