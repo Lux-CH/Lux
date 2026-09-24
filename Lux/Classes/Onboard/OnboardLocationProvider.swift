@@ -25,6 +25,13 @@ final class OnboardLocationProvider: NSObject, CLLocationManagerDelegate {
         manager.pausesLocationUpdatesAutomatically = false
     }
 
+    var isSaving = false {
+        didSet {
+            guard isSaving != oldValue else { return }
+            manager.desiredAccuracy = isSaving ? kCLLocationAccuracyNearestTenMeters : kCLLocationAccuracyBestForNavigation
+        }
+    }
+
     func start() {
         if manager.authorizationStatus == .notDetermined {
             manager.requestWhenInUseAuthorization()
