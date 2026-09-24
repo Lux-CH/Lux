@@ -418,7 +418,7 @@ struct OnboardBottomPanel: View {
                     }
                 }
                 .padding(.top, 24)
-                .padding(.bottom, session.endsWithButton ? 2 : 6)
+                .padding(.bottom, session.endsWithButton ? 2 : summaryOnly ? 12 : 6)
                 .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { onCompactHeightChange($0) }
 
                 if session.phase != .arrived {
@@ -495,6 +495,10 @@ struct OnboardBottomPanel: View {
         let minutes = max(0, Int((session.arrivalDate.timeIntervalSince(now) / 60).rounded(.up)))
         let time = minutes >= 60 ? "\(minutes / 60) h \(String(format: "%02d", minutes % 60))" : "\(minutes) min"
         return session.phase == .arrived ? String(localized: "Trajet terminé") : "\(time) · \(formatDistance(session.remainingDistance))"
+    }
+
+    private var summaryOnly: Bool {
+        session.phase == .walking && session.nextTransitLeg == nil && session.legDisruptions.isEmpty
     }
 
     @ViewBuilder
