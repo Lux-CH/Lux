@@ -13,24 +13,56 @@ import LuxCom
 struct HybridLocationSearchService {
     private let maxReturnedPlaces = 10
     private let scorer = SearchResultScorer()
-    
-    func search(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
-        async let stopSearchResults = searchStops(query: query, userLocation: userLocation)
-        async let placeSearchOutcome = searchPlaces(query: query, userLocation: userLocation)
-        
-        let stopResults = await stopSearchResults
-        let placeOutcome = await placeSearchOutcome
-        
-        var mergedResults = stopResults + placeOutcome.results
-        
-        if placeOutcome.wasRateLimited {
-            let luxFallback = await searchLuxFallbackAll(query: query, userLocation: userLocation)
-            mergedResults.append(contentsOf: luxFallback)
+    private let placesGracePeriod: Duration = .milliseconds(350)
+
+    func search(
+        query: String,
+        userLocation: CLLocationCoordinate2D?,
+        onStopResults: (@Sendable ([SearchResult]) async -> Void)? = nil
+    ) async -> [SearchResult] {
+        let placesTask = Task {
+            await searchPlaces(query: query, userLocation: userLocation)
         }
-        
-        let deduplicatedByID = deduplicated(results: mergedResults)
-        let rankedResults = scorer.ranked(deduplicatedByID, query: query, userLocation: userLocation)
-        return deduplicatedByNameAndProximity(rankedResults)
+
+        return await withTaskCancellationHandler {
+            let stopResults = await searchStops(query: query, userLocation: userLocation)
+
+            var earlyDelivery: Task<Void, Never>?
+            if let onStopResults, !stopResults.isEmpty {
+                let earlyResults = rankedAndDeduplicated([stopResults], query: query, userLocation: userLocation)
+                let gracePeriod = placesGracePeriod
+                earlyDelivery = Task {
+                    try? await Task.sleep(for: gracePeriod)
+                    guard !Task.isCancelled else {
+                        return
+                    }
+                    await onStopResults(earlyResults)
+                }
+            }
+
+            let placeOutcome = await placesTask.value
+            earlyDelivery?.cancel()
+            await earlyDelivery?.value
+
+            var sources = [stopResults, placeOutcome.results]
+
+            if placeOutcome.needsFallback {
+                sources.append(await searchLuxFallbackAll(query: query, userLocation: userLocation))
+            }
+
+            return rankedAndDeduplicated(sources, query: query, userLocation: userLocation)
+        } onCancel: {
+            placesTask.cancel()
+        }
+    }
+
+    private func rankedAndDeduplicated(
+        _ sources: [[SearchResult]],
+        query: String,
+        userLocation: CLLocationCoordinate2D?
+    ) -> [SearchResult] {
+        let rankedResults = scorer.ranked(sources, query: query, userLocation: userLocation)
+        return deduplicatedByNameAndProximity(deduplicated(results: rankedResults))
     }
     
     private func searchStops(query: String, userLocation: CLLocationCoordinate2D?) async -> [SearchResult] {
@@ -69,26 +101,38 @@ struct HybridLocationSearchService {
     
     private func searchPlaces(query: String, userLocation: CLLocationCoordinate2D?) async -> PlaceSearchOutcome {
         if await MapKitRateLimitState.shared.isRateLimited() {
-            return PlaceSearchOutcome(results: [], wasRateLimited: true)
+            return PlaceSearchOutcome(results: [], needsFallback: true)
         }
 
         let region = makeSearchRegion(around: userLocation)
 
         let completer = await MainActor.run { MapKitCompleterClient.shared }
-        let completions = await completer.fetchCompletions(query: query, region: region)
+        let completionOutcome = await completer.fetchCompletions(query: query, region: region)
 
-        if !completions.isEmpty {
+        if Task.isCancelled {
+            return PlaceSearchOutcome(results: [], needsFallback: false)
+        }
+
+        switch completionOutcome {
+        case .completions(let completions) where !completions.isEmpty:
             let results = await MainActor.run { mapCompletionsToOutcome(completions) }
-            return PlaceSearchOutcome(results: results, wasRateLimited: false)
+            return PlaceSearchOutcome(results: results, needsFallback: false)
+        case .throttled(let resetAfter):
+            await MapKitRateLimitState.shared.markRateLimited(resetAfter: resetAfter)
+            return PlaceSearchOutcome(results: [], needsFallback: true)
+        case .timedOut:
+            return PlaceSearchOutcome(results: [], needsFallback: true)
+        case .completions, .failed:
+            break
         }
 
         let directOutcome = await performMapSearch(query: query, region: region)
         if directOutcome.wasRateLimited {
-            return PlaceSearchOutcome(results: [], wasRateLimited: true)
+            return PlaceSearchOutcome(results: [], needsFallback: true)
         }
 
         let resolvedResults = await makeResolvedResults(from: directOutcome.items)
-        return PlaceSearchOutcome(results: resolvedResults, wasRateLimited: false)
+        return PlaceSearchOutcome(results: resolvedResults, needsFallback: false)
     }
 
     @MainActor
@@ -682,8 +726,8 @@ struct HybridLocationSearchService {
     private func handleMapKitSearchError(_ error: Error, context: String) async -> Bool {
         let nsError = error as NSError
         
-        if isMapKitRateLimitError(nsError) {
-            await MapKitRateLimitState.shared.markRateLimited(resetAfter: extractMapKitResetDelay(from: nsError))
+        if Self.isMapKitRateLimitError(nsError) {
+            await MapKitRateLimitState.shared.markRateLimited(resetAfter: Self.extractMapKitResetDelay(from: nsError))
             print("map \(context) rate-limited: \(nsError.localizedDescription)")
             return true
         }
@@ -692,7 +736,7 @@ struct HybridLocationSearchService {
         return false
     }
     
-    private func isMapKitRateLimitError(_ error: NSError) -> Bool {
+    static func isMapKitRateLimitError(_ error: NSError) -> Bool {
         if error.domain == MKErrorDomain && error.code == 3 {
             return true
         }
@@ -709,7 +753,7 @@ struct HybridLocationSearchService {
         return description.contains("throttled") || description.contains("rate limit")
     }
     
-    private func extractMapKitResetDelay(from error: NSError) -> TimeInterval? {
+    static func extractMapKitResetDelay(from error: NSError) -> TimeInterval? {
         if let reset = error.userInfo["timeUntilReset"] as? NSNumber {
             return reset.doubleValue
         }
@@ -737,7 +781,7 @@ private struct MapKitSearchOutcome {
 
 private struct PlaceSearchOutcome {
     let results: [SearchResult]
-    let wasRateLimited: Bool
+    let needsFallback: Bool
 }
 
 actor MapKitRateLimitState {
@@ -767,80 +811,140 @@ actor MapKitRateLimitState {
     }
 }
 
+private enum CompletionOutcome {
+    case completions([MKLocalSearchCompletion])
+    case throttled(resetAfter: TimeInterval?)
+    case timedOut
+    case failed
+}
+
 @MainActor
 private final class MapKitCompleterClient: NSObject {
     static let shared = MapKitCompleterClient()
-    
+
+    private let timeout: Duration = .milliseconds(1250)
+
     private let completer: MKLocalSearchCompleter = {
         let completer = MKLocalSearchCompleter()
         completer.resultTypes = [.address, .pointOfInterest]
         completer.pointOfInterestFilter = MKPointOfInterestFilter(excluding: [.publicTransport])
         return completer
     }()
-    
-    private var continuation: CheckedContinuation<[MKLocalSearchCompletion], Never>?
+
+    private var continuation: CheckedContinuation<CompletionOutcome, Never>?
+    private var requestID = 0
     private var expectedQueryFragment = ""
-    
+    private var answeredQueryFragment: String?
+
     override init() {
         super.init()
         completer.delegate = self
     }
-    
+
     func fetchCompletions(
         query: String,
         region: MKCoordinateRegion?
-    ) async -> [MKLocalSearchCompletion] {
+    ) async -> CompletionOutcome {
         guard !query.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
-            return []
+            return .completions([])
         }
-        
+
         if let region {
             completer.region = region
         }
-        
+
+        if answeredQueryFragment == query, completer.queryFragment == query, !completer.isSearching {
+            return .completions(completer.results)
+        }
+
+        requestID += 1
+        let currentRequestID = requestID
+
         return await withTaskCancellationHandler {
             await withCheckedContinuation { continuation in
-                resolvePendingContinuation(with: [])
+                resolvePendingContinuation(with: .completions([]))
                 self.continuation = continuation
                 self.expectedQueryFragment = query
-                
+                self.answeredQueryFragment = nil
+
+                if completer.queryFragment == query {
+                    completer.cancel()
+                    completer.queryFragment = ""
+                }
                 completer.queryFragment = query
+
+                scheduleTimeout(for: currentRequestID)
             }
         } onCancel: { [weak self] in
             Task { @MainActor [weak self] in
-                self?.resolvePendingContinuation(with: [])
+                self?.resolveContinuation(of: currentRequestID, with: .completions([]))
             }
         }
     }
-    
-    private func resolvePendingContinuation(with results: [MKLocalSearchCompletion]) {
-        
+
+    private func scheduleTimeout(for request: Int) {
+        let timeout = timeout
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: timeout)
+            guard let self, self.requestID == request, self.continuation != nil else {
+                return
+            }
+
+            print("map completer timed out for \(self.expectedQueryFragment)")
+            if self.completer.queryFragment == self.expectedQueryFragment, !self.completer.results.isEmpty {
+                self.resolvePendingContinuation(with: .completions(self.completer.results))
+            } else {
+                self.resolvePendingContinuation(with: .timedOut)
+            }
+        }
+    }
+
+    private func resolveContinuation(of request: Int, with outcome: CompletionOutcome) {
+        guard requestID == request else {
+            return
+        }
+
+        resolvePendingContinuation(with: outcome)
+    }
+
+    fileprivate func deliverResults(of completer: MKLocalSearchCompleter) {
+        guard expectedQueryFragment == completer.queryFragment else {
+            return
+        }
+        if completer.results.isEmpty && completer.isSearching {
+            return
+        }
+
+        answeredQueryFragment = completer.queryFragment
+        resolvePendingContinuation(with: .completions(completer.results))
+    }
+
+    private func resolvePendingContinuation(with outcome: CompletionOutcome) {
         guard let continuation else {
             return
         }
-        
+
         self.continuation = nil
-        continuation.resume(returning: results)
+        continuation.resume(returning: outcome)
     }
 }
 
 extension MapKitCompleterClient: MKLocalSearchCompleterDelegate {
     nonisolated func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
         Task { @MainActor [weak self] in
-            guard self?.expectedQueryFragment == completer.queryFragment else {
-                return
-            }
-            if completer.results.isEmpty && completer.isSearching {
-                return
-            }
-            self?.resolvePendingContinuation(with: completer.results)
+            self?.deliverResults(of: completer)
         }
     }
-    
+
     nonisolated func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
+        let nsError = error as NSError
+        let outcome: CompletionOutcome = HybridLocationSearchService.isMapKitRateLimitError(nsError)
+            ? .throttled(resetAfter: HybridLocationSearchService.extractMapKitResetDelay(from: nsError))
+            : .failed
+
         Task { @MainActor [weak self] in
-            print("map completer error: \(error.localizedDescription)")
-            self?.resolvePendingContinuation(with: [])
+            print("map completer error: \(nsError.localizedDescription)")
+            self?.resolvePendingContinuation(with: outcome)
         }
     }
 }

@@ -11,9 +11,6 @@ import CoreLocation
 import LuxCom
 
 struct SearchResultScorer {
-    private let proximityHalfDistance: CLLocationDistance = 4_000
-
-
     private static let tokenSynonyms: [String: String] = [
         "st": "saint", "ste": "sainte", "sts": "saints", "stes": "saintes",
         "av": "avenue", "ave": "avenue",
@@ -23,49 +20,49 @@ struct SearchResultScorer {
         "mt": "mont",
     ]
 
-    private let textWeight = 0.60
-    private let proximityWeight = 0.25
-    private let stopRelevanceWeight = 0.20
+    private let textWeight = 0.55
+    private let proximityWeight = 0.30
+    private let sourceRankWeight = 0.15
+    private let stopWeight = 0.08
+    private let proximityHorizonKilometers = 300.0
+    private let unknownPlaceProximity = 0.3
 
     func ranked(
-        _ results: [SearchResult],
+        _ sources: [[SearchResult]],
         query: String,
         userLocation: CLLocationCoordinate2D?
     ) -> [SearchResult] {
-        let queryTokens = tokenize(query)
-        guard !queryTokens.isEmpty else {
-            return results
+        let entries = sources.flatMap { source in
+            source.enumerated().map { (result: $0.element, sourceRank: $0.offset) }
         }
 
-        let normalizedQuery = queryTokens.joined(separator: " ")
+        let queryTokens = tokenize(query)
+        guard !queryTokens.isEmpty else {
+            return entries.map(\.result)
+        }
+
         let userCLLocation = userLocation.map {
             CLLocation(latitude: $0.latitude, longitude: $0.longitude)
         }
 
-        let scored = results.map { result -> (result: SearchResult, score: Double, distance: CLLocationDistance) in
-            let textScore = textScore(
-                for: result.name,
-                queryTokens: queryTokens,
-                normalizedQuery: normalizedQuery
-            )
-            let distance = distance(from: userCLLocation, to: result)
-            let proximityScore = proximityScore(for: distance)
+        let scored = entries.map { entry -> (result: SearchResult, score: Double, distance: CLLocationDistance) in
+            let textScore = textScore(for: entry.result, queryTokens: queryTokens)
+            let distance = distance(from: userCLLocation, to: entry.result)
+            let proximityScore = proximityScore(for: distance, hasUserLocation: userCLLocation != nil)
 
-            var composite = textWeight * textScore + proximityWeight * proximityScore
-            if result.type == .stop {
-                composite += stopRelevanceWeight * textScore
+            var composite = textWeight * textScore
+                + proximityWeight * proximityScore
+                + sourceRankWeight * sourceRankScore(for: entry.sourceRank)
+            if entry.result.type == .stop {
+                composite += stopWeight * textScore
             }
 
-            return (result, composite, distance)
+            return (entry.result, composite, distance)
         }
 
         let sorted = scored.sorted { lhs, rhs in
             if lhs.score != rhs.score {
                 return lhs.score > rhs.score
-            }
-
-            if lhs.result.type != rhs.result.type {
-                return lhs.result.type == .stop
             }
 
             if lhs.distance != rhs.distance {
@@ -78,45 +75,66 @@ struct SearchResultScorer {
         return sorted.map(\.result)
     }
 
-    private func textScore(for name: String, queryTokens: [String], normalizedQuery: String) -> Double {
-        let nameTokens = tokenize(name)
+    private func textScore(for result: SearchResult, queryTokens: [String]) -> Double {
+        let nameTokens = tokenize(result.name)
         guard !nameTokens.isEmpty else {
             return 0
         }
 
-        let normalizedName = nameTokens.joined(separator: " ")
+        let localNameTokens = localNameTokens(for: result, nameTokens: nameTokens)
+        let phraseScore = max(
+            phraseScore(candidate: localNameTokens, queryTokens: queryTokens),
+            phraseScore(candidate: nameTokens, queryTokens: queryTokens)
+        )
 
-        if normalizedName == normalizedQuery {
-            return 1.0
-        }
-        if normalizedName.hasPrefix(normalizedQuery) {
-            return 0.95
-        }
-        if normalizedName.contains(normalizedQuery) {
-            return 0.85
-        }
-
+        let areaTokens = Set(result.areas.flatMap { tokenize($0.name) })
         var matchTotal = 0.0
         for queryToken in queryTokens {
-            var best = 0.0
-            for nameToken in nameTokens {
-                best = max(best, tokenSimilarity(query: queryToken, candidate: nameToken))
-                if best == 1.0 {
-                    break
-                }
+            let nameMatch = nameTokens.map { tokenSimilarity(query: queryToken, candidate: $0) }.max() ?? 0
+            let areaMatch = areaTokens.map { tokenSimilarity(query: queryToken, candidate: $0) }.max() ?? 0
+            matchTotal += max(nameMatch, 0.9 * areaMatch)
+        }
+        let coverageScore = 0.85 * matchTotal / Double(queryTokens.count)
+
+        return max(phraseScore, coverageScore)
+    }
+
+    private func localNameTokens(for result: SearchResult, nameTokens: [String]) -> [String] {
+        if let commaIndex = result.name.firstIndex(of: ",") {
+            let localTokens = tokenize(String(result.name[result.name.index(after: commaIndex)...]))
+            if !localTokens.isEmpty {
+                return localTokens
             }
-            matchTotal += best
         }
 
-        let coverageScore = matchTotal / Double(queryTokens.count)
-
-        if let firstQueryToken = queryTokens.first,
-           let firstNameToken = nameTokens.first,
-           firstNameToken.hasPrefix(firstQueryToken) {
-            return min(1.0, coverageScore + 0.05)
+        for area in result.areas {
+            let areaTokens = tokenize(area.name)
+            if !areaTokens.isEmpty, nameTokens.count > areaTokens.count, nameTokens.starts(with: areaTokens) {
+                return Array(nameTokens.dropFirst(areaTokens.count))
+            }
         }
 
-        return coverageScore
+        return nameTokens
+    }
+
+    private func phraseScore(candidate: [String], queryTokens: [String]) -> Double {
+        guard !candidate.isEmpty else {
+            return 0
+        }
+
+        let candidatePhrase = candidate.joined(separator: " ")
+        let queryPhrase = queryTokens.joined(separator: " ")
+
+        if candidatePhrase == queryPhrase {
+            return 1.0
+        }
+        if candidatePhrase.hasPrefix(queryPhrase) {
+            return 0.95
+        }
+        if (" " + candidatePhrase).contains(" " + queryPhrase) {
+            return 0.85
+        }
+        return 0
     }
 
     private func tokenSimilarity(query: String, candidate: String) -> Double {
@@ -124,22 +142,25 @@ struct SearchResultScorer {
             return 1.0
         }
         if candidate.hasPrefix(query) {
-            return 0.9
-        }
-        if query.hasPrefix(candidate) {
-            return 0.75
-        }
-        if candidate.contains(query) {
-            return 0.6
+            return query.count >= 2 ? 0.9 : 0.5
         }
         return 0
     }
 
-    private func proximityScore(for distance: CLLocationDistance) -> Double {
-        guard distance < .greatestFiniteMagnitude else {
+    private func proximityScore(for distance: CLLocationDistance, hasUserLocation: Bool) -> Double {
+        guard hasUserLocation else {
             return 0
         }
-        return proximityHalfDistance / (proximityHalfDistance + distance)
+        guard distance < .greatestFiniteMagnitude else {
+            return unknownPlaceProximity
+        }
+
+        let kilometers = distance / 1_000
+        return max(0, 1 - log10(1 + kilometers) / log10(1 + proximityHorizonKilometers))
+    }
+
+    private func sourceRankScore(for rank: Int) -> Double {
+        1 / (1 + 0.35 * Double(rank))
     }
 
     private func distance(from userLocation: CLLocation?, to result: SearchResult) -> CLLocationDistance {
@@ -156,10 +177,8 @@ struct SearchResultScorer {
         return userLocation.distance(from: resultLocation)
     }
 
-
     private func tokenize(_ text: String) -> [String] {
         let folded = text.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
-
 
         var tokens: [String] = []
         var current = String.UnicodeScalarView()
