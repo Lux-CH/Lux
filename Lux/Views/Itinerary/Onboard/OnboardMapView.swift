@@ -1016,11 +1016,16 @@ struct NavigationPuck: View {
                 .fill(color.opacity(0.16))
                 .frame(width: 76, height: 76)
             if let heading {
-                Image(systemName: "arrowtriangle.up.fill")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(color)
-                    .offset(y: -33)
-                    .rotationEffect(.degrees(heading))
+                ZStack {
+                    HeadingArrow()
+                        .stroke(.white, style: StrokeStyle(lineWidth: 4, lineJoin: .round))
+                    HeadingArrow()
+                        .fill(color)
+                }
+                .frame(width: 16, height: 14)
+                .shadow(color: .black.opacity(0.3), radius: 1.5, y: 0.5)
+                .offset(y: -40)
+                .rotationEffect(.degrees(heading))
             }
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(color.gradient)
@@ -1033,6 +1038,18 @@ struct NavigationPuck: View {
         }
         .frame(width: 76, height: 76)
         .transition(.scale.combined(with: .opacity))
+    }
+}
+
+private struct HeadingArrow: Shape {
+    func path(in rect: CGRect) -> Path {
+        Path { path in
+            path.move(to: CGPoint(x: rect.midX, y: rect.minY))
+            path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
+            path.addLine(to: CGPoint(x: rect.midX, y: rect.maxY - rect.height * 0.32))
+            path.addLine(to: CGPoint(x: rect.minX, y: rect.maxY))
+            path.closeSubpath()
+        }
     }
 }
 
