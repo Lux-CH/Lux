@@ -61,10 +61,12 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
 
     private var puck: MapPin?
     private var ghost: MapPin?
-    private var estimated: MapPin?
+    private var estimated: GroundVehicle?
+    private var lastEstimatedDraw: CFTimeInterval = 0
     private var approaching: MapPin?
     private var destination: MapPin?
-    private var stopPins: [MapPin] = []
+    private var stopDots: GroundDots?
+    private var stopLabels: [MapPin] = []
     private var levelPins: [MapPin] = []
     private var sectorPins: [MapPin] = []
     private var sectorSignature = ""
@@ -394,6 +396,8 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
             }
             mapView.addOverlays(routeLines, level: .aboveRoads)
             arrowSignature = ""
+            stopSignature = ""
+            estimated = remove(estimated)
         }
     }
 
@@ -445,41 +449,50 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     private func syncStops() {
         var signature = ""
         var stops: [Place] = []
+        var path: RoutePath?
+        var alongs: [CLLocationDistance] = []
         var color = UIColor.gray
         var passed = 0
         if let (index, leg) = focusedTransitLeg {
             stops = leg.allStops
             color = UIColor(getLegColor(leg))
             passed = index == session.legIndex && session.phase == .riding ? session.nextStopIndex : 0
-            signature = "\(index)-\(leg.tripId ?? "")-\(stops.count)-\(passed)"
+            if session.paths.indices.contains(index), session.stopAlongs.indices.contains(index) {
+                path = session.paths[index]
+                alongs = session.stopAlongs[index]
+            }
+            signature = "\(index)-\(leg.tripId ?? "")-\(stops.count)-\(passed)-\(path?.coordinates.count ?? 0)"
         }
         guard signature != stopSignature else { return }
         stopSignature = signature
-        mapView.removeAnnotations(stopPins)
+        if let stopDots { mapView.removeOverlay(stopDots) }
+        stopDots = nil
+        mapView.removeAnnotations(stopLabels)
+        stopLabels = []
+        guard !stops.isEmpty else { return }
         // the destination flag already names the trip's last stop
         let destination = session.legs.last.map { CLLocationCoordinate2D(latitude: $0.to.lat, longitude: $0.to.lon) }
-        stopPins = stops.enumerated().map { stopIndex, stop in
+        var dots: [GroundDots.Dot] = []
+        for (stopIndex, stop) in stops.enumerated() {
             let isEnd = stopIndex == 0 || stopIndex == stops.count - 1
-            let coordinate = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon)
+            var coordinate = CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon)
             let isDestination = destination.map { coordinate.distance(to: $0) < 80 } ?? false
-            let size: CGFloat = isEnd ? 16 : 9
-            let ring = Color(stopIndex < passed ? .gray : color)
-            let pin = MapPin(kind: .stop, coordinate: CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon), anchorY: size / 2)
-            pin.content = AnyView(
-                VStack(spacing: 2) {
-                    Circle()
-                        .fill(.white)
-                        .frame(width: size, height: size)
-                        .overlay(Circle().stroke(ring, lineWidth: isEnd ? 4 : 2.5))
-                        .shadow(color: .black.opacity(0.2), radius: 1.5)
-                    if isEnd && !isDestination {
-                        MapLabel(text: stop.name)
-                    }
-                }
-            )
-            return pin
+            if alongs.count == stops.count, let onLine = path?.coordinate(at: alongs[stopIndex]), onLine.distance(to: coordinate) < 60 {
+                coordinate = onLine
+            }
+            let diameter: CGFloat = isEnd ? 16 : 9
+            let ringWidth: CGFloat = isEnd ? 4 : 2.5
+            dots.append(GroundDots.Dot(point: MKMapPoint(coordinate), diameter: diameter, ring: stopIndex < passed ? .gray : color, ringWidth: ringWidth))
+            if isEnd && !isDestination {
+                let label = MapPin(kind: .stop, coordinate: coordinate, anchorY: -(diameter / 2 + ringWidth / 2 + 2))
+                label.content = AnyView(MapLabel(text: stop.name))
+                stopLabels.append(label)
+            }
         }
-        mapView.addAnnotations(stopPins)
+        let overlay = GroundDots(dots: dots)
+        mapView.addOverlay(overlay, level: .aboveRoads)
+        stopDots = overlay
+        mapView.addAnnotations(stopLabels)
     }
 
     private func syncMarkers() {
@@ -520,11 +533,23 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
 
         if session.hasEstimatedVehicle, session.approachingVehicle == nil, let leg = nextLeg,
            let coordinate = session.estimatedVehicleCoordinate(at: Date()) {
-            estimated = place(estimated, kind: .estimated, at: coordinate)
-            update(estimated, content: AnyView(
-                VehicleAnnotationView(annotation: VehicleAnnotation(id: "estimated", coordinate: coordinate, routeShortName: leg.routeShortName, color: getLegColor(leg)))
-                    .opacity(0.8)
-            ), key: leg.tripId ?? "")
+            let point = MKMapPoint(coordinate)
+            if let current = estimated, current.key != (leg.tripId ?? "") || !current.boundingMapRect.contains(point) {
+                estimated = remove(current)
+            }
+            if estimated == nil {
+                let pill = LinePill(line: leg.routeShortName ?? "", mode: leg.mode, agency: leg.agencyId)
+                let vehicle = GroundVehicle(
+                    key: leg.tripId ?? "",
+                    point: point,
+                    heading: mapView.camera.heading,
+                    text: leg.routeShortName ?? "",
+                    fill: UIColor(pill.lineColor),
+                    textColor: UIColor(pill.textColorOnLineColor)
+                )
+                mapView.addOverlay(vehicle, level: .aboveRoads)
+                estimated = vehicle
+            }
         } else {
             estimated = remove(estimated)
         }
@@ -565,6 +590,33 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     private func remove(_ pin: MapPin?) -> MapPin? {
         if let pin { mapView.removeAnnotation(pin) }
         return nil
+    }
+
+    private func remove(_ vehicle: GroundVehicle?) -> GroundVehicle? {
+        if let vehicle { mapView.removeOverlay(vehicle) }
+        return nil
+    }
+
+    // the estimate is drawn on the ground, so it is redrawn (a small area) as it moves
+    // or as the camera turns, at most 10 times a second
+    private func moveEstimatedVehicle(at timestamp: CFTimeInterval, date: Date) {
+        guard let estimated, timestamp - lastEstimatedDraw > 0.1,
+              let coordinate = session.estimatedVehicleCoordinate(at: date) else { return }
+        let point = MKMapPoint(coordinate)
+        guard estimated.boundingMapRect.contains(point) else { return }
+        let heading = mapView.camera.heading
+        let previous = estimated.state
+        let zoom = mapView.bounds.width / max(1, mapView.visibleMapRect.size.width)
+        guard zoom > 0, zoom.isFinite else { return }
+        let moved = hypot(point.x - previous.point.x, point.y - previous.point.y) * zoom
+        guard moved > 0.5 || abs(Angle360.delta(from: previous.heading, to: heading)) > 2 else { return }
+        lastEstimatedDraw = timestamp
+        estimated.state = GroundVehicle.State(point: point, heading: heading)
+        let radius = 80 / zoom
+        func around(_ center: MKMapPoint) -> MKMapRect {
+            MKMapRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
+        }
+        mapView.renderer(for: estimated)?.setNeedsDisplay(around(previous.point).union(around(point)))
     }
 
     private func update(_ pin: MapPin?, content: @autoclosure () -> AnyView, key: String) {
@@ -608,9 +660,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         if let ghost, let coordinate = session.scheduledWalkerCoordinate(at: date) {
             ghost.coordinate = coordinate
         }
-        if let estimated, let coordinate = session.estimatedVehicleCoordinate(at: date) {
-            estimated.coordinate = coordinate
-        }
+        moveEstimatedVehicle(at: timestamp, date: date)
 
         driveCamera(at: timestamp, blend: blend)
         applyStationDetail()
@@ -825,6 +875,14 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
                 renderer.lineWidth = 1
                 return renderer
             }
+            if let dots = overlay as? GroundDots {
+                return GroundDotsRenderer(overlay: dots)
+            }
+            if let vehicle = overlay as? GroundVehicle {
+                let renderer = GroundVehicleRenderer(overlay: vehicle)
+                renderer.alpha = 0.85
+                return renderer
+            }
             if let head = overlay as? ArrowHead {
                 let renderer = MKPolygonRenderer(polygon: head)
                 renderer.fillColor = head.fill
@@ -875,6 +933,119 @@ private final class ArrowHead: MKPolygon {
     }
 }
 
+private final class GroundDots: NSObject, MKOverlay {
+    struct Dot {
+        let point: MKMapPoint
+        let diameter: CGFloat
+        let ring: UIColor
+        let ringWidth: CGFloat
+    }
+
+    let dots: [Dot]
+    let coordinate: CLLocationCoordinate2D
+    let boundingMapRect: MKMapRect
+
+    init(dots: [Dot]) {
+        self.dots = dots
+        var rect = MKMapRect.null
+        for dot in dots {
+            rect = rect.union(MKMapRect(x: dot.point.x, y: dot.point.y, width: 1, height: 1))
+        }
+        coordinate = MKMapPoint(x: rect.midX, y: rect.midY).coordinate
+        // dots keep their size on screen, so they cover more ground when zoomed out
+        let padding = MKMapPointsPerMeterAtLatitude(coordinate.latitude) * 2000
+        boundingMapRect = rect.insetBy(dx: -padding, dy: -padding)
+    }
+}
+
+private final class GroundDotsRenderer: MKOverlayRenderer {
+    override func draw(_ mapRect: MKMapRect, zoomScale: MKZoomScale, in context: CGContext) {
+        guard let overlay = overlay as? GroundDots else { return }
+        let unit = 1 / zoomScale
+        for dot in overlay.dots {
+            let outer = Double((dot.diameter / 2 + dot.ringWidth) * unit)
+            guard MKMapRect(x: dot.point.x - outer, y: dot.point.y - outer, width: outer * 2, height: outer * 2).intersects(mapRect) else { continue }
+            let center = point(for: dot.point)
+            let radius = dot.diameter / 2 * unit
+            let circle = CGRect(x: center.x - radius, y: center.y - radius, width: radius * 2, height: radius * 2)
+            context.setFillColor(UIColor.white.cgColor)
+            context.fillEllipse(in: circle)
+            context.setStrokeColor(dot.ring.cgColor)
+            context.setLineWidth(dot.ringWidth * unit)
+            context.strokeEllipse(in: circle)
+        }
+    }
+}
+
+private final class GroundVehicle: NSObject, MKOverlay, @unchecked Sendable {
+    struct State {
+        let point: MKMapPoint
+        let heading: CLLocationDirection
+    }
+
+    let key: String
+    let text: String
+    let fill: UIColor
+    let textColor: UIColor
+    let boundingMapRect: MKMapRect
+    private let lock = NSLock()
+    private var current: State
+
+    var state: State {
+        get { lock.withLock { current } }
+        set { lock.withLock { current = newValue } }
+    }
+
+    var coordinate: CLLocationCoordinate2D { state.point.coordinate }
+
+    init(key: String, point: MKMapPoint, heading: CLLocationDirection, text: String, fill: UIColor, textColor: UIColor) {
+        self.key = key
+        self.text = text
+        self.fill = fill
+        self.textColor = textColor
+        current = State(point: point, heading: heading)
+        let padding = MKMapPointsPerMeterAtLatitude(point.coordinate.latitude) * 6000
+        boundingMapRect = MKMapRect(x: point.x - padding, y: point.y - padding, width: padding * 2, height: padding * 2)
+    }
+}
+
+private final class GroundVehicleRenderer: MKOverlayRenderer {
+    override func draw(_ mapRect: MKMapRect, zoomScale: MKZoomScale, in context: CGContext) {
+        guard let vehicle = overlay as? GroundVehicle else { return }
+        let state = vehicle.state
+        let unit = 1 / zoomScale
+        let reach = Double(40 * unit)
+        guard MKMapRect(x: state.point.x - reach, y: state.point.y - reach, width: reach * 2, height: reach * 2).intersects(mapRect) else { return }
+
+        let font = UIFont.systemFont(ofSize: 13, weight: .heavy)
+        let text = vehicle.text as NSString
+        let attributes: [NSAttributedString.Key: Any] = [.font: font, .foregroundColor: vehicle.textColor]
+        let textSize = text.size(withAttributes: attributes)
+        let height: CGFloat = 26
+        let width = max(height, textSize.width + 16)
+        let badge = CGRect(x: -width / 2, y: -height / 2, width: width, height: height)
+
+        // upright for the camera that was looking when it was last redrawn
+        let center = point(for: state.point)
+        context.saveGState()
+        context.translateBy(x: center.x, y: center.y)
+        context.rotate(by: state.heading * .pi / 180)
+        context.scaleBy(x: unit, y: unit)
+        let shape = UIBezierPath(roundedRect: badge, cornerRadius: height / 2).cgPath
+        context.addPath(shape)
+        context.setFillColor(vehicle.fill.cgColor)
+        context.fillPath()
+        context.addPath(shape)
+        context.setStrokeColor(UIColor.white.cgColor)
+        context.setLineWidth(2.5)
+        context.strokePath()
+        UIGraphicsPushContext(context)
+        text.draw(at: CGPoint(x: -textSize.width / 2, y: -textSize.height / 2), withAttributes: attributes)
+        UIGraphicsPopContext()
+        context.restoreGState()
+    }
+}
+
 private final class StationArea: MKPolygon {
     var fill: UIColor = .clear
     var stroke: UIColor = .clear
@@ -882,12 +1053,12 @@ private final class StationArea: MKPolygon {
 
 private final class MapPin: NSObject, MKAnnotation {
     enum Kind {
-        case puck, ghost, estimated, approaching, stop, destination, stationTrack, stationCurrentTrack, stationAccess, levelChange, sector
+        case puck, ghost, approaching, stop, destination, stationTrack, stationCurrentTrack, stationAccess, levelChange, sector
 
         var zPriority: MKAnnotationViewZPriority {
             switch self {
             case .puck: return .max
-            case .approaching, .estimated: return MKAnnotationViewZPriority(rawValue: 700)
+            case .approaching: return MKAnnotationViewZPriority(rawValue: 700)
             case .ghost: return MKAnnotationViewZPriority(rawValue: 600)
             case .destination: return MKAnnotationViewZPriority(rawValue: 500)
             case .stop: return .defaultUnselected
