@@ -147,6 +147,11 @@ struct SearchResultScorer {
         if candidatePhrase.contains(boundedQueryPhrase) {
             return looseMatchScore
         }
+        let candidateText = candidate.joined(separator: " ")
+        let queryText = orderedQueryTokens.joined(separator: " ")
+        if !containsDigit(candidateText), !containsDigit(queryText), isTypo(of: candidateText, query: queryText) {
+            return 0.85
+        }
         return 0
     }
 
@@ -172,7 +177,7 @@ struct SearchResultScorer {
     }
 
     private func isTypo(of candidate: String, query: String) -> Bool {
-        guard query.count >= 4, candidate.count >= 4, !isNumber(query) else {
+        guard query.count >= 4, candidate.count >= 3, !isNumber(query) else {
             return false
         }
 
@@ -217,6 +222,10 @@ struct SearchResultScorer {
             return 0.5
         }
         return 0
+    }
+
+    private func containsDigit(_ text: String) -> Bool {
+        text.contains { $0.isNumber }
     }
 
     private func isNumber(_ token: String) -> Bool {
