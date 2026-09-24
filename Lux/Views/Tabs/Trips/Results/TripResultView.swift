@@ -133,9 +133,9 @@ struct TripResultView: View {
             if dontGoToView {
                 RoundedRectangle(cornerRadius: 24)
                     .fill(colorScheme == .dark ?
-                          Color(.systemFill).opacity(0.3) :
+                          Color(.systemFill).opacity(0.45) :
                             Color(.systemBackground))
-                    .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                    .stroke(Color.primary.opacity(0.15), lineWidth: 0.5)
                     .shadow(
                         color: Color.black.opacity(colorScheme == .dark ? 0.3 : 0.1),
                         radius: isPressed ? 4 : 10,
