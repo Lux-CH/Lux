@@ -352,18 +352,28 @@ private struct RunLabel: View {
                     .font(.system(size: text.count > 1 ? 12 : 15, weight: .heavy, design: .rounded))
                     .minimumScaleFactor(0.7)
             case .services(let symbols):
-                HStack(spacing: 3) {
-                    ForEach(symbols.prefix(3), id: \.self) { symbol in
-                        Image(systemName: symbol)
-                    }
+                ViewThatFits(in: .horizontal) {
+                    symbolRow(symbols.prefix(3), size: 12)
+                    symbolRow(symbols.prefix(3), size: 9)
+                    symbolRow(symbols.prefix(2), size: 9)
+                    symbolRow(symbols.prefix(1), size: 9)
+                    symbolRow(symbols.prefix(1), size: 7)
                 }
-                .font(.system(size: 12, weight: .bold))
-                .minimumScaleFactor(0.6)
             }
         }
         .lineLimit(1)
         .foregroundStyle(.white)
         .padding(.horizontal, 2)
+    }
+
+    private func symbolRow(_ symbols: ArraySlice<String>, size: CGFloat) -> some View {
+        HStack(spacing: size < 10 ? 2 : 3) {
+            ForEach(Array(symbols), id: \.self) { symbol in
+                Image(systemName: symbol)
+            }
+        }
+        .font(.system(size: size, weight: .bold))
+        .fixedSize()
     }
 }
 
