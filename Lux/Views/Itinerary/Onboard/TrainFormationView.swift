@@ -9,6 +9,7 @@ import SwiftUI
 
 struct TrainFormationView: View {
     let formation: TrainFormation
+    var platformSectors: [String] = []
 
     @State private var page = 0
     @State private var availableWidth: CGFloat = 320
@@ -23,18 +24,28 @@ struct TrainFormationView: View {
     }
 
     var body: some View {
-        let layout = FormationLayout(formation: formation, availableWidth: availableWidth)
-        ScrollView(.horizontal, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 4) {
-                SectorRuler(sectors: layout.sectors, total: layout.total)
-                TrainRow(blocks: layout.blocks, labels: layout.labels(on: page), total: layout.total)
-                RailTrack()
-                    .fill(.secondary.opacity(0.45))
-                    .frame(width: layout.total, height: 5)
+        let layout = FormationLayout(formation: formation, platformSectors: platformSectors, availableWidth: availableWidth)
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 4) {
+                    SectorRuler(sectors: layout.sectors, total: layout.total)
+                    TrainRow(blocks: layout.blocks, labels: layout.labels(on: page), total: layout.total)
+                    RailTrack()
+                        .fill(.secondary.opacity(0.45))
+                        .frame(width: layout.total, height: 5)
+                }
+                .overlay(alignment: .leading) {
+                    Color.clear
+                        .frame(width: 1, height: 1)
+                        .offset(x: layout.trainCenter)
+                        .id("train")
+                }
+                .frame(minWidth: availableWidth, alignment: .leading)
             }
-            .frame(minWidth: availableWidth)
+            .scrollDisabled(layout.total <= availableWidth)
+            .onAppear { proxy.scrollTo("train", anchor: .center) }
+            .onChange(of: layout.trainCenter) { _, _ in proxy.scrollTo("train", anchor: .center) }
         }
-        .scrollDisabled(layout.total <= availableWidth)
         .onGeometryChange(for: CGFloat.self, of: { $0.size.width }) { availableWidth = $0 }
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(accessibilityText))
@@ -95,27 +106,49 @@ private struct FormationLayout {
         let id: Int
         let letter: String?
         let span: Span
+        let isCovered: Bool
+        let hasFirstClass: Bool
     }
 
     let coaches: [TrainFormation.Coach]
     let blocks: [Block]
     let sectors: [Sector]
     let total: CGFloat
+    let trainCenter: CGFloat
     private let x: [CGFloat]
     private let widths: [CGFloat]
 
-    init(formation: TrainFormation, availableWidth: CGFloat) {
+    init(formation: TrainFormation, platformSectors: [String], availableWidth: CGFloat) {
         let coaches = formation.coaches
         self.coaches = coaches
         let blockRanges: [ClosedRange<Int>] = Self.runs(of: coaches.map { Optional($0.bodyKind) })
 
         let units: CGFloat = coaches.reduce(0) { $0 + ($1.isLocomotive ? 0.75 : 1) }
         let gaps = CGFloat(max(0, blockRanges.count - 1)) * TrainFormationView.gap
-        let coachWidth: CGFloat = min(32, max(20, (availableWidth - gaps) / max(units, 1)))
+
+        let lettered = coaches.compactMap(\.s)
+        var axis = Array(Set(platformSectors + lettered)).sorted()
+        if let first = lettered.first, let last = lettered.last, first > last { axis.reverse() }
+        let firstIndex = lettered.first.flatMap { axis.firstIndex(of: $0) } ?? 0
+        let lastIndex = lettered.last.flatMap { axis.firstIndex(of: $0) } ?? max(0, axis.count - 1)
+        let spanned = CGFloat(abs(lastIndex - firstIndex) + 1)
+        let sectorCount = CGFloat(max(axis.count, 1))
+
+        let minimumCoach: CGFloat = 18
+        let sectorWidth = max(availableWidth / sectorCount, (minimumCoach * units + gaps) / spanned)
+        var trainStart = CGFloat(min(firstIndex, lastIndex)) * sectorWidth
+        var trainLength = spanned * sectorWidth
+        var coachWidth = (trainLength - gaps) / max(units, 1)
+        if coachWidth > 40 {
+            coachWidth = 40
+            let length = 40 * units + gaps
+            trainStart += (trainLength - length) / 2
+            trainLength = length
+        }
 
         var x: [CGFloat] = []
         var widths: [CGFloat] = []
-        var cursor: CGFloat = 0
+        var cursor: CGFloat = trainStart
         for range in blockRanges {
             for index in range {
                 let width: CGFloat = coaches[index].isLocomotive ? (coachWidth * 0.75).rounded() : coachWidth
@@ -127,7 +160,8 @@ private struct FormationLayout {
         }
         self.x = x
         self.widths = widths
-        self.total = max(0, cursor - TrainFormationView.gap)
+        self.total = axis.isEmpty ? max(0, cursor - TrainFormationView.gap) : sectorCount * sectorWidth
+        self.trainCenter = trainStart + trainLength / 2
 
         var blocks: [Block] = []
         for (offset, range) in blockRanges.enumerated() {
@@ -142,11 +176,17 @@ private struct FormationLayout {
         }
         self.blocks = blocks
 
-        var sectors: [Sector] = []
-        for (offset, range) in Self.runs(of: coaches.map(\.s)).enumerated() {
-            sectors.append(Sector(id: offset, letter: coaches[range.lowerBound].s, span: Self.span(range, x: x, widths: widths)))
+        let covered = formation.coveredSectors
+        let firstClass = Set(formation.sectors.first)
+        self.sectors = axis.enumerated().map { index, letter in
+            Sector(
+                id: index,
+                letter: letter,
+                span: Span(x: CGFloat(index) * sectorWidth, width: sectorWidth),
+                isCovered: covered.contains(letter),
+                hasFirstClass: firstClass.contains(letter)
+            )
         }
-        self.sectors = sectors
     }
 
     func labels(on page: Int) -> [Label] {
@@ -207,7 +247,7 @@ private struct SectorRuler: View {
             ZStack(alignment: .topLeading) {
                 ForEach(sectors, id: \.id) { sector in
                     if let letter = sector.letter {
-                        SectorChipView(letter: letter, covered: nil, firstClass: false)
+                        SectorChipView(letter: letter, covered: sector.isCovered ? nil : false, firstClass: sector.hasFirstClass)
                             .frame(width: sector.span.width)
                             .offset(x: sector.span.x)
                     }

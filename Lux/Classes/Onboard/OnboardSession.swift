@@ -386,6 +386,13 @@ final class OnboardSession {
     /// The train to board next, while walking to it or waiting for it: its formation is
     /// fetched when that train changes and refreshed every 3 minutes (coaches get coupled,
     /// closed or swapped during the day).
+    var formationPlatformSectors: [String] {
+        guard let (_, leg) = nextTransitLeg, let uic = StationLayout.uic(fromStopId: leg.from.stopId),
+              let layout = StationLayoutStore.shared.cached(uic: uic),
+              let track = layout.track(named: leg.from.track ?? leg.from.scheduledTrack, stopId: leg.from.stopId) else { return [] }
+        return track.sectors.map(\.s)
+    }
+
     func refreshFormationIfNeeded() {
         var target = ""
         if phase == .walking || phase == .waiting, let (_, leg) = nextTransitLeg, leg.mode.isMainlineRail,

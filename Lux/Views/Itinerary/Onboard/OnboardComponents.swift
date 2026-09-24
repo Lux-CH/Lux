@@ -504,15 +504,15 @@ struct OnboardBottomPanel: View {
                     nextTransitRow(next)
                     // on the way to the platform, where to stand is worth knowing already
                     if session.isInStation, let formation = session.formation {
-                        TrainFormationView(formation: formation)
+                        TrainFormationView(formation: formation, platformSectors: session.formationPlatformSectors)
                     }
                 }
             }
         case .waiting:
             VStack(alignment: .leading, spacing: 10) {
                 if let formation = session.formation {
-                    TrainFormationView(formation: formation)
                         .padding(.bottom, 28)
+                    TrainFormationView(formation: formation, platformSectors: session.formationPlatformSectors)
                         .transition(.opacity)
                 }
                 if let info = session.rideInfo {
