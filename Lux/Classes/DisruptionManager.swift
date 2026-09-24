@@ -46,14 +46,17 @@ final class DisruptionManager: ObservableObject {
         guard let agencyId = leg.agencyId == "Transports Publics Genevois" ? "881" : leg.agencyId else { return [] }
         let line = leg.routeShortName ?? ""
         let tripKey = Self.tripKey(leg.tripId)
-        let stations = Set(([leg.from, leg.to] + (leg.intermediateStops ?? [])).compactMap { Self.station($0.stopId ?? $0.parentId) })
+        let endpoints = Set([leg.from, leg.to].compactMap { Self.station($0.stopId ?? $0.parentId) })
+        let stations = endpoints.union((leg.intermediateStops ?? []).compactMap { Self.station($0.stopId ?? $0.parentId) })
 
         return disruptions.filter { disruption in
             guard (disruption.agencyId ?? "881") == agencyId,
                   disruption.isActive(from: leg.startTime, to: leg.endTime) else { return false }
             if !line.isEmpty && disruption.line == line { return true }
             if let tripKey, disruption.tripIds?.contains(tripKey) == true { return true }
-            return disruption.stopIds?.contains(where: stations.contains) == true
+            guard let stopIds = disruption.stopIds else { return false }
+            if stopIds.count == 1 { return endpoints.contains(stopIds[0]) }
+            return stopIds.filter(stations.contains).count >= 2
         }
     }
 
