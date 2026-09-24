@@ -434,9 +434,9 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         arrowOverlays = []
         guard let arrow else { return }
         arrowOverlays = [
-            RouteLine.make(arrow.shaft, color: Self.walkBlueDark, width: 14),
-            ArrowHead.make(arrow.head, fill: Self.walkBlueDark, outline: 4),
-            RouteLine.make(arrow.shaft, color: .white, width: 8),
+            RouteLine.make(arrow.shaft, color: Self.walkBlueDark, width: 11),
+            ArrowHead.make(arrow.head, fill: Self.walkBlueDark, outline: 3),
+            RouteLine.make(arrow.shaft, color: .white, width: 6),
             ArrowHead.make(arrow.head, fill: .white, outline: 0)
         ]
         mapView.addOverlays(arrowOverlays, level: .aboveRoads)
@@ -1099,8 +1099,8 @@ private struct TurnArrow {
     let head: [CLLocationCoordinate2D]
 
     init?(path: RoutePath, along: CLLocationDistance) {
-        let start = max(0, along - 14)
-        let end = min(path.length, along + 11)
+        let start = max(0, along - 12)
+        let end = min(path.length, along + 9)
         guard end - along > 4,
               let shaftEnd = path.coordinate(at: end),
               let beforeEnd = path.coordinate(at: end - 4),
@@ -1108,9 +1108,9 @@ private struct TurnArrow {
         let bearing = beforeEnd.bearing(to: shaftEnd)
         shaft = path.slice(from: start, to: end)
         head = [
-            shaftEnd.offset(by: 8, bearing: bearing),
-            shaftEnd.offset(by: 6, bearing: bearing + 90),
-            shaftEnd.offset(by: 6, bearing: bearing - 90)
+            shaftEnd.offset(by: 6.5, bearing: bearing),
+            shaftEnd.offset(by: 4.8, bearing: bearing + 90),
+            shaftEnd.offset(by: 4.8, bearing: bearing - 90)
         ]
         guard shaft.count >= 2 else { return nil }
     }
