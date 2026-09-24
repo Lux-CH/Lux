@@ -488,6 +488,7 @@ extension OnboardSession {
                 )
             }
         }
+        refreshDisruptions()
         liveActivity.update(activityState())
     }
 

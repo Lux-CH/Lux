@@ -358,6 +358,7 @@ struct OnboardAlertToast: View {
                 if let message = alert.message {
                     Text(message)
                         .font(.footnote)
+                        .lineLimit(3)
                         .opacity(0.85)
                 }
             }
@@ -400,6 +401,7 @@ struct OnboardBottomPanel: View {
     @ObservedObject var itineraryViewModel: ItineraryViewModel
     let isExpanded: Bool
     let onEnd: () -> Void
+    var onOpenDetail: () -> Void = {}
     let onCompactHeightChange: (CGFloat) -> Void
 
     var body: some View {
@@ -411,9 +413,15 @@ struct OnboardBottomPanel: View {
                     contextRow
                         .padding(.horizontal, 22)
                         .padding(.top, 12)
+                    if !session.legDisruptions.isEmpty {
+                        DisruptionsRow(groups: session.disruptionGroups, action: onOpenDetail)
+                            .padding(.horizontal, 22)
+                            .padding(.top, 10)
+                            .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
                 }
                 .padding(.top, 24)
-                .padding(.bottom, session.phase == .waiting ? 2 : 16)
+                .padding(.bottom, session.endsWithButton ? 2 : 6)
                 .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { onCompactHeightChange($0) }
 
                 if session.phase != .arrived {

@@ -123,6 +123,7 @@ extension OnboardSession {
         reroutedWalks = reroutedWalks.filter { $0 < keep }
         announcedRisk = .comfortable
         startLiveFeeds()
+        refreshDisruptions()
         loadStationLayouts()
 
         if keep <= legIndex {

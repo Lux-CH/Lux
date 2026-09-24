@@ -11,6 +11,7 @@ import LuxCom
 struct OnboardNavigationView: View {
     let session: OnboardSession
     @ObservedObject var itineraryViewModel: ItineraryViewModel
+    @EnvironmentObject private var disruptionManager: DisruptionManager
     let onEnd: () -> Void
 
     @State private var isFollowing = true
@@ -20,6 +21,8 @@ struct OnboardNavigationView: View {
     @State private var bannerHeight: CGFloat = 120
     @State private var compactHeight: CGFloat = 150
     @State private var detent: PresentationDetent = .height(150)
+    @State private var detailPath: [String] = []
+    @State private var allowsMediumDetent = false
 
     var body: some View {
         ZStack {
@@ -88,18 +91,31 @@ struct OnboardNavigationView: View {
             .animation(.spring(duration: 0.45), value: session.replan)
             .animation(.spring(duration: 0.45), value: session.isReplanning)
         }
+        .onChange(of: detailPath) { _, path in
+            guard path.isEmpty else { return }
+            if detent == .medium {
+                withAnimation(.smooth(duration: 0.3)) { detent = .height(compactHeight) }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { allowsMediumDetent = false }
+        }
         .onChange(of: session.phase) { _, phase in
             if phase == .arrived { detent = .height(compactHeight) }
         }
         .sheet(isPresented: .constant(true)) {
-            OnboardBottomPanel(session: session, itineraryViewModel: itineraryViewModel, isExpanded: detent == .large, onEnd: end) { height in
-                let compact = (height + (session.phase == .waiting ? 0 : 14)).rounded()
-                guard abs(compact - compactHeight) > 1 else { return }
-                let wasCompact = detent == .height(compactHeight)
-                compactHeight = compact
-                if wasCompact { detent = .height(compact) }
+            NavigationStack(path: $detailPath) {
+                OnboardBottomPanel(session: session, itineraryViewModel: itineraryViewModel, isExpanded: detent == .large, onEnd: end, onOpenDetail: openDisruptions) { height in
+                    let compact = height.rounded()
+                    guard abs(compact - compactHeight) > 1 else { return }
+                    let wasCompact = detent == .height(compactHeight)
+                    compactHeight = compact
+                    if wasCompact { detent = .height(compact) }
+                }
+                .toolbar(.hidden, for: .navigationBar)
+                .navigationDestination(for: String.self) { _ in
+                    DisruptionsListView(groups: session.disruptionGroups)
+                }
             }
-            .presentationDetents([.height(compactHeight), .large], selection: $detent)
+            .presentationDetents(allowsMediumDetent ? [.height(compactHeight), .medium, .large] : [.height(compactHeight), .large], selection: $detent)
             .presentationBackgroundInteraction(.enabled(upThrough: .height(compactHeight)))
             .presentationDragIndicator(.visible)
             .interactiveDismissDisabled()
@@ -128,6 +144,15 @@ struct OnboardNavigationView: View {
             }
             try? await Task.sleep(for: .seconds(1.2))
             showsConsent = true
+        }
+        .onAppear {
+            if disruptionManager.hasLoaded { session.updateDisruptions(disruptionManager.disruptions) }
+        }
+        .onChange(of: disruptionManager.disruptions) { _, disruptions in
+            if disruptionManager.hasLoaded { session.updateDisruptions(disruptions) }
+        }
+        .onChange(of: disruptionManager.hasLoaded) { _, loaded in
+            if loaded { session.updateDisruptions(disruptionManager.disruptions) }
         }
         .onChange(of: itineraryViewModel.selectedStop) { _, stop in
             if let stop { stopDetail = StopDetailDestination(place: stop) }
@@ -199,6 +224,18 @@ struct OnboardNavigationView: View {
         withAnimation(.snappy) {
             showsOverview = false
             isFollowing = true
+        }
+    }
+
+    private func openDisruptions() {
+        guard detent == .height(compactHeight) else {
+            detailPath.append("disruptions")
+            return
+        }
+        allowsMediumDetent = true
+        withAnimation(.smooth(duration: 0.3)) { detent = .medium }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            detailPath.append("disruptions")
         }
     }
 

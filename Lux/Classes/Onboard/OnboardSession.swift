@@ -36,6 +36,9 @@ final class OnboardSession {
     var isOffRoute = false
     var hasWeakGPS = false
     var hasTrainGPS = false
+    var legDisruptions: [LegDisruption] = []
+    @ObservationIgnored var knownDisruptions: [Disruption]?
+    @ObservationIgnored var announcedDisruptionIds: Set<String>?
     var nextManeuver: WalkManeuver?
     var distanceToManeuver: CLLocationDistance?
     var followingManeuver: WalkManeuver?
