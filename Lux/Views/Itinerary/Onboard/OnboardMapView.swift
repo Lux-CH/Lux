@@ -152,8 +152,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         frameDriver.isRunning = true
     }
 
-    // MARK: - SwiftUI inputs
-
     func setInsets(top: CGFloat, bottom: CGFloat) {
         guard top != topInset || bottom != bottomInset else { return }
         topInset = top
@@ -174,8 +172,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
             beginTransition()
         }
     }
-
-    // MARK: - Content
 
     func syncContent() {
         let phase = session.phase
@@ -547,8 +543,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         return .walker
     }
 
-    // MARK: - Frame loop
-
     private func frame(at timestamp: CFTimeInterval) {
         let dt = min(0.1, max(0, timestamp - (lastFrame ?? timestamp - 1.0 / 60)))
         lastFrame = timestamp
@@ -623,8 +617,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
             }
         }
     }
-
-    // MARK: - Camera
 
     private func followTarget() -> (distance: CLLocationDistance, pitch: Double) {
         switch session.phase {
@@ -742,8 +734,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         }
     }
 
-    // MARK: - Gestures
-
     @objc private func userGesture(_ recognizer: UIGestureRecognizer) {
         guard recognizer.state == .began else { return }
         transition = nil
@@ -762,8 +752,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     nonisolated func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldRecognizeSimultaneouslyWith otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         true
     }
-
-    // MARK: - Rendering
 
     nonisolated func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
         MainActor.assumeIsolated {
@@ -807,8 +795,6 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         }
     }
 }
-
-// MARK: - Map objects
 
 private final class RouteLine: MKPolyline {
     var color: UIColor = .systemBlue
@@ -949,8 +935,6 @@ private struct PuckView: View {
         NavigationPuck(style: model.style, heading: model.heading, pitch: model.pitch)
     }
 }
-
-// MARK: - Puck
 
 struct NavigationPuck: View {
     enum Style: Equatable {

@@ -73,7 +73,6 @@ struct ItineraryView: View {
         }
     }
     
-    /// On iOS 26 the system radius follows the screen's corners at the bottom; a fixed one doesn't.
     private var sheetCornerRadius: CGFloat? {
         if #available(iOS 26, *) { return nil }
         return 38
