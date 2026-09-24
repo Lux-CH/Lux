@@ -35,6 +35,7 @@ final class OnboardSession {
     var alongInLeg: CLLocationDistance = 0
     var isOffRoute = false
     var hasWeakGPS = false
+    var hasTrainGPS = false
     var nextManeuver: WalkManeuver?
     var distanceToManeuver: CLLocationDistance?
     var followingManeuver: WalkManeuver?
@@ -107,6 +108,10 @@ final class OnboardSession {
     @ObservationIgnored var compassAccuracy: CLLocationDirection = -1
     @ObservationIgnored var compassAt: Date = .distantPast
     @ObservationIgnored var offRouteStreak = 0
+    @ObservationIgnored var trainGPSStreak = 0
+    @ObservationIgnored var trainGPSAt: Date = .distantPast
+    @ObservationIgnored var lastTrainFix: Date = .distantPast
+    @ObservationIgnored var trainFix: (along: CLLocationDistance, speed: CLLocationSpeed) = (0, 0)
     @ObservationIgnored var lastRerouteAt: Date = .distantPast
     @ObservationIgnored var lastCrowdReportAt: Date = .distantPast
     @ObservationIgnored var spokenManeuvers: Set<String> = []
@@ -332,11 +337,11 @@ final class OnboardSession {
 
     var followsTimetable: Bool {
         guard let leg = currentLeg, leg.isTransit else { return false }
-        return leg.mode.isMainlineRail && (phase == .riding || phase == .waiting)
+        return leg.mode.isMainlineRail && (phase == .waiting || (phase == .riding && !hasTrainGPS))
     }
 
     var riderCoordinate: CLLocationCoordinate2D? {
-        if followsTimetable, phase == .riding, let point = currentPath?.coordinate(at: alongInLeg) {
+        if phase == .riding, currentLeg?.mode.isMainlineRail == true, let point = currentPath?.coordinate(at: alongInLeg) {
             return point
         }
         return userLocation?.coordinate

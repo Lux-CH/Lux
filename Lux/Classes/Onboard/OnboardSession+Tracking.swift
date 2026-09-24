@@ -249,7 +249,7 @@ extension OnboardSession {
         guard alongs.count >= 2 else { return }
 
         if leg.mode.isMainlineRail {
-            evaluateRidingByTimetable(leg: leg, alongs: alongs)
+            evaluateRidingTrain(leg: leg, alongs: alongs)
             return
         }
 
@@ -305,8 +305,34 @@ extension OnboardSession {
         }
     }
 
-    func evaluateRidingByTimetable(leg: Leg, alongs: [CLLocationDistance]) {
-        assign(\.alongInLeg, estimatedAlongByTime(leg: leg, alongs: alongs))
+    func evaluateRidingTrain(leg: Leg, alongs: [CLLocationDistance]) {
+        let timetable = estimatedAlongByTime(leg: leg, alongs: alongs)
+        var gpsAlong: CLLocationDistance?
+        if let location = userLocation, location.horizontalAccuracy >= 0, location.horizontalAccuracy <= 25,
+           now.timeIntervalSince(location.timestamp) < 4,
+           let projection = currentPath?.project(location.coordinate, hint: alongInLeg),
+           projection.offset < 40, abs(projection.along - timetable) < 2500 {
+            gpsAlong = projection.along
+            if location.timestamp > lastTrainFix {
+                lastTrainFix = location.timestamp
+                trainFix = (projection.along, max(0, location.speed))
+                trainGPSStreak += 1
+                trainGPSAt = now
+            }
+        } else if now.timeIntervalSince(trainGPSAt) >= 15 {
+            trainGPSStreak = 0
+        }
+        let locked = trainGPSStreak >= 3 && now.timeIntervalSince(trainGPSAt) < 15
+        if locked != hasTrainGPS {
+            withAnimation { hasTrainGPS = locked }
+        }
+
+        if locked {
+            let along = gpsAlong ?? trainFix.along + trainFix.speed * now.timeIntervalSince(trainGPSAt)
+            assign(\.alongInLeg, max(alongInLeg - 30, along))
+        } else {
+            assign(\.alongInLeg, timetable)
+        }
         assign(\.dwellingStopIndex, alongs.firstIndex { abs($0 - alongInLeg) <= stopRadius })
         let next = alongs.firstIndex { $0 > alongInLeg + stopRadius * 0.7 } ?? (alongs.count - 1)
         if next != nextStopIndex {
@@ -314,7 +340,15 @@ extension OnboardSession {
         }
         announceStopsIfNeeded(leg: leg)
         updateHeading()
-        if now > leg.endTime.addingTimeInterval(15) {
+
+        let alightAlong = alongs.last ?? alongInLeg
+        if locked, let location = userLocation {
+            let stoppedAtAlight = CLLocation(latitude: leg.to.lat, longitude: leg.to.lon).distance(from: location) < 120
+                && location.speed >= 0 && location.speed < 1.5
+            if stoppedAtAlight || alongInLeg > alightAlong + 400 {
+                completeLeg()
+            }
+        } else if now > leg.endTime.addingTimeInterval(15) {
             completeLeg()
         }
     }
@@ -417,6 +451,8 @@ extension OnboardSession {
         isOffRoute = false
         nextStopIndex = 1
         dwellingStopIndex = nil
+        hasTrainGPS = false
+        trainGPSStreak = 0
         crowdStatus = nil
         rideReports = [:]
         positionDelay = nil
