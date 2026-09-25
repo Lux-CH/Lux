@@ -493,6 +493,7 @@ extension OnboardSession {
         hasTrainGPS = false
         trainGPSStreak = 0
         crowdStatus = nil
+        crowdWatched = false
         rideReports = [:]
         positionDelay = nil
         showsCrowdPrompt = false

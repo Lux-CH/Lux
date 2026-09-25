@@ -16,7 +16,7 @@ final class OnboardSession {
     let arrivalRadius: CLLocationDistance = 20
     let stopRadius: CLLocationDistance = 30
     let usableAccuracy: CLLocationAccuracy = 80
-    let crowdReportInterval: TimeInterval = 10
+    var crowdReportInterval: TimeInterval { crowdWatched ? 2 : 10 }
     let rerouteCooldown: TimeInterval = 20
 
     let destinationName: String
@@ -130,6 +130,8 @@ final class OnboardSession {
     @ObservationIgnored var trainFix: (along: CLLocationDistance, speed: CLLocationSpeed) = (0, 0)
     @ObservationIgnored var lastRerouteAt: Date = .distantPast
     @ObservationIgnored var lastCrowdReportAt: Date = .distantPast
+    @ObservationIgnored var crowdWatched = false
+    @ObservationIgnored var liveTracks: [Int: LiveVehicleTrack] = [:]
     @ObservationIgnored var spokenManeuvers: Set<String> = []
     @ObservationIgnored var announcedStopAlerts: Set<String> = []
     @ObservationIgnored var announcedDelays: [Int: Int] = [:]

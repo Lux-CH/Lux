@@ -157,6 +157,7 @@ actor RelayClient {
         let delay: Int?
         let riders: Int?
         let likelyTripId: String?
+        let watched: Bool?
     }
 
     func reportOnboardPosition(

@@ -117,6 +117,10 @@ extension OnboardSession {
             for await ack in acks {
                 guard let self, !Task.isCancelled else { return }
                 guard ack.tripId == self.currentLeg?.tripId, self.phase == .riding else { continue }
+                if let watched = ack.watched, watched != self.crowdWatched {
+                    self.crowdWatched = watched
+                    if watched { self.lastCrowdReportAt = .distantPast }
+                }
                 let state: CrowdStatus.State?
                 switch ack.status {
                 case "ok": state = .contributing(riders: ack.riders ?? 1, delaySeconds: ack.delay ?? 0)

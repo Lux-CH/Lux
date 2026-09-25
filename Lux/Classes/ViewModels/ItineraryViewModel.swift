@@ -26,8 +26,7 @@ final class ItineraryViewModel: ObservableObject {
     }
 
     private var legKeyFrames: [String: [VehicleVisualisation.KeyFrame]] = [:]
-    /// Last drawn live (crowd-sourced) vehicle positions, eased towards each new report.
-    private var displayedVehiclePositions: [String: CLLocationCoordinate2D] = [:]
+    private var liveTracks: [String: LiveVehicleTrack] = [:]
     private var walkingLegPaths: [String: WalkingPathMetrics] = [:]
     private var vehicleUpdateTask: Task<Void, Never>?
     private var walkingUpdateTask: Task<Void, Never>?
@@ -91,6 +90,7 @@ final class ItineraryViewModel: ObservableObject {
         liveVehicleTasks.values.forEach { $0.cancel() }
         liveVehicleTasks.removeAll()
         liveVehicles.removeAll()
+        liveTracks.removeAll()
         stationTask?.cancel()
         stationTask = nil
         shouldStop = true
@@ -435,6 +435,7 @@ final class ItineraryViewModel: ObservableObject {
                 for await vehicle in await RelayClient.shared.vehicle(tripId: tripId) {
                     guard let self, !Task.isCancelled else { return }
                     self.liveVehicles[legId] = vehicle
+                    self.track(vehicle, on: leg, legId: legId)
                 }
             }
         }
@@ -452,8 +453,7 @@ final class ItineraryViewModel: ObservableObject {
             let legId = getLegIdentifier(leg)
 
             if let live = liveVehicles[legId], live.isFresh, leg.endTime.addingTimeInterval(300) >= currentTime {
-                let position = eased(from: displayedVehiclePositions[legId], to: live.coordinate)
-                displayedVehiclePositions[legId] = position
+                let position = liveTracks[legId]?.coordinate(at: currentTime) ?? live.coordinate
                 return VehicleAnnotation(
                     id: legId,
                     coordinate: position,
@@ -484,15 +484,19 @@ final class ItineraryViewModel: ObservableObject {
         }
     }
 
-    /// Moves a quarter of the remaining gap per update so a new live report slides the marker
-    /// instead of teleporting it. Implausible jumps just snap.
-    private func eased(from current: CLLocationCoordinate2D?, to target: CLLocationCoordinate2D) -> CLLocationCoordinate2D {
-        guard let current, current.distance(to: target) < 2_000 else { return target }
-        let factor = 0.25
-        return CLLocationCoordinate2D(
-            latitude: current.latitude + (target.latitude - current.latitude) * factor,
-            longitude: current.longitude + (target.longitude - current.longitude) * factor
-        )
+    private func track(_ vehicle: RelayClient.CrowdVehicle?, on leg: Leg, legId: String) {
+        guard let vehicle else {
+            liveTracks[legId] = nil
+            return
+        }
+        let now = Date()
+        if var track = liveTracks[legId] {
+            track.update(with: vehicle, at: now)
+            liveTracks[legId] = track
+        } else {
+            let path = RoutePath(encoded: leg.legGeometry.points, precision: 1e6)
+            liveTracks[legId] = LiveVehicleTrack(path: path, vehicle: vehicle, receivedAt: now)
+        }
     }
     
     private func updateWalkingPositions() {

@@ -516,8 +516,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         }
 
         let nextLeg = session.nextTransitLeg?.leg
-        if let vehicle = session.approachingVehicle, let leg = nextLeg {
-            let coordinate = CLLocationCoordinate2D(latitude: vehicle.lat, longitude: vehicle.lon)
+        if session.approachingVehicle != nil, let leg = nextLeg, let coordinate = session.approachingVehicleCoordinate(at: Date()) {
             approaching = place(approaching, kind: .approaching, at: coordinate)
             update(approaching, content: AnyView(
                 VehicleAnnotationView(annotation: VehicleAnnotation(id: "approaching", coordinate: coordinate, routeShortName: leg.routeShortName, color: getLegColor(leg), isLive: true))
@@ -655,6 +654,9 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
             ghost.coordinate = coordinate
         }
         moveEstimatedVehicle(at: timestamp, date: date)
+        if let approaching, let coordinate = session.approachingVehicleCoordinate(at: date) {
+            approaching.coordinate = coordinate
+        }
 
         driveCamera(at: timestamp, blend: blend)
         applyStationDetail()

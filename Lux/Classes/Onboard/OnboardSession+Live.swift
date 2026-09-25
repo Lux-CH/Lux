@@ -16,6 +16,7 @@ extension OnboardSession {
         vehicleTasks.values.forEach { $0.cancel() }
         vehicleTasks.removeAll()
         liveVehicles.removeAll()
+        liveTracks.removeAll()
         tripKeyFrames.removeAll()
         for index in legs.indices {
             startLiveFeed(for: index)
@@ -25,6 +26,7 @@ extension OnboardSession {
     func startLiveFeed(for index: Int) {
         tripKeyFrames[index] = nil
         tripLegs[index] = nil
+        liveTracks[index] = nil
         liveFeeds[index]?.stop()
         vehicleTasks[index]?.cancel()
         let leg = legs[index]
@@ -44,6 +46,7 @@ extension OnboardSession {
             for await vehicle in await RelayClient.shared.vehicle(tripId: tripId) {
                 guard let self, !Task.isCancelled else { return }
                 self.liveVehicles[index] = vehicle
+                self.trackVehicle(vehicle, forLeg: index)
                 self.updateApproachingVehicle()
             }
         }
@@ -84,9 +87,29 @@ extension OnboardSession {
     }
 
     var approachingVehicleDistance: CLLocationDistance? {
-        guard let vehicle = approachingVehicle, let leg = nextTransitLeg?.leg else { return nil }
+        guard let vehicle = approachingVehicleCoordinate(at: Date()), let leg = nextTransitLeg?.leg else { return nil }
         return CLLocation(latitude: leg.from.lat, longitude: leg.from.lon)
-            .distance(from: CLLocation(latitude: vehicle.lat, longitude: vehicle.lon))
+            .distance(from: CLLocation(latitude: vehicle.latitude, longitude: vehicle.longitude))
+    }
+
+    func trackVehicle(_ vehicle: RelayClient.CrowdVehicle?, forLeg index: Int) {
+        guard let vehicle else {
+            liveTracks[index] = nil
+            return
+        }
+        let now = Date()
+        if var track = liveTracks[index] {
+            track.update(with: vehicle, at: now)
+            liveTracks[index] = track
+        } else if let trip = tripPaths[index] {
+            liveTracks[index] = LiveVehicleTrack(path: trip.path, vehicle: vehicle, receivedAt: now)
+        }
+    }
+
+    func approachingVehicleCoordinate(at date: Date) -> CLLocationCoordinate2D? {
+        guard let vehicle = approachingVehicle else { return nil }
+        guard let (index, _) = nextTransitLeg, let track = liveTracks[index] else { return vehicle.coordinate }
+        return track.coordinate(at: date, limit: tripPaths[index]?.boardAlong) ?? vehicle.coordinate
     }
 
     func scheduledWalkerAlong(at date: Date) -> CLLocationDistance? {
@@ -104,7 +127,7 @@ extension OnboardSession {
 
     func remainingApproach(at date: Date) -> (index: Int, coordinates: [CLLocationCoordinate2D])? {
         guard phase == .walking || phase == .waiting, let (index, _) = nextTransitLeg, let trip = tripPaths[index] else { return nil }
-        let vehicle = approachingVehicle.map { CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lon) } ?? estimatedVehicleCoordinate(at: date)
+        let vehicle = approachingVehicleCoordinate(at: date) ?? estimatedVehicleCoordinate(at: date)
         guard let vehicle, let projection = trip.path.project(vehicle, hint: trip.boardAlong),
               projection.along < trip.boardAlong - 10 else { return nil }
         let coordinates = trip.path.slice(from: projection.along, to: trip.boardAlong)
