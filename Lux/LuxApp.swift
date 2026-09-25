@@ -8,8 +8,20 @@
 import SwiftUI
 import LuxCom
 
+final class LuxAppDelegate: NSObject, UIApplicationDelegate {
+    func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        OnboardLiveActivityController.endAll()
+        return true
+    }
+
+    func applicationWillTerminate(_ application: UIApplication) {
+        OnboardLiveActivityController.endAllBeforeTermination()
+    }
+}
+
 @main
 struct LuxApp: App {
+    @UIApplicationDelegateAdaptor(LuxAppDelegate.self) private var appDelegate
     @StateObject private var locationManager = LocationManager()
     @StateObject private var shortcutManager = ShortcutManager()
     @StateObject private var disruptionManager = DisruptionManager()

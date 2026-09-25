@@ -13,6 +13,8 @@ final class OnboardLiveActivityController {
     private var activity: Activity<OnboardActivityAttributes>?
     private var lastState: OnboardActivityAttributes.ContentState?
     private var lastPush: Date = .distantPast
+    private static let staleAfter: TimeInterval = 180
+    private static let refreshAfter: TimeInterval = 60
 
     func start(destinationName: String, state: OnboardActivityAttributes.ContentState) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled, activity == nil else { return }
@@ -22,7 +24,7 @@ final class OnboardLiveActivityController {
         do {
             activity = try Activity.request(
                 attributes: OnboardActivityAttributes(destinationName: destinationName),
-                content: ActivityContent(state: state, staleDate: state.targetDate?.addingTimeInterval(15 * 60)),
+                content: ActivityContent(state: state, staleDate: Date().addingTimeInterval(Self.staleAfter)),
                 pushType: nil
             )
             lastState = state
@@ -33,8 +35,9 @@ final class OnboardLiveActivityController {
     }
 
     func update(_ state: OnboardActivityAttributes.ContentState, alert: (title: String, body: String)? = nil) {
-        guard let activity, state != lastState || alert != nil else { return }
-        if alert == nil, let lastState, isMinorChange(from: lastState, to: state) {
+        let needsRefresh = Date().timeIntervalSince(lastPush) >= Self.refreshAfter
+        guard let activity, state != lastState || alert != nil || needsRefresh else { return }
+        if alert == nil, !needsRefresh, let lastState, isMinorChange(from: lastState, to: state) {
             let progressMoved = abs(lastState.progress - state.progress) >= 0.02
             let sinceLastPush = Date().timeIntervalSince(lastPush)
             guard (progressMoved && sinceLastPush >= 5) || sinceLastPush >= 15 else { return }
@@ -42,7 +45,7 @@ final class OnboardLiveActivityController {
         lastState = state
         lastPush = Date()
 
-        let content = ActivityContent(state: state, staleDate: state.targetDate?.addingTimeInterval(15 * 60))
+        let content = ActivityContent(state: state, staleDate: Date().addingTimeInterval(Self.staleAfter))
         let alertConfiguration = alert.map {
             AlertConfiguration(title: LocalizedStringResource(stringLiteral: $0.title), body: LocalizedStringResource(stringLiteral: $0.body), sound: .default)
         }
@@ -50,6 +53,25 @@ final class OnboardLiveActivityController {
     }
 
     var isActive: Bool { activity != nil }
+
+    nonisolated static func endAll() {
+        for activity in Activity<OnboardActivityAttributes>.activities {
+            Task { await activity.end(nil, dismissalPolicy: .immediate) }
+        }
+    }
+
+    nonisolated static func endAllBeforeTermination() {
+        let activities = Activity<OnboardActivityAttributes>.activities
+        guard !activities.isEmpty else { return }
+        let done = DispatchSemaphore(value: 0)
+        Task.detached {
+            for activity in activities {
+                await activity.end(nil, dismissalPolicy: .immediate)
+            }
+            done.signal()
+        }
+        _ = done.wait(timeout: .now() + 2)
+    }
 
     func end(finalState: OnboardActivityAttributes.ContentState?) {
         guard let activity else { return }

@@ -15,33 +15,85 @@ private typealias State = OnboardActivityAttributes.ContentState
 struct OnboardLiveActivity: Widget {
     var body: some WidgetConfiguration {
         ActivityConfiguration(for: OnboardActivityAttributes.self) { context in
-            OnboardLockScreenView(state: context.state, destination: context.attributes.destinationName)
-                .widgetURL(URL(string: "lux://onboard"))
+            Group {
+                if context.isStale {
+                    InterruptedView(destination: context.attributes.destinationName)
+                } else {
+                    OnboardLockScreenView(state: context.state, destination: context.attributes.destinationName)
+                }
+            }
+            .widgetURL(URL(string: "lux://onboard"))
         } dynamicIsland: { context in
             let state = context.state
+            let isStale = context.isStale
             return DynamicIsland {
                 DynamicIslandExpandedRegion(.leading) {
-                    ExpandedLeading(state: state)
+                    if !isStale { ExpandedLeading(state: state) }
                 }
                 DynamicIslandExpandedRegion(.trailing) {
-                    ExpandedTrailing(state: state)
+                    if !isStale { ExpandedTrailing(state: state) }
                 }
                 DynamicIslandExpandedRegion(.center) {
-                    ExpandedCenter(state: state)
+                    if !isStale { ExpandedCenter(state: state) }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    ExpandedBottom(state: state, destination: context.attributes.destinationName)
+                    if isStale {
+                        InterruptedView(destination: context.attributes.destinationName)
+                    } else {
+                        ExpandedBottom(state: state, destination: context.attributes.destinationName)
+                    }
                 }
             } compactLeading: {
-                CompactLeading(state: state)
+                if isStale {
+                    InterruptedSymbol()
+                } else {
+                    CompactLeading(state: state)
+                }
             } compactTrailing: {
-                CompactTrailing(state: state)
+                if !isStale { CompactTrailing(state: state) }
             } minimal: {
-                MinimalView(state: state)
+                if isStale {
+                    InterruptedSymbol()
+                } else {
+                    MinimalView(state: state)
+                }
             }
             .widgetURL(URL(string: "lux://onboard"))
             .keylineTint(state.accent)
         }
+    }
+}
+
+private struct InterruptedSymbol: View {
+    var body: some View {
+        Image(systemName: "location.slash.fill")
+            .font(.system(size: 13, weight: .bold))
+            .foregroundStyle(.secondary)
+    }
+}
+
+private struct InterruptedView: View {
+    let destination: String
+
+    var body: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "location.slash.fill")
+                .font(.system(size: 18, weight: .bold))
+                .foregroundStyle(.secondary)
+                .frame(width: 40, height: 40)
+                .background(Circle().fill(Color.secondary.opacity(0.15)))
+            VStack(alignment: .leading, spacing: 2) {
+                Text("Navigation interrompue")
+                    .font(.headline)
+                Text(destination)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .lineLimit(1)
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 22)
+        .padding(.vertical, 20)
     }
 }
 
