@@ -85,11 +85,12 @@ extension OnboardSession {
 
     func reportCrowdPosition(leg: Leg, offsetOK: Bool) {
         guard isSharingPosition,
-              !leg.mode.isMainlineRail,
               !OfflineRouter.shared.isOfflineActive,
               offsetOK,
               let tripId = leg.tripId, !tripId.isEmpty,
-              let location = usableLocation, location.horizontalAccuracy <= 50,
+              let location = usableLocation,
+              location.horizontalAccuracy <= (leg.mode.isMainlineRail ? 20 : 50),
+              !leg.mode.isMainlineRail || hasTrainGPS,
               now.timeIntervalSince(lastCrowdReportAt) >= crowdReportInterval else { return }
         lastCrowdReportAt = now
         let coordinate = location.coordinate
