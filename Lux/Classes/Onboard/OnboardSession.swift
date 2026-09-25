@@ -438,6 +438,9 @@ final class OnboardSession {
            phase != .waiting || (replan.firstTransit?.startTime ?? now) <= now.addingTimeInterval(20) {
             withAnimation(.spring(duration: 0.4)) { self.replan = nil }
         }
+        if let replan, replan.reason == .faster, phase != .riding || (replan.expiresAt.map { now >= $0 } ?? false) {
+            withAnimation(.spring(duration: 0.4)) { self.replan = nil }
+        }
         lookForEarlierDeparture()
         catchUpWithVehicle()
         updateEstimates()

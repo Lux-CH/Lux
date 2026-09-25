@@ -17,7 +17,7 @@ extension OnboardSession {
     }
 
     enum ReplanReason: Equatable {
-        case connection, missedDeparture, cancelled, earlier
+        case connection, missedDeparture, cancelled, earlier, faster
     }
 
     struct ReplanProposal: Identifiable, Equatable {
@@ -28,8 +28,15 @@ extension OnboardSession {
         let arrival: Date
         let lateBy: TimeInterval
         let autoApplyAt: Date?
+        var expiresAt: Date? = nil
+        var exitName: String? = nil
+        var ridingTripId: String? = nil
 
         var firstTransit: Leg? { legs.first(where: \.isTransit) }
+        var nextTransit: Leg? {
+            guard let ridingTripId else { return firstTransit }
+            return legs.first { $0.isTransit && $0.tripId != ridingTripId }
+        }
 
         static func == (lhs: ReplanProposal, rhs: ReplanProposal) -> Bool { lhs.id == rhs.id }
     }
@@ -123,7 +130,11 @@ extension OnboardSession {
         refreshDisruptions()
         loadStationLayouts()
 
-        if keep <= legIndex {
+        let staysAboard = phase == .riding && keep == legIndex && legs[keep].tripId == proposal.ridingTripId
+        if staysAboard {
+            nextStopIndex = 1
+            announcedStopAlerts = announcedStopAlerts.filter { !$0.hasPrefix("\(keep)-") }
+        } else if keep <= legIndex {
             enterLeg(keep)
         }
         arrivalDate = proposal.arrival
@@ -193,6 +204,69 @@ extension OnboardSession {
             self.announcer.announce(
                 String(localized: "Départ plus tôt possible : \(transit.spokenLineName), \(self.spokenDeparture(transit.startTime)), arrivée à \(formatTime(proposal.arrival))."),
                 notificationTitle: String(localized: "Départ plus tôt possible"),
+                urgency: .notice
+            )
+        }
+    }
+
+    func lookForFasterConnection() {
+        guard isRunning, phase == .riding, replan == nil, !isReplanning, earlierTask == nil,
+              !OfflineRouter.shared.isOfflineActive, legIndex < legs.count - 1,
+              let leg = currentLeg, leg.isTransit, let tripId = leg.tripId, let destination = legs.last?.to else { return }
+        let stops = leg.allStops
+        let exits = Array(stops.indices.filter { $0 >= max(1, nextStopIndex) }.suffix(4))
+        guard !exits.isEmpty else { return }
+        let index = legIndex
+        let target = Self.routeTarget(destination)
+        let currentArrival = arrivalDate
+        earlierTask = Task { [weak self] in
+            var best: (exit: Int, itinerary: Itinerary)?
+            await withTaskGroup(of: (Int, Trip?).self) { group in
+                for exit in exits {
+                    let stop = stops[exit]
+                    guard let stopId = stop.stopId else { continue }
+                    let time = (stop.arrival ?? stop.scheduledArrival ?? stop.departure ?? Date()).addingTimeInterval(30)
+                    let options = Self.savedRouteOptions(from: RouteOptions.RouteLocation(stopId: stopId), to: target, time: time)
+                    group.addTask { (exit, try? await LuxData.route(options)) }
+                }
+                for await (exit, trip) in group {
+                    let arrivalAtExit = stops[exit].arrival ?? stops[exit].scheduledArrival ?? Date()
+                    for itinerary in trip?.itineraries ?? [] {
+                        guard itinerary.startTime >= arrivalAtExit.addingTimeInterval(-60),
+                              !itinerary.legs.contains(where: { $0.tripId == tripId }) else { continue }
+                        if best.map({ itinerary.endTime < $0.itinerary.endTime }) ?? true {
+                            best = (exit, itinerary)
+                        }
+                    }
+                }
+            }
+            guard let self else { return }
+            self.earlierTask = nil
+            guard let best, self.isRunning, self.phase == .riding, self.legIndex == index, self.replan == nil,
+                  best.itinerary.endTime < currentArrival.addingTimeInterval(-120) else { return }
+            let exitsAtAlight = best.exit == stops.count - 1
+            var newLegs = best.itinerary.legs
+            if !exitsAtAlight {
+                guard let shortened = LegLiveMerger.slice(leg, boardIndex: 0, alightIndex: best.exit) else { return }
+                newLegs.insert(shortened, at: 0)
+            }
+            let exit = stops[best.exit]
+            let proposal = ReplanProposal(
+                reason: .faster,
+                replaceFrom: exitsAtAlight ? index + 1 : index,
+                legs: newLegs,
+                arrival: best.itinerary.endTime,
+                lateBy: best.itinerary.endTime.timeIntervalSince(currentArrival),
+                autoApplyAt: nil,
+                expiresAt: (exit.arrival ?? exit.scheduledArrival)?.addingTimeInterval(-30),
+                exitName: self.placeName(exit),
+                ridingTripId: tripId
+            )
+            withAnimation(.spring(duration: 0.45)) { self.replan = proposal }
+            let next = proposal.nextTransit.map { String(localized: ", puis prenez \($0.spokenLineName)") } ?? ""
+            self.announcer.announce(
+                String(localized: "Correspondance plus rapide : descendez à \(proposal.exitName ?? "")\(next), arrivée à \(formatTime(proposal.arrival))."),
+                notificationTitle: String(localized: "Correspondance plus rapide"),
                 urgency: .notice
             )
         }

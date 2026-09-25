@@ -25,6 +25,16 @@
     "-" : {
       "shouldTranslate" : false
     },
+    ", puis prenez %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : ", then take %@"
+          }
+        }
+      }
+    },
     "· Puis" : {
       "localizations" : {
         "en" : {
@@ -2400,6 +2410,26 @@
         }
       }
     },
+    "Correspondance plus rapide" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faster connection"
+          }
+        }
+      }
+    },
+    "Correspondance plus rapide : descendez à %@%@, arrivée à %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faster connection: get off at %1$@%2$@, arriving at %3$@."
+          }
+        }
+      }
+    },
     "Correspondance risquée" : {
       "localizations" : {
         "en" : {
@@ -2758,16 +2788,16 @@
     },
     "Départ plus tôt possible : %@, %@, arrivée à %@." : {
       "localizations" : {
-        "fr" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Départ plus tôt possible : %1$@, %2$@, arrivée à %3$@."
-          }
-        },
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Earlier departure available: %1$@, %2$@, arriving at %3$@."
+          }
+        },
+        "fr" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Départ plus tôt possible : %1$@, %2$@, arrivée à %3$@."
           }
         }
       }
@@ -2862,6 +2892,16 @@
         }
       }
     },
+    "Descendez à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Get off at %@"
+          }
+        }
+      }
+    },
     "Descendez au niveau inférieur" : {
       "localizations" : {
         "en" : {
@@ -2883,6 +2923,7 @@
       }
     },
     "Descendez au prochain arrêt et suivez le nouvel itinéraire à pied." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7819,7 +7860,18 @@
         }
       }
     },
+    "Vous avez dépassé votre arrêt. Descendez au prochain arrêt, %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You've passed your stop. Get off at the next stop, %@."
+          }
+        }
+      }
+    },
     "Vous avez dépassé votre arrêt. Descendez au prochain arrêt." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -7975,16 +8027,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "XX"
-          }
-        }
-      }
-    },
-    "Vous avez dépassé votre arrêt. Descendez au prochain arrêt, %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You've passed your stop. Get off at the next stop, %@."
           }
         }
       }

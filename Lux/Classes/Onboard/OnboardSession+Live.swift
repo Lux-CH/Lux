@@ -76,6 +76,9 @@ extension OnboardSession {
                 urgency: .notice
             )
             self.evaluate()
+            if earlier, self.phase == .riding {
+                self.lookForFasterConnection()
+            }
         }
     }
 

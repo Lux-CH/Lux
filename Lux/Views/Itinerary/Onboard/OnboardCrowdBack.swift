@@ -365,7 +365,7 @@ struct ReplanCard: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(title(for: reason))
                     .font(.headline)
-                Text("Nouvel itinéraire trouvé")
+                Text(session.replan?.exitName.map { String(localized: "Descendez à \($0)") } ?? String(localized: "Nouvel itinéraire trouvé"))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -379,13 +379,14 @@ struct ReplanCard: View {
         case .missedDeparture: return String(localized: "Départ manqué")
         case .cancelled: return String(localized: "Véhicule supprimé")
         case .earlier: return String(localized: "Départ plus tôt possible")
+        case .faster: return String(localized: "Correspondance plus rapide")
         }
     }
 
     private func symbol(for reason: OnboardSession.ReplanReason) -> String {
         switch reason {
         case .cancelled: return "xmark.octagon.fill"
-        case .earlier: return "hare.fill"
+        case .earlier, .faster: return "hare.fill"
         default: return "arrow.triangle.branch"
         }
     }
@@ -393,14 +394,14 @@ struct ReplanCard: View {
     private func tint(for reason: OnboardSession.ReplanReason) -> Color {
         switch reason {
         case .cancelled: return .red
-        case .earlier: return .green
+        case .earlier, .faster: return .green
         default: return .orange
         }
     }
 
     private func proposalRow(_ proposal: OnboardSession.ReplanProposal) -> some View {
         HStack(spacing: 10) {
-            if let transit = proposal.firstTransit {
+            if let transit = proposal.nextTransit {
                 LinePill(line: transit.routeShortName ?? "", mode: transit.mode, agency: transit.agencyId, width: 42, height: 26, fontSize: 14)
                 VStack(alignment: .leading, spacing: 1) {
                     Text("\(formatTime(transit.startTime)) · \(session.placeName(transit.from))")
