@@ -418,7 +418,7 @@ struct OnboardBottomPanel: View {
                     }
                 }
                 .padding(.top, 24)
-                .padding(.bottom, session.endsWithButton ? 2 : summaryOnly ? 12 : 6)
+                .padding(.bottom, session.endsWithButton ? 2 : summaryOnly ? 24 : 6)
                 .onGeometryChange(for: CGFloat.self, of: { $0.size.height }) { onCompactHeightChange($0) }
 
                 if session.phase != .arrived {
