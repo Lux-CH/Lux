@@ -61,6 +61,8 @@ extension OnboardSession {
                   let corrected = LegLiveMerger.merge(self.legs[index], with: trip, retargetingTo: tripId) else { return }
             let earlier = corrected.scheduledStartTime < self.legs[index].scheduledStartTime
             self.legs[index] = corrected
+            self.scheduleOffset = nil
+            self.positionDelay = nil
             self.crowdStatus = nil
             self.startLiveFeed(for: index)
             self.showAlert(

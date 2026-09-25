@@ -43,6 +43,8 @@ final class OnboardSession {
     @ObservationIgnored var alightWatch: AlightWatch?
     @ObservationIgnored var tripLegs: [Int: Leg] = [:]
     @ObservationIgnored var legKeyFrames: (key: String, frames: [VehicleVisualisation.KeyFrame])?
+    @ObservationIgnored var scheduleKeyFrames: (key: String, frames: [VehicleVisualisation.KeyFrame])?
+    @ObservationIgnored var scheduleOffset: (seconds: TimeInterval, at: Date)?
     @ObservationIgnored var knownDisruptions: [Disruption]?
     @ObservationIgnored var announcedDisruptionIds: Set<String>?
     var nextManeuver: WalkManeuver?

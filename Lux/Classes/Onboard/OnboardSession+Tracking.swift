@@ -298,10 +298,10 @@ extension OnboardSession {
 
         if locatedByGPS {
             reportCrowdPosition(leg: leg, offsetOK: true)
-            updatePositionDelay(leg: leg, alongs: alongs)
+            if let location = usableLocation, location.horizontalAccuracy <= 30, offset <= 30 {
+                measureScheduleOffset(leg: leg, along: alongInLeg)
+            }
             checkDelay(of: leg, at: legIndex)
-        } else if positionDelay != nil, now.timeIntervalSince(positionDelayAt) > 60 {
-            positionDelay = nil
         }
 
         let alightAlong = alongs.last ?? path.length
@@ -339,6 +339,12 @@ extension OnboardSession {
             withAnimation { hasTrainGPS = locked }
         }
 
+        if let gpsAlong {
+            measureScheduleOffset(leg: leg, along: gpsAlong)
+            reportCrowdPosition(leg: leg, offsetOK: true)
+            checkDelay(of: leg, at: legIndex)
+        }
+
         if locked {
             if let gpsAlong, alongInLeg - gpsAlong > 60 {
                 assign(\.alongInLeg, gpsAlong)
@@ -347,7 +353,7 @@ extension OnboardSession {
                 assign(\.alongInLeg, max(alongInLeg - 30, along))
             }
         } else {
-            assign(\.alongInLeg, timetable)
+            assign(\.alongInLeg, hasFreshScheduleOffset ? max(alongInLeg, timetable) : timetable)
         }
         assign(\.dwellingStopIndex, alongs.firstIndex { abs($0 - alongInLeg) <= stopRadius })
         let next = alongs.firstIndex { $0 > alongInLeg + stopRadius * 0.7 } ?? (alongs.count - 1)
@@ -369,10 +375,14 @@ extension OnboardSession {
         }
     }
 
+    var hasFreshScheduleOffset: Bool {
+        scheduleOffset.map { now.timeIntervalSince($0.at) < 1200 } ?? false
+    }
+
     var estimatedAlightTime: Date? {
-        guard phase == .riding, !followsTimetable, let positionDelay, now.timeIntervalSince(positionDelayAt) < 60,
-              let leg = currentLeg, let scheduled = leg.to.scheduledArrival ?? leg.to.scheduledDeparture else { return nil }
-        return max(now, scheduled.addingTimeInterval(positionDelay))
+        guard phase == .riding, hasFreshScheduleOffset, let offset = scheduleOffset, let leg = currentLeg else { return nil }
+        let scheduled = leg.to.scheduledArrival ?? leg.to.scheduledDeparture ?? leg.scheduledEndTime
+        return max(now, scheduled.addingTimeInterval(-offset.seconds))
     }
 
     var currentLegArrival: Date {
@@ -384,30 +394,58 @@ extension OnboardSession {
         return currentLeg?.arrivalDelayMinutes ?? 0
     }
 
-    func updatePositionDelay(leg: Leg, alongs: [CLLocationDistance]) {
-        guard alongInLeg > (alongs.first ?? 0) + 60 else { return }
-        let stops = leg.allStops
-        func arrival(_ index: Int) -> Date? { stops[index].scheduledArrival ?? stops[index].scheduledDeparture }
-        func departure(_ index: Int) -> Date? { stops[index].scheduledDeparture ?? stops[index].scheduledArrival }
-
-        var delay: TimeInterval?
-        if let stop = dwellingStopIndex, let arrive = arrival(stop), let leave = departure(stop) {
-            if now < arrive { delay = now.timeIntervalSince(arrive) }
-            else if now <= leave { delay = 0 }
-            else { delay = now.timeIntervalSince(leave) }
-        } else if let segment = (0..<(alongs.count - 1)).first(where: { alongInLeg >= alongs[$0] && alongInLeg < alongs[$0 + 1] }),
-                  let leave = departure(segment), let arrive = arrival(segment + 1) {
-            let span = alongs[segment + 1] - alongs[segment]
-            let fraction = span > 0 ? (alongInLeg - alongs[segment]) / span : 0
-            let scheduled = leave.addingTimeInterval(arrive.timeIntervalSince(leave) * fraction)
-            delay = now.timeIntervalSince(scheduled)
+    func scheduleAlong(at date: Date, leg: Leg, hint: CLLocationDistance) -> CLLocationDistance? {
+        let key = "\(legIndex)|\(leg.tripId ?? "")|\(leg.scheduledStartTime.timeIntervalSince1970)"
+        if scheduleKeyFrames?.key != key {
+            scheduleKeyFrames = (key, VehicleVisualisation.calculateKeyFrames(for: leg, polylineString: leg.legGeometry.points, precision: 1e6, scheduled: true))
         }
-        guard let delay, delay > -300, delay < 5400 else { return }
-        positionDelay = positionDelay.map { $0 * 0.7 + delay * 0.3 } ?? delay
+        guard let frames = scheduleKeyFrames?.frames, !frames.isEmpty, let path = currentPath,
+              let position = VehicleVisualisation.interpolatePosition(at: date.timeIntervalSince1970, using: frames),
+              let projection = path.project(position, hint: hint) else { return nil }
+        return projection.along
+    }
+
+    func measureScheduleOffset(leg: Leg, along: CLLocationDistance) {
+        guard let path = currentPath, along > 30, along < path.length - 30 else { return }
+        let lower = now.addingTimeInterval(-5400)
+        let upper = now.addingTimeInterval(1800)
+        func earliest(_ reached: (CLLocationDistance) -> Bool) -> Date? {
+            guard let last = scheduleAlong(at: upper, leg: leg, hint: along), reached(last) else { return nil }
+            var low = lower
+            var high = upper
+            for _ in 0..<16 {
+                let middle = low.addingTimeInterval(high.timeIntervalSince(low) / 2)
+                if let value = scheduleAlong(at: middle, leg: leg, hint: along), reached(value) {
+                    high = middle
+                } else {
+                    low = middle
+                }
+            }
+            return high
+        }
+        guard let reachedAt = earliest({ $0 >= along - 8 }) else { return }
+        let leftAt = earliest({ $0 > along + 8 }) ?? reachedAt
+        let measured: TimeInterval
+        if now < reachedAt {
+            measured = reachedAt.timeIntervalSince(now)
+        } else if now > leftAt {
+            measured = leftAt.timeIntervalSince(now)
+        } else {
+            measured = 0
+        }
+        guard measured > -5400, measured < 900 else { return }
+        let smoothed = scheduleOffset.map { abs($0.seconds - measured) > 120 ? measured : $0.seconds * 0.6 + measured * 0.4 } ?? measured
+        scheduleOffset = (smoothed, now)
+        let delay = (-smoothed / 15).rounded() * 15
+        if positionDelay != delay { positionDelay = delay }
         positionDelayAt = now
     }
 
     func estimatedAlongByTime(leg: Leg, alongs: [CLLocationDistance]) -> CLLocationDistance {
+        if hasFreshScheduleOffset, let offset = scheduleOffset,
+           let along = scheduleAlong(at: now.addingTimeInterval(offset.seconds), leg: leg, hint: alongInLeg) {
+            return along
+        }
         if let along = keyFrameAlong(leg: leg) { return along }
         let stops = leg.allStops
         let times: [Date] = stops.enumerated().map { index, stop in
@@ -496,6 +534,7 @@ extension OnboardSession {
         crowdWatched = false
         rideReports = [:]
         positionDelay = nil
+        scheduleOffset = nil
         showsCrowdPrompt = false
         crowdPromptTask?.cancel()
         lastAtBoardingStop = nil
