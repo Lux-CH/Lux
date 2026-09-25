@@ -33,37 +33,58 @@ enum VehicleVisualisation {
         let isDwelling: Bool
     }
     
-    static func calculateKeyFrames(for leg: Leg, polylineString: String, precision: Double) -> [KeyFrame] {
+    static func calculateKeyFrames(for leg: Leg, polylineString: String, precision: Double, scheduled: Bool = false) -> [KeyFrame] {
         let polyline = Polyline(encodedPolyline: polylineString, precision: precision)
         guard let coordinates = polyline.coordinates, coordinates.count >= 2 else { return [] }
         
-        let departureTime = leg.startTime.timeIntervalSince1970
-        let arrivalTime = leg.endTime.timeIntervalSince1970
+        let departureTime = (scheduled ? leg.scheduledStartTime : leg.startTime).timeIntervalSince1970
+        let arrivalTime = (scheduled ? leg.scheduledEndTime : leg.endTime).timeIntervalSince1970
         
         var stops: [(arrivalTime: TimeInterval?, departureTime: TimeInterval, coordinate: CLLocationCoordinate2D)] = []
+        var timetable: [(arrival: TimeInterval?, departure: TimeInterval?)] = []
         
         stops.append((nil, departureTime, CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon)))
+        timetable.append((nil, leg.scheduledStartTime.timeIntervalSince1970))
         
         if let intermediateStops = leg.intermediateStops {
             for stop in intermediateStops {
-                let arrivalTime = stop.arrival?.timeIntervalSince1970 ?? stop.scheduledArrival?.timeIntervalSince1970
-                let departureTime = stop.departure?.timeIntervalSince1970 ?? stop.scheduledDeparture?.timeIntervalSince1970
+                let scheduledArrival = stop.scheduledArrival?.timeIntervalSince1970
+                let scheduledDeparture = stop.scheduledDeparture?.timeIntervalSince1970
+                let arrivalTime = scheduled ? scheduledArrival ?? stop.arrival?.timeIntervalSince1970 : stop.arrival?.timeIntervalSince1970 ?? scheduledArrival
+                let departureTime = scheduled ? scheduledDeparture ?? stop.departure?.timeIntervalSince1970 : stop.departure?.timeIntervalSince1970 ?? scheduledDeparture
                 
                 if let depTime = departureTime {
                     stops.append((arrivalTime, depTime, CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon)))
+                    timetable.append((scheduledArrival, scheduledDeparture))
                 } else if let arrTime = arrivalTime {
                     stops.append((arrTime, arrTime, CLLocationCoordinate2D(latitude: stop.lat, longitude: stop.lon)))
+                    timetable.append((scheduledArrival, scheduledDeparture))
                 }
             }
         }
         
         stops.append((arrivalTime, arrivalTime, CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon)))
+        timetable.append((leg.scheduledEndTime.timeIntervalSince1970, nil))
         
         let mode = leg.mode
         for i in 1..<(stops.count-1) {
             if let arrivalTime = stops[i].arrivalTime, abs(arrivalTime - stops[i].departureTime) < 1.0 {
                 stops[i].departureTime = arrivalTime + mode.dwellTime
             }
+        }
+
+        for i in 0..<(scheduled ? 0 : stops.count - 1) {
+            guard let plannedDeparture = timetable[i].departure ?? timetable[i].arrival,
+                  let plannedArrival = timetable[i + 1].arrival ?? timetable[i + 1].departure,
+                  plannedArrival > plannedDeparture else { continue }
+            let minimumTravel = (plannedArrival - plannedDeparture) * 0.6
+            let nextArrival = stops[i + 1].arrivalTime ?? stops[i + 1].departureTime
+            guard nextArrival - stops[i].departureTime < minimumTravel else { continue }
+            let earliestDeparture = stops[i].arrivalTime ?? stops[i].departureTime
+            stops[i].departureTime = max(earliestDeparture, nextArrival - minimumTravel)
+            let arrival = max(nextArrival, stops[i].departureTime + minimumTravel)
+            if stops[i + 1].arrivalTime != nil { stops[i + 1].arrivalTime = arrival }
+            stops[i + 1].departureTime = max(stops[i + 1].departureTime, arrival)
         }
         
         var mappedStops: [(arrivalTime: TimeInterval?, departureTime: TimeInterval, index: Int)] = []
