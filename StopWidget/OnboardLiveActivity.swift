@@ -476,6 +476,7 @@ private struct MinimalView: View {
                 if state.isUrgent {
                     Image(systemName: "figure.walk.departure")
                         .font(.system(size: 10, weight: .bold))
+                        .foregroundStyle(Color.urgentRed)
                 } else {
                     Text("\(state.stopsRemaining ?? 0)")
                         .font(.system(size: 11, weight: .bold, design: .rounded))
