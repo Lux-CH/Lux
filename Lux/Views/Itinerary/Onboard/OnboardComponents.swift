@@ -498,7 +498,7 @@ struct OnboardBottomPanel: View {
     }
 
     private var summaryOnly: Bool {
-        session.phase == .walking && session.nextTransitLeg == nil && session.legDisruptions.isEmpty
+        session.phase == .arrived || (session.phase == .walking && session.nextTransitLeg == nil && session.legDisruptions.isEmpty)
     }
 
     @ViewBuilder
