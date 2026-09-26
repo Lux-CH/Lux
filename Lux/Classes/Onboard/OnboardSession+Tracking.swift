@@ -488,7 +488,7 @@ extension OnboardSession {
         if alongs.count >= 2, phase == .riding, !announcedStopAlerts.contains(key + "-final") {
             let alight = alongs[alongs.count - 1]
             let previous = alongs[alongs.count - 2]
-            if alight - previous > 300, alongInLeg > previous, alight - alongInLeg <= 20 {
+            if alight - previous > 300, alongInLeg > previous, alight - alongInLeg <= 30 {
                 announcedStopAlerts.insert(key + "-final")
                 announcer.speak(String(localized: "Descendez maintenant, \(alightName)."))
             }
