@@ -274,7 +274,7 @@ struct OnboardInstructionBanner: View {
             let nextName: String? = session.stopsRemaining > 1 && session.nextStopIndex < stops.count ? stops[session.nextStopIndex].name : nil
             return AnyView(Group {
                 if let nextName {
-                    Image(systemName: "arrow.down.to.line")
+                    Image(systemName: "arrow.up.to.line")
                     Text("Prochain : \(nextName)")
                         .lineLimit(1)
                 } else {
