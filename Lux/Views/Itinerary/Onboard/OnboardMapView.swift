@@ -391,6 +391,8 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
                 }
             }
             mapView.addOverlays(routeLines, level: .aboveRoads)
+            mapView.removeOverlays(arrowOverlays)
+            arrowOverlays = []
             arrowSignature = ""
             stopSignature = ""
             estimated = remove(estimated)
