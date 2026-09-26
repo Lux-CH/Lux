@@ -88,6 +88,7 @@ final class OnboardSession {
 
     let locationProvider = OnboardLocationProvider()
     let motion = OnboardMotionDetector()
+    let motionRecorder = OnboardMotionRecorder()
     @ObservationIgnored var measuredPace: CLLocationSpeed?
     @ObservationIgnored var tripKeyFrames: [Int: (frames: [VehicleVisualisation.KeyFrame], at: Date)] = [:]
     @ObservationIgnored var paceSamples = 0
@@ -257,6 +258,9 @@ final class OnboardSession {
         locationProvider.onHeading = { [weak self] heading in self?.handle(heading) }
         locationProvider.start()
         motion.start()
+        if Settings.shared.onboardMotionRecording {
+            motionRecorder.start(tripName: legs.compactMap(\.routeShortName).joined(separator: " ") + " → " + destinationName)
+        }
         isTracking = true
 
         UIApplication.shared.isIdleTimerDisabled = true
@@ -308,6 +312,7 @@ final class OnboardSession {
         isTracking = false
         locationProvider.stop()
         motion.stop()
+        motionRecorder.stop()
         enqueueRelay {
             await RelayClient.shared.stopOnboardReports()
             await RelayClient.shared.setBackgroundKeepAlive(false)
@@ -421,6 +426,20 @@ final class OnboardSession {
         }
     }
 
+    func recordContext() {
+        let leg = currentLeg
+        motionRecorder.context(
+            phase: "\(phase)",
+            leg: legIndex,
+            mode: leg.map { "\($0.mode)" } ?? "",
+            line: leg?.routeShortName ?? "",
+            trip: leg?.tripId ?? "",
+            nextStop: nextStopIndex,
+            along: alongInLeg,
+            locked: hasTrainGPS
+        )
+    }
+
     func requestNotificationPermission() {
         announcer.prepare()
     }
@@ -443,6 +462,7 @@ final class OnboardSession {
         }
         lookForEarlierDeparture()
         catchUpWithVehicle()
+        recordContext()
         updateEstimates()
         refreshFormationIfNeeded()
         if let lastFixAt, now.timeIntervalSince(lastFixAt) > 45 {

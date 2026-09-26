@@ -33,6 +33,7 @@ extension OnboardSession {
         assign(\.hasWeakGPS, location.horizontalAccuracy > usableAccuracy)
         userLocation = location
         motion.record(location)
+        motionRecorder.record(location)
         if phase == .walking, location.horizontalAccuracy <= 30, location.speed >= 0.4, location.speed <= 3 {
             measuredPace = measuredPace.map { $0 * 0.92 + location.speed * 0.08 } ?? location.speed
             paceSamples += 1

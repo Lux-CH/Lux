@@ -284,6 +284,13 @@ struct SettingsView: View {
                         set: { settings.onboardCrowdConsent = $0 ? .granted : .declined }
                     )
                 )
+                SettingsToggle(
+                    icon: "waveform.path.ecg",
+                    title: String(localized: "Enregistrer les mouvements"),
+                    subtitle: String(localized: "Garde sur l'appareil l'accéléromètre et la position de chaque trajet, pour améliorer la détection des arrêts sous terre"),
+                    isOn: $settings.onboardMotionRecording
+                )
+                MotionRecordingsRow()
             } header: {
                 SectionHeader(
                     icon: "location.north.line.fill",
@@ -462,5 +469,55 @@ struct SettingsView: View {
                 )
             }
         }
+    }
+}
+
+private struct MotionRecordingsRow: View {
+    @ObservedObject var accentColorManager = AccentColorManager.shared
+    @State private var recordings: [URL] = []
+    @State private var size: Int64 = 0
+    @State private var confirmsDelete = false
+
+    var body: some View {
+        Group {
+            if !recordings.isEmpty {
+                HStack(spacing: 12) {
+                    Image(systemName: "square.and.arrow.up")
+                        .font(.title3)
+                        .foregroundColor(accentColorManager.selectedAccentColor)
+                        .frame(width: 24, height: 24)
+                    ShareLink(items: recordings) {
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Exporter les enregistrements")
+                                .font(.body)
+                                .fontWeight(.medium)
+                                .foregroundStyle(.primary)
+                            Text("\(recordings.count) trajets · \(ByteCountFormatter.string(fromByteCount: size, countStyle: .file))")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Spacer()
+                    Button(role: .destructive) {
+                        confirmsDelete = true
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .buttonStyle(.borderless)
+                }
+                .confirmationDialog("Supprimer les enregistrements ?", isPresented: $confirmsDelete, titleVisibility: .visible) {
+                    Button("Supprimer", role: .destructive) {
+                        OnboardMotionRecorder.deleteAll()
+                        reload()
+                    }
+                }
+            }
+        }
+        .onAppear(perform: reload)
+    }
+
+    private func reload() {
+        recordings = OnboardMotionRecorder.recordings
+        size = OnboardMotionRecorder.totalSize
     }
 }

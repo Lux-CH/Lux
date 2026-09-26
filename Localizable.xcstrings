@@ -22,6 +22,16 @@
         }
       }
     },
+    "%lld trajets · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld trips · %@"
+          }
+        }
+      }
+    },
     "-" : {
       "shouldTranslate" : false
     },
@@ -31,6 +41,46 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : ", then take %@"
+          }
+        }
+      }
+    },
+    "Enregistrer les mouvements" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record motion"
+          }
+        }
+      }
+    },
+    "Exporter les enregistrements" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export recordings"
+          }
+        }
+      }
+    },
+    "Garde sur l'appareil l'accéléromètre et la position de chaque trajet, pour améliorer la détection des arrêts sous terre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps each trip's accelerometer and position data on this device, to improve stop detection underground"
+          }
+        }
+      }
+    },
+    "Supprimer les enregistrements ?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete recordings?"
           }
         }
       }
