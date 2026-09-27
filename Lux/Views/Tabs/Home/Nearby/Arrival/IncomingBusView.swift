@@ -44,7 +44,7 @@ struct IncomingBusView: View {
                     .toolbarBackground(.hidden, for: .navigationBar)
                     .navigationBarBackButtonHidden(true)
                     .onAppear {
-                        viewModel.userSelectedLine(group.routeShortName)
+                        viewModel.userSelectedGroup(group)
                     }
             }
         }) {

@@ -26,7 +26,7 @@ struct RouteGroupView: View {
                     get: { viewModel.currentPages[routeName] ?? 0 },
                     set: { newValue in
                         withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-                            viewModel.currentPages[routeName] = newValue
+                            viewModel.userChangedPage(newValue, for: routeName)
                         }
                     }
                 )) {

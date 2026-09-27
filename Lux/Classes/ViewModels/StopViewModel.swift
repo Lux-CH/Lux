@@ -28,6 +28,18 @@ class StopViewModel: ObservableObject {
     private var fromStops: Bool
     private var currentTime: Date = Date()
     private var isCustomTimeSelected: Bool = false
+    private var needsStartPagePick = true
+    private var lastMonitoringStop: Date?
+    private var dwellTask: Task<Void, Never>?
+    private let directionPreferences = DirectionPreferenceStore.shared
+
+    private static let startPagePickCooldown: TimeInterval = 5 * 60
+    private static let dwellDuration: Duration = .seconds(2)
+    private static let dwellPoints = 0.3
+    private static let selectionPoints = 1.0
+    private static let minimumFavoriteScore = 1.0
+    private static let favoriteHorizon: TimeInterval = 40 * 60
+
     init(stop: SearchResult, fromStops: Bool) {
         self.stop = stop
         self.fromStops = fromStops
@@ -43,7 +55,14 @@ class StopViewModel: ObservableObject {
     }
     
     func startMonitoring() {
+        if let lastMonitoringStop, Date().timeIntervalSince(lastMonitoringStop) > Self.startPagePickCooldown {
+            needsStartPagePick = true
+        }
+
         Task { @MainActor in
+            if needsStartPagePick && !routeGroups.isEmpty {
+                pickStartPages()
+            }
             let relayEligible = !fromStops
                 && !OfflineRouter.shared.isOfflineActive
                 && !isCustomTimeSelected
@@ -79,6 +98,8 @@ class StopViewModel: ObservableObject {
         }
         departureCheckTimer?.cancel()
         backgroundRefreshTask?.cancel()
+        dwellTask?.cancel()
+        lastMonitoringStop = Date()
     }
 
     /// Live departures via the relay WebSocket. The relay pushes a new
@@ -303,6 +324,9 @@ class StopViewModel: ObservableObject {
                         groupsModified = true
                     } else {
                         groups.remove(at: groupIndex)
+                        if let page = currentPages[routeName], page > groupIndex {
+                            currentPages[routeName] = page - 1
+                        }
                         groupsModified = true
                         break
                     }
@@ -456,8 +480,10 @@ class StopViewModel: ObservableObject {
                 }
 
             result[routeName] = groupsByHeadsign
-            newCurrentPages[routeName] = min(currentPages[routeName] ?? 0, max(0, groupsByHeadsign.count - 1))
+            newCurrentPages[routeName] = startPage(for: routeName, in: groupsByHeadsign)
         }
+
+        needsStartPagePick = false
         
         let sortedRouteNames = lineScoreManager.getSortedRouteNames(Array(routeGroups.keys))
         
@@ -467,6 +493,88 @@ class StopViewModel: ObservableObject {
     }
     
     
+    @MainActor
+    private func startPage(for routeName: String, in groups: [GroupedStopTime]) -> Int {
+        guard !needsStartPagePick, let previousGroups = self.routeGroups[routeName] else {
+            return preferredStartPage(for: groups)
+        }
+
+        let previousPage = currentPages[routeName] ?? 0
+        if previousGroups.indices.contains(previousPage) {
+            let previousKey = previousGroups[previousPage].headsign.normalizedHeadsignKey
+            if let index = groups.firstIndex(where: { $0.headsign.normalizedHeadsignKey == previousKey }) {
+                return index
+            }
+        }
+        return min(previousPage, max(0, groups.count - 1))
+    }
+
+    @MainActor
+    private func pickStartPages() {
+        for routeName in routeNames {
+            if let groups = routeGroups[routeName] {
+                currentPages[routeName] = preferredStartPage(for: groups)
+            }
+        }
+        needsStartPagePick = false
+    }
+
+    @MainActor
+    private func preferredStartPage(for groups: [GroupedStopTime]) -> Int {
+        let referenceTime = getReferenceTime()
+        let viewedStopKey = stop.name.normalizedHeadsignKey
+        let candidates = groups.indices.filter { groups[$0].headsign.normalizedHeadsignKey != viewedStopKey }
+        guard !candidates.isEmpty else { return 0 }
+
+        func nextDeparture(_ index: Int) -> Date {
+            groups[index].stopTimes.first.map(eventTime) ?? .distantFuture
+        }
+
+        let favorite = candidates
+            .map { index in
+                (index: index, score: directionPreferences.score(
+                    stopId: stop.id,
+                    route: groups[index].routeShortName,
+                    headsignKey: groups[index].headsign.normalizedHeadsignKey,
+                    at: referenceTime
+                ))
+            }
+            .filter { $0.score >= Self.minimumFavoriteScore }
+            .max { $0.score < $1.score }
+
+        if let favorite, nextDeparture(favorite.index).timeIntervalSince(referenceTime) <= Self.favoriteHorizon {
+            return favorite.index
+        }
+
+        return candidates.min { nextDeparture($0) < nextDeparture($1) } ?? 0
+    }
+
+    @MainActor
+    func userChangedPage(_ page: Int, for routeName: String) {
+        currentPages[routeName] = page
+        dwellTask?.cancel()
+
+        guard let group = routeGroups[routeName], group.indices.contains(page) else { return }
+        let headsignKey = group[page].headsign.normalizedHeadsignKey
+
+        dwellTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(for: Self.dwellDuration)
+            guard let self, !Task.isCancelled, self.currentPages[routeName] == page else { return }
+            self.recordDirection(route: routeName, headsignKey: headsignKey, points: Self.dwellPoints)
+        }
+    }
+
+    @MainActor
+    func userSelectedGroup(_ group: GroupedStopTime) {
+        userSelectedLine(group.routeShortName)
+        recordDirection(route: group.routeShortName, headsignKey: group.headsign.normalizedHeadsignKey, points: Self.selectionPoints)
+    }
+
+    @MainActor
+    private func recordDirection(route: String, headsignKey: String, points: Double) {
+        directionPreferences.record(stopId: stop.id, route: route, headsignKey: headsignKey, at: getReferenceTime(), points: points)
+    }
+
     func userSelectedLine(_ routeShortName: String) {
         let trimmedLine = routeShortName.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         lineScoreManager.addScore(to: trimmedLine)

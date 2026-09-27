@@ -30,7 +30,7 @@ struct DepartureTimeRow: View {
                 .toolbarBackground(.hidden, for: .navigationBar)
                 .navigationBarBackButtonHidden(true)
                 .onAppear {
-                    viewModel.userSelectedLine(group.routeShortName)
+                    viewModel.userSelectedGroup(group)
                 }
         }) {
             TimelineView(.periodic(from: .now, by: 5)) { context in

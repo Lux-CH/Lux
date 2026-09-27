@@ -186,7 +186,7 @@ struct CompactStopView: View {
             ZStack(alignment: .bottom) {
                 TabView(selection: Binding(
                     get: { viewModel.currentPages[routeName] ?? 0 },
-                    set: { viewModel.currentPages[routeName] = $0 }
+                    set: { viewModel.userChangedPage($0, for: routeName) }
                 )) {
                     ForEach(Array(groups.enumerated()), id: \.element.id) { index, group in
                         if !group.stopTimes.isEmpty {
