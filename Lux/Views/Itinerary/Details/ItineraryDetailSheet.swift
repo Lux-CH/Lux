@@ -16,8 +16,7 @@ struct ItineraryDetailSheet: View {
     @Binding var detent: PresentationDetent
     let compactDetent: PresentationDetent
 
-    @State private var path: [Int] = []
-    @State private var disruptionGroups: [DisruptionGroup] = []
+    @State private var path: [DisruptionsRoute] = []
 
     var body: some View {
         if let itinerary = viewModel.itinerary {
@@ -30,8 +29,8 @@ struct ItineraryDetailSheet: View {
                     }
                 }
                 .toolbar(.hidden, for: .navigationBar)
-                .navigationDestination(for: Int.self) { _ in
-                    DisruptionsListView(groups: disruptionGroups)
+                .navigationDestination(for: DisruptionsRoute.self) { route in
+                    DisruptionsListView(groups: route.groups)
                 }
             }
             .environment(\.openDisruptions, openDisruptions)
@@ -45,14 +44,22 @@ struct ItineraryDetailSheet: View {
     }
 
     private func openDisruptions(_ groups: [DisruptionGroup]) {
-        disruptionGroups = groups
+        let route = DisruptionsRoute(groups: groups)
         guard detent == compactDetent else {
-            path.append(0)
+            path.append(route)
             return
         }
         withAnimation(.smooth(duration: 0.3)) { detent = .medium }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { path.append(0) }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { path.append(route) }
     }
+}
+
+private struct DisruptionsRoute: Hashable {
+    let id = UUID()
+    let groups: [DisruptionGroup]
+
+    static func == (lhs: Self, rhs: Self) -> Bool { lhs.id == rhs.id }
+    func hash(into hasher: inout Hasher) { hasher.combine(id) }
 }
 
 struct StopStatus {
