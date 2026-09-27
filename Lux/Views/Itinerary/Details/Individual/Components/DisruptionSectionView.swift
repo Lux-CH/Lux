@@ -37,6 +37,7 @@ struct DisruptionsRow: View {
     let groups: [DisruptionGroup]
     var action: (() -> Void)?
     @Environment(\.openDisruptions) private var openDisruptions
+    @State private var isOpening = false
 
     private var all: [Disruption] { groups.flatMap(\.disruptions) }
 
@@ -44,12 +45,19 @@ struct DisruptionsRow: View {
         if !all.isEmpty {
             if action != nil || openDisruptions != nil {
                 Button {
+                    guard !isOpening else { return }
                     HapticFeedback.lightImpact()
+                    isOpening = true
                     if let action { action() } else { openDisruptions?(groups) }
+                    Task {
+                        try? await Task.sleep(for: .seconds(2))
+                        isOpening = false
+                    }
                 } label: {
                     label
                 }
                 .buttonStyle(.plain)
+                .onDisappear { isOpening = false }
             } else {
                 NavigationLink {
                     DisruptionsListView(groups: groups)
@@ -72,9 +80,14 @@ struct DisruptionsRow: View {
                 .font(.subheadline.weight(.semibold))
                 .foregroundStyle(.primary)
             Spacer(minLength: 8)
-            Image(systemName: "chevron.right")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(.tertiary)
+            if isOpening {
+                ProgressView()
+                    .controlSize(.small)
+            } else {
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(.tertiary)
+            }
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 11)
