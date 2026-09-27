@@ -45,6 +45,36 @@
         }
       }
     },
+    "1re classe %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1st class %@"
+          }
+        }
+      }
+    },
+    "2e classe %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2nd class %@"
+          }
+        }
+      }
+    },
+    "Affluence prévue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expected occupancy"
+          }
+        }
+      }
+    },
     "Enregistrer les mouvements" : {
       "localizations" : {
         "en" : {
@@ -81,6 +111,36 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete recordings?"
+          }
+        }
+      }
+    },
+    "peu de places libres" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "few seats available"
+          }
+        }
+      }
+    },
+    "places debout uniquement" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "standing room only"
+          }
+        }
+      }
+    },
+    "places libres" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seats available"
           }
         }
       }

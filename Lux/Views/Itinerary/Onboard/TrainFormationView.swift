@@ -19,8 +19,11 @@ struct TrainFormationView: View {
     static let gap: CGFloat = 3
     static let coachHeight: CGFloat = 30
 
-    private var hasServices: Bool {
-        formation.coaches.contains { !$0.services.isEmpty }
+    private var pages: [FormationPage] {
+        var pages: [FormationPage] = [.classes]
+        if formation.coaches.contains(where: { !$0.services.isEmpty }) { pages.append(.services) }
+        if formation.occupancy?.isKnown == true { pages.append(.occupancy) }
+        return pages
     }
 
     var body: some View {
@@ -29,7 +32,7 @@ struct TrainFormationView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 4) {
                     SectorRuler(sectors: layout.sectors, total: layout.total)
-                    TrainRow(blocks: layout.blocks, labels: layout.labels(on: page), total: layout.total)
+                    TrainRow(blocks: layout.blocks, labels: layout.labels(on: pages[page % pages.count]), total: layout.total)
                     RailTrack()
                         .fill(.secondary.opacity(0.45))
                         .frame(width: layout.total, height: 5)
@@ -50,11 +53,12 @@ struct TrainFormationView: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(accessibilityText))
         .task(id: formation) {
-            guard hasServices else { return }
+            let count = pages.count
+            guard count > 1 else { return }
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(4))
                 guard !Task.isCancelled else { return }
-                withAnimation(.smooth(duration: 0.6)) { page = (page + 1) % 2 }
+                withAnimation(.smooth(duration: 0.6)) { page = (page + 1) % count }
             }
         }
     }
@@ -77,7 +81,77 @@ struct TrainFormationView: View {
         if !sectors.wheelchair.isEmpty {
             parts.append(String(localized: "fauteuils roulants secteur \(TrainFormation.sectorText(sectors.wheelchair))"))
         }
+        if let occupancy = formation.occupancy {
+            if let first = occupancy.first { parts.append(String(localized: "1re classe \(FormationOccupancy.text(first))")) }
+            if let second = occupancy.second { parts.append(String(localized: "2e classe \(FormationOccupancy.text(second))")) }
+        }
         return parts.joined(separator: ", ")
+    }
+}
+
+enum FormationPage {
+    case classes, services, occupancy
+}
+
+enum FormationOccupancy {
+    static func text(_ level: Int) -> String {
+        switch level {
+        case 1: return String(localized: "places libres")
+        case 2: return String(localized: "peu de places libres")
+        default: return String(localized: "places debout uniquement")
+        }
+    }
+}
+
+struct OccupancyForecastRow: View {
+    let occupancy: TrainFormation.Occupancy
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Label("Affluence prévue", systemImage: "person.2.fill")
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.secondary)
+            Spacer(minLength: 4)
+            if let first = occupancy.first { entry("1", level: first, color: TrainFormationView.firstClass) }
+            if let second = occupancy.second { entry("2", level: second, color: TrainFormationView.secondClass) }
+        }
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(accessibilityText))
+    }
+
+    private func entry(_ travelClass: String, level: Int, color: Color) -> some View {
+        HStack(spacing: 5) {
+            Text(travelClass)
+                .font(.system(size: 12, weight: .heavy, design: .rounded))
+                .foregroundStyle(.white)
+                .frame(width: 20, height: 20)
+                .background(color, in: RoundedRectangle(cornerRadius: 5, style: .continuous))
+            PeopleLevel(level: level, size: 11)
+                .foregroundStyle(.primary)
+        }
+    }
+
+    private var accessibilityText: String {
+        var parts = [String(localized: "Affluence prévue")]
+        if let first = occupancy.first { parts.append(String(localized: "1re classe \(FormationOccupancy.text(first))")) }
+        if let second = occupancy.second { parts.append(String(localized: "2e classe \(FormationOccupancy.text(second))")) }
+        return parts.joined(separator: ", ")
+    }
+}
+
+struct PeopleLevel: View {
+    let level: Int
+    let size: CGFloat
+
+    var body: some View {
+        HStack(spacing: size < 10 ? 0 : 1) {
+            ForEach(1...3, id: \.self) { index in
+                Image(systemName: "person.fill")
+                    .opacity(index <= level ? 1 : 0.3)
+            }
+        }
+        .font(.system(size: size, weight: .bold))
+        .fixedSize()
     }
 }
 
@@ -110,6 +184,7 @@ private struct FormationLayout {
     }
 
     let coaches: [TrainFormation.Coach]
+    let occupancy: TrainFormation.Occupancy?
     let blocks: [Block]
     let sectors: [Sector]
     let total: CGFloat
@@ -120,6 +195,7 @@ private struct FormationLayout {
     init(formation: TrainFormation, platformSectors: [String], availableWidth: CGFloat) {
         let coaches = formation.coaches
         self.coaches = coaches
+        self.occupancy = formation.occupancy
         let blockRanges: [ClosedRange<Int>] = Self.runs(of: coaches.map { Optional($0.bodyKind) })
 
         let units: CGFloat = coaches.reduce(0) { $0 + ($1.isLocomotive ? 0.75 : 1) }
@@ -186,8 +262,8 @@ private struct FormationLayout {
         }
     }
 
-    func labels(on page: Int) -> [Label] {
-        let contents: [RunLabel.Content?] = coaches.map { Self.content(of: $0, on: page) }
+    func labels(on page: FormationPage) -> [Label] {
+        let contents: [RunLabel.Content?] = coaches.map { Self.content(of: $0, on: page, occupancy: occupancy) }
         var labels: [Label] = []
         for range in Self.runs(of: contents) {
             guard let content = contents[range.lowerBound] else { continue }
@@ -200,9 +276,10 @@ private struct FormationLayout {
         return labels
     }
 
-    static func content(of coach: TrainFormation.Coach, on page: Int) -> RunLabel.Content? {
+    static func content(of coach: TrainFormation.Coach, on page: FormationPage, occupancy: TrainFormation.Occupancy?) -> RunLabel.Content? {
         if coach.isLocomotive || coach.closed { return nil }
-        if page == 1, !coach.services.isEmpty { return .services(coach.services) }
+        if page == .services, !coach.services.isEmpty { return .services(coach.services) }
+        if page == .occupancy, let level = occupancy?.level(for: coach) { return .occupancy(level) }
         if coach.isRestaurant { return .services(["fork.knife"]) }
         return .text(coach.t == "12" ? "1·2" : coach.t == "FA" ? "2" : coach.t)
     }
@@ -333,11 +410,13 @@ private struct RunLabel: View {
     enum Content: Equatable {
         case text(String)
         case services([String])
+        case occupancy(Int)
 
         var key: String {
             switch self {
             case .text(let text): "t" + text
             case .services(let symbols): "s" + symbols.joined(separator: ",")
+            case .occupancy(let level): "o\(level)"
             }
         }
     }
@@ -351,6 +430,16 @@ private struct RunLabel: View {
                 Text(text)
                     .font(.system(size: text.count > 1 ? 12 : 15, weight: .heavy, design: .rounded))
                     .minimumScaleFactor(0.7)
+            case .occupancy(let level):
+                ViewThatFits(in: .horizontal) {
+                    PeopleLevel(level: level, size: 11)
+                    PeopleLevel(level: level, size: 8)
+                    HStack(spacing: 1) {
+                        Image(systemName: "person.fill")
+                        Text("\(level)")
+                    }
+                    .font(.system(size: 9, weight: .heavy, design: .rounded))
+                }
             case .services(let symbols):
                 ViewThatFits(in: .horizontal) {
                     symbolRow(symbols.prefix(3), size: 12)

@@ -510,14 +510,14 @@ struct OnboardBottomPanel: View {
                     nextTransitRow(next)
                     // on the way to the platform, where to stand is worth knowing already
                     if session.isInStation, let formation = session.formation {
-                        TrainFormationView(formation: formation, platformSectors: session.formationPlatformSectors)
+                        FormationSummary(formation: formation, platformSectors: session.formationPlatformSectors)
                     }
                 }
             }
         case .waiting:
             VStack(alignment: .leading, spacing: 10) {
                 if let formation = session.formation {
-                    TrainFormationView(formation: formation, platformSectors: session.formationPlatformSectors)
+                    FormationSummary(formation: formation, platformSectors: session.formationPlatformSectors)
                         .padding(.bottom, 2)
                         .transition(.opacity)
                 }
@@ -743,5 +743,18 @@ struct OnboardBottomPanel: View {
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, 7)
+    }
+}
+
+private struct FormationSummary: View {
+    let formation: TrainFormation
+    let platformSectors: [String]
+
+    var body: some View {
+        if !formation.coaches.isEmpty {
+            TrainFormationView(formation: formation, platformSectors: platformSectors)
+        } else if let occupancy = formation.occupancy, occupancy.isKnown {
+            OccupancyForecastRow(occupancy: occupancy)
+        }
     }
 }

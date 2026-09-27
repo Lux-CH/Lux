@@ -16,6 +16,20 @@ struct TrainFormation: Decodable, Sendable, Equatable {
     let sectors: Sectors
     /// In platform order.
     let coaches: [Coach]
+    let occupancy: Occupancy?
+
+    struct Occupancy: Decodable, Sendable, Equatable {
+        let first: Int?
+        let second: Int?
+
+        var isKnown: Bool { first != nil || second != nil }
+
+        func level(for coach: Coach) -> Int? {
+            if coach.isRestaurant || coach.isLocomotive { return nil }
+            if coach.t == "12" { return [first, second].compactMap { $0 }.max() }
+            return coach.isFirstClass ? first : second
+        }
+    }
 
     /// Sectors (sorted) where each thing a rider looks for is.
     struct Sectors: Decodable, Sendable, Equatable {
