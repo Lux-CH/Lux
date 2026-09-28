@@ -6,49 +6,54 @@
 //
 
 import Foundation
-import SwiftUI
 
-class ConnectionExtractor: ObservableObject {
-    @ObservedObject var settings = Settings.shared
+struct StopConnection: Hashable, Sendable {
+    let line: String
+    let agency: String?
+}
+
+actor ConnectionExtractor {
     private let url: URL
-    
-    private var mappedData: Data?
-    
+    private var table: [String: [StopConnection]]?
+
     init() throws {
         guard let url = Bundle.main.url(forResource: "connections", withExtension: "plist") else {
             throw BinaryPlistError.fileNotFound
         }
         self.url = url
-        try mapFile()
     }
-    
-    private func mapFile() throws {
-        mappedData = try Data(contentsOf: url, options: .mappedIfSafe)
-    }
-    
-    func extractSpecificKey(_ key: String) async throws -> [String]? {
-        guard let data = mappedData else {
-            throw BinaryPlistError.dataNotLoaded
+
+    func extractSpecificKey(_ key: String) throws -> [StopConnection]? {
+        if table == nil {
+            table = try loadTable()
         }
-        
-        let stream = InputStream(data: data)
-        stream.open()
-        defer { stream.close() }
-        
-        guard let plist = try PropertyListSerialization.propertyList(with: stream, options: .mutableContainersAndLeaves, format: nil) as? [String: Any] else {
-            throw BinaryPlistError.invalidPlistFormat
+        return table?[key]
+    }
+
+    private func loadTable() throws -> [String: [StopConnection]] {
+        try autoreleasepool {
+            let data = try Data(contentsOf: url, options: .mappedIfSafe)
+            guard let plist = try PropertyListSerialization.propertyList(from: data, format: nil) as? [String: [Any]] else {
+                throw BinaryPlistError.invalidPlistFormat
+            }
+            var result = [String: [StopConnection]](minimumCapacity: plist.count)
+            for (key, entries) in plist {
+                result[key] = entries.compactMap { entry in
+                    if let pair = entry as? [String], let line = pair.first {
+                        return StopConnection(line: line, agency: pair.count > 1 && !pair[1].isEmpty ? pair[1] : nil)
+                    }
+                    if let line = entry as? String {
+                        return StopConnection(line: line, agency: nil)
+                    }
+                    return nil
+                }
+            }
+            return result
         }
-        
-        return plist[key] as? [String]
     }
-    
-    func releaseResources() {
-        mappedData = nil
-    }
-    
+
     enum BinaryPlistError: Error {
         case fileNotFound
-        case dataNotLoaded
         case invalidPlistFormat
     }
 }

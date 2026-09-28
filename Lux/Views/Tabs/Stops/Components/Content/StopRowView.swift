@@ -12,7 +12,7 @@ import CoreLocation
 struct StopRowView: View {
     let stop: SearchResult
     let locationManager: LocationManager
-    @State private var connections: [String] = []
+    @State private var connections: [StopConnection] = []
     @State private var relativeAngle: Double = 0
     let isSearching: Bool
     
@@ -31,8 +31,8 @@ struct StopRowView: View {
                 HStack {
                     if !isSearching {
                         HStack(spacing: 4) {
-                            ForEach(connections.prefix(5), id: \.self) { routeName in
-                                LinePill(line: routeName, mode: .bus, agency: nil)
+                            ForEach(connections.prefix(5), id: \.self) { connection in
+                                LinePill(line: connection.line, mode: .bus, agency: connection.agency)
                             }
                             if connections.count > 5 {
                                 MorePill()

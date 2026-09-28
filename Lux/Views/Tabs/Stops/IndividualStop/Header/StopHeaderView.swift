@@ -11,7 +11,7 @@ import LuxCom
 struct StopHeaderView: View {
     @State var stop: SearchResult
     @State private var showTripSearch: Bool = false
-    @State private var connections: [String] = []
+    @State private var connections: [StopConnection] = []
     @State private var showAlert: Bool = false
     @State private var name = ""
     @ObservedObject var settings = Settings.shared
@@ -30,7 +30,7 @@ struct StopHeaderView: View {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 6) {
                             ForEach(connections, id: \.self) { connection in
-                                LinePill(line: connection, mode: .bus, agency: nil)
+                                LinePill(line: connection.line, mode: .bus, agency: connection.agency)
                             }
                         }
                     }
