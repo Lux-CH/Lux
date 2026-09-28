@@ -701,6 +701,15 @@ func resolvedLineColor(for leg: Leg) -> LineColors.ResolvedLineColor? {
     )
 }
 
+func getOnboardLegColor(_ leg: Leg) -> Color {
+    switch leg.mode {
+    case .walk, .bike, .car:
+        return getLegColor(leg)
+    default:
+        return legacyLineColor(getLegColor(leg))
+    }
+}
+
 func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
     switch leg.mode {
     case .walk:

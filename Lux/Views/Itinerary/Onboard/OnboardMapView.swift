@@ -512,7 +512,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
                     point: point,
                     heading: mapView.camera.heading,
                     text: leg.routeShortName ?? "",
-                    fill: UIColor(pill.lineColor),
+                    fill: UIColor(pill.onboardLineColor),
                     textColor: UIColor(pill.textColorOnLineColor)
                 )
                 mapView.addOverlay(vehicle, level: .aboveRoads)
@@ -601,7 +601,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     private var puckStyle: NavigationPuck.Style {
         if session.phase == .riding, let leg = session.currentLeg {
             let pill = LinePill(line: leg.routeShortName ?? "", mode: leg.mode, agency: leg.agencyId)
-            return .vehicle(color: pill.lineColor, textColor: pill.textColorOnLineColor, symbol: NavigationPuck.vehicleSymbol(for: leg.mode))
+            return .vehicle(color: pill.onboardLineColor, textColor: pill.textColorOnLineColor, symbol: NavigationPuck.vehicleSymbol(for: leg.mode))
         }
         return .walker
     }

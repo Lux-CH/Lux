@@ -12,6 +12,10 @@ func readableLineColor(_ color: Color, onTint tint: Double = 0) -> Color {
     LineColorContrast.dynamic(color, tint: tint)
 }
 
+func legacyLineColor(_ color: Color) -> Color {
+    isDarkColor(color) ? lightenColor(color) : color
+}
+
 enum LineColorContrast {
     static let darkTarget = 3.5
 

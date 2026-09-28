@@ -18,7 +18,7 @@ struct OnboardInstructionBanner: View {
         case .waiting, .riding:
             guard let leg = session.currentLeg else { return .accentColor }
             if session.phase == .riding && session.stopsRemaining <= 1 { return Color(red: 0.86, green: 0.18, blue: 0.2) }
-            return linePill(for: leg).lineColor
+            return linePill(for: leg).onboardLineColor
         }
     }
 
@@ -591,7 +591,7 @@ struct OnboardBottomPanel: View {
 
     private var rideProgress: some View {
         let stops = session.currentStops
-        let color = session.currentLeg.map { getLegColor($0, brightIt: true) } ?? .accentColor
+        let color = session.currentLeg.map { getOnboardLegColor($0) } ?? .accentColor
         return VStack(alignment: .leading, spacing: 6) {
             GeometryReader { proxy in
                 let count = max(stops.count, 2)

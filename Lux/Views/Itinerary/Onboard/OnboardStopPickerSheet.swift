@@ -40,7 +40,7 @@ struct OnboardStopPickerSheet: View {
 
     var body: some View {
         let board = boardIndex
-        let color = getLegColor(tripLeg, brightIt: true)
+        let color = getOnboardLegColor(tripLeg)
         NavigationStack {
             List {
                 Section {

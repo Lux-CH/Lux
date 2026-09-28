@@ -68,6 +68,10 @@ struct LinePill: View {
         return readableLineColor(baseLineColor, onTint: settings.easyOnTheEyes ? 0 : 0.25)
     }
 
+    var onboardLineColor: Color {
+        settings.highContrastButAccurateLinePill ? baseLineColor : legacyLineColor(baseLineColor)
+    }
+
     private var pillWidth: CGFloat {
         if isMetro { return pillHeight }
         guard isMainlineRail else { return width }
