@@ -29,11 +29,14 @@ struct ItineraryView: View {
     @EnvironmentObject var locationManager: LocationManager
     @Environment(\.dismiss) private var dismiss
     @State private var showDetails: Bool = true
+    @State private var hasShownDeferredDetails = false
+    private var defersDetails = false
     @State var otherItineraries: [TripOption] = []
     @State private var isSingle: Bool
     @State private var isSwitchingTrip = false
     @State private var tripSwitchTask: Task<Void, Never>?
     @State private var shouldRenderMap = true
+    @State private var isOnScreen = false
     let fromNearby: Bool
     let itineraarySharer = ItinerarySharer()
     
@@ -43,6 +46,12 @@ struct ItineraryView: View {
     @State private var showsOnboardIntro = false
     @State private var showsStopPicker = false
     @State private var detailDetent: PresentationDetent
+    @State private var stopDetailDestination: StopDetailDestination?
+    @State private var shownStopDestination: StopDetailDestination?
+    @State private var stopSheetCompactHeight: CGFloat = 480
+    @State private var stopSheetDetent: PresentationDetent = .height(480)
+    @State private var openedTrip: TripDestination?
+    @State private var keepsDetailsHidden = false
 
     private static func compactDetent(isSingle: Bool) -> PresentationDetent {
         guard isSingle else { return .fraction(0.225) }
@@ -50,8 +59,10 @@ struct ItineraryView: View {
         return .fraction(0.1)
     }
 
-    init(tripId: String, fromNearby: Bool, otherTripOptions: [TripOption] = []) {
+    init(tripId: String, fromNearby: Bool, otherTripOptions: [TripOption] = [], defersDetails: Bool = false) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(tripId: tripId))
+        self.defersDetails = defersDetails
+        self._showDetails = State(initialValue: !defersDetails)
         self.fromNearby = fromNearby
         self._otherItineraries = State(initialValue: otherTripOptions)
         self.isSingle = true
@@ -133,7 +144,11 @@ struct ItineraryView: View {
                             trackingMode: $trackingMode,
                             showDetails: $showDetails,
                             isSingle: isSingle,
-                            detents: detents
+                            detents: detents,
+                            selectedStop: stopDetailDestination != nil ? shownStopDestination?.place : nil,
+                            stopSheetHeight: stopSheetCompactHeight,
+                            onOpenStop: openStopSheet,
+                            onMapTap: { closeStopSheet(restoringDetails: true) }
                         )
                     } else {
                         Color(.secondarySystemBackground)
@@ -145,6 +160,7 @@ struct ItineraryView: View {
                         GlassEffectGroup(spacing: 8) {
                             VStack(spacing: 12) {
                                 Button(action: {
+                                    closeStopSheet(restoringDetails: false)
                                     showDetails = false
                                     dismiss()
                                 }) {
@@ -241,6 +257,43 @@ struct ItineraryView: View {
                         .presentationCornerRadius(sheetCornerRadius)
                     }
                 }
+                .sheet(isPresented: Binding(
+                    get: { stopDetailDestination != nil },
+                    set: { if !$0 { stopDetailDestination = nil } }
+                ), onDismiss: {
+                    if !keepsDetailsHidden { showDetails = true }
+                    viewModel.selectedStop = nil
+                }) {
+                    if let destination = shownStopDestination {
+                        ItineraryStopSheet(place: destination.place, detent: $stopSheetDetent, compactHeight: $stopSheetCompactHeight)
+                            .environment(\.openTrip) { trip in
+                                closeStopSheet(restoringDetails: false)
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                    openedTrip = trip
+                                }
+                            }
+                            .presentationDetents([.height(stopSheetCompactHeight), .large], selection: $stopSheetDetent)
+                            .presentationBackgroundInteraction(.enabled(upThrough: .height(stopSheetCompactHeight)))
+                            .presentationCornerRadius(36)
+                    }
+                }
+                .navigationDestination(item: $openedTrip) { trip in
+                    ItineraryView(tripId: trip.tripId, fromNearby: false, otherTripOptions: trip.otherTripOptions, defersDetails: true)
+                        .toolbarBackground(.hidden, for: .navigationBar)
+                        .navigationBarBackButtonHidden(true)
+                }
+            }
+        }
+        .onChange(of: viewModel.selectedStop) { _, newStop in
+            if let newStop {
+                openStopSheet(newStop)
+            }
+        }
+        .onChange(of: openedTrip) { old, new in
+            guard old != nil, new == nil else { return }
+            keepsDetailsHidden = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+                showDetails = true
             }
         }
         .task {
@@ -248,7 +301,14 @@ struct ItineraryView: View {
         }
         .onAppear {
             locationManager.startMonitoring()
+            isOnScreen = true
             shouldRenderMap = true
+            if defersDetails && !hasShownDeferredDetails {
+                hasShownDeferredDetails = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
+                    showDetails = true
+                }
+            }
         }
         .onChange(of: viewModel.isLoading) { _, newValue in
             if !newValue {
@@ -264,10 +324,35 @@ struct ItineraryView: View {
             tripSwitchTask?.cancel()
             tripSwitchTask = nil
             isSwitchingTrip = false
-            shouldRenderMap = false
+            isOnScreen = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if !isOnScreen { shouldRenderMap = false }
+            }
             trackingMode = .none
             viewModel.stopAllTasks()
         }
+    }
+
+    private func openStopSheet(_ place: Place) {
+        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        let destination = StopDetailDestination(place: place)
+        shownStopDestination = destination
+        stopSheetDetent = .height(stopSheetCompactHeight)
+        guard stopDetailDestination == nil else {
+            stopDetailDestination = destination
+            return
+        }
+        keepsDetailsHidden = false
+        showDetails = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
+            stopDetailDestination = destination
+        }
+    }
+
+    private func closeStopSheet(restoringDetails: Bool) {
+        guard stopDetailDestination != nil else { return }
+        keepsDetailsHidden = !restoringDetails
+        stopDetailDestination = nil
     }
 
     private var canStartOnboard: Bool {
@@ -280,6 +365,7 @@ struct ItineraryView: View {
             dismissOnboardIntro()
             guard let itinerary = viewModel.itinerary else { return }
             if isSingle {
+                closeStopSheet(restoringDetails: false)
                 showDetails = false
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { showsStopPicker = true }
             } else {
@@ -327,6 +413,7 @@ struct ItineraryView: View {
 
     private func startOnboard(_ itinerary: Itinerary) {
         let session = OnboardSession(itinerary: itinerary, destinationName: viewModel.destinationName)
+        closeStopSheet(restoringDetails: false)
         showDetails = false
         trackingMode = .none
         withAnimation(.easeInOut(duration: 0.35)) {
@@ -433,10 +520,32 @@ struct ItineraryMapView: View {
     let isSingle: Bool
     let detents: (CGFloat, CGFloat)
     
+    let selectedStop: Place?
+    let stopSheetHeight: CGFloat
+    let onOpenStop: (Place) -> Void
+    let onMapTap: () -> Void
+
     @State private var position: MapCameraPosition = .automatic
-    @State private var stopDetailDestination: StopDetailDestination?
+    @State private var mapCamera: MapCamera?
+    @State private var mapSize: CGSize = .zero
     
     var body: some View {
+        MapReader { proxy in
+            map
+                .simultaneousGesture(
+                    SpatialTapGesture().onEnded { value in
+                        guard selectedStop != nil, !hitsStop(at: value.location, using: proxy) else { return }
+                        onMapTap()
+                    }
+                )
+                .onChange(of: selectedStop) {
+                    guard let selectedStop else { return }
+                    reveal(selectedStop, using: proxy)
+                }
+        }
+    }
+
+    private var map: some View {
         Map(position: $position) {
             UserAnnotation()
             ForEach(viewModel.mapAnnotations) { annotation in
@@ -445,11 +554,8 @@ struct ItineraryMapView: View {
                         StopAnnotationView(
                             annotation: annotation,
                             isTerminal: true,
-                            onOpenExpandedStop: { place in
-                                showDetails = false
-                                stopDetailDestination = StopDetailDestination(place: place)
-                            },
-                            showSheet: $showDetails
+                            onOpenExpandedStop: onOpenStop,
+                            isSelected: isSelectedStop(annotation)
                         )
                     }
                 } else if viewModel.showingIntermediateStops {
@@ -457,11 +563,8 @@ struct ItineraryMapView: View {
                         StopAnnotationView(
                             annotation: annotation,
                             isTerminal: false,
-                            onOpenExpandedStop: { place in
-                                showDetails = false
-                                stopDetailDestination = StopDetailDestination(place: place)
-                            },
-                            showSheet: $showDetails
+                            onOpenExpandedStop: onOpenStop,
+                            isSelected: isSelectedStop(annotation)
                         )
                     }
                 }
@@ -492,8 +595,10 @@ struct ItineraryMapView: View {
             Spacer().frame(height: isSingle ? detents.1 : 165)
         }
         .onMapCameraChange { context in
+            mapCamera = context.camera
             viewModel.updateZoomLevel(distance: context.camera.distance)
         }
+        .onGeometryChange(for: CGSize.self) { $0.size } action: { mapSize = $0 }
         .simultaneousGesture(
             DragGesture()
                 .onChanged { _ in
@@ -512,26 +617,42 @@ struct ItineraryMapView: View {
         .onChange(of: viewModel.position) { _, newValue in
             position = newValue
         }
-        .onChange(of: viewModel.selectedStop) { _, newStop in
-            if let stop = newStop {
-                showDetails = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                    stopDetailDestination = StopDetailDestination(place: stop)
-                }
-            }
-        }
-        .fullScreenCover(item: $stopDetailDestination, onDismiss: {
-            showDetails = true
-            viewModel.selectedStop = nil
-        }) { destination in
-            ItineraryStopDetailView(
-                stop: destination.place
-            )
-            .toolbarBackground(.hidden, for: .navigationBar)
-            .navigationBarBackButtonHidden(true)
+    }
+
+    private func reveal(_ place: Place, using proxy: MapProxy) {
+        let coordinate = CLLocationCoordinate2D(latitude: place.lat, longitude: place.lon)
+        guard let point = proxy.convert(coordinate, to: .local), mapSize.height > 0 else { return }
+        let top: CGFloat = 140
+        let bottom = mapSize.height - stopSheetHeight - 40
+        guard bottom > top else { return }
+        let target = CGPoint(x: mapSize.width / 2, y: top + (bottom - top) * 0.8)
+        let shifted = CGPoint(x: mapSize.width / 2 + point.x - target.x, y: mapSize.height / 2 + point.y - target.y)
+        guard let center = proxy.convert(shifted, from: .local) else { return }
+        disableTrackingIfNeeded()
+        let camera = mapCamera
+        withAnimation(.smooth(duration: 0.6)) {
+            position = .camera(MapCamera(
+                centerCoordinate: center,
+                distance: camera?.distance ?? 1500,
+                heading: camera?.heading ?? 0,
+                pitch: camera?.pitch ?? 0
+            ))
         }
     }
-    
+
+    private func hitsStop(at location: CGPoint, using proxy: MapProxy) -> Bool {
+        viewModel.mapAnnotations.contains { annotation in
+            guard annotation.isTerminal || viewModel.showingIntermediateStops,
+                  let point = proxy.convert(annotation.coordinate, to: .local) else { return false }
+            return hypot(point.x - location.x, point.y - location.y) < 24
+        }
+    }
+
+    private func isSelectedStop(_ annotation: StopAnnotation) -> Bool {
+        guard let selectedStop else { return false }
+        return StopAnnotation(place: selectedStop, color: annotation.color).id == annotation.id
+    }
+
     private func disableTrackingIfNeeded() {
         if trackingMode != .none {
             withAnimation {

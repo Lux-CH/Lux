@@ -58,10 +58,7 @@ struct StopAnnotationView: View {
     let annotation: StopAnnotation
     let isTerminal: Bool
     let onOpenExpandedStop: (Place) -> Void
-    @State private var showPopover = false
-    @State private var isLaunchingStopDetail = false
-    @State private var connections: [String] = []
-    @Binding var showSheet: Bool
+    var isSelected = false
     
     private let circleSize: CGFloat = 16
     private let terminalSize: CGFloat = 20
@@ -76,51 +73,40 @@ struct StopAnnotationView: View {
                 .frame(width: hitAreaSize, height: hitAreaSize)
                 .contentShape(Circle())
                 .onTapGesture {
-                    loadConnections()
-
                     withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
                         isAnimating = true
-                        showSheet = false
                     }
+                    onOpenExpandedStop(annotation.place)
 
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        isAnimating = false
-                        showPopover = true
+                        withAnimation(.spring(response: 0.2, dampingFraction: 0.6)) {
+                            isAnimating = false
+                        }
                     }
                 }
             
-            if isTerminal || annotation.isTerminal {
+            if isSelected {
+                Circle()
+                    .fill(annotation.color.opacity(0.25))
+                    .frame(width: 40, height: 40)
+                    .transition(.scale(scale: 0.4).combined(with: .opacity))
+            } else if isTerminal || annotation.isTerminal {
                 Circle()
                     .fill(annotation.color.opacity(0.15))
                     .frame(width: terminalSize + 10, height: terminalSize + 10)
             }
             
             Circle()
-                .fill(.white)
-                .stroke(annotation.color, lineWidth: isTerminal || annotation.isTerminal ? 3 : 1)
+                .fill(isSelected ? annotation.color : .white)
+                .stroke(isSelected ? .white : annotation.color, lineWidth: isSelected || isTerminal || annotation.isTerminal ? 3 : 1)
                 .frame(
-                    width: getCircleSize(),
-                    height: getCircleSize()
+                    width: isSelected ? 24 : getCircleSize(),
+                    height: isSelected ? 24 : getCircleSize()
                 )
-                .shadow(color: Color.black.opacity(0.2), radius: 2, x: 0, y: 1)
+                .shadow(color: Color.black.opacity(isSelected ? 0.3 : 0.2), radius: isSelected ? 4 : 2, x: 0, y: 1)
                 .scaleEffect(isAnimating ? 1.2 : 1.0)
         }
-        .popover(isPresented: $showPopover) {
-            StopPopoverView(place: annotation.place, color: annotation.color, connections: connections, onNavigate: {
-                isLaunchingStopDetail = true
-                showPopover = false
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.15) {
-                    onOpenExpandedStop(annotation.place)
-                    isLaunchingStopDetail = false
-                }
-            })
-            .presentationCompactAdaptation(.popover)
-        }
-        .onChange(of: showPopover) {
-            if !showPopover && !isLaunchingStopDetail {
-                showSheet = true
-            }
-        }
+        .animation(.spring(response: 0.35, dampingFraction: 0.65), value: isSelected)
     }
     
     private func getCircleSize() -> CGFloat {
@@ -132,132 +118,4 @@ struct StopAnnotationView: View {
             return circleSize
         }
     }
-
-    private func loadConnections() {
-        guard let stopId = sanitizedStopId else { return }
-
-        ConnectionService.shared.getConnections(for: stopId) { results in
-            connections = results
-        }
-    }
-
-    private var sanitizedStopId: String? {
-        guard let stopId = annotation.place.stopId, !stopId.isEmpty else { return nil }
-        return stopId.components(separatedBy: ":").first
-    }
-
-}
-
-struct StopPopoverView: View {
-    let place: Place
-    let color: Color
-    let connections: [String]
-    let onNavigate: () -> Void
-    
-    @Environment(\.colorScheme) var colorScheme
-    
-    private var backgroundColor: Color {
-        if #available(iOS 26, *) {
-            return Color.clear
-        } else {
-            return Color(.secondarySystemBackground).opacity(0.8)
-        }
-    }
-    
-    var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            HStack {
-                Circle()
-                    .fill(color)
-                    .frame(width: 8, height: 8)
-                
-                Text(place.name)
-                    .font(.headline)
-            }
-            .padding(.bottom, 4)
-            
-            VStack(alignment: .leading, spacing: 8) {
-                timingRows
-
-                if let track = place.track {
-                    HStack(spacing: 6) {
-                        Image(systemName: "train.side.front.car")
-                            .foregroundColor(color)
-                        Text(getTrackType(track))
-                            .fontWeight(.medium)
-                    }
-                }
-
-                if !connections.isEmpty {
-                    HStack(alignment: .top, spacing: 6) {
-                        Image(systemName: "arrow.triangle.swap")
-                            .foregroundColor(color)
-
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack(spacing: 4) {
-                                ForEach(connections, id: \.self) { routeName in
-                                    LinePill(line: routeName, mode: .bus, agency: nil)
-                                }
-                            }
-                        }
-                    }
-                    .padding(.top, 2)
-                    .accessibilityHidden(true)
-                }
-            }
-            .font(.subheadline)
-            
-            Button {
-                onNavigate()
-            } label: {
-                HStack {
-                    Text("Autres départs")
-                    Image(systemName: "chevron.right")
-                        .font(.footnote)
-                }
-            }
-            .buttonStyle(.borderedProminent)
-            .tint(color)
-            .foregroundColor(colorScheme == .dark && color == .white ? .black : .white)
-            .frame(maxWidth: .infinity)
-            .padding(.top, 12)
-        }
-        .padding()
-        .frame(minWidth: 250)
-        .background(backgroundColor)
-    }
-    
-    private func formatTime(_ date: Date) -> String {
-        Self.timeFormatter.string(from: date)
-    }
-
-    @ViewBuilder
-    private var timingRows: some View {
-        if let arrival = place.arrival,
-           let departure = place.departure,
-           arrival != departure {
-            timingRow(icon: "arrow.down.circle.fill", text: String(localized:"Arrivée prévue : \(formatTime(arrival))"))
-            timingRow(icon: "arrow.up.circle.fill", text: String(localized:"Départ à : \(formatTime(departure))"))
-        } else if let arrival = place.arrival {
-            timingRow(icon: "clock", text: String(localized:"Arrivée prévue : \(formatTime(arrival))"))
-        } else if let departure = place.departure {
-            timingRow(icon: "clock", text: String(localized:"Départ à : \(formatTime(departure))"))
-        }
-    }
-
-    @ViewBuilder
-    private func timingRow(icon: String, text: String) -> some View {
-        HStack(spacing: 6) {
-            Image(systemName: icon)
-                .foregroundColor(color)
-            Text(text)
-                .fontWeight(.medium)
-        }
-    }
-
-    private static let timeFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter
-    }()
 }
