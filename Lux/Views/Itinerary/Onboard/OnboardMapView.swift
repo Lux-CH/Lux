@@ -318,36 +318,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
 
     private func rebuildStationShapes(at detail: StationDetail) {
         mapView.removeOverlays(stationOverlays)
-        stationOverlays = []
-        guard detail >= .tracks else { return }
-
-        func area(_ coordinates: [CLLocationCoordinate2D], fill: UIColor, stroke: UIColor = .clear) -> StationArea {
-            let polygon = StationArea(coordinates: coordinates, count: coordinates.count)
-            polygon.fill = fill
-            polygon.stroke = stroke
-            return polygon
-        }
-        let idleRails: [MKOverlay] = stationContent.rails.filter { $0.color == nil }.map {
-            area($0.coordinates, fill: StationStyle.idleRail)
-        }
-        let areas: [MKOverlay] = stationContent.areas.map {
-            area(
-                $0.coordinates,
-                fill: $0.color.map { UIColor($0).withAlphaComponent(StationStyle.highlightedPlatformOpacity) } ?? StationStyle.platformFill,
-                stroke: StationStyle.platformStroke
-            )
-        }
-        let ourRails: [MKOverlay] = stationContent.rails.compactMap { rail in
-            rail.color.map { area(rail.coordinates, fill: StationStyle.ourRailColor(for: $0)) }
-        }
-        let edges: [MKOverlay] = stationContent.lines.map {
-            RouteLine.make($0.coordinates, color: StationStyle.idleEdge, width: StationStyle.idleEdgeWidth)
-        }
-        let stairs: [MKOverlay] = stationContent.visibleStairs(at: detail).flatMap { stairway -> [MKOverlay] in
-            [area(stairway.band, fill: StationStyle.stairBand)]
-                + (stairway.treads.count >= 3 ? [area(stairway.treads, fill: StationStyle.stairTread)] : [])
-        }
-        stationOverlays = idleRails + areas + ourRails + stairs + edges
+        stationOverlays = stationContent.mapOverlays(at: detail)
         // all under the route, so the walk between platforms stays on top
         for overlay in stationOverlays.reversed() {
             mapView.insertOverlay(overlay, at: 0, level: .aboveRoads)
@@ -919,7 +890,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
     }
 }
 
-private final class RouteLine: MKPolyline {
+final class RouteLine: MKPolyline {
     var color: UIColor = .systemBlue
     var width: CGFloat = 6
     var strokeStart: CGFloat = 0
@@ -1056,9 +1027,43 @@ private final class GroundVehicleRenderer: MKOverlayRenderer {
     }
 }
 
-private final class StationArea: MKPolygon {
+final class StationArea: MKPolygon {
     var fill: UIColor = .clear
     var stroke: UIColor = .clear
+}
+
+extension StationOverlayContent {
+    func mapOverlays(at detail: StationDetail) -> [MKOverlay] {
+        guard detail >= .tracks else { return [] }
+
+        func area(_ coordinates: [CLLocationCoordinate2D], fill: UIColor, stroke: UIColor = .clear) -> StationArea {
+            let polygon = StationArea(coordinates: coordinates, count: coordinates.count)
+            polygon.fill = fill
+            polygon.stroke = stroke
+            return polygon
+        }
+        let idleRails: [MKOverlay] = rails.filter { $0.color == nil }.map {
+            area($0.coordinates, fill: StationStyle.idleRail)
+        }
+        let platforms: [MKOverlay] = areas.map {
+            area(
+                $0.coordinates,
+                fill: $0.color.map { UIColor($0).withAlphaComponent(StationStyle.highlightedPlatformOpacity) } ?? StationStyle.platformFill,
+                stroke: StationStyle.platformStroke
+            )
+        }
+        let ourRails: [MKOverlay] = rails.compactMap { rail in
+            rail.color.map { area(rail.coordinates, fill: StationStyle.ourRailColor(for: $0)) }
+        }
+        let edges: [MKOverlay] = lines.map {
+            RouteLine.make($0.coordinates, color: StationStyle.idleEdge, width: StationStyle.idleEdgeWidth)
+        }
+        let stairways: [MKOverlay] = visibleStairs(at: detail).flatMap { stairway -> [MKOverlay] in
+            [area(stairway.band, fill: StationStyle.stairBand)]
+                + (stairway.treads.count >= 3 ? [area(stairway.treads, fill: StationStyle.stairTread)] : [])
+        }
+        return idleRails + platforms + ourRails + stairways + edges
+    }
 }
 
 private final class MapPin: NSObject, MKAnnotation {

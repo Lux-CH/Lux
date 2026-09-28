@@ -22,16 +22,6 @@
         }
       }
     },
-    "%lld trajets · %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld trips · %@"
-          }
-        }
-      }
-    },
     "-" : {
       "shouldTranslate" : false
     },
@@ -41,106 +31,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : ", then take %@"
-          }
-        }
-      }
-    },
-    "1re classe %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1st class %@"
-          }
-        }
-      }
-    },
-    "2e classe %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "2nd class %@"
-          }
-        }
-      }
-    },
-    "Affluence prévue" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Expected occupancy"
-          }
-        }
-      }
-    },
-    "Enregistrer les mouvements" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Record motion"
-          }
-        }
-      }
-    },
-    "Exporter les enregistrements" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Export recordings"
-          }
-        }
-      }
-    },
-    "Garde sur l'appareil l'accéléromètre et la position de chaque trajet, pour améliorer la détection des arrêts sous terre" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keeps each trip's accelerometer and position data on this device, to improve stop detection underground"
-          }
-        }
-      }
-    },
-    "Supprimer les enregistrements ?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete recordings?"
-          }
-        }
-      }
-    },
-    "peu de places libres" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "few seats available"
-          }
-        }
-      }
-    },
-    "places debout uniquement" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "standing room only"
-          }
-        }
-      }
-    },
-    "places libres" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "seats available"
           }
         }
       }
@@ -381,6 +271,16 @@
         }
       }
     },
+    "%lld trajets · %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld trips · %@"
+          }
+        }
+      }
+    },
     "%lld transfer%@" : {
       "localizations" : {
         "en" : {
@@ -512,12 +412,32 @@
         }
       }
     },
+    "1re classe %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1st class %@"
+          }
+        }
+      }
+    },
     "1re classe secteur %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "1st class sector %@"
+          }
+        }
+      }
+    },
+    "2e classe %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "2nd class %@"
           }
         }
       }
@@ -558,6 +478,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "To"
+          }
+        }
+      }
+    },
+    "À %@ de vous" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ away"
           }
         }
       }
@@ -918,6 +848,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Crowd"
+          }
+        }
+      }
+    },
+    "Affluence prévue" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expected occupancy"
           }
         }
       }
@@ -1725,6 +1665,7 @@
       }
     },
     "Autres départs" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -1964,6 +1905,16 @@
         }
       }
     },
+    "Carte des arrêts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stops map"
+          }
+        }
+      }
+    },
     "Cartes" : {
       "localizations" : {
         "en" : {
@@ -2103,6 +2054,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Loading departures…"
+          }
+        }
+      }
+    },
+    "Chargement…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Loading…"
           }
         }
       }
@@ -3223,6 +3184,16 @@
         }
       }
     },
+    "Double-tapez pour afficher les arrêts sur une carte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Double-tap to show stops on a map"
+          }
+        }
+      }
+    },
     "Double-tapez pour changer d'onglet" : {
       "localizations" : {
         "en" : {
@@ -3389,6 +3360,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save"
+          }
+        }
+      }
+    },
+    "Enregistrer les mouvements" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Record motion"
           }
         }
       }
@@ -3563,6 +3544,16 @@
         }
       }
     },
+    "Exporter les enregistrements" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export recordings"
+          }
+        }
+      }
+    },
     "Faites de Lux le votre" : {
       "localizations" : {
         "en" : {
@@ -3719,6 +3710,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Funicular"
+          }
+        }
+      }
+    },
+    "Garde sur l'appareil l'accéléromètre et la position de chaque trajet, pour améliorer la détection des arrêts sous terre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keeps each trip's accelerometer and position data on this device, to improve stop detection underground"
           }
         }
       }
@@ -4879,6 +4880,16 @@
         }
       }
     },
+    "Maintenez pour placer un repère" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Press and hold to drop a pin"
+          }
+        }
+      }
+    },
     "Maison" : {
       "localizations" : {
         "en" : {
@@ -5910,6 +5921,16 @@
         }
       }
     },
+    "peu de places libres" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "few seats available"
+          }
+        }
+      }
+    },
     "Photo et vidéo" : {
       "localizations" : {
         "en" : {
@@ -5926,6 +5947,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Seats free"
+          }
+        }
+      }
+    },
+    "places debout uniquement" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "standing room only"
+          }
+        }
+      }
+    },
+    "places libres" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seats available"
           }
         }
       }
@@ -6390,6 +6431,16 @@
         }
       }
     },
+    "Recherche des arrêts proches…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finding nearby stops…"
+          }
+        }
+      }
+    },
     "Recherche en cours..." : {
       "localizations" : {
         "en" : {
@@ -6510,6 +6561,16 @@
         }
       }
     },
+    "Repère sur la carte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dropped pin"
+          }
+        }
+      }
+    },
     "Résolution prévue : %@" : {
       "localizations" : {
         "en" : {
@@ -6596,6 +6657,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Remove stopover"
+          }
+        }
+      }
+    },
+    "Retirer le repère" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove pin"
           }
         }
       }
@@ -7126,6 +7197,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete offline data ?"
+          }
+        }
+      }
+    },
+    "Supprimer les enregistrements ?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete recordings?"
           }
         }
       }
@@ -8137,6 +8218,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "XX"
+          }
+        }
+      }
+    },
+    "Y aller" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Go there"
+          }
+        }
+      }
+    },
+    "Zoomez pour voir les arrêts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zoom in to see stops"
           }
         }
       }

@@ -19,9 +19,14 @@ struct ExpandedStopView: View {
     @State private var viewType = String(localized: "Groupé")
     @Namespace private var animation
     let maxGroupsToShow: Int
+    @Environment(\.stopAnimatesIn) private var animatesIn
+
+    private var entrance: Binding<Bool> {
+        animatesIn ? $animateIn : .constant(true)
+    }
     
-    init(stop: SearchResult, fromStops: Bool, maxGroupsToShow: Int, time: Date? = nil) {
-        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: fromStops, time: time))
+    init(stop: SearchResult, fromStops: Bool, maxGroupsToShow: Int, time: Date? = nil, track: String? = nil) {
+        self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: fromStops, time: time, track: track))
         self.maxGroupsToShow = maxGroupsToShow
         self._selectedDate = State(initialValue: time ?? Date())
     }
@@ -31,7 +36,7 @@ struct ExpandedStopView: View {
             VStack(spacing: 0) {
                 ExpandedStopHeaderView(
                     showDatePicker: $showDatePicker,
-                    animateIn: $animateIn,
+                    animateIn: entrance,
                     selectedDate: $selectedDate,
                     viewType: $viewType,
                     onDateSelected: {
@@ -44,14 +49,14 @@ struct ExpandedStopView: View {
                 
                 ZStack {
                     if viewModel.isLoading {
-                        StopContentLoadingView(animateIn: $animateIn, errorMessage: viewModel.errorMessage)
+                        StopContentLoadingView(animateIn: entrance, errorMessage: viewModel.errorMessage)
                             .transition(.asymmetric(
                                 insertion: .move(edge: .bottom).combined(with: .opacity),
                                 removal: .move(edge: .bottom).combined(with: .opacity)
                             ))
                             .frame(maxWidth: .infinity, maxHeight: .infinity)
                     } else if viewModel.routeGroups.isEmpty && !viewModel.isLoading {
-                        StopContentEmptyView(animateIn: $animateIn, errorMessage: viewModel.errorMessage)
+                        StopContentEmptyView(animateIn: entrance, errorMessage: viewModel.errorMessage)
                             .transition(.asymmetric(
                                 insertion: .move(edge: .bottom).combined(with: .opacity),
                                 removal: .move(edge: .bottom).combined(with: .opacity)
@@ -60,7 +65,7 @@ struct ExpandedStopView: View {
                     } else if showContent {
                         RouteGroupsView(
                             viewModel: viewModel,
-                            animateIn: $animateIn,
+                            animateIn: entrance,
                             maxGroupsToShow: maxGroupsToShow,
                             animation: animation,
                             viewType: $viewType,

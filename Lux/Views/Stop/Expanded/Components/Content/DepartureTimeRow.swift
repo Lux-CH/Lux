@@ -10,88 +10,107 @@ import LuxCom
 
 struct DepartureTimeRow: View {
     @Environment(\.calendar) private var calendar
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.isOnGlassSheet) private var isOnGlass
     @ObservedObject var settings = Settings.shared
     let stopTime: StopTime
     @Binding var animateIn: Bool
     let index: Int
     let group: GroupedStopTime
     let viewModel: StopViewModel
+    @Environment(\.openTrip) private var openTrip
+
+    private var otherTripOptions: [TripOption] {
+        group.stopTimes.prefix(10).map { stopTime in
+            TripOption(
+                id: stopTime.tripId,
+                startTime: stopTime.place.departure ?? stopTime.place.scheduledDeparture ?? stopTime.place.arrival ?? stopTime.place.scheduledArrival ?? Date()
+            )
+        }
+    }
     
     var body: some View {
-        NavigationLink(destination: {
-            let otherTripOptions = group.stopTimes.prefix(10).map { stopTime in
-                TripOption(
-                    id: stopTime.tripId,
-                    startTime: stopTime.place.departure ?? stopTime.place.scheduledDeparture ?? stopTime.place.arrival ?? stopTime.place.scheduledArrival ?? Date()
-                )
+        if let openTrip {
+            Button {
+                viewModel.userSelectedGroup(group)
+                openTrip(TripDestination(tripId: stopTime.tripId, otherTripOptions: otherTripOptions))
+            } label: {
+                tile
             }
-            
-            ItineraryView(tripId: stopTime.tripId, fromNearby: false, otherTripOptions: otherTripOptions)
-                .toolbarBackground(.hidden, for: .navigationBar)
-                .navigationBarBackButtonHidden(true)
-                .onAppear {
-                    viewModel.userSelectedGroup(group)
-                }
-        }) {
-            TimelineView(.periodic(from: .now, by: 5)) { context in
-                VStack(spacing: 2) {
-                    HStack(spacing: 2) {
-                        if let departure = stopTime.place.departure ?? stopTime.place.arrival,
-                           let scheduledDeparture = stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival {
-                            let isNextDay = !calendar.isDate(departure, inSameDayAs: context.date)
-                            
-                            Text(settings.showDelayInsteadOfDirectTime ? formatTime(scheduledDeparture) : formatTime(departure))
-                                .font(.system(.headline, design: .monospaced))
+            .buttonStyle(ScaleButtonStyle())
+        } else {
+            NavigationLink(destination: {
+                ItineraryView(tripId: stopTime.tripId, fromNearby: false, otherTripOptions: otherTripOptions)
+                    .toolbarBackground(.hidden, for: .navigationBar)
+                    .navigationBarBackButtonHidden(true)
+                    .onAppear {
+                        viewModel.userSelectedGroup(group)
+                    }
+            }) {
+                tile
+            }
+            .buttonStyle(ScaleButtonStyle())
+        }
+    }
+
+    private var tile: some View {
+        TimelineView(.periodic(from: .now, by: 5)) { context in
+            VStack(spacing: 2) {
+                HStack(spacing: 2) {
+                    if let departure = stopTime.place.departure ?? stopTime.place.arrival,
+                       let scheduledDeparture = stopTime.place.scheduledDeparture ?? stopTime.place.scheduledArrival {
+                        let isNextDay = !calendar.isDate(departure, inSameDayAs: context.date)
+                        
+                        Text(settings.showDelayInsteadOfDirectTime ? formatTime(scheduledDeparture) : formatTime(departure))
+                            .font(.system(.headline, design: .monospaced))
+                            .foregroundColor(settings.showDelayInsteadOfDirectTime ? .primary : latenessColor)
+                            .fontWeight(.bold)
+                            .contentTransition(.numericText())
+                            .strikethrough(stopTime.cancelled, color: .red)
+                        
+                        if isNextDay {
+                            Text("*")
+                                .font(.caption2)
                                 .foregroundColor(settings.showDelayInsteadOfDirectTime ? .primary : latenessColor)
-                                .fontWeight(.bold)
                                 .contentTransition(.numericText())
-                                .strikethrough(stopTime.cancelled, color: .red)
+                        }
+                        
+                        if settings.showDelayInsteadOfDirectTime && !stopTime.cancelled && stopTime.realTime {
+                            let scheduledDifference = calendar.dateComponents([.minute], from: scheduledDeparture, to: departure).minute ?? 0
                             
-                            if isNextDay {
-                                Text("*")
-                                    .font(.caption2)
-                                    .foregroundColor(settings.showDelayInsteadOfDirectTime ? .primary : latenessColor)
+                            if scheduledDifference != 0 {
+                                Text("\(scheduledDifference >= 0 ? "+" : "")\(scheduledDifference)'")
+                                    .font(.system(.footnote, design: .monospaced))
+                                    .foregroundColor(latenessColor)
+                                    .fontWeight(.bold)
                                     .contentTransition(.numericText())
-                            }
-                            
-                            if settings.showDelayInsteadOfDirectTime && !stopTime.cancelled && stopTime.realTime {
-                                let scheduledDifference = calendar.dateComponents([.minute], from: scheduledDeparture, to: departure).minute ?? 0
-                                
-                                if scheduledDifference != 0 {
-                                    Text("\(scheduledDifference >= 0 ? "+" : "")\(scheduledDifference)'")
-                                        .font(.system(.footnote, design: .monospaced))
-                                        .foregroundColor(latenessColor)
-                                        .fontWeight(.bold)
-                                        .contentTransition(.numericText())
-                                }
                             }
                         }
                     }
-                    
-                    Text(relativeTime(for: stopTime.place.departure ?? stopTime.place.arrival, from: context.date))
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
-                        .contentTransition(.numericText())
-                        .multilineTextAlignment(.center)
-                        .lineLimit(2)
                 }
-                .padding(.vertical, 6)
-                .padding(.horizontal, 6)
-                .frame(maxWidth: .infinity, minHeight: 50)
-                .background(
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(Color(UIColor.secondarySystemBackground))
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(delayBorderColor, lineWidth: stopTime.cancelled ? 2 : 1)
-                        )
-                )
-                .scaleEffect(animateIn ? 1 : 0.9)
-                .opacity(animateIn ? 1 : 0)
-                .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(Double(index) * 0.05 + 0.1), value: animateIn)
+                
+                Text(relativeTime(for: stopTime.place.departure ?? stopTime.place.arrival, from: context.date))
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+                    .contentTransition(.numericText())
+                    .multilineTextAlignment(.center)
+                    .lineLimit(2)
             }
+            .padding(.vertical, 6)
+            .padding(.horizontal, 6)
+            .frame(maxWidth: .infinity, minHeight: 50)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(tileFill)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 8)
+                            .stroke(delayBorderColor, lineWidth: stopTime.cancelled ? 2 : 1)
+                    )
+            )
+            .scaleEffect(animateIn ? 1 : 0.9)
+            .opacity(animateIn ? 1 : 0)
+            .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(Double(index) * 0.05 + 0.1), value: animateIn)
         }
-        .buttonStyle(ScaleButtonStyle())
     }
     
     private func formatTime(_ date: Date) -> String {
@@ -100,6 +119,10 @@ struct DepartureTimeRow: View {
         return formatter.string(from: date)
     }
     
+    private var tileFill: Color {
+        isOnGlass && colorScheme == .dark ? Color(UIColor.tertiarySystemFill) : Color(UIColor.secondarySystemBackground)
+    }
+
     private var latenessColor: Color {
         stopTime.punctuality(calendar: calendar).color
     }

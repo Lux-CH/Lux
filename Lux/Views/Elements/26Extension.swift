@@ -19,11 +19,20 @@ enum iOS26Effect {
     case glassButtonTintedIn(AnyShape, Color)
 }
 
+private struct IsOnGlassSheetKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
 private struct LiquidGlassLightModeButtonTintOptOutKey: EnvironmentKey {
     static let defaultValue = false
 }
 
 extension EnvironmentValues {
+    var isOnGlassSheet: Bool {
+        get { self[IsOnGlassSheetKey.self] }
+        set { self[IsOnGlassSheetKey.self] = newValue }
+    }
+
     var liquidGlassLightModeButtonTintOptOut: Bool {
         get { self[LiquidGlassLightModeButtonTintOptOutKey.self] }
         set { self[LiquidGlassLightModeButtonTintOptOutKey.self] = newValue }
@@ -130,6 +139,15 @@ extension View {
             } else {
                 self.buttonStyle(.glass)
             }
+        } else {
+            self
+        }
+    }
+
+    @ViewBuilder
+    func glassMorphID<ID: Hashable & Sendable>(_ id: ID, in namespace: Namespace.ID) -> some View {
+        if #available(iOS 26, *) {
+            self.glassEffectID(id, in: namespace)
         } else {
             self
         }

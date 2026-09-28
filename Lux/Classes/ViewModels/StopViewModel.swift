@@ -21,6 +21,7 @@ class StopViewModel: ObservableObject {
     @ObservedObject var settings = Settings.shared
     
     let stop: SearchResult
+    let track: String?
     
     private let liveFeed = RelayLiveFeed<StopTimes>()
     private var departureCheckTimer: AnyCancellable?
@@ -40,14 +41,16 @@ class StopViewModel: ObservableObject {
     private static let minimumFavoriteScore = 1.0
     private static let favoriteHorizon: TimeInterval = 40 * 60
 
-    init(stop: SearchResult, fromStops: Bool) {
+    init(stop: SearchResult, fromStops: Bool, track: String? = nil) {
         self.stop = stop
         self.fromStops = fromStops
+        self.track = track
     }
 
-    init(stop: SearchResult, fromStops: Bool, time: Date?) {
+    init(stop: SearchResult, fromStops: Bool, time: Date?, track: String? = nil) {
         self.stop = stop
         self.fromStops = fromStops
+        self.track = track
         if let selectedTime = time {
             isCustomTimeSelected = true
             currentTime = selectedTime
@@ -172,7 +175,16 @@ class StopViewModel: ObservableObject {
     }
 
     private func filteredForStation(_ stopTimes: StopTimes) -> StopTimes {
-        stopTimes.filteredToStation(stopId: stop.id, name: stop.name, lat: stop.lat, lon: stop.lon, servesMainlineRail: stop.servesMainlineRail)
+        let station = stopTimes.filteredToStation(stopId: stop.id, name: stop.name, lat: stop.lat, lon: stop.lon, servesMainlineRail: stop.servesMainlineRail)
+        guard let track else { return station }
+        let wanted = StationLayout.normalizedTrack(track)
+        return StopTimes(
+            stopTimes: station.stopTimes.filter { stopTime in
+                (stopTime.place.track ?? stopTime.place.scheduledTrack).map(StationLayout.normalizedTrack) == wanted
+            },
+            previousPageCursor: station.previousPageCursor,
+            nextPageCursor: station.nextPageCursor
+        )
     }
 
     @MainActor

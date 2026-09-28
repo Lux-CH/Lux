@@ -13,34 +13,37 @@ struct ExpandedStopHeaderView: View {
     @Binding var selectedDate: Date
     @Binding var viewType: String
     var onDateSelected: () -> Void
+    @Environment(\.stopAnimatesIn) private var animatesIn
+
+    private var isIn: Bool { animateIn || !animatesIn }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
                 Image(systemName: "clock")
-                    .rotationEffect(Angle(degrees: animateIn ? 0 : -45))
-                    .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(0.1), value: animateIn)
+                    .rotationEffect(Angle(degrees: isIn ? 0 : -45))
+                    .animation(.spring(response: 0.5, dampingFraction: 0.7).delay(0.1), value: isIn)
                 Text("Horaires")
                     .fontWeight(.bold)
-                    .offset(x: animateIn ? 0 : -20)
-                    .opacity(animateIn ? 1 : 0)
-                    .animation(.easeOut(duration: 0.4).delay(0.2), value: animateIn)
+                    .offset(x: isIn ? 0 : -20)
+                    .opacity(isIn ? 1 : 0)
+                    .animation(.easeOut(duration: 0.4).delay(0.2), value: isIn)
                 Spacer()
                 datePickerButton
-                    .offset(x: animateIn ? 0 : 20)
-                    .opacity(animateIn ? 1 : 0)
-                    .animation(.easeOut(duration: 0.4).delay(0.3), value: animateIn)
+                    .offset(x: isIn ? 0 : 20)
+                    .opacity(isIn ? 1 : 0)
+                    .animation(.easeOut(duration: 0.4).delay(0.3), value: isIn)
             }
             
             CustomSegmentedPicker(selection: $viewType)
-                .offset(y: animateIn ? 0 : 10)
-                .opacity(animateIn ? 1 : 0)
-                .animation(.easeOut(duration: 0.4).delay(0.35), value: animateIn)
+                .offset(y: isIn ? 0 : 10)
+                .opacity(isIn ? 1 : 0)
+                .animation(.easeOut(duration: 0.4).delay(0.35), value: isIn)
             
             Divider()
                 .padding(.bottom, 0)
-                .scaleEffect(x: animateIn ? 1 : 0, anchor: .leading)
-                .animation(.easeOut(duration: 0.5).delay(0.4), value: animateIn)
+                .scaleEffect(x: isIn ? 1 : 0, anchor: .leading)
+                .animation(.easeOut(duration: 0.5).delay(0.4), value: isIn)
         }
         .padding(.top, 17.5)
         .padding(.horizontal, 25)
@@ -135,5 +138,16 @@ struct CustomSegmentedPicker: View {
                 .stroke(Color.accentColor.opacity(0.2), lineWidth: colorScheme == .dark ? 0.5 : 0.75)
         )
         .frame(height: 28)
+    }
+}
+
+private struct StopAnimatesInKey: EnvironmentKey {
+    static let defaultValue = true
+}
+
+extension EnvironmentValues {
+    var stopAnimatesIn: Bool {
+        get { self[StopAnimatesInKey.self] }
+        set { self[StopAnimatesInKey.self] = newValue }
     }
 }

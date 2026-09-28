@@ -41,9 +41,14 @@ struct MainNavigationView: View {
     @State private var showSettings: Bool = false
     @State private var showShortcutsSettings: Bool = false
     @State private var showLuxPass: Bool = false
+    @State private var showStopsMap: Bool = false
+    @Namespace private var glassNamespace
+    @State private var pendingMapDestination: SearchResult?
     @StateObject private var stopsViewModel = StopsViewModel()
     @EnvironmentObject var locationManager: LocationManager
     @EnvironmentObject var shortcutManager: ShortcutManager
+    @EnvironmentObject var disruptionManager: DisruptionManager
+    @EnvironmentObject var offlineManager: OfflineManager
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.scenePhase) private var scenePhase
     
@@ -186,48 +191,80 @@ struct MainNavigationView: View {
                                             .transition(.opacity.combined(with: .move(edge: .top)))
                                         }
                                         
-                                        GlassEffectGroup(spacing: 6) {
-                                            AnimatedSearchBar(
-                                                searchText: viewMode == .home ? $searchText : $stopsViewModel.searchQuery,
-                                                placeholderText: viewMode == .home ?
-                                                (progress.numOfTimesTripViewWasOpened <= 1 ?
-                                                    String(localized: "Où souhaitez-vous aller ?") :
-                                                    String(localized: "Aller à...")) :
-                                                String(localized: "Rechercher un arrêt..."),
-                                                onSearch: {
-                                                    if viewMode == .stops {
-                                                        withAnimation(ultraSmoothSpring) {
-                                                            stopsViewModel.performSearch()
+                                        GlassEffectGroup(spacing: 8) {
+                                            HStack(spacing: 8) {
+                                                AnimatedSearchBar(
+                                                    searchText: viewMode == .home ? $searchText : $stopsViewModel.searchQuery,
+                                                    placeholderText: viewMode == .home ?
+                                                    (progress.numOfTimesTripViewWasOpened <= 1 ?
+                                                        String(localized: "Où souhaitez-vous aller ?") :
+                                                        String(localized: "Aller à...")) :
+                                                    String(localized: "Rechercher un arrêt..."),
+                                                    onSearch: {
+                                                        if viewMode == .stops {
+                                                            withAnimation(ultraSmoothSpring) {
+                                                                stopsViewModel.performSearch()
+                                                            }
+                                                        }
+                                                    },
+                                                    onClear: {
+                                                        if viewMode == .stops {
+                                                            withAnimation(ultraSmoothSpring) {
+                                                                stopsViewModel.resetSearch()
+                                                            }
+                                                        } else {
+                                                            searchText = ""
+                                                        }
+                                                    },
+                                                    isTextFieldDisabled: viewMode == .home
+                                                )
+                                                .focused($isSearchBarFocused)
+                                                .simultaneousGesture(
+                                                    TapGesture().onEnded {
+                                                        if viewMode == .home {
+                                                            transitionToSearchMode()
                                                         }
                                                     }
-                                                },
-                                                onClear: {
-                                                    if viewMode == .stops {
-                                                        withAnimation(ultraSmoothSpring) {
-                                                            stopsViewModel.resetSearch()
-                                                        }
-                                                    } else {
-                                                        searchText = ""
-                                                    }
-                                                },
-                                                isTextFieldDisabled: viewMode == .home
-                                            )
-                                            .focused($isSearchBarFocused)
-                                            .simultaneousGesture(
-                                                TapGesture().onEnded {
+                                                )
+                                                .accessibilityAction(.default) {
                                                     if viewMode == .home {
                                                         transitionToSearchMode()
                                                     }
                                                 }
-                                            )
-                                            .accessibilityAction(.default) {
-                                                if viewMode == .home {
-                                                    transitionToSearchMode()
+                                                .accessibilityLabel(viewMode == .home ? "Recherche de destination" : "")
+                                                .accessibilityHint(viewMode == .home ? "Double-tapez pour ouvrir la recherche d'itinéraires" : "")
+                                                .accessibilityAddTraits(viewMode == .home ? .isSearchField : [])
+                                                .glassMorphID("searchBar", in: glassNamespace)
+
+                                                if viewMode == .stops {
+                                                    Button {
+                                                        isSearchBarFocused = false
+                                                        showStopsMap = true
+                                                        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+                                                    } label: {
+                                                        Image(systemName: "map")
+                                                            .foregroundColor(Color.primary.opacity(0.6))
+                                                            .font(.system(size: 20))
+                                                            .symbolEffect(.bounce.down, options: .speed(0.8), value: viewMode == .stops)
+                                                            .frame(width: 60, height: 60)
+                                                            .contentShape(Circle())
+                                                    }
+                                                    .buttonStyle(.plain)
+                                                    .adaptable(ios26: .glassButtonClear, fallback: {
+                                                        $0.background(
+                                                            Color(.secondarySystemFill).opacity(0.5),
+                                                            in: Circle()
+                                                        ).overlay(
+                                                            Circle()
+                                                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                                        )
+                                                    })
+                                                    .accessibilityLabel("Carte des arrêts")
+                                                    .accessibilityHint("Double-tapez pour afficher les arrêts sur une carte")
+                                                    .glassMorphID("stopsMap", in: glassNamespace)
+                                                    .transition(.opacity)
                                                 }
                                             }
-                                            .accessibilityLabel(viewMode == .home ? "Recherche de destination" : "")
-                                            .accessibilityHint(viewMode == .home ? "Double-tapez pour ouvrir la recherche d'itinéraires" : "")
-                                            .accessibilityAddTraits(viewMode == .home ? .isSearchField : [])
                                             .padding(.top, viewMode == .home ? 0 : topSafeAreaInset + 5)
                                             .padding(.leading, 17.5)
                                             // trailing pulled in slightly less than leading: the search bar's
@@ -376,6 +413,20 @@ struct MainNavigationView: View {
                     }
                 )
             }
+        }
+        .fullScreenCover(isPresented: $showStopsMap, onDismiss: {
+            guard let destination = pendingMapDestination else { return }
+            pendingMapDestination = nil
+            transitionToSearchMode(destination: destination)
+        }) {
+            StopsMapScreen(initialLocation: locationManager.location) { destination in
+                pendingMapDestination = destination
+                showStopsMap = false
+            }
+            .environmentObject(locationManager)
+            .environmentObject(shortcutManager)
+            .environmentObject(disruptionManager)
+            .environmentObject(offlineManager)
         }
         .onAppear {
             locationManager.startMonitoring()
@@ -747,11 +798,17 @@ struct MainNavigationView: View {
     }
     
     private func transitionToSearchModeWithShortcut(_ shortcut: UserShortcut) {
+        transitionToSearchMode(destination: shortcut.toSearchResult())
+    }
+
+    private func transitionToSearchMode(destination searchResult: SearchResult) {
         guard !isSearchTransitioning else { return }
         
         isSearchTransitioning = true
-        
-        let searchResult = shortcut.toSearchResult()
+
+        if viewMode == .stops {
+            stopsViewModel.resetSearch()
+        }
         
         withAnimation(searchTransitionSpring) {
             isAnimatingToSearch = true
