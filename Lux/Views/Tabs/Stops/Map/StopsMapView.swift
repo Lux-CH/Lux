@@ -105,7 +105,7 @@ final class StopsMapModel {
         guard selection != self.selection else { return }
         self.selection = selection
         presentedSelection = selection
-        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        HapticFeedback.impact(.soft)
     }
 
     func openShortcut(_ shortcut: UserShortcut) {
@@ -120,7 +120,7 @@ final class StopsMapModel {
     }
 
     func dropPin(at coordinate: CLLocationCoordinate2D, shortcut: UserShortcut? = nil) {
-        UIImpactFeedbackGenerator(style: shortcut == nil ? .medium : .soft).impactOccurred()
+        HapticFeedback.impact(shortcut == nil ? .medium : .soft)
         selection = nil
         pin = StopsMapPin(coordinate: coordinate, name: shortcut?.name, shortcut: shortcut)
         pinTask?.cancel()
@@ -175,6 +175,8 @@ struct StopsMapScreen: View {
     @State private var pinCardHeight: CGFloat = 0
     @State private var showsHint = true
     @State private var openedTrip: TripDestination?
+    @State private var pendingTrip: TripDestination?
+    @State private var tripOpener = TripOpener()
     @State private var shouldRenderMap = true
     @State private var isOnScreen = false
 
@@ -210,6 +212,10 @@ struct StopsMapScreen: View {
             .onAppear {
                 isOnScreen = true
                 shouldRenderMap = true
+                tripOpener.open = { trip in
+                    pendingTrip = trip
+                    model.selection = nil
+                }
             }
             .onDisappear {
                 isOnScreen = false
@@ -231,19 +237,18 @@ struct StopsMapScreen: View {
         .sheet(isPresented: Binding(
             get: { model.selection != nil },
             set: { if !$0 { model.selection = nil } }
-        )) {
+        ), onDismiss: {
+            guard let trip = pendingTrip else { return }
+            pendingTrip = nil
+            openedTrip = trip
+        }) {
             if let selection = model.presentedSelection {
                 NavigationStack {
                     StopDepartureSheet(stop: selection.stop, track: selection.track) {
                         go(selection.stop)
                     }
-                    .environment(\.openTrip) { trip in
-                        model.selection = nil
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                            openedTrip = trip
-                        }
-                    }
-                        .toolbar(.hidden, for: .navigationBar)
+                    .environment(\.openTrip, tripOpener)
+                    .toolbar(.hidden, for: .navigationBar)
                 }
                 .presentationDetents([.medium, .large])
                 .presentationBackgroundInteraction(.enabled(upThrough: .medium))
@@ -333,7 +338,7 @@ struct StopsMapScreen: View {
 
     private func mapButton(_ symbol: String, label: String, action: @escaping () -> Void) -> some View {
         Button {
-            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+            HapticFeedback.impact(.soft)
             action()
         } label: {
             Image(systemName: symbol)
@@ -527,7 +532,7 @@ struct StopsMapView: UIViewRepresentable {
 }
 
 @MainActor
-final class StopsMapController: NSObject, MKMapViewDelegate {
+final class StopsMapController: NSObject, MKMapViewDelegate, UIGestureRecognizerDelegate {
     let mapView = MKMapView()
 
     private let model: StopsMapModel
@@ -538,14 +543,17 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
     private var quaiPins: [String: QuaiPin] = [:]
     private var droppedPin: DroppedPin?
     private var shortcutPins: [ShortcutPin] = []
-    private var shortcutSignature = ""
-    private var stationOverlays: [MKOverlay] = []
-    private var layouts: [Int: StationLayout] = [:]
+    private var shownShortcuts: [UserShortcut] = []
+    private var stationOverlays: [Int: [MKOverlay]] = [:]
+    private var stationContents: [Int: StationOverlayContent] = [:]
     private var requestedLayouts: Set<Int> = []
+    private var pendingLayouts: Set<Int> = []
     private var loadedRects: [MKMapRect] = []
     private var loadTask: Task<Void, Never>?
     private var pendingRect: MKMapRect?
-    private var layoutTasks: [Task<Void, Never>] = []
+    private var layoutTasks: [Int: Task<Void, Never>] = [:]
+    private var layoutFlushTask: Task<Void, Never>?
+    private var freshAnnotations: Set<ObjectIdentifier> = []
     private var detail: StationDetail = .hidden
     private var selectionId: String?
     private var selectedStop: SearchResult?
@@ -557,6 +565,7 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
 
     private static let maxLoadDistance: CLLocationDistance = 9000
     private static let maxStations = 1500
+    private static let pinGlyph = UIImage(systemName: "mappin")
     private static let switzerland = MKCoordinateRegion(
         center: CLLocationCoordinate2D(latitude: 46.80, longitude: 8.23),
         span: MKCoordinateSpan(latitudeDelta: 2.6, longitudeDelta: 4.6)
@@ -586,6 +595,7 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
 
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(longPressed(_:)))
         longPress.minimumPressDuration = 0.35
+        longPress.delegate = self
         mapView.addGestureRecognizer(longPress)
     }
 
@@ -593,7 +603,13 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
         model.savedCamera = mapView.camera.copy() as? MKMapCamera
         if model.isLoading { model.isLoading = false }
         loadTask?.cancel()
-        layoutTasks.forEach { $0.cancel() }
+        layoutFlushTask?.cancel()
+        layoutTasks.values.forEach { $0.cancel() }
+    }
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        HapticFeedback.prepareImpact(.soft, .medium)
+        return true
     }
 
     func setInsets(top: CGFloat, bottom: CGFloat) {
@@ -616,14 +632,23 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
     }
 
     func syncShortcuts(_ shortcuts: [UserShortcut]) {
-        let signature = shortcuts.map {
-            "\($0.id)|\($0.name)|\($0.symbol)|\($0.coordinates.latitude)|\($0.coordinates.longitude)|\($0.stopId ?? "")"
-        }.joined(separator: ";")
-        guard signature != shortcutSignature else { return }
-        shortcutSignature = signature
-        mapView.removeAnnotations(shortcutPins)
-        shortcutPins = shortcuts.map(ShortcutPin.init)
-        mapView.addAnnotations(shortcutPins)
+        guard shortcuts != shownShortcuts else { return }
+        shownShortcuts = shortcuts
+        let current = Dictionary(shortcutPins.map { ($0.shortcut.id, $0) }, uniquingKeysWith: { first, _ in first })
+        var kept: [ShortcutPin] = []
+        var added: [ShortcutPin] = []
+        for shortcut in shortcuts {
+            if let pin = current[shortcut.id], pin.shortcut == shortcut {
+                kept.append(pin)
+            } else {
+                added.append(ShortcutPin(shortcut: shortcut))
+            }
+        }
+        let keptIds = Set(kept.map(ObjectIdentifier.init))
+        mapView.removeAnnotations(shortcutPins.filter { !keptIds.contains(ObjectIdentifier($0)) })
+        shortcutPins = kept + added
+        freshAnnotations.formUnion(added.map(ObjectIdentifier.init))
+        mapView.addAnnotations(added)
     }
 
     private func syncPin(_ pin: StopsMapPin?) {
@@ -769,6 +794,7 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
             }
             stations = Dictionary(uniqueKeysWithValues: ranked.prefix(Self.maxStations).map { ($0.id, $0) })
             loadedRects = []
+            pruneLayouts(keeping: Set(stations.keys.compactMap { StationLayout.uic(fromStopId: $0) }))
         }
         rebuildStations()
         rebuildQuais()
@@ -798,10 +824,9 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
         defer { isMutatingAnnotations = false }
 
         var desired: [String: QuaiPin] = [:]
-        let content = StationOverlayContent(legs: [], layouts: layouts)
         var railStations: [Int: MapStation] = [:]
         for station in stations.values where station.stop.servesMainlineRail {
-            if let uic = StationLayout.uic(fromStopId: station.id), layouts[uic] != nil {
+            if let uic = StationLayout.uic(fromStopId: station.id), stationContents[uic] != nil {
                 railStations[uic] = station
             }
         }
@@ -813,9 +838,10 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
             desired[key] = quaiPins[key] ?? QuaiPin(key: key, stop: station.stop, track: track, isRail: isRail, coordinate: coordinate)
         }
 
-        for label in content.labels {
-            guard let uic = Int(label.id.prefix { $0.isNumber }), let station = railStations[uic] else { continue }
-            add(station: station, track: label.text, coordinate: label.coordinate, isRail: true)
+        for (uic, station) in railStations {
+            for label in stationContents[uic]?.labels ?? [] {
+                add(station: station, track: label.text, coordinate: label.coordinate, isRail: true)
+            }
         }
         for station in stations.values {
             let hasLayout = StationLayout.uic(fromStopId: station.id).map { railStations[$0] != nil } ?? false
@@ -832,12 +858,34 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
             }
         }
 
-        let stale = quaiPins.filter { desired[$0.key] == nil }
-        mapView.removeAnnotations(Array(stale.values))
-        let added = desired.filter { quaiPins[$0.key] == nil }
+        let stale = Array(quaiPins.filter { desired[$0.key] == nil }.values)
+        freshAnnotations.subtract(stale.map(ObjectIdentifier.init))
+        removeFading(stale)
+        let added = Array(desired.filter { quaiPins[$0.key] == nil }.values)
         quaiPins = desired
-        mapView.addAnnotations(Array(added.values))
+        freshAnnotations.formUnion(added.map(ObjectIdentifier.init))
+        mapView.addAnnotations(added)
         if selectedTrack != nil { selectCurrentAnnotation() }
+    }
+
+    private func removeFading(_ annotations: [MKAnnotation]) {
+        guard !annotations.isEmpty else { return }
+        let views = annotations.compactMap { mapView.view(for: $0) }
+        guard !views.isEmpty else {
+            mapView.removeAnnotations(annotations)
+            return
+        }
+        UIView.animate(withDuration: 0.18, delay: 0, options: [.beginFromCurrentState, .allowUserInteraction]) {
+            for view in views {
+                view.alpha = 0
+                view.transform = CGAffineTransform(scaleX: 0.6, y: 0.6)
+            }
+        } completion: { [weak self] _ in
+            guard let self else { return }
+            self.isMutatingAnnotations = true
+            self.mapView.removeAnnotations(annotations)
+            self.isMutatingAnnotations = false
+        }
     }
 
     private func loadLayouts() {
@@ -849,19 +897,60 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
             guard area.contains(MKMapPoint(CLLocationCoordinate2D(latitude: station.stop.lat, longitude: station.stop.lon))) else { continue }
             requestedLayouts.insert(uic)
             let stopId = station.id
-            layoutTasks.append(Task { [weak self] in
-                guard let layout = await StationLayoutStore.shared.layout(for: stopId), let self, !Task.isCancelled else { return }
-                self.layouts[layout.uic] = layout
-                self.rebuildStationShapes()
-                self.rebuildQuais()
-            })
+            layoutTasks[uic] = Task { [weak self] in
+                let layout = await StationLayoutStore.shared.layout(for: stopId)
+                guard let self, !Task.isCancelled else { return }
+                self.layoutTasks[uic] = nil
+                guard let layout else { return }
+                self.stationContents[layout.uic] = StationOverlayContent(legs: [], layouts: [layout.uic: layout])
+                self.pendingLayouts.insert(layout.uic)
+                self.scheduleLayoutFlush()
+            }
         }
     }
 
+    private func scheduleLayoutFlush() {
+        guard layoutFlushTask == nil else { return }
+        layoutFlushTask = Task { [weak self] in
+            try? await Task.sleep(for: .milliseconds(60))
+            guard let self, !Task.isCancelled else { return }
+            self.layoutFlushTask = nil
+            let arrived = self.pendingLayouts
+            self.pendingLayouts = []
+            self.addStationShapes(for: arrived)
+            self.rebuildQuais()
+        }
+    }
+
+    private func addStationShapes(for uics: Set<Int>) {
+        var added: [MKOverlay] = []
+        for uic in uics {
+            guard let content = stationContents[uic] else { continue }
+            if let previous = stationOverlays[uic] { mapView.removeOverlays(previous) }
+            let overlays = content.mapOverlays(at: detail)
+            stationOverlays[uic] = overlays
+            added += overlays
+        }
+        mapView.addOverlays(added, level: .aboveRoads)
+    }
+
     private func rebuildStationShapes() {
-        mapView.removeOverlays(stationOverlays)
-        stationOverlays = StationOverlayContent(legs: [], layouts: layouts).mapOverlays(at: detail)
-        mapView.addOverlays(stationOverlays, level: .aboveRoads)
+        mapView.removeOverlays(stationOverlays.values.flatMap { $0 })
+        stationOverlays = [:]
+        addStationShapes(for: Set(stationContents.keys))
+    }
+
+    private func pruneLayouts(keeping kept: Set<Int>) {
+        for uic in stationContents.keys where !kept.contains(uic) {
+            stationContents[uic] = nil
+            if let overlays = stationOverlays.removeValue(forKey: uic) { mapView.removeOverlays(overlays) }
+        }
+        for (uic, task) in layoutTasks where !kept.contains(uic) {
+            task.cancel()
+            layoutTasks[uic] = nil
+        }
+        requestedLayouts.formIntersection(kept)
+        pendingLayouts.formIntersection(kept)
     }
 
     private func updateDetail() {
@@ -896,6 +985,20 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
         MainActor.assumeIsolated {
             updateDetail()
             scheduleLoad()
+        }
+    }
+
+    nonisolated func mapView(_ mapView: MKMapView, didAdd views: [MKAnnotationView]) {
+        MainActor.assumeIsolated {
+            for view in views {
+                guard let annotation = view.annotation, freshAnnotations.remove(ObjectIdentifier(annotation)) != nil else { continue }
+                view.alpha = 0
+                view.transform = CGAffineTransform(scaleX: 0.5, y: 0.5)
+                UIView.animate(springDuration: 0.4, bounce: 0.3, options: [.allowUserInteraction]) {
+                    view.alpha = 1
+                    view.transform = .identity
+                }
+            }
         }
     }
 
@@ -1006,7 +1109,7 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
                     ?? MKMarkerAnnotationView(annotation: pin, reuseIdentifier: "dropped")
                 view.annotation = pin
                 view.markerTintColor = .systemRed
-                view.glyphImage = UIImage(systemName: "mappin")
+                view.glyphImage = Self.pinGlyph
                 view.displayPriority = .required
                 view.zPriority = .max
                 view.animatesWhenAdded = true
@@ -1088,6 +1191,12 @@ private final class ShortcutAnnotationView: MKAnnotationView {
         onTap?()
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        alpha = 1
+        transform = .identity
+    }
+
     func configure(with shortcut: UserShortcut) {
         let badge = ShortcutBadgeView(symbol: shortcut.symbol, name: shortcut.name, size: Self.badgeSize)
         let host = host ?? {
@@ -1100,7 +1209,7 @@ private final class ShortcutAnnotationView: MKAnnotationView {
         }()
         host.rootView = badge
         let size = host.sizeThatFits(in: CGSize(width: 240, height: 200))
-        frame.size = size
+        bounds.size = size
         host.view.frame = CGRect(origin: .zero, size: size)
         centerOffset = CGPoint(x: 0, y: size.height / 2 - Self.badgeSize / 2)
         displayPriority = .required
@@ -1138,6 +1247,7 @@ private struct ShortcutBadgeView: View {
 
 private final class StationMarkerView: MKMarkerAnnotationView {
     static let reuseIdentifier = "station"
+    private static let glyph = UIImage(systemName: "signpost.right")
 
     var onTap: ((MKAnnotationView) -> Void)?
 
@@ -1157,7 +1267,7 @@ private final class StationMarkerView: MKMarkerAnnotationView {
     func configure(with station: MapStation) {
         let mode = StopsMapStyle.primaryMode(of: station.stop.modes)
         markerTintColor = StopsMapStyle.color(for: mode)
-        glyphImage = UIImage(systemName: "signpost.right")
+        glyphImage = Self.glyph
         displayPriority = MKFeatureDisplayPriority(rawValue: Float(500 + 499 * min(1, station.importance * 3)))
         titleVisibility = .adaptive
         subtitleVisibility = .hidden
@@ -1204,6 +1314,12 @@ private final class QuaiAnnotationView: MKAnnotationView {
         render()
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        alpha = 1
+        transform = .identity
+    }
+
     private func render() {
         let host = host ?? {
             let controller = UIHostingController(rootView: sign)
@@ -1215,7 +1331,7 @@ private final class QuaiAnnotationView: MKAnnotationView {
         }()
         host.rootView = sign
         let size = host.sizeThatFits(in: CGSize(width: 200, height: 200))
-        frame.size = size
+        bounds.size = size
         host.view.frame = CGRect(origin: .zero, size: size)
     }
 }

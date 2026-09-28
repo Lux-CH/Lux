@@ -57,6 +57,10 @@ struct ItineraryView: View {
     @State private var tripSearchDestination: SearchResult?
     @State private var isSearchCovered = false
     @State private var keepsDetailsHidden = false
+    @State private var pendingTrip: TripDestination?
+    @State private var pendingTripSearch: SearchResult?
+    @State private var tripOpener = TripOpener()
+    @State private var containerWidth: CGFloat = 0
 
     private static func compactDetent(isSingle: Bool) -> PresentationDetent {
         guard isSingle else { return .fraction(0.225) }
@@ -160,6 +164,7 @@ struct ItineraryView: View {
                             .ignoresSafeArea()
                     }
                 }
+                .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { containerWidth = $0 }
                 .overlay(alignment: .leading) {
                     VStack(spacing: 12) {
                         GlassEffectGroup(spacing: 8) {
@@ -268,20 +273,21 @@ struct ItineraryView: View {
                 ), onDismiss: {
                     if !keepsDetailsHidden { showDetails = true }
                     viewModel.selectedStop = nil
+                    if let trip = pendingTrip {
+                        pendingTrip = nil
+                        openedTrip = trip
+                    }
+                    if let stop = pendingTripSearch {
+                        pendingTripSearch = nil
+                        tripSearchDestination = stop
+                    }
                 }) {
                     if let destination = shownStopDestination {
                         ItineraryStopSheet(place: destination.place, detent: $stopSheetDetent, compactHeight: $stopSheetCompactHeight) { stop in
+                            pendingTripSearch = stop
                             closeStopSheet(restoringDetails: false)
-                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                tripSearchDestination = stop
-                            }
                         }
-                            .environment(\.openTrip) { trip in
-                                closeStopSheet(restoringDetails: false)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
-                                    openedTrip = trip
-                                }
-                            }
+                            .environment(\.openTrip, tripOpener)
                             .presentationDetents([.height(stopSheetCompactHeight), .large], selection: $stopSheetDetent)
                             .presentationBackgroundInteraction(.enabled(upThrough: .height(stopSheetCompactHeight)))
                             .presentationCornerRadius(36)
@@ -337,6 +343,10 @@ struct ItineraryView: View {
             locationManager.startMonitoring()
             isOnScreen = true
             shouldRenderMap = true
+            tripOpener.open = { trip in
+                pendingTrip = trip
+                closeStopSheet(restoringDetails: false)
+            }
             if defersDetails && !hasShownDeferredDetails {
                 hasShownDeferredDetails = true
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
@@ -368,8 +378,9 @@ struct ItineraryView: View {
     }
 
     private func openStopSheet(_ place: Place) {
-        UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+        HapticFeedback.impact(.soft)
         let destination = StopDetailDestination(place: place)
+        stopSheetCompactHeight = ItineraryStopSheet.estimatedCompactHeight(for: place, width: containerWidth > 0 ? containerWidth : 390)
         shownStopDestination = destination
         stopSheetDetent = .height(stopSheetCompactHeight)
         guard stopDetailDestination == nil else {

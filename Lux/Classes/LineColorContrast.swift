@@ -9,20 +9,61 @@ import SwiftUI
 import UIKit
 
 func readableLineColor(_ color: Color, onTint tint: Double = 0) -> Color {
-    let base = UIColor(color)
-    return Color(UIColor { traits in
-        LineColorContrast.readable(
-            base.resolvedColor(with: traits),
-            isDark: traits.userInterfaceStyle == .dark,
-            tint: tint
-        )
-    })
+    LineColorContrast.dynamic(color, tint: tint)
 }
 
 enum LineColorContrast {
     static let darkTarget = 3.5
 
     private typealias RGB = (r: Double, g: Double, b: Double)
+
+    private struct DynamicKey: Hashable {
+        let color: Color
+        let tint: Double
+    }
+
+    private struct ResolvedKey: Hashable {
+        let red: CGFloat
+        let green: CGFloat
+        let blue: CGFloat
+        let alpha: CGFloat
+        let isDark: Bool
+        let tint: Double
+    }
+
+    private static let lock = NSLock()
+    nonisolated(unsafe) private static var dynamicColors: [DynamicKey: Color] = [:]
+    nonisolated(unsafe) private static var resolvedColors: [ResolvedKey: UIColor] = [:]
+
+    static func dynamic(_ color: Color, tint: Double) -> Color {
+        let key = DynamicKey(color: color, tint: tint)
+        lock.lock()
+        defer { lock.unlock() }
+        if let cached = dynamicColors[key] { return cached }
+        let base = UIColor(color)
+        let result = Color(UIColor { traits in
+            resolved(base.resolvedColor(with: traits), isDark: traits.userInterfaceStyle == .dark, tint: tint)
+        })
+        if dynamicColors.count > 512 { dynamicColors.removeAll() }
+        dynamicColors[key] = result
+        return result
+    }
+
+    private static func resolved(_ color: UIColor, isDark: Bool, tint: Double) -> UIColor {
+        var red: CGFloat = 0, green: CGFloat = 0, blue: CGFloat = 0, alpha: CGFloat = 0
+        guard color.getRed(&red, green: &green, blue: &blue, alpha: &alpha) else { return color }
+        let key = ResolvedKey(red: red, green: green, blue: blue, alpha: alpha, isDark: isDark, tint: tint)
+        lock.lock()
+        let cached = resolvedColors[key]
+        lock.unlock()
+        if let cached { return cached }
+        let result = readable(color, isDark: isDark, tint: tint)
+        lock.lock()
+        if resolvedColors.count > 1024 { resolvedColors.removeAll() }
+        resolvedColors[key] = result
+        lock.unlock()
+        return result
+    }
 
     private static let darkSurface: RGB = (0.282, 0.282, 0.290)
     private static let lightSurface: RGB = (1, 1, 1)
@@ -43,14 +84,20 @@ enum LineColorContrast {
         )
 
         guard isDark else { return legacy(color) }
-        var (hue, saturation, lightness) = hsl(original)
-        var candidate = original
-        for _ in 0..<100 {
-            if contrast(candidate, background) >= darkTarget || lightness >= 1 { break }
-            lightness = min(1, lightness + 0.01)
-            candidate = rgb(hue: hue, saturation: saturation, lightness: lightness)
+        let (hue, saturation, lightness) = hsl(original)
+        func candidate(_ step: Int) -> RGB {
+            step == 0 ? original : rgb(hue: hue, saturation: saturation, lightness: min(1, lightness + Double(step) / 100))
         }
-        return UIColor(red: candidate.r, green: candidate.g, blue: candidate.b, alpha: alpha)
+        func passes(_ step: Int) -> Bool {
+            lightness + Double(step) / 100 >= 1 || contrast(candidate(step), background) >= darkTarget
+        }
+        var low = 0, high = 100
+        while low < high {
+            let middle = (low + high) / 2
+            if passes(middle) { high = middle } else { low = middle + 1 }
+        }
+        let result = candidate(low)
+        return UIColor(red: result.r, green: result.g, blue: result.b, alpha: alpha)
     }
 
     private static func clamp(_ value: CGFloat) -> Double {

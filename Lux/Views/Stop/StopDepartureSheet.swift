@@ -93,15 +93,15 @@ struct ItineraryStopSheet: View {
         )
     }
 
-    private var details: [StopDepartureSheet.Detail] {
+    static func details(for place: Place) -> [StopDepartureSheet.Detail] {
         var details: [StopDepartureSheet.Detail] = []
         if let arrival = place.arrival, let departure = place.departure, arrival != departure {
-            details.append(.init(symbol: "arrow.down.circle.fill", text: String(localized: "Arrivée prévue : \(Self.timeFormatter.string(from: arrival))")))
-            details.append(.init(symbol: "arrow.up.circle.fill", text: String(localized: "Départ à : \(Self.timeFormatter.string(from: departure))")))
+            details.append(.init(symbol: "arrow.down.circle.fill", text: String(localized: "Arrivée prévue : \(timeFormatter.string(from: arrival))")))
+            details.append(.init(symbol: "arrow.up.circle.fill", text: String(localized: "Départ à : \(timeFormatter.string(from: departure))")))
         } else if let departure = place.departure {
-            details.append(.init(symbol: "clock", text: String(localized: "Départ à : \(Self.timeFormatter.string(from: departure))")))
+            details.append(.init(symbol: "clock", text: String(localized: "Départ à : \(timeFormatter.string(from: departure))")))
         } else if let arrival = place.arrival {
-            details.append(.init(symbol: "clock", text: String(localized: "Arrivée prévue : \(Self.timeFormatter.string(from: arrival))")))
+            details.append(.init(symbol: "clock", text: String(localized: "Arrivée prévue : \(timeFormatter.string(from: arrival))")))
         }
         if let track = place.track {
             details.append(.init(symbol: "train.side.front.car", text: getTrackType(track)))
@@ -109,12 +109,33 @@ struct ItineraryStopSheet: View {
         return details
     }
 
+    static func estimatedCompactHeight(for place: Place, width: CGFloat) -> CGFloat {
+        let titleFont = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title3).pointSize, weight: .bold)
+        let detailFont = UIFont.preferredFont(forTextStyle: .subheadline)
+        let buttonFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
+        let buttonWidth = (String(localized: "Y aller") as NSString).size(withAttributes: [.font: buttonFont]).width + 54
+        let textWidth = max(80, width - 40 - 12 - buttonWidth)
+        let titleHeight = min(
+            (place.name as NSString).boundingRect(
+                with: CGSize(width: textWidth, height: .greatestFiniteMagnitude),
+                options: .usesLineFragmentOrigin,
+                attributes: [.font: titleFont],
+                context: nil
+            ).height,
+            titleFont.lineHeight * 2
+        )
+        let detailCount = CGFloat(details(for: place).count)
+        let column = ceil(titleHeight) + detailCount * (ceil(detailFont.lineHeight) + 4)
+        let header = 26 + 14 + max(column, 38)
+        return (header + firstGroupHeight).rounded()
+    }
+
     var body: some View {
         NavigationStack {
             StopDepartureSheet(
                 stop: stop,
                 time: place.departure ?? place.arrival,
-                details: details,
+                details: Self.details(for: place),
                 onHeaderHeight: { height in
                     let compact = (height + Self.firstGroupHeight).rounded()
                     guard abs(compact - compactHeight) > 1 else { return }
@@ -153,12 +174,20 @@ struct TripDestination: Identifiable, Hashable {
     }
 }
 
+final class TripOpener {
+    var open: (TripDestination) -> Void = { _ in }
+
+    func callAsFunction(_ trip: TripDestination) {
+        open(trip)
+    }
+}
+
 private struct OpenTripKey: EnvironmentKey {
-    static let defaultValue: ((TripDestination) -> Void)? = nil
+    static let defaultValue: TripOpener? = nil
 }
 
 extension EnvironmentValues {
-    var openTrip: ((TripDestination) -> Void)? {
+    var openTrip: TripOpener? {
         get { self[OpenTripKey.self] }
         set { self[OpenTripKey.self] = newValue }
     }
