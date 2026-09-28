@@ -74,9 +74,11 @@ struct StopsMapPin: Equatable {
     var name: String?
     var nearby: [SearchResult] = []
     var isLoading = true
+    var shortcut: UserShortcut?
 
     static func == (lhs: StopsMapPin, rhs: StopsMapPin) -> Bool {
-        lhs.coordinate.latitude == rhs.coordinate.latitude
+        lhs.shortcut?.id == rhs.shortcut?.id
+            && lhs.coordinate.latitude == rhs.coordinate.latitude
             && lhs.coordinate.longitude == rhs.coordinate.longitude
             && lhs.name == rhs.name
             && lhs.nearby.map(\.id) == rhs.nearby.map(\.id)
@@ -106,10 +108,21 @@ final class StopsMapModel {
         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
     }
 
-    func dropPin(at coordinate: CLLocationCoordinate2D) {
-        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+    func openShortcut(_ shortcut: UserShortcut) {
+        if shortcut.stopId != nil {
+            clearPin()
+            select(shortcut.toSearchResult())
+            return
+        }
+        let coordinate = CLLocationCoordinate2D(latitude: shortcut.coordinates.latitude, longitude: shortcut.coordinates.longitude)
+        guard pin?.shortcut?.id != shortcut.id else { return }
+        dropPin(at: coordinate, shortcut: shortcut)
+    }
+
+    func dropPin(at coordinate: CLLocationCoordinate2D, shortcut: UserShortcut? = nil) {
+        UIImpactFeedbackGenerator(style: shortcut == nil ? .medium : .soft).impactOccurred()
         selection = nil
-        pin = StopsMapPin(coordinate: coordinate)
+        pin = StopsMapPin(coordinate: coordinate, name: shortcut?.name, shortcut: shortcut)
         pinTask?.cancel()
         pinTask = Task { [weak self] in
             let place = (coordinate.latitude, coordinate.longitude)
@@ -122,7 +135,9 @@ final class StopsMapModel {
                 pinLocation.distance(from: CLLocation(latitude: $0.lat, longitude: $0.lon))
                     < pinLocation.distance(from: CLLocation(latitude: $1.lat, longitude: $1.lon))
             }
-            pin?.name = resolved?.first { $0.type != .stop }?.name
+            if shortcut == nil {
+                pin?.name = resolved?.first { $0.type != .stop }?.name
+            }
             pin?.nearby = Array(nearby.prefix(6))
             pin?.isLoading = false
             focusToken += 1
@@ -135,6 +150,7 @@ final class StopsMapModel {
     }
 
     func destination(for pin: StopsMapPin) -> SearchResult {
+        if let shortcut = pin.shortcut { return shortcut.toSearchResult() }
         let name = pin.name ?? String(localized: "Repère sur la carte")
         return SearchResult(
             type: .place,
@@ -154,6 +170,7 @@ struct StopsMapScreen: View {
     let onGo: (SearchResult) -> Void
 
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject private var shortcutManager: ShortcutManager
     @State private var model = StopsMapModel()
     @State private var pinCardHeight: CGFloat = 0
     @State private var showsHint = true
@@ -168,6 +185,7 @@ struct StopsMapScreen: View {
                     if shouldRenderMap {
                         StopsMapView(
                             model: model,
+                            shortcuts: shortcutManager.shortcuts,
                             initialLocation: initialLocation,
                             topInset: geometry.safeAreaInsets.top + 64,
                             bottomInset: bottomInset(in: geometry)
@@ -339,9 +357,17 @@ struct StopsMapScreen: View {
     private func pinCard(_ pin: StopsMapPin) -> some View {
         VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 12) {
-                Image(systemName: "mappin.circle.fill")
-                    .font(.system(size: 30))
-                    .foregroundStyle(.white, .red)
+                if let shortcut = pin.shortcut {
+                    Image(systemName: shortcut.symbol)
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(.white)
+                        .frame(width: 30, height: 30)
+                        .background(Color.accentColor, in: Circle())
+                } else {
+                    Image(systemName: "mappin.circle.fill")
+                        .font(.system(size: 30))
+                        .foregroundStyle(.white, .red)
+                }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(pin.name ?? String(localized: "Repère sur la carte"))
                         .font(.headline)
@@ -470,6 +496,7 @@ enum StopsMapStyle {
 
 struct StopsMapView: UIViewRepresentable {
     let model: StopsMapModel
+    let shortcuts: [UserShortcut]
     let initialLocation: CLLocation?
     let topInset: CGFloat
     let bottomInset: CGFloat
@@ -485,6 +512,7 @@ struct StopsMapView: UIViewRepresentable {
     func updateUIView(_ mapView: MKMapView, context: Context) {
         let controller = context.coordinator
         controller.setInsets(top: topInset, bottom: bottomInset)
+        controller.syncShortcuts(shortcuts)
         controller.sync(
             selection: model.selection,
             pin: model.pin,
@@ -509,6 +537,8 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
     private var stationPins: [String: StationPin] = [:]
     private var quaiPins: [String: QuaiPin] = [:]
     private var droppedPin: DroppedPin?
+    private var shortcutPins: [ShortcutPin] = []
+    private var shortcutSignature = ""
     private var stationOverlays: [MKOverlay] = []
     private var layouts: [Int: StationLayout] = [:]
     private var requestedLayouts: Set<Int> = []
@@ -585,8 +615,19 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
         }
     }
 
+    func syncShortcuts(_ shortcuts: [UserShortcut]) {
+        let signature = shortcuts.map {
+            "\($0.id)|\($0.name)|\($0.symbol)|\($0.coordinates.latitude)|\($0.coordinates.longitude)|\($0.stopId ?? "")"
+        }.joined(separator: ";")
+        guard signature != shortcutSignature else { return }
+        shortcutSignature = signature
+        mapView.removeAnnotations(shortcutPins)
+        shortcutPins = shortcuts.map(ShortcutPin.init)
+        mapView.addAnnotations(shortcutPins)
+    }
+
     private func syncPin(_ pin: StopsMapPin?) {
-        guard let pin else {
+        guard let pin, pin.shortcut == nil else {
             if let droppedPin {
                 mapView.removeAnnotation(droppedPin)
                 self.droppedPin = nil
@@ -863,6 +904,9 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
             guard !isMutatingAnnotations, let annotation = view.annotation else { return }
             if annotation is StationPin || annotation is QuaiPin {
                 choose(annotation)
+            } else if let pin = annotation as? ShortcutPin {
+                mapView.deselectAnnotation(annotation, animated: false)
+                model.openShortcut(pin.shortcut)
             } else {
                 mapView.deselectAnnotation(annotation, animated: false)
             }
@@ -950,6 +994,13 @@ final class StopsMapController: NSObject, MKMapViewDelegate {
                 view.configure(with: pin)
                 view.onTap = { [weak self] view in self?.tapped(view) }
                 return view
+            case let pin as ShortcutPin:
+                let view = mapView.dequeueReusableAnnotationView(withIdentifier: ShortcutAnnotationView.reuseIdentifier) as? ShortcutAnnotationView
+                    ?? ShortcutAnnotationView(annotation: pin, reuseIdentifier: ShortcutAnnotationView.reuseIdentifier)
+                view.annotation = pin
+                view.configure(with: pin.shortcut)
+                view.onTap = { [weak self] in self?.model.openShortcut(pin.shortcut) }
+                return view
             case let pin as DroppedPin:
                 let view = mapView.dequeueReusableAnnotationView(withIdentifier: "dropped") as? MKMarkerAnnotationView
                     ?? MKMarkerAnnotationView(annotation: pin, reuseIdentifier: "dropped")
@@ -1004,6 +1055,86 @@ private final class QuaiPin: NSObject, MKAnnotation {
 }
 
 private final class DroppedPin: MKPointAnnotation {}
+
+private final class ShortcutPin: NSObject, MKAnnotation {
+    let shortcut: UserShortcut
+    let coordinate: CLLocationCoordinate2D
+
+    init(shortcut: UserShortcut) {
+        self.shortcut = shortcut
+        coordinate = CLLocationCoordinate2D(latitude: shortcut.coordinates.latitude, longitude: shortcut.coordinates.longitude)
+    }
+
+    var title: String? { shortcut.name }
+}
+
+private final class ShortcutAnnotationView: MKAnnotationView {
+    static let reuseIdentifier = "shortcut"
+    private static let badgeSize: CGFloat = 34
+
+    var onTap: (() -> Void)?
+    private var host: UIHostingController<ShortcutBadgeView>?
+
+    override init(annotation: MKAnnotation?, reuseIdentifier: String?) {
+        super.init(annotation: annotation, reuseIdentifier: reuseIdentifier)
+        addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleTap)))
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+
+    @objc private func handleTap() {
+        onTap?()
+    }
+
+    func configure(with shortcut: UserShortcut) {
+        let badge = ShortcutBadgeView(symbol: shortcut.symbol, name: shortcut.name, size: Self.badgeSize)
+        let host = host ?? {
+            let controller = UIHostingController(rootView: badge)
+            controller.view.backgroundColor = .clear
+            controller.view.isUserInteractionEnabled = false
+            addSubview(controller.view)
+            self.host = controller
+            return controller
+        }()
+        host.rootView = badge
+        let size = host.sizeThatFits(in: CGSize(width: 240, height: 200))
+        frame.size = size
+        host.view.frame = CGRect(origin: .zero, size: size)
+        centerOffset = CGPoint(x: 0, y: size.height / 2 - Self.badgeSize / 2)
+        displayPriority = .required
+        collisionMode = .none
+        zPriority = MKAnnotationViewZPriority(rawValue: 800)
+        canShowCallout = false
+        accessibilityLabel = shortcut.name
+    }
+}
+
+private struct ShortcutBadgeView: View {
+    let symbol: String
+    let name: String
+    let size: CGFloat
+
+    var body: some View {
+        VStack(spacing: 3) {
+            Image(systemName: symbol)
+                .font(.system(size: size * 0.42, weight: .semibold))
+                .foregroundStyle(.white)
+                .frame(width: size, height: size)
+                .background(Color.accentColor, in: Circle())
+                .overlay(Circle().stroke(.white, lineWidth: 2.5))
+                .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
+            Text(name)
+                .font(.caption.weight(.semibold))
+                .foregroundStyle(.primary)
+                .shadow(color: Color(.systemBackground), radius: 1)
+                .shadow(color: Color(.systemBackground), radius: 1)
+                .lineLimit(1)
+        }
+        .fixedSize()
+    }
+}
 
 private final class StationMarkerView: MKMarkerAnnotationView {
     static let reuseIdentifier = "station"
