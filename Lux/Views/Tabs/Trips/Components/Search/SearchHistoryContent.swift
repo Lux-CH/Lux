@@ -24,16 +24,18 @@ struct SearchHistoryContent: View {
                 header
                     .padding(.horizontal, 20)
                     .padding(.top, 18)
-                    .padding(.bottom, 11)
 
                 ScrollView {
                     historyList
                         .padding(.horizontal, 16)
+                        .padding(.top, 14)
                     Spacer().frame(height: 40)
                 }
                 .scrollClipDisabled()
                 .mask(
                     VStack(spacing: 0) {
+                        LinearGradient(colors: [.clear, .black], startPoint: .top, endPoint: .bottom)
+                            .frame(height: 14)
                         Rectangle()
                         LinearGradient(
                             gradient: Gradient(colors: [Color.black, Color.clear]),
