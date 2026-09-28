@@ -18,12 +18,23 @@ struct StopDepartureSheet: View {
     var track: String? = nil
     var time: Date? = nil
     var details: [Detail] = []
+    var connections: [StopConnection]? = nil
     var onHeaderHeight: (CGFloat) -> Void = { _ in }
     let onGo: () -> Void
 
     private var shownDetails: [Detail] {
         guard let track else { return details }
         return [Detail(symbol: "signpost.right", text: getTrackType(track))] + details
+    }
+
+    @State private var loadedConnections: (stopId: String, lines: [StopConnection])?
+
+    static let connectionRowHeight: CGFloat = 26
+
+    private var shownConnections: [StopConnection] {
+        if let connections { return connections }
+        guard let loadedConnections, loadedConnections.stopId == stop.id else { return [] }
+        return loadedConnections.lines
     }
 
     private var contentKey: String {
@@ -38,6 +49,10 @@ struct StopDepartureSheet: View {
                         .font(.title3)
                         .fontWeight(.bold)
                         .lineLimit(2)
+                    if !shownConnections.isEmpty {
+                        ConnectionPillsRow(connections: shownConnections)
+                            .transition(.opacity)
+                    }
                     ForEach(shownDetails, id: \.self) { detail in
                         Label(detail.text, systemImage: detail.symbol)
                             .font(.subheadline.weight(.medium))
@@ -70,11 +85,44 @@ struct StopDepartureSheet: View {
                 .environment(\.stopAnimatesIn, false)
                 .id(contentKey)
         }
+        .task(id: stop.id) {
+            guard connections == nil else { return }
+            let stopId = stop.id
+            let lines = await ConnectionService.shared.connections(for: stopId)
+            guard !Task.isCancelled else { return }
+            withAnimation(.snappy) {
+                loadedConnections = (stopId, lines)
+            }
+        }
+    }
+}
+
+private struct ConnectionPillsRow: View {
+    let connections: [StopConnection]
+
+    var body: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 6) {
+                ForEach(connections, id: \.self) { connection in
+                    LinePill(line: connection.line, mode: .bus, agency: connection.agency)
+                }
+            }
+            .padding(.trailing, 30)
+        }
+        .frame(height: StopDepartureSheet.connectionRowHeight)
+        .mask(
+            HStack(spacing: 0) {
+                Rectangle()
+                LinearGradient(colors: [.black, .clear], startPoint: .leading, endPoint: .trailing)
+                    .frame(width: 30)
+            }
+        )
     }
 }
 
 struct ItineraryStopSheet: View {
     let place: Place
+    var connections: [StopConnection] = []
     @Binding var detent: PresentationDetent
     @Binding var compactHeight: CGFloat
     let onGo: (SearchResult) -> Void
@@ -109,7 +157,7 @@ struct ItineraryStopSheet: View {
         return details
     }
 
-    static func estimatedCompactHeight(for place: Place, width: CGFloat) -> CGFloat {
+    static func estimatedCompactHeight(for place: Place, width: CGFloat, hasConnections: Bool) -> CGFloat {
         let titleFont = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title3).pointSize, weight: .bold)
         let detailFont = UIFont.preferredFont(forTextStyle: .subheadline)
         let buttonFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
@@ -125,7 +173,8 @@ struct ItineraryStopSheet: View {
             titleFont.lineHeight * 2
         )
         let detailCount = CGFloat(details(for: place).count)
-        let column = ceil(titleHeight) + detailCount * (ceil(detailFont.lineHeight) + 4)
+        let connectionRow = hasConnections ? StopDepartureSheet.connectionRowHeight + 4 : 0
+        let column = ceil(titleHeight) + connectionRow + detailCount * (ceil(detailFont.lineHeight) + 4)
         let header = 26 + 14 + max(column, 38)
         return (header + firstGroupHeight).rounded()
     }
@@ -136,6 +185,7 @@ struct ItineraryStopSheet: View {
                 stop: stop,
                 time: place.departure ?? place.arrival,
                 details: Self.details(for: place),
+                connections: connections,
                 onHeaderHeight: { height in
                     let compact = (height + Self.firstGroupHeight).rounded()
                     guard abs(compact - compactHeight) > 1 else { return }

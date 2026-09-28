@@ -256,6 +256,7 @@ struct StopsMapScreen: View {
             }
         }
         .task {
+            ConnectionService.shared.warmUp()
             try? await Task.sleep(for: .seconds(4))
             showsHint = false
         }

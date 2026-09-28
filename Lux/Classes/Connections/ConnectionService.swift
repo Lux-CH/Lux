@@ -39,6 +39,18 @@ final class ConnectionService {
         }
     }
 
+    func connections(for stopId: String) async -> [StopConnection] {
+        await withCheckedContinuation { continuation in
+            getConnections(for: stopId) { continuation.resume(returning: $0) }
+        }
+    }
+
+    func warmUp() {
+        Task(priority: .utility) { [extractor] in
+            _ = try? await extractor?.extractSpecificKey("")
+        }
+    }
+
     @MainActor
     private func sorted(_ connections: [StopConnection]) -> [StopConnection] {
         let order = LineScoreManager.shared.getSortedRouteNames(connections.map(\.line))

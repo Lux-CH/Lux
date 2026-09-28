@@ -12,6 +12,7 @@ import CoreLocation
 struct StopDetailDestination: Identifiable {
     let id = UUID()
     let place: Place
+    var connections: [StopConnection] = []
 }
 
 

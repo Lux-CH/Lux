@@ -61,6 +61,7 @@ struct ItineraryView: View {
     @State private var pendingTripSearch: SearchResult?
     @State private var tripOpener = TripOpener()
     @State private var containerWidth: CGFloat = 0
+    @State private var connectionsTask: Task<Void, Never>?
 
     private static func compactDetent(isSingle: Bool) -> PresentationDetent {
         guard isSingle else { return .fraction(0.225) }
@@ -283,7 +284,7 @@ struct ItineraryView: View {
                     }
                 }) {
                     if let destination = shownStopDestination {
-                        ItineraryStopSheet(place: destination.place, detent: $stopSheetDetent, compactHeight: $stopSheetCompactHeight) { stop in
+                        ItineraryStopSheet(place: destination.place, connections: destination.connections, detent: $stopSheetDetent, compactHeight: $stopSheetCompactHeight) { stop in
                             pendingTripSearch = stop
                             closeStopSheet(restoringDetails: false)
                         }
@@ -343,6 +344,7 @@ struct ItineraryView: View {
             locationManager.startMonitoring()
             isOnScreen = true
             shouldRenderMap = true
+            ConnectionService.shared.warmUp()
             tripOpener.open = { trip in
                 pendingTrip = trip
                 closeStopSheet(restoringDetails: false)
@@ -366,6 +368,7 @@ struct ItineraryView: View {
             onboardSession = nil
             locationManager.stopMonitoring()
             tripSwitchTask?.cancel()
+            connectionsTask?.cancel()
             tripSwitchTask = nil
             isSwitchingTrip = false
             isOnScreen = false
@@ -379,8 +382,32 @@ struct ItineraryView: View {
 
     private func openStopSheet(_ place: Place) {
         HapticFeedback.impact(.soft)
-        let destination = StopDetailDestination(place: place)
-        stopSheetCompactHeight = ItineraryStopSheet.estimatedCompactHeight(for: place, width: containerWidth > 0 ? containerWidth : 390)
+        let riding = ridingLines(at: place)
+        connectionsTask?.cancel()
+        connectionsTask = Task {
+            let lines = await ConnectionService.shared.connections(for: place.parentId ?? place.stopId ?? "")
+            guard !Task.isCancelled else { return }
+            presentStopSheet(place, connections: lines.filter { !riding.contains($0.line) })
+        }
+    }
+
+    private func ridingLines(at place: Place) -> Set<String> {
+        let ids = Set([place.stopId, place.parentId].compactMap { $0 })
+        guard !ids.isEmpty, let legs = viewModel.itinerary?.legs else { return [] }
+        return Set(legs.filter { leg in
+            leg.isTransit && ([leg.from, leg.to] + (leg.intermediateStops ?? [])).contains { stop in
+                [stop.stopId, stop.parentId].contains { id in id.map { ids.contains($0) } ?? false }
+            }
+        }.compactMap(\.routeShortName))
+    }
+
+    private func presentStopSheet(_ place: Place, connections: [StopConnection]) {
+        let destination = StopDetailDestination(place: place, connections: connections)
+        stopSheetCompactHeight = ItineraryStopSheet.estimatedCompactHeight(
+            for: place,
+            width: containerWidth > 0 ? containerWidth : 390,
+            hasConnections: !connections.isEmpty
+        )
         shownStopDestination = destination
         stopSheetDetent = .height(stopSheetCompactHeight)
         guard stopDetailDestination == nil else {
@@ -395,6 +422,7 @@ struct ItineraryView: View {
     }
 
     private func closeStopSheet(restoringDetails: Bool) {
+        connectionsTask?.cancel()
         guard stopDetailDestination != nil else { return }
         keepsDetailsHidden = !restoringDetails
         stopDetailDestination = nil
