@@ -27,6 +27,9 @@ enum MapTrackingMode {
 struct ItineraryView: View {
     @StateObject private var viewModel: ItineraryViewModel
     @EnvironmentObject var locationManager: LocationManager
+    @EnvironmentObject private var shortcutManager: ShortcutManager
+    @EnvironmentObject private var disruptionManager: DisruptionManager
+    @EnvironmentObject private var offlineManager: OfflineManager
     @Environment(\.dismiss) private var dismiss
     @State private var showDetails: Bool = true
     @State private var hasShownDeferredDetails = false
@@ -51,6 +54,7 @@ struct ItineraryView: View {
     @State private var stopSheetCompactHeight: CGFloat = 480
     @State private var stopSheetDetent: PresentationDetent = .height(480)
     @State private var openedTrip: TripDestination?
+    @State private var tripSearchDestination: SearchResult?
     @State private var keepsDetailsHidden = false
 
     private static func compactDetent(isSingle: Bool) -> PresentationDetent {
@@ -265,7 +269,12 @@ struct ItineraryView: View {
                     viewModel.selectedStop = nil
                 }) {
                     if let destination = shownStopDestination {
-                        ItineraryStopSheet(place: destination.place, detent: $stopSheetDetent, compactHeight: $stopSheetCompactHeight)
+                        ItineraryStopSheet(place: destination.place, detent: $stopSheetDetent, compactHeight: $stopSheetCompactHeight) { stop in
+                            closeStopSheet(restoringDetails: false)
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                                tripSearchDestination = stop
+                            }
+                        }
                             .environment(\.openTrip) { trip in
                                 closeStopSheet(restoringDetails: false)
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
@@ -277,6 +286,20 @@ struct ItineraryView: View {
                             .presentationCornerRadius(36)
                     }
                 }
+                .fullScreenCover(item: $tripSearchDestination, onDismiss: {
+                    keepsDetailsHidden = false
+                    showDetails = true
+                }) { stop in
+                    NavigationStack {
+                        TripsSearchView(initialSearchResult: stop, initialTargetField: .to)
+                            .toolbarBackground(.hidden, for: .navigationBar)
+                            .navigationBarBackButtonHidden(true)
+                    }
+                    .environmentObject(locationManager)
+                    .environmentObject(shortcutManager)
+                    .environmentObject(disruptionManager)
+                    .environmentObject(offlineManager)
+                }
                 .navigationDestination(item: $openedTrip) { trip in
                     ItineraryView(tripId: trip.tripId, fromNearby: false, otherTripOptions: trip.otherTripOptions, defersDetails: true)
                         .toolbarBackground(.hidden, for: .navigationBar)
@@ -287,6 +310,17 @@ struct ItineraryView: View {
         .onChange(of: viewModel.selectedStop) { _, newStop in
             if let newStop {
                 openStopSheet(newStop)
+            }
+        }
+        .onChange(of: tripSearchDestination?.id) {
+            guard tripSearchDestination?.id != nil else {
+                isOnScreen = true
+                shouldRenderMap = true
+                return
+            }
+            isOnScreen = false
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                if !isOnScreen { shouldRenderMap = false }
             }
         }
         .onChange(of: openedTrip) { old, new in

@@ -77,7 +77,7 @@ struct ItineraryStopSheet: View {
     let place: Place
     @Binding var detent: PresentationDetent
     @Binding var compactHeight: CGFloat
-    @State private var showTripSearch = false
+    let onGo: (SearchResult) -> Void
 
     private var stop: SearchResult {
         SearchResult(
@@ -123,16 +123,10 @@ struct ItineraryStopSheet: View {
                     if wasCompact { detent = .height(compact) }
                 },
                 onGo: {
-                    detent = .large
-                    showTripSearch = true
+                    onGo(stop)
                 }
             )
             .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(isPresented: $showTripSearch) {
-                TripsSearchView(initialSearchResult: stop, initialTargetField: .to)
-                    .toolbarBackground(.hidden, for: .navigationBar)
-                    .navigationBarBackButtonHidden(true)
-            }
         }
     }
 
