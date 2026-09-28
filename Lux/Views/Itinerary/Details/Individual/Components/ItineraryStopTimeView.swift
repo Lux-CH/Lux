@@ -18,6 +18,7 @@ struct ItineraryStopTimeView: View {
     let isRealTime: Bool
     let isCancelled: Bool
     @Environment(\.calendar) private var calendar
+    @Environment(\.countdownColor) private var countdownColor
     @ObservedObject private var settings = Settings.shared
     
     private var punctuality: Punctuality {
@@ -61,7 +62,7 @@ struct ItineraryStopTimeView: View {
                     
                     Text(stopStatus.timeUntil)
                         .font(.subheadline)
-                        .foregroundColor(stopStatus.isCurrentStop ? accentColor : legColor)
+                        .foregroundColor(stopStatus.isCurrentStop ? accentColor : countdownColor ?? legColor)
                         .fontWeight(stopStatus.isCurrentStop ? .semibold : .medium)
                 }
             }
@@ -71,5 +72,16 @@ struct ItineraryStopTimeView: View {
                 isArrivalStop: isArrivalStop,
             )
         }
+    }
+}
+
+private struct CountdownColorKey: EnvironmentKey {
+    static let defaultValue: Color? = nil
+}
+
+extension EnvironmentValues {
+    var countdownColor: Color? {
+        get { self[CountdownColorKey.self] }
+        set { self[CountdownColorKey.self] = newValue }
     }
 }

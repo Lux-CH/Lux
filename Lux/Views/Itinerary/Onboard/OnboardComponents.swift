@@ -554,7 +554,7 @@ struct OnboardBottomPanel: View {
             Text("Ensuite")
                 .font(.footnote.weight(.semibold))
                 .foregroundStyle(.secondary)
-            LinePill(line: leg.routeShortName ?? "", mode: leg.mode, agency: leg.agencyId, width: 38, height: 24, fontSize: 13)
+            LinePill(line: leg.routeShortName ?? "", mode: leg.mode, agency: leg.agencyId, width: 38, height: 24, fontSize: 13, usesOriginalColors: true)
             VStack(alignment: .leading, spacing: 0) {
                 HStack(spacing: 4) {
                     Text("\(formatTime(leg.startTime)) ·")
@@ -682,7 +682,7 @@ struct OnboardBottomPanel: View {
                     ItinerarySheetDetailStopsContentView(
                         viewModel: itineraryViewModel,
                         stops: session.upcomingStops,
-                        legColor: getLegColor(leg, brightIt: true),
+                        legColor: getOnboardLegColor(leg),
                         fromStop: leg.from,
                         toStop: leg.to,
                         duration: leg.duration,
@@ -690,7 +690,7 @@ struct OnboardBottomPanel: View {
                         isRealTime: leg.realTime,
                         isCancelled: leg.cancelled
                     )
-                    .environment(\.timelineLineColor, getLegColor(leg))
+                    .environment(\.countdownColor, getLegColor(leg, brightIt: true))
                     if session.canReportRide {
                         Divider()
                             .padding(.vertical, 16)
@@ -726,7 +726,7 @@ struct OnboardBottomPanel: View {
     private func legRow(_ leg: Leg) -> some View {
         HStack(spacing: 12) {
             if leg.isTransit {
-                LinePill(line: leg.routeShortName ?? "", mode: leg.mode, agency: leg.agencyId, width: 38, height: 24, fontSize: 13)
+                LinePill(line: leg.routeShortName ?? "", mode: leg.mode, agency: leg.agencyId, width: 38, height: 24, fontSize: 13, usesOriginalColors: true)
                 Text(leg.headsign.map { String(localized: "Direction \($0)") } ?? "")
                     .font(.subheadline)
                     .lineLimit(1)

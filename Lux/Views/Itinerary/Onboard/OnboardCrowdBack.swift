@@ -402,7 +402,7 @@ struct ReplanCard: View {
     private func proposalRow(_ proposal: OnboardSession.ReplanProposal) -> some View {
         HStack(spacing: 10) {
             if let transit = proposal.nextTransit {
-                LinePill(line: transit.routeShortName ?? "", mode: transit.mode, agency: transit.agencyId, width: 42, height: 26, fontSize: 14)
+                LinePill(line: transit.routeShortName ?? "", mode: transit.mode, agency: transit.agencyId, width: 42, height: 26, fontSize: 14, usesOriginalColors: true)
                 VStack(alignment: .leading, spacing: 1) {
                     Text("\(formatTime(transit.startTime)) · \(session.placeName(transit.from))")
                         .font(.subheadline.weight(.semibold))

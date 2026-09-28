@@ -17,6 +17,7 @@ struct LinePill: View {
     var width: CGFloat = 30
     var height: CGFloat = 20
     var fontSize: CGFloat = 11
+    var usesOriginalColors = false
     
     private var isTrainDetected: Bool {
         ["RL", "IR", "RE", "IC", "EC", "EXT", "ICE", "TGV", "RJ", "SN", "R"].contains {
@@ -62,6 +63,9 @@ struct LinePill: View {
     }
     
     var lineColor: Color {
+        if usesOriginalColors {
+            return onboardLineColor
+        }
         if settings.highContrastButAccurateLinePill {
             return baseLineColor
         }

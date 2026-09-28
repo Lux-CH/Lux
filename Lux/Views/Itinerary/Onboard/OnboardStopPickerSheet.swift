@@ -71,7 +71,7 @@ struct OnboardStopPickerSheet: View {
                     }
                 } header: {
                     HStack(spacing: 8) {
-                        LinePill(line: tripLeg.routeShortName ?? "", mode: tripLeg.mode, agency: tripLeg.agencyId, width: 38, height: 24, fontSize: 13)
+                        LinePill(line: tripLeg.routeShortName ?? "", mode: tripLeg.mode, agency: tripLeg.agencyId, width: 38, height: 24, fontSize: 13, usesOriginalColors: true)
                         Text("Depuis \(stops[board].name)")
                             .textCase(nil)
                             .lineLimit(1)
