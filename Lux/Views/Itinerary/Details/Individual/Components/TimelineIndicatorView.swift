@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct TimelineIndicatorView: View {
+    @Environment(\.timelineLineColor) private var timelineLineColor
+    @Environment(\.colorScheme) private var colorScheme
     let legColor: Color
     let accentColor: Color
     let isFirstStop: Bool
@@ -58,14 +60,14 @@ struct TimelineIndicatorView: View {
         ZStack {
             Circle()
                 .fill(backgroundCircleColor)
-                .stroke(legColor, lineWidth: 1.5)
+                .stroke(fillColor, lineWidth: 1.5)
                 .frame(width: 28, height: 28)
             
             Image(systemName: symbolName)
                 .resizable()
                 .scaledToFit()
                 .frame(width: 18, height: 18)
-                .foregroundStyle(legColor)
+                .foregroundStyle(fillColor)
                 .fontWeight(.medium)
         }
     }
@@ -73,7 +75,7 @@ struct TimelineIndicatorView: View {
     @ViewBuilder
     private var currentStopView: some View {
         Circle()
-            .fill(legColor)
+            .fill(fillColor)
             .stroke(accentColor, lineWidth: 2)
             .frame(width: 18, height: 18)
     }
@@ -81,7 +83,7 @@ struct TimelineIndicatorView: View {
     @ViewBuilder
     private var standardStopView: some View {
         Circle()
-            .fill(legColor)
+            .fill(fillColor)
             .stroke(Color(.systemBackground), lineWidth: 2)
             .frame(width: 16, height: 16)
     }
@@ -99,8 +101,12 @@ struct TimelineIndicatorView: View {
         }
     }
     
+    private var fillColor: Color {
+        colorScheme == .dark ? timelineLineColor ?? legColor : legColor
+    }
+
     private var lineColor: Color {
-        isCurrentStop ? accentColor : legColor
+        isCurrentStop ? accentColor : fillColor
     }
     
     private var backgroundCircleColor: Color {
@@ -108,5 +114,16 @@ struct TimelineIndicatorView: View {
             return Color(.systemBackground)
         }
         return .clear
+    }
+}
+
+private struct TimelineLineColorKey: EnvironmentKey {
+    static let defaultValue: Color? = nil
+}
+
+extension EnvironmentValues {
+    var timelineLineColor: Color? {
+        get { self[TimelineLineColorKey.self] }
+        set { self[TimelineLineColorKey.self] = newValue }
     }
 }

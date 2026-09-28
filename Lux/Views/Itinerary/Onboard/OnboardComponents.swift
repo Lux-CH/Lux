@@ -690,6 +690,7 @@ struct OnboardBottomPanel: View {
                         isRealTime: leg.realTime,
                         isCancelled: leg.cancelled
                     )
+                    .environment(\.timelineLineColor, getLegColor(leg))
                     if session.canReportRide {
                         Divider()
                             .padding(.vertical, 16)

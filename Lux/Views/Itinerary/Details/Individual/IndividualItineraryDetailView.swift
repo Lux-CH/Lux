@@ -108,6 +108,7 @@ struct IndividualItineraryDetailView: View {
                                 isRealTime: leg.realTime,
                                 isCancelled: leg.cancelled
                             )
+                            .environment(\.timelineLineColor, getLegColor(leg))
                             .padding(.horizontal, 20)
                             .padding(.top, 16)
                             Divider()

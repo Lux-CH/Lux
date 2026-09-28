@@ -85,7 +85,13 @@ struct ItineraryStopTimelineView: View {
 }
 
 struct IntermediateStopsButton: View {
+    @Environment(\.timelineLineColor) private var timelineLineColor
+    @Environment(\.colorScheme) private var colorScheme
     let count: Int
+
+    private var lineFill: Color {
+        colorScheme == .dark ? timelineLineColor ?? legColor : legColor
+    }
     let legColor: Color
     let isExpanded: Bool
     let action: () -> Void
@@ -95,11 +101,11 @@ struct IntermediateStopsButton: View {
             HStack(alignment: .center, spacing: 0) {
                 VStack(spacing: 0) {
                     Rectangle()
-                        .fill(legColor)
+                        .fill(lineFill)
                         .frame(width: 3, height: 20)
                     
                     Rectangle()
-                        .fill(legColor)
+                        .fill(lineFill)
                         .frame(width: 3, height: 20)
                 }
                 .frame(width: 60)
