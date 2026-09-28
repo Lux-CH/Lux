@@ -62,10 +62,10 @@ struct LinePill: View {
     }
     
     var lineColor: Color {
-        if isDarkColor(baseLineColor) && !settings.highContrastButAccurateLinePill {
-            return lightenColor(baseLineColor)
+        if settings.highContrastButAccurateLinePill {
+            return baseLineColor
         }
-        return baseLineColor
+        return readableLineColor(baseLineColor, onTint: settings.easyOnTheEyes ? 0 : 0.25)
     }
 
     private var pillWidth: CGFloat {
@@ -159,10 +159,10 @@ struct SamplePill: View {
     }
     
     private var lineColor: Color {
-        if isDarkColor(baseLineColor) && !isRealistic {
-            return lightenColor(baseLineColor)
+        if isRealistic {
+            return baseLineColor
         }
-        return baseLineColor
+        return readableLineColor(baseLineColor, onTint: isEasyOnTheEyes ? 0 : 0.25)
     }
     
     var body: some View {

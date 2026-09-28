@@ -716,10 +716,7 @@ func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
             baseColor = leg.mode.usesSquaredPill ? Color(hex: "EA0706") : .accent
         }
 
-        if brightIt && isDarkColor(baseColor) {
-            return lightenColor(baseColor)
-        }
-        return baseColor
+        return brightIt ? readableLineColor(baseColor) : baseColor
     }
 }
 

@@ -62,7 +62,7 @@ struct ItineraryStopTimeView: View {
                     Text(stopStatus.timeUntil)
                         .font(.subheadline)
                         .foregroundColor(stopStatus.isCurrentStop ? accentColor : legColor)
-                        .fontWeight(stopStatus.isCurrentStop ? .semibold : .regular)
+                        .fontWeight(stopStatus.isCurrentStop ? .semibold : .medium)
                 }
             }
             
