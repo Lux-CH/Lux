@@ -81,7 +81,7 @@ struct IndividualItineraryDetailView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        Group {
             VStack(spacing: 0) {
                 if let leg = mainLeg {
                     LegHeaderView(leg: leg, legColor: legColor, isSingle: !isMultipleLeg, nextStop: nextStop)
