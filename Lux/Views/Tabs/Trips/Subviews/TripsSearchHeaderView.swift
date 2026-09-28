@@ -22,14 +22,17 @@ struct TripsSearchHeaderView: View {
     var onBack: (() -> Void)?
 
     
-    private static let statusBarSpacing: CGFloat = {
+    @MainActor private static var cachedStatusBarSpacing: CGFloat?
+
+    private var statusBarSpacing: CGFloat {
+        if let cached = Self.cachedStatusBarSpacing { return cached }
         let topInset = UIApplication.shared.connectedScenes
             .compactMap { $0 as? UIWindowScene }
             .first?.keyWindow?.safeAreaInsets.top ?? 48
-        return max(topInset - 8, 48)
-    }()
-
-    private var statusBarSpacing: CGFloat { Self.statusBarSpacing }
+        let spacing = max(topInset - 8, 48)
+        Self.cachedStatusBarSpacing = spacing
+        return spacing
+    }
     var body: some View {
         ZStack(alignment: .top) {
             headerBackground
