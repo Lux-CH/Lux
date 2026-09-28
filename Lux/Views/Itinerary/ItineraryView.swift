@@ -55,6 +55,7 @@ struct ItineraryView: View {
     @State private var stopSheetDetent: PresentationDetent = .height(480)
     @State private var openedTrip: TripDestination?
     @State private var tripSearchDestination: SearchResult?
+    @State private var isSearchCovered = false
     @State private var keepsDetailsHidden = false
 
     private static func compactDetent(isSingle: Bool) -> PresentationDetent {
@@ -294,6 +295,16 @@ struct ItineraryView: View {
                         TripsSearchView(initialSearchResult: stop, initialTargetField: .to)
                             .toolbarBackground(.hidden, for: .navigationBar)
                             .navigationBarBackButtonHidden(true)
+                            .onAppear {
+                                isSearchCovered = false
+                                shouldRenderMap = true
+                            }
+                            .onDisappear {
+                                isSearchCovered = true
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                                    if isSearchCovered && tripSearchDestination != nil { shouldRenderMap = false }
+                                }
+                            }
                     }
                     .environmentObject(locationManager)
                     .environmentObject(shortcutManager)
@@ -310,17 +321,6 @@ struct ItineraryView: View {
         .onChange(of: viewModel.selectedStop) { _, newStop in
             if let newStop {
                 openStopSheet(newStop)
-            }
-        }
-        .onChange(of: tripSearchDestination?.id) {
-            guard tripSearchDestination?.id != nil else {
-                isOnScreen = true
-                shouldRenderMap = true
-                return
-            }
-            isOnScreen = false
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                if !isOnScreen { shouldRenderMap = false }
             }
         }
         .onChange(of: openedTrip) { old, new in
@@ -360,7 +360,7 @@ struct ItineraryView: View {
             isSwitchingTrip = false
             isOnScreen = false
             DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                if !isOnScreen { shouldRenderMap = false }
+                if !isOnScreen && tripSearchDestination == nil { shouldRenderMap = false }
             }
             trackingMode = .none
             viewModel.stopAllTasks()
