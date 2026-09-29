@@ -41,6 +41,8 @@ final class OnboardSession {
     @ObservationIgnored var walkOffset: CLLocationDistance = .infinity
     @ObservationIgnored var ridesOffPath = false
     @ObservationIgnored var alightWatch: AlightWatch?
+    @ObservationIgnored var walkBackLegIndex: Int?
+    @ObservationIgnored var walkBackRouteTask: Task<Void, Never>?
     @ObservationIgnored var tripLegs: [Int: Leg] = [:]
     @ObservationIgnored var legKeyFrames: (key: String, frames: [VehicleVisualisation.KeyFrame])?
     @ObservationIgnored var scheduleKeyFrames: (key: String, frames: [VehicleVisualisation.KeyFrame])?
@@ -293,6 +295,7 @@ final class OnboardSession {
         crowdAckTask?.cancel()
         alertDismissTask?.cancel()
         rerouteTask?.cancel()
+        walkBackRouteTask?.cancel()
         liveFeeds.values.forEach { $0.stop() }
         liveFeeds.removeAll()
         vehicleTasks.values.forEach { $0.cancel() }

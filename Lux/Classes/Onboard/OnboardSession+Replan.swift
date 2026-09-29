@@ -126,6 +126,8 @@ extension OnboardSession {
         retargetedLegs = retargetedLegs.filter { $0 < keep }
         reroutedWalks = reroutedWalks.filter { $0 < keep }
         announcedRisk = .comfortable
+        walkBackLegIndex = nil
+        walkBackRouteTask?.cancel()
         startLiveFeeds()
         refreshDisruptions()
         loadStationLayouts()

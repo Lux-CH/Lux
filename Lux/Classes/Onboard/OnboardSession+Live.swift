@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 import LuxCom
+import Polyline
 
 extension OnboardSession {
     func startLiveFeeds() {
@@ -319,12 +320,20 @@ extension OnboardSession {
               alightIndex + 1 < stops.count,
               let extended = LegLiveMerger.slice(tripLeg, boardIndex: boardIndex, alightIndex: alightIndex + 1) else { return }
 
+        let isNewFinalStopDestination = index == legs.count - 1 && watch.leg.to.vertexType == .transit
+        let hasWalkBackAfter = walkBackLegIndex == index + 1
+
         arrivalTask?.cancel()
         legs[index] = extended
         let (path, alongs) = Self.buildPath(for: extended)
         paths[index] = path
         stopAlongs[index] = alongs
         announcedStopAlerts = announcedStopAlerts.filter { !$0.hasPrefix("\(index)-") }
+        if isNewFinalStopDestination {
+            appendWalkBack(to: watch.leg.to, from: extended.to, after: extended.endTime)
+        } else if hasWalkBackAfter {
+            updateWalkBack(at: index + 1, from: extended.to, after: extended.endTime)
+        }
         enterLeg(index, announce: false)
         board(announce: false, verifiable: false)
         let alightAlong = alongs.count >= 2 ? alongs[alongs.count - 2] : 0
@@ -343,5 +352,91 @@ extension OnboardSession {
             urgency: .critical
         )
         evaluate()
+    }
+
+    private func appendWalkBack(to destination: Place, from start: Place, after date: Date) {
+        let walk = Self.straightWalk(from: start, to: destination, after: date, walkingSpeed: walkingSpeed)
+        let index = legs.count
+        legs.append(walk)
+        let (path, _) = Self.buildPath(for: walk)
+        paths.append(path)
+        stopAlongs.append([])
+        maneuvers.append(WalkManeuverBuilder.maneuvers(for: [StepInstruction](), on: path))
+        walkBackLegIndex = index
+        fetchWalkBackRoute(at: index, from: start, to: destination)
+    }
+
+    private func updateWalkBack(at index: Int, from start: Place, after date: Date) {
+        guard legs.indices.contains(index) else { return }
+        let destination = legs[index].to
+        legs[index] = Self.straightWalk(from: start, to: destination, after: date, walkingSpeed: walkingSpeed)
+        let (path, _) = Self.buildPath(for: legs[index])
+        paths[index] = path
+        stopAlongs[index] = []
+        maneuvers[index] = WalkManeuverBuilder.maneuvers(for: [StepInstruction](), on: path)
+        fetchWalkBackRoute(at: index, from: start, to: destination)
+    }
+
+    private static func straightWalk(from start: Place, to destination: Place, after date: Date, walkingSpeed: CLLocationSpeed) -> Leg {
+        let distance = CLLocationCoordinate2D(latitude: start.lat, longitude: start.lon)
+            .distance(to: CLLocationCoordinate2D(latitude: destination.lat, longitude: destination.lon))
+        let duration = max(60, Int(distance / walkingSpeed))
+        let end = date.addingTimeInterval(Double(duration))
+        let to = Place(
+            name: "END", stopId: nil, parentId: nil, lat: destination.lat, lon: destination.lon, level: destination.level,
+            arrival: end, departure: nil, scheduledArrival: end, scheduledDeparture: nil,
+            scheduledTrack: nil, track: nil, vertexType: .normal
+        )
+        return Leg(
+            mode: .walk, from: start, to: to, duration: duration, startTime: date, endTime: end,
+            scheduledStartTime: date, scheduledEndTime: end, realTime: false, cancelled: false,
+            distance: distance, headsign: nil, routeShortName: nil, intermediateStops: nil,
+            legGeometry: LegGeometry(points: "", length: 0), agencyId: nil, tripId: nil, steps: nil
+        )
+    }
+
+    private func fetchWalkBackRoute(at index: Int, from start: Place, to destination: Place) {
+        walkBackRouteTask?.cancel()
+        walkBackRouteTask = Task { [weak self] in
+            let request = MKDirections.Request()
+            request.source = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: start.lat, longitude: start.lon)))
+            request.destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: destination.lat, longitude: destination.lon)))
+            request.transportType = .walking
+            guard let route = try? await MKDirections(request: request).calculate().routes.first,
+                  !Task.isCancelled, let self, self.walkBackLegIndex == index, self.legs.indices.contains(index),
+                  !self.legs[index].isTransit else { return }
+
+            let points = route.polyline.points()
+            let coordinates = (0..<route.polyline.pointCount).map { points[$0].coordinate }
+            let path = RoutePath(coordinates: coordinates)
+            guard !path.isEmpty else { return }
+            self.paths[index] = path
+            self.maneuvers[index] = WalkManeuverBuilder.maneuvers(for: [StepInstruction](), on: path)
+            self.reroutedWalks.insert(index)
+            let current = self.legs[index]
+            let end = current.startTime.addingTimeInterval(route.expectedTravelTime)
+            let to = Place(
+                name: current.to.name, stopId: current.to.stopId, parentId: current.to.parentId,
+                lat: current.to.lat, lon: current.to.lon, level: current.to.level,
+                arrival: end, departure: nil, scheduledArrival: end, scheduledDeparture: nil,
+                scheduledTrack: nil, track: nil, vertexType: current.to.vertexType
+            )
+            self.legs[index] = Leg(
+                mode: current.mode, from: current.from, to: to, duration: Int(route.expectedTravelTime),
+                startTime: current.startTime, endTime: end, scheduledStartTime: current.scheduledStartTime,
+                scheduledEndTime: end, realTime: current.realTime, cancelled: current.cancelled,
+                distance: route.distance, headsign: current.headsign, routeShortName: current.routeShortName,
+                intermediateStops: current.intermediateStops,
+                legGeometry: LegGeometry(points: Polyline(coordinates: coordinates, precision: 1e6).encodedPolyline, length: coordinates.count),
+                agencyId: current.agencyId, tripId: current.tripId, steps: current.steps
+            )
+            if self.legIndex == index {
+                self.alongInLeg = 0
+                self.offRouteStreak = 0
+                self.spokenManeuvers.removeAll()
+                withAnimation { self.isOffRoute = false }
+                self.evaluate()
+            }
+        }
     }
 }
