@@ -8,6 +8,7 @@
 import SwiftUI
 import MapKit
 import LuxCom
+import Polyline
 
 extension OnboardSession {
     static func buildPath(for leg: Leg) -> (RoutePath, [CLLocationDistance]) {
@@ -648,6 +649,24 @@ extension OnboardSession {
             self.paths[index] = path
             self.maneuvers[index] = WalkManeuverBuilder.maneuvers(for: [StepInstruction](), on: path)
             self.reroutedWalks.insert(index)
+            let current = self.legs[index]
+            let end = self.now.addingTimeInterval(route.expectedTravelTime)
+            let to = Place(
+                name: current.to.name, stopId: current.to.stopId, parentId: current.to.parentId,
+                lat: current.to.lat, lon: current.to.lon, level: current.to.level,
+                arrival: end, departure: nil, scheduledArrival: end, scheduledDeparture: nil,
+                scheduledTrack: nil, track: nil, vertexType: current.to.vertexType
+            )
+            self.legs[index] = Leg(
+                mode: current.mode, from: current.from, to: to,
+                duration: Int(end.timeIntervalSince(current.startTime)), startTime: current.startTime, endTime: end,
+                scheduledStartTime: current.scheduledStartTime, scheduledEndTime: end,
+                realTime: current.realTime, cancelled: current.cancelled, distance: route.distance,
+                headsign: current.headsign, routeShortName: current.routeShortName,
+                intermediateStops: current.intermediateStops,
+                legGeometry: LegGeometry(points: Polyline(coordinates: coordinates, precision: 1e6).encodedPolyline, length: coordinates.count),
+                agencyId: current.agencyId, tripId: current.tripId, steps: current.steps
+            )
             self.alongInLeg = 0
             self.offRouteStreak = 0
             self.spokenManeuvers.removeAll()
