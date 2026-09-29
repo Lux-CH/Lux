@@ -37,7 +37,6 @@ class Settings: ObservableObject, @unchecked Sendable {
 
     @AppStorage("onboardVoiceGuidance") var onboardVoiceGuidance: Bool = true
     @AppStorage("onboardCrowdConsent") var onboardCrowdConsent: CrowdConsent = .undecided
-    @AppStorage("onboardMotionRecording") var onboardMotionRecording: Bool = false
 
     enum CrowdConsent: Int {
         case undecided, granted, declined

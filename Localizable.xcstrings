@@ -271,16 +271,6 @@
         }
       }
     },
-    "%lld trajets · %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld trips · %@"
-          }
-        }
-      }
-    },
     "%lld transfer%@" : {
       "localizations" : {
         "en" : {
@@ -3364,16 +3354,6 @@
         }
       }
     },
-    "Enregistrer les mouvements" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Record motion"
-          }
-        }
-      }
-    },
     "Ensuite" : {
       "localizations" : {
         "en" : {
@@ -3544,16 +3524,6 @@
         }
       }
     },
-    "Exporter les enregistrements" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Export recordings"
-          }
-        }
-      }
-    },
     "Faites de Lux le votre" : {
       "localizations" : {
         "en" : {
@@ -3710,16 +3680,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Funicular"
-          }
-        }
-      }
-    },
-    "Garde sur l'appareil l'accéléromètre et la position de chaque trajet, pour améliorer la détection des arrêts sous terre" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Keeps each trip's accelerometer and position data on this device, to improve stop detection underground"
           }
         }
       }
@@ -7197,16 +7157,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Delete offline data ?"
-          }
-        }
-      }
-    },
-    "Supprimer les enregistrements ?" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Delete recordings?"
           }
         }
       }
