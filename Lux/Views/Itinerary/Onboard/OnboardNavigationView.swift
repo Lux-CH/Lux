@@ -83,6 +83,11 @@ struct OnboardNavigationView: View {
                     .padding(.horizontal, 12)
                     .padding(.bottom, 10)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
+                } else if !session.transferOptions.isEmpty {
+                    TransferOptionsCard(session: session)
+                        .padding(.horizontal, 12)
+                        .padding(.bottom, 10)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
                 Color.clear.frame(height: compactHeight + 56)
             }
@@ -90,6 +95,7 @@ struct OnboardNavigationView: View {
             .animation(.spring(duration: 0.45), value: session.showsCrowdPrompt)
             .animation(.spring(duration: 0.45), value: session.replan)
             .animation(.spring(duration: 0.45), value: session.isReplanning)
+            .animation(.spring(duration: 0.45), value: session.transferOptions)
         }
         .onChange(of: detailPath) { _, path in
             guard path.isEmpty else { return }

@@ -301,7 +301,7 @@ struct ReplanCard: View {
         VStack(alignment: .leading, spacing: 12) {
             if let proposal = session.replan {
                 header(for: proposal.reason)
-                proposalRow(proposal)
+                ReplanOptionRow(session: session, proposal: proposal)
                 HStack(spacing: 10) {
                     Button {
                         HapticFeedback.lightImpact()
@@ -380,6 +380,7 @@ struct ReplanCard: View {
         case .cancelled: return String(localized: "Véhicule supprimé")
         case .earlier: return String(localized: "Départ plus tôt possible")
         case .faster: return String(localized: "Correspondance plus rapide")
+        case .alternative: return String(localized: "Autres options")
         }
     }
 
@@ -398,8 +399,13 @@ struct ReplanCard: View {
         default: return .orange
         }
     }
+}
 
-    private func proposalRow(_ proposal: OnboardSession.ReplanProposal) -> some View {
+struct ReplanOptionRow: View {
+    let session: OnboardSession
+    let proposal: OnboardSession.ReplanProposal
+
+    var body: some View {
         HStack(spacing: 10) {
             if let transit = proposal.nextTransit {
                 LinePill(line: transit.routeShortName ?? "", mode: transit.mode, agency: transit.agencyId, width: 42, height: 26, fontSize: 14, usesOriginalColors: true)
@@ -407,10 +413,17 @@ struct ReplanCard: View {
                     Text("\(formatTime(transit.startTime)) · \(session.placeName(transit.from))")
                         .font(.subheadline.weight(.semibold))
                         .lineLimit(1)
-                    Text(transit.headsign.map { String(localized: "Direction \($0)") } ?? "")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .lineLimit(1)
+                    HStack(spacing: 6) {
+                        if let transfers = proposal.transfers, transfers > 0 {
+                            Label("\(transfers)", systemImage: "arrow.triangle.swap")
+                                .labelStyle(.titleAndIcon)
+                                .fixedSize()
+                        }
+                        Text(transit.headsign.map { String(localized: "Direction \($0)") } ?? "")
+                            .lineLimit(1)
+                    }
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
                 }
             } else {
                 Image(systemName: "figure.walk")
@@ -435,5 +448,65 @@ struct ReplanCard: View {
         }
         .padding(10)
         .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+}
+
+struct TransferOptionsCard: View {
+    let session: OnboardSession
+
+    @State private var isExpanded = false
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Button {
+                HapticFeedback.selectionChanged()
+                withAnimation(.spring(duration: 0.4)) { isExpanded.toggle() }
+            } label: {
+                HStack(spacing: 10) {
+                    Image(systemName: "arrow.triangle.branch")
+                        .font(.system(size: 15, weight: .bold))
+                        .foregroundStyle(.white)
+                        .frame(width: 30, height: 30)
+                        .background(Circle().fill(Color.accentColor.gradient))
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Autres options")
+                            .font(.subheadline.weight(.semibold))
+                        if let earliest = session.transferOptions.map(\.arrival).min() {
+                            Text("Arrivée dès \(formatTime(earliest))")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                    }
+                    Spacer()
+                    Text("\(session.transferOptions.count)")
+                        .font(.subheadline.weight(.semibold))
+                        .monospacedDigit()
+                        .foregroundStyle(.secondary)
+                    Image(systemName: "chevron.up")
+                        .font(.footnote.weight(.bold))
+                        .foregroundStyle(.secondary)
+                        .rotationEffect(.degrees(isExpanded ? 180 : 0))
+                }
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(.plain)
+
+            if isExpanded {
+                ForEach(session.transferOptions) { option in
+                    Button {
+                        session.useTransferOption(option)
+                    } label: {
+                        ReplanOptionRow(session: session, proposal: option)
+                    }
+                    .buttonStyle(ScaleButtonStyle())
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+            }
+        }
+        .padding(12)
+        .adaptable(ios26: .glassIn(AnyShape(RoundedRectangle(cornerRadius: 22, style: .continuous))), fallback: {
+            $0.background(.regularMaterial, in: RoundedRectangle(cornerRadius: 22, style: .continuous))
+                .shadow(color: .black.opacity(0.14), radius: 12, y: 4)
+        })
     }
 }

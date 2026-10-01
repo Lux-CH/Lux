@@ -70,6 +70,9 @@ final class OnboardSession {
     @ObservationIgnored var positionDelayAt: Date = .distantPast
     var hasEstimatedVehicle = false
     var isReplanning = false
+    var transferOptions: [ReplanProposal] = []
+    @ObservationIgnored var transferOptionsTask: Task<Void, Never>?
+    @ObservationIgnored var transferOptionsCheck: (key: String, at: Date)?
     /// Where the coaches of the next train to board stop on its platform (mainline rail).
     var formation: TrainFormation?
     @ObservationIgnored var formationTarget = ""
@@ -299,6 +302,7 @@ final class OnboardSession {
         rideInfoTask?.cancel()
         crowdPromptTask?.cancel()
         replanTask?.cancel()
+        transferOptionsTask?.cancel()
         arrivalTask?.cancel()
         stopTracking()
         announcer.stop()
@@ -445,6 +449,7 @@ final class OnboardSession {
             withAnimation(.spring(duration: 0.4)) { self.replan = nil }
         }
         lookForEarlierDeparture()
+        refreshTransferOptions()
         catchUpWithVehicle()
         updateEstimates()
         refreshFormationIfNeeded()

@@ -17,13 +17,13 @@ extension OnboardSession {
     }
 
     enum ReplanReason: Equatable {
-        case connection, missedDeparture, cancelled, earlier, faster
+        case connection, missedDeparture, cancelled, earlier, faster, alternative
     }
 
     struct ReplanProposal: Identifiable, Equatable {
         let id = UUID()
         let reason: ReplanReason
-        let replaceFrom: Int
+        var replaceFrom: Int
         let legs: [Leg]
         let arrival: Date
         let lateBy: TimeInterval
@@ -31,6 +31,7 @@ extension OnboardSession {
         var expiresAt: Date? = nil
         var exitName: String? = nil
         var ridingTripId: String? = nil
+        var transfers: Int? = nil
 
         var firstTransit: Leg? { legs.first(where: \.isTransit) }
         var nextTransit: Leg? {
@@ -104,7 +105,12 @@ extension OnboardSession {
     }
 
     func acceptReplan() {
-        guard let proposal = replan, proposal.replaceFrom <= legs.count else { return }
+        guard let proposal = replan else { return }
+        apply(proposal)
+    }
+
+    func apply(_ proposal: ReplanProposal) {
+        guard proposal.replaceFrom <= legs.count else { return }
         HapticFeedback.notification(type: .success)
         withAnimation(.spring(duration: 0.45)) { replan = nil }
 
@@ -160,6 +166,91 @@ extension OnboardSession {
             declinedReplanLegs.insert(legIndex)
         }
         withAnimation(.spring(duration: 0.4)) { replan = nil }
+    }
+
+    var isAtTransfer: Bool {
+        guard phase == .walking || phase == .waiting, legIndex > 0, nextTransitLeg != nil else { return false }
+        return legs[..<legIndex].contains(where: \.isTransit)
+    }
+
+    var transferOptionsKey: String {
+        nextTransitLeg.map { "\($0.index)|\($0.leg.tripId ?? "")" } ?? ""
+    }
+
+    func refreshTransferOptions() {
+        guard isRunning, isAtTransfer, !OfflineRouter.shared.isOfflineActive,
+              let (nextIndex, _) = nextTransitLeg, let leg = currentLeg, let destination = legs.last?.to else {
+            transferOptionsTask?.cancel()
+            transferOptionsTask = nil
+            if !transferOptions.isEmpty { withAnimation(.spring(duration: 0.4)) { transferOptions = [] } }
+            return
+        }
+        let departing = transferOptions.filter { $0.firstTransit.map { $0.startTime <= now.addingTimeInterval(30) } ?? false }
+        if !departing.isEmpty {
+            withAnimation(.spring(duration: 0.4)) { transferOptions.removeAll { option in departing.contains(option) } }
+        }
+        let key = transferOptionsKey
+        if let check = transferOptionsCheck, check.key == key, now.timeIntervalSince(check.at) < 180 { return }
+        guard transferOptionsTask == nil else { return }
+        if transferOptionsCheck?.key != key, !transferOptions.isEmpty {
+            withAnimation(.spring(duration: 0.4)) { transferOptions = [] }
+        }
+
+        let origin: RouteOptions.RouteLocation
+        if phase == .waiting, let stopId = leg.from.stopId {
+            origin = RouteOptions.RouteLocation(stopId: stopId)
+        } else if let coordinate = userLocation?.coordinate {
+            origin = RouteOptions.RouteLocation(coordinates: (coordinate.latitude, coordinate.longitude))
+        } else if let stopId = leg.from.stopId {
+            origin = RouteOptions.RouteLocation(stopId: stopId)
+        } else {
+            origin = RouteOptions.RouteLocation(coordinates: (leg.from.lat, leg.from.lon))
+        }
+        transferOptionsCheck = (key, now)
+        let index = legIndex
+        let planned = Set(legs[nextIndex...].compactMap(\.tripId))
+        let options = Self.savedRouteOptions(from: origin, to: Self.routeTarget(destination), time: now)
+        transferOptionsTask = Task { [weak self] in
+            let result = try? await LuxData.route(options)
+            guard let self, !Task.isCancelled else { return }
+            self.transferOptionsTask = nil
+            guard self.isRunning, self.isAtTransfer, self.transferOptionsKey == key else { return }
+            let now = Date()
+            var seen: Set<String> = []
+            let alternatives = (result?.itineraries ?? [])
+                .filter { itinerary in
+                    guard !itinerary.legs.contains(where: \.cancelled),
+                          Set(itinerary.legs.compactMap(\.tripId)) != planned else { return false }
+                    guard let first = itinerary.legs.first(where: \.isTransit) else { return true }
+                    return first.startTime > now.addingTimeInterval(60)
+                }
+                .sorted { $0.endTime < $1.endTime }
+                .filter { seen.insert($0.legs.first(where: \.isTransit)?.tripId ?? "walk").inserted }
+                .prefix(3)
+                .map { itinerary in
+                    ReplanProposal(
+                        reason: .alternative,
+                        replaceFrom: index,
+                        legs: itinerary.legs,
+                        arrival: itinerary.endTime,
+                        lateBy: itinerary.endTime.timeIntervalSince(self.arrivalDate),
+                        autoApplyAt: nil,
+                        transfers: itinerary.transfers
+                    )
+                }
+            withAnimation(.spring(duration: 0.45)) { self.transferOptions = Array(alternatives) }
+        }
+    }
+
+    func useTransferOption(_ option: ReplanProposal) {
+        guard isAtTransfer, legIndex >= option.replaceFrom else { return }
+        var option = option
+        option.replaceFrom = legIndex
+        transferOptionsTask?.cancel()
+        transferOptionsTask = nil
+        withAnimation(.spring(duration: 0.4)) { transferOptions = [] }
+        apply(option)
+        transferOptionsCheck = (transferOptionsKey, now)
     }
 
     static func routeTarget(_ destination: Place) -> RouteOptions.RouteLocation {

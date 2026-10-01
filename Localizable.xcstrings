@@ -8137,6 +8137,26 @@
           }
         }
       }
+    },
+    "Autres options" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other options"
+          }
+        }
+      }
+    },
+    "Arrivée dès %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Earliest arrival %@"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
