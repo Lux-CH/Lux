@@ -7,11 +7,13 @@
 //  https://needone.app/get-location-coordinates-using-cllocationmanager-in-swift/
 
 import CoreLocation
+import Combine
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
     @Published var location: CLLocation?
-    @Published var heading: CLHeading?
+    private(set) var heading: CLHeading?
+    let headingUpdates = PassthroughSubject<CLHeading, Never>()
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
     @Published var permissionDenied = false
     @Published var errorMessage: String?
@@ -22,6 +24,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         super.init()
         locationManager.delegate = self
         locationManager.distanceFilter = 10.0
+        locationManager.headingFilter = 5
         locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
         
         self.authorizationStatus = locationManager.authorizationStatus
@@ -51,6 +54,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
         DispatchQueue.main.async {
             self.heading = newHeading
+            self.headingUpdates.send(newHeading)
         }
     }
     

@@ -6,6 +6,7 @@
 //
 
 import CoreLocation
+import UIKit
 
 @MainActor
 final class OnboardLocationProvider: NSObject, CLLocationManagerDelegate {
@@ -23,6 +24,19 @@ final class OnboardLocationProvider: NSObject, CLLocationManagerDelegate {
         manager.distanceFilter = kCLDistanceFilterNone
         manager.headingFilter = 3
         manager.pausesLocationUpdatesAutomatically = false
+        NotificationCenter.default.addObserver(self, selector: #selector(didEnterBackground), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(willEnterForeground), name: UIApplication.willEnterForegroundNotification, object: nil)
+    }
+
+    private var isRunning = false
+
+    @objc private func didEnterBackground() {
+        manager.stopUpdatingHeading()
+    }
+
+    @objc private func willEnterForeground() {
+        guard isRunning else { return }
+        manager.startUpdatingHeading()
     }
 
     var isSaving = false {
@@ -43,10 +57,14 @@ final class OnboardLocationProvider: NSObject, CLLocationManagerDelegate {
         manager.allowsBackgroundLocationUpdates = true
         manager.showsBackgroundLocationIndicator = true
         manager.startUpdatingLocation()
-        manager.startUpdatingHeading()
+        isRunning = true
+        if UIApplication.shared.applicationState != .background {
+            manager.startUpdatingHeading()
+        }
     }
 
     func stop() {
+        isRunning = false
         manager.stopUpdatingLocation()
         manager.stopUpdatingHeading()
         manager.allowsBackgroundLocationUpdates = false

@@ -81,7 +81,7 @@ struct StopRowView: View {
         .padding(.horizontal)
         .contentShape(Rectangle())
         .background(Color.clear)
-        .onReceive(locationManager.$heading) { _ in
+        .onReceive(locationManager.headingUpdates) { _ in
             updateRelativeAngle()
         }
     }
