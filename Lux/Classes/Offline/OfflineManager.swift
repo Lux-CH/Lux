@@ -187,6 +187,7 @@ private final class GTFSDownloader: NSObject, URLSessionDownloadDelegate {
         let config = URLSessionConfiguration.default
         config.timeoutIntervalForResource = 3600
         let session = URLSession(configuration: config, delegate: self, delegateQueue: nil)
+        defer { session.finishTasksAndInvalidate() }
         return try await withCheckedThrowingContinuation { cont in
             self.continuation = cont
             session.downloadTask(with: url).resume()
