@@ -1654,17 +1654,6 @@
         }
       }
     },
-    "Autres départs" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Other departures"
-          }
-        }
-      }
-    },
     "Avance" : {
       "localizations" : {
         "en" : {
@@ -2351,16 +2340,6 @@
         }
       }
     },
-    "Conseiller intuitivité et design" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intuitivity and design advisor"
-          }
-        }
-      }
-    },
     "Consultez et partagez des informations en temps réel sur les transports." : {
       "localizations" : {
         "en" : {
@@ -2979,17 +2958,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Get off at the next stop"
-          }
-        }
-      }
-    },
-    "Descendez au prochain arrêt et suivez le nouvel itinéraire à pied." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Get off at the next stop and follow the new walking route."
           }
         }
       }
@@ -5870,17 +5838,6 @@
         }
       }
     },
-    "Perturbations (%lld)" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Disruptions (%lld)"
-          }
-        }
-      }
-    },
     "peu de places libres" : {
       "localizations" : {
         "en" : {
@@ -8007,17 +7964,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "You've passed your stop. Get off at the next stop, %@."
-          }
-        }
-      }
-    },
-    "Vous avez dépassé votre arrêt. Descendez au prochain arrêt." : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You passed your stop. Get off at the next stop."
           }
         }
       }
