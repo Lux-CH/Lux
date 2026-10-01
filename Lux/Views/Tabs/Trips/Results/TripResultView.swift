@@ -11,6 +11,7 @@ import LuxCom
 struct TripResultView: View {
     let itinerary: Itinerary
     var destinationName: String? = nil
+    var horizontalInset: CGFloat = 16
     @State var dontGoToView: Bool = false
     @Environment(\.colorScheme) private var colorScheme
     @State private var isPressed = false
@@ -42,11 +43,11 @@ struct TripResultView: View {
                 buttonContent
             }
             .buttonStyle(TripsResultBttnStyle(isPressed: $isPressed))
-            .padding(.horizontal, 16)
+            .padding(.horizontal, horizontalInset)
         }
         else {
             buttonContent
-                .padding(.horizontal, 16)
+                .padding(.horizontal, horizontalInset)
         }
     }
     private var buttonContent: some View {

@@ -19,6 +19,8 @@ struct RouteOptionsView: View {
     @State private var maxWalkingTime: Int
     @State private var pedestrianSpeed: Double
     @State private var showResetConfirmation = false
+    @State private var showIntelligenceSetup = false
+    @ObservedObject private var intelligenceStore = IntelligenceStore.shared
     
     private let availableTransportModes: [TransportationMode] = [.bus, .tram, .rail, .ferry]
     private let onSave: (RouteOptions) -> Void
@@ -57,6 +59,7 @@ struct RouteOptionsView: View {
                         .padding(.horizontal)
                     
                     VStack(spacing: 24) {
+                        intelligenceSection
                         transfersSection
                         walkOptionsSection
                         accessibilitySection
@@ -110,6 +113,48 @@ struct RouteOptionsView: View {
             } message: {
                 Text("Toutes les options seront réinitialisées aux paramètres par défaut. Cette action est irréversible.")
             }
+            .sheet(isPresented: $showIntelligenceSetup) {
+                IntelligenceSetupView()
+                    .presentationCornerRadius(36)
+            }
+        }
+    }
+
+    private var intelligenceSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            OptionHeader(title: String(localized: "Intelligent"), icon: "sparkles")
+
+            Button {
+                HapticFeedback.lightImpact()
+                showIntelligenceSetup = true
+            } label: {
+                ModernCard {
+                    HStack(spacing: 14) {
+                        ZStack {
+                            Circle()
+                                .fill(accentColorManager.selectedAccentColor.opacity(0.15))
+                                .frame(width: 44, height: 44)
+                            Image(systemName: "sparkles")
+                                .font(.system(size: 18, weight: .semibold))
+                                .foregroundStyle(accentColorManager.selectedAccentColor)
+                        }
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(intelligenceStore.profile.isConfigured ? "Modifier mes préférences" : "Personnaliser Intelligent")
+                                .font(.subheadline.weight(.medium))
+                                .foregroundStyle(.primary)
+                            Text("Météo, affluence, marche et habitudes")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
+                        Spacer(minLength: 0)
+                        Image(systemName: "chevron.right")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(.tertiary)
+                    }
+                }
+            }
+            .buttonStyle(ScaleButtonStyle())
         }
     }
     

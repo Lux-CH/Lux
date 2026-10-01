@@ -8157,6 +8157,836 @@
           }
         }
       }
+    },
+    "%lld correspondance(s) en moins" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld fewer transfer(s)"
+          }
+        }
+      }
+    },
+    "%lld min de marche en moins" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min less walking"
+          }
+        }
+      }
+    },
+    "%lld min de marche en moins dans le froid" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min less walking in the cold"
+          }
+        }
+      }
+    },
+    "%lld min de marche en moins sous la chaleur" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min less walking in the heat"
+          }
+        }
+      }
+    },
+    "%lld min de marche en moins sous la pluie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min less walking in the rain"
+          }
+        }
+      }
+    },
+    "%lld min de plus que le plus rapide" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min more than the fastest"
+          }
+        }
+      }
+    },
+    "%lld sur %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld of %lld"
+          }
+        }
+      }
+    },
+    "À durée à peu près égale" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For a similar travel time"
+          }
+        }
+      }
+    },
+    "À limiter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something to keep short"
+          }
+        }
+      }
+    },
+    "À temps de trajet comparable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For a comparable travel time"
+          }
+        }
+      }
+    },
+    "Analyse de la météo, de l'affluence et de vos habitudes…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Checking weather, crowding and your habits…"
+          }
+        }
+      }
+    },
+    "Attend un bus direct quand ça vaut le coup" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waits for a direct bus when it's worth it"
+          }
+        }
+      }
+    },
+    "Bagages, poussette ou simplement pas envie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Luggage, a stroller or just not in the mood"
+          }
+        }
+      }
+    },
+    "Ça ne me dérange pas" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I don't mind"
+          }
+        }
+      }
+    },
+    "Combiné à la météo, à l'affluence signalée et à vos lignes habituelles. Touchez une carte pour la modifier." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Combined with the weather, reported crowding and your usual lines. Tap a card to change it."
+          }
+        }
+      }
+    },
+    "Correspondance moins serrée" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less tight transfer"
+          }
+        }
+      }
+    },
+    "Correspondances" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transfers"
+          }
+        }
+      }
+    },
+    "D'après les signalements des autres voyageurs Lux." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Based on reports from other Lux riders."
+          }
+        }
+      }
+    },
+    "Direct, sans correspondance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direct, no transfers"
+          }
+        }
+      }
+    },
+    "En correspondance, il vous faut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "For transfers, you need"
+          }
+        }
+      }
+    },
+    "Environ 3 minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "About 3 minutes"
+          }
+        }
+      }
+    },
+    "Évite les véhicules signalés bondés par la communauté" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Avoids vehicles the community reports as packed"
+          }
+        }
+      }
+    },
+    "Face à un véhicule bondé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Faced with a packed vehicle"
+          }
+        }
+      }
+    },
+    "Habitudes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Habits"
+          }
+        }
+      }
+    },
+    "Intelligent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Intelligent"
+          }
+        }
+      }
+    },
+    "J'attends le suivant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I wait for the next one"
+          }
+        }
+      }
+    },
+    "J'évite de marcher au maximum" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I avoid walking as much as possible"
+          }
+        }
+      }
+    },
+    "J'évite si possible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I avoid it if I can"
+          }
+        }
+      }
+    },
+    "Je cours s'il le faut" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I'll run if I have to"
+          }
+        }
+      }
+    },
+    "Je marche quand même" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I walk anyway"
+          }
+        }
+      }
+    },
+    "Je monte quand même" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I get on anyway"
+          }
+        }
+      }
+    },
+    "Je ne cours jamais" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I never run"
+          }
+        }
+      }
+    },
+    "Je préfère marcher moins" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I'd rather walk less"
+          }
+        }
+      }
+    },
+    "Je préfère nettement les trajets directs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "I clearly prefer direct trips"
+          }
+        }
+      }
+    },
+    "Jusqu'à 5 minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up to 5 minutes"
+          }
+        }
+      }
+    },
+    "Jusqu'à 10 minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up to 10 minutes"
+          }
+        }
+      }
+    },
+    "Jusqu'à 15 minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Up to 15 minutes"
+          }
+        }
+      }
+    },
+    "La marche, pour vous, c'est" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking, for you, is"
+          }
+        }
+      }
+    },
+    "La météo ne change rien" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weather changes nothing"
+          }
+        }
+      }
+    },
+    "Le bon trajet, pas seulement le plus rapide. Quelques questions pour qu'il vous ressemble." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The right trip, not just the fastest. A few questions to make it yours."
+          }
+        }
+      }
+    },
+    "Le meilleur compromis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The best trade-off"
+          }
+        }
+      }
+    },
+    "Le plus rapide, peu importe les changements" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fastest, no matter the transfers"
+          }
+        }
+      }
+    },
+    "Les correspondances, très peu pour moi" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Transfers? No thanks"
+          }
+        }
+      }
+    },
+    "Les privilégier" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Prefer them"
+          }
+        }
+      }
+    },
+    "Lux apprend les lignes et directions que vous consultez le plus." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux learns the lines and directions you check the most."
+          }
+        }
+      }
+    },
+    "Lux consulte la météo au départ de chaque recherche." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux checks the weather at the start of every search."
+          }
+        }
+      }
+    },
+    "Lux écarte les changements trop serrés pour vous." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux steers you away from transfers that are too tight."
+          }
+        }
+      }
+    },
+    "Marche" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walking"
+          }
+        }
+      }
+    },
+    "Marcher plutôt qu'attendre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Walk rather than wait"
+          }
+        }
+      }
+    },
+    "Marge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Margin"
+          }
+        }
+      }
+    },
+    "Même si le trajet est plus long" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Even if the trip takes longer"
+          }
+        }
+      }
+    },
+    "Météo, affluence, marche et habitudes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weather, crowding, walking and habits"
+          }
+        }
+      }
+    },
+    "Modifier mes préférences" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit my preferences"
+          }
+        }
+      }
+    },
+    "Moins d'une minute" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Takes less than a minute"
+          }
+        }
+      }
+    },
+    "Moins de marche quand il pleut, fait froid ou trop chaud" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less walking when it's rainy, cold or too hot"
+          }
+        }
+      }
+    },
+    "Moins de monde à bord" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Less crowded on board"
+          }
+        }
+      }
+    },
+    "Par beau temps, sur les trajets à pied et les correspondances." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In good weather, for walks and transfers."
+          }
+        }
+      }
+    },
+    "Pas du tout" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not at all"
+          }
+        }
+      }
+    },
+    "Passer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip"
+          }
+        }
+      }
+    },
+    "Personnaliser" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customize"
+          }
+        }
+      }
+    },
+    "Personnaliser Intelligent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Customize Intelligent"
+          }
+        }
+      }
+    },
+    "Peu de marge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Little margin"
+          }
+        }
+      }
+    },
+    "Peu importe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Doesn't matter"
+          }
+        }
+      }
+    },
+    "Places assises signalées" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Seats reported available"
+          }
+        }
+      }
+    },
+    "Pour éviter une correspondance, vous attendriez" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To avoid a transfer, you would wait"
+          }
+        }
+      }
+    },
+    "Privilégie les lignes que vous prenez déjà" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Favors the lines you already take"
+          }
+        }
+      }
+    },
+    "Quand il pleut ou qu'il fait très froid" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When it rains or it's very cold"
+          }
+        }
+      }
+    },
+    "Quelques minutes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A few minutes"
+          }
+        }
+      }
+    },
+    "Quelques minutes de plus pour rester au sec" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A few extra minutes to stay dry"
+          }
+        }
+      }
+    },
+    "Recommencer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start over"
+          }
+        }
+      }
+    },
+    "Seul le trajet compte" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the trip matters"
+          }
+        }
+      }
+    },
+    "Suggestion" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suggestion"
+          }
+        }
+      }
+    },
+    "Tant que ça reste raisonnable" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "As long as it stays reasonable"
+          }
+        }
+      }
+    },
+    "Trajets directs" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Direct trips"
+          }
+        }
+      }
+    },
+    "Un bus direct qui arrive un peu plus tard peut valoir le coup." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A direct bus arriving a bit later can be worth it."
+          }
+        }
+      }
+    },
+    "Un moyen comme un autre" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Just another way to get around"
+          }
+        }
+      }
+    },
+    "Un petit détour pour rester assis" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A small detour to stay seated"
+          }
+        }
+      }
+    },
+    "Un plaisir" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A pleasure"
+          }
+        }
+      }
+    },
+    "Une marge large" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A wide margin"
+          }
+        }
+      }
+    },
+    "Une place assise avant tout" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A seat above all"
+          }
+        }
+      }
+    },
+    "Vos lignes habituelles" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your usual lines"
+          }
+        }
+      }
+    },
+    "Votre Intelligent" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Intelligent"
+          }
+        }
+      }
+    },
+    "Votre ligne %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your line %@"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

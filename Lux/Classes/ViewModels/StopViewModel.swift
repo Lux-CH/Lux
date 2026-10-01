@@ -593,7 +593,7 @@ class StopViewModel: ObservableObject {
     }
 }
 
-private extension String {
+extension String {
     var normalizedHeadsignKey: String {
         folding(options: [.caseInsensitive, .diacriticInsensitive], locale: nil)
             .trimmingCharacters(in: .whitespacesAndNewlines)

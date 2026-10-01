@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import LuxCom
 
 struct TripsSearchContentView: View {
     @ObservedObject var viewModel: TripsSearchViewModel
@@ -107,6 +108,23 @@ struct TripResultsContent: View {
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .animation(.easeInOut(duration: 0.25), value: viewModel.isPresetFallback)
+        .sheet(isPresented: $viewModel.showIntelligenceSetup) {
+            IntelligenceSetupView()
+                .presentationDetents([.large])
+                .presentationCornerRadius(36)
+        }
+    }
+
+    private var suggestedSignature: String? {
+        viewModel.suggestion?.itinerary.intelligenceSignature
+    }
+
+    private var visibleDirects: [Itinerary] {
+        viewModel.directs.filter { $0.intelligenceSignature != suggestedSignature }
+    }
+
+    private var visibleTrips: [Itinerary] {
+        viewModel.trips.filter { $0.intelligenceSignature != suggestedSignature }
     }
 
     private var tripsState: some View {
@@ -132,21 +150,35 @@ struct TripResultsContent: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 16) {
-                    if !viewModel.directs.isEmpty {
-                        ForEach(viewModel.directs.indices, id: \.self) { index in
-                            let itinerary = viewModel.directs[index]
+                    if viewModel.routePreset == .intelligent {
+                        if let suggestion = viewModel.suggestion {
+                            SuggestedTripView(
+                                suggestion: suggestion,
+                                destinationName: viewModel.selectedTo?.displayName,
+                                onCustomize: { viewModel.showIntelligenceSetup = true }
+                            )
+                            .transition(.opacity.combined(with: .scale(scale: 0.97, anchor: .top)))
+                        } else if viewModel.isThinking {
+                            IntelligenceThinkingView(onCustomize: { viewModel.showIntelligenceSetup = true })
+                                .transition(.opacity)
+                        }
+                    }
+
+                    if !visibleDirects.isEmpty {
+                        ForEach(visibleDirects.indices, id: \.self) { index in
+                            let itinerary = visibleDirects[index]
                             TripResultView(itinerary: itinerary, destinationName: viewModel.selectedTo?.displayName)
                                 .id("direct-\(index)")
                         }
                         
-                        if !viewModel.trips.isEmpty {
+                        if !visibleTrips.isEmpty {
                             Divider()
                                 .padding(.vertical, 8)
                                 .padding(.horizontal, 32)
                         }
                     }
-                    ForEach(viewModel.trips.indices, id: \.self) { index in
-                        let itinerary = viewModel.trips[index]
+                    ForEach(visibleTrips.indices, id: \.self) { index in
+                        let itinerary = visibleTrips[index]
                         TripResultView(itinerary: itinerary, destinationName: viewModel.selectedTo?.displayName)
                             .id("trip-\(index)")
                     }
@@ -399,6 +431,10 @@ struct RoutePresetBar: View {
         let isSelected = viewModel.routePreset == preset
         return Button {
             HapticFeedback.lightImpact()
+            if isSelected && preset == .intelligent {
+                viewModel.showIntelligenceSetup = true
+                return
+            }
             withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
                 viewModel.setRoutePreset(preset)
             }

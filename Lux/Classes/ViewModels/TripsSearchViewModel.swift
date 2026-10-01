@@ -10,6 +10,7 @@ import LuxCom
 import Foundation
 import SwiftUI
 import CoreLocation
+import Combine
 
 enum SelectedLocation: Equatable {
     case searchResult(SearchResult)
@@ -51,12 +52,13 @@ struct ViaStop: Identifiable, Equatable {
 
 /// Quick routing profiles layered on top of the user's saved route options.
 enum RoutePreset: String, CaseIterable, Identifiable {
-    case fastest, fewerTransfers, lessWalking, relaxed
+    case intelligent, fastest, fewerTransfers, lessWalking, relaxed
 
     var id: String { rawValue }
 
     var title: LocalizedStringKey {
         switch self {
+        case .intelligent: "Intelligent"
         case .fastest: "Le plus rapide"
         case .fewerTransfers: "Moins de changements"
         case .lessWalking: "Moins de marche"
@@ -66,6 +68,7 @@ enum RoutePreset: String, CaseIterable, Identifiable {
 
     var symbol: String {
         switch self {
+        case .intelligent: "sparkles"
         case .fastest: "bolt.fill"
         case .fewerTransfers: "arrow.triangle.swap"
         case .lessWalking: "figure.walk"
@@ -163,10 +166,15 @@ class TripsSearchViewModel: ObservableObject {
     
     @Published var hasCustomSettings = false
 
-    @AppStorage("routePreset") private var storedRoutePreset: String = RoutePreset.fastest.rawValue
-    @Published var routePreset: RoutePreset = .fastest
+    @AppStorage("routePreset") private var storedRoutePreset: String = RoutePreset.intelligent.rawValue
+    @Published var routePreset: RoutePreset = .intelligent
     /// True when the selected preset found nothing and the shown routes ignore it.
     @Published var isPresetFallback = false
+    @Published var suggestion: TripSuggestion?
+    @Published var isThinking = false
+    @Published var showIntelligenceSetup = false
+    private var intelligenceTask: Task<Void, Never>?
+    private var cancellables = Set<AnyCancellable>()
     
     enum SearchField: Equatable {
         case from, to, via(UUID), none
@@ -206,9 +214,18 @@ class TripsSearchViewModel: ObservableObject {
     @AppStorage("routeOptionsPedestrianSpeed") private var storedPedestrianSpeed: Double = 1.2
     
     init() {
-        routePreset = RoutePreset(rawValue: storedRoutePreset) ?? .fastest
+        routePreset = RoutePreset(rawValue: storedRoutePreset) ?? .intelligent
         fetchRouteOptionsPreferences()
         loadSearchHistory()
+        IntelligenceStore.shared.$profile
+            .dropFirst()
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] _ in
+                guard let self, self.routePreset == .intelligent, self.showTripResults else { return }
+                self.refreshTripsIfReady()
+            }
+            .store(in: &cancellables)
     }
     
     private func loadSearchHistory() {
@@ -629,6 +646,9 @@ class TripsSearchViewModel: ObservableObject {
             isLoadingTrips = true
             allTrips = []
             currentPageIndex = 0
+            intelligenceTask?.cancel()
+            suggestion = nil
+            isThinking = false
         }
         
         showTripResults = true
@@ -643,7 +663,7 @@ class TripsSearchViewModel: ObservableObject {
         let viaIds = needsStitching ? [] : plannedVias.map(\.location.id)
         let viaStays = needsStitching ? [] : plannedVias.map(\.stay)
 
-        let options = { (preset: RoutePreset) in
+        let options = { (preset: RoutePreset, directOnly: Bool) in
             RouteOptions(
                 from: fromLocation,
                 to: toLocation,
@@ -651,7 +671,7 @@ class TripsSearchViewModel: ObservableObject {
                 viaMinimumStay: viaStays.contains { $0 > 0 } ? viaStays : [],
                 time: timeForRequest,
                 arriveBy: self.departureType == .arriveBy,
-                maxTransfers: preset.maxTransfers(self.routeOptions.maxTransfers),
+                maxTransfers: directOnly ? 0 : preset.maxTransfers(self.routeOptions.maxTransfers),
                 minTransferTime: preset.transferBuffer(self.routeOptions.minTransferTime),
                 pedestrianProfile: self.routeOptions.pedestrianProfile,
                 pedestrianSpeed: self.routeOptions.pedestrianSpeed,
@@ -664,23 +684,23 @@ class TripsSearchViewModel: ObservableObject {
                 numLegAlternatives: 0 // 0.8
             )
         }
-        let plan = { (preset: RoutePreset) async throws -> PlannedRoute in
+        let plan = { (preset: RoutePreset, directOnly: Bool) async throws -> PlannedRoute in
             needsStitching
-                ? try await StitchedRoutePlanner.plan(options(preset), vias: plannedVias)
-                : PlannedRoute(try await LuxData.route(options(preset)))
+                ? try await StitchedRoutePlanner.plan(options(preset, directOnly), vias: plannedVias)
+                : PlannedRoute(try await LuxData.route(options(preset, directOnly)))
         }
         // Paging must repeat the request its cursor came from, including a fallback.
         let preset = pageCursor != nil && isPresetFallback ? RoutePreset.fastest : routePreset
         
         Task {
             do {
-                var result = try await plan(preset)
+                var result = try await plan(preset, false)
                 var fellBack = false
                 // A preset can rule out every route (e.g. no stop within its walking limit);
                 // show the unfiltered routes rather than an empty list.
-                if pageCursor == nil, preset != .fastest,
+                if pageCursor == nil, preset != .fastest, preset != .intelligent,
                    result.itineraries.isEmpty, result.direct.isEmpty {
-                    result = try await plan(.fastest)
+                    result = try await plan(.fastest, false)
                     fellBack = true
                 }
                 
@@ -731,6 +751,15 @@ class TripsSearchViewModel: ObservableObject {
                     self.isChangingContent = false
                     self.animateIn = true
                     self.errorMessage = nil
+
+                    if pageCursor == nil, preset == .intelligent {
+                        self.startIntelligence(
+                            base: result,
+                            includeDirects: plannedVias.isEmpty,
+                            time: timeForRequest,
+                            plan: plan
+                        )
+                    }
                 }
             } catch {
                 await MainActor.run {
@@ -749,6 +778,64 @@ class TripsSearchViewModel: ObservableObject {
         }
     }
     
+    @MainActor
+    private func startIntelligence(base: PlannedRoute, includeDirects: Bool, time: Date, plan: @escaping (RoutePreset, Bool) async throws -> PlannedRoute) {
+        let profile = IntelligenceStore.shared.profile
+        let arriveBy = departureType == .arriveBy
+        let isOffline = OfflineRouter.shared.isOfflineActive
+        let origin = isOffline ? nil : originCoordinate
+        let wantsDirect = TripIntelligence.needsDirectSearch(profile, maxTransfers: routeOptions.maxTransfers)
+        let usesCrowd = profile.crowd != .indifferent && settings.crowdbackAllowed && !isOffline
+        let candidatesBase = base.itineraries + (includeDirects ? base.direct : [])
+        guard !candidatesBase.isEmpty else { return }
+
+        isThinking = true
+        intelligenceTask = Task { [weak self] in
+            async let weatherFetch: WeatherSnapshot? = {
+                guard let origin else { return nil }
+                return await WeatherService.shared.snapshot(latitude: origin.0, longitude: origin.1, at: time)
+            }()
+            async let directFetch: [Itinerary] = {
+                guard wantsDirect else { return [] }
+                return (try? await plan(.intelligent, true))?.itineraries ?? []
+            }()
+
+            let weather = await weatherFetch
+            var lessWalking: [Itinerary] = []
+            if TripIntelligence.needsLessWalkingSearch(profile, weather: weather) {
+                lessWalking = (try? await plan(.lessWalking, false))?.itineraries ?? []
+            }
+            let candidates = candidatesBase + (await directFetch) + lessWalking
+            let crowd = usesCrowd ? await TripIntelligence.crowdLevels(for: candidates) : [:]
+            guard !Task.isCancelled else { return }
+
+            let suggestion = TripIntelligence.suggest(
+                from: candidates,
+                context: .init(profile: profile, weather: weather, arriveBy: arriveBy, crowd: crowd)
+            )
+            await MainActor.run {
+                guard let self, !Task.isCancelled else { return }
+                withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
+                    self.suggestion = suggestion
+                    self.isThinking = false
+                }
+            }
+        }
+    }
+
+    private var originCoordinate: (Double, Double)? {
+        switch selectedFrom {
+        case .searchResult(let result):
+            guard result.lat != 0 || result.lon != 0 else { return nil }
+            return (result.lat, result.lon)
+        case .currentPosition:
+            guard let coordinate = locationManager?.location?.coordinate else { return nil }
+            return (coordinate.latitude, coordinate.longitude)
+        case nil:
+            return nil
+        }
+    }
+
     private func updateDisplayedTrips() {
         let startIndex = currentPageIndex * itemsPerPage
         let endIndex = min(startIndex + itemsPerPage, allTrips.count)
