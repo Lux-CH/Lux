@@ -19,8 +19,9 @@ struct StopDepartureSheet: View {
     var time: Date? = nil
     var details: [Detail] = []
     var connections: [StopConnection]? = nil
+    var showsDepartures = true
     var onHeaderHeight: (CGFloat) -> Void = { _ in }
-    let onGo: () -> Void
+    var onGo: (() -> Void)?
 
     private var shownDetails: [Detail] {
         guard let track else { return details }
@@ -60,33 +61,39 @@ struct StopDepartureSheet: View {
                     }
                 }
                 Spacer()
-                Button(action: onGo) {
-                    Label("Y aller", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
-                        .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(.white)
-                        .padding(.horizontal, 14)
-                        .frame(height: 38)
-                        .contentShape(Capsule(style: .continuous))
-                        .adaptable(ios26: .glassButtonTintedIn(AnyShape(Capsule(style: .continuous)), .accentColor), fallback: {
-                            $0.background(Color.accentColor, in: Capsule(style: .continuous))
-                        })
+                if let onGo {
+                    Button(action: onGo) {
+                        Label("Y aller", systemImage: "arrow.triangle.turn.up.right.diamond.fill")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundStyle(.white)
+                            .padding(.horizontal, 14)
+                            .frame(height: 38)
+                            .contentShape(Capsule(style: .continuous))
+                            .adaptable(ios26: .glassButtonTintedIn(AnyShape(Capsule(style: .continuous)), .accentColor), fallback: {
+                                $0.background(Color.accentColor, in: Capsule(style: .continuous))
+                            })
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
             }
             .padding(.horizontal, 20)
             .padding(.top, 26)
             .padding(.bottom, 14)
             .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { onHeaderHeight($0) }
-            Divider()
-            ExpandedStopView(stop: stop, fromStops: true, maxGroupsToShow: 50, time: time, track: track)
-                .contentMargins(.bottom, 30, for: .scrollContent)
-                .ignoresSafeArea(.container, edges: .bottom)
-                .environment(\.isOnGlassSheet, true)
-                .environment(\.stopAnimatesIn, false)
-                .id(contentKey)
+            if showsDepartures {
+                Divider()
+                ExpandedStopView(stop: stop, fromStops: true, maxGroupsToShow: 50, time: time, track: track)
+                    .contentMargins(.bottom, 30, for: .scrollContent)
+                    .ignoresSafeArea(.container, edges: .bottom)
+                    .environment(\.isOnGlassSheet, true)
+                    .environment(\.stopAnimatesIn, false)
+                    .id(contentKey)
+            } else {
+                Spacer(minLength: 0)
+            }
         }
         .task(id: stop.id) {
-            guard connections == nil else { return }
+            guard connections == nil, showsDepartures else { return }
             let stopId = stop.id
             let lines = await ConnectionService.shared.connections(for: stopId)
             guard !Task.isCancelled else { return }
@@ -123,6 +130,7 @@ private struct ConnectionPillsRow: View {
 struct ItineraryStopSheet: View {
     let place: Place
     var connections: [StopConnection] = []
+    var isEndpoint = false
     @Binding var detent: PresentationDetent
     @Binding var compactHeight: CGFloat
     let onGo: (SearchResult) -> Void
@@ -157,12 +165,12 @@ struct ItineraryStopSheet: View {
         return details
     }
 
-    static func estimatedCompactHeight(for place: Place, width: CGFloat, hasConnections: Bool) -> CGFloat {
+    static func estimatedCompactHeight(for place: Place, width: CGFloat, hasConnections: Bool, isEndpoint: Bool = false) -> CGFloat {
         let titleFont = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title3).pointSize, weight: .bold)
         let detailFont = UIFont.preferredFont(forTextStyle: .subheadline)
         let buttonFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
         let buttonWidth = (String(localized: "Y aller") as NSString).size(withAttributes: [.font: buttonFont]).width + 54
-        let textWidth = max(80, width - 40 - 12 - buttonWidth)
+        let textWidth = max(80, isEndpoint ? width - 40 : width - 40 - 12 - buttonWidth)
         let titleHeight = min(
             (place.name as NSString).boundingRect(
                 with: CGSize(width: textWidth, height: .greatestFiniteMagnitude),
@@ -175,6 +183,9 @@ struct ItineraryStopSheet: View {
         let detailCount = CGFloat(details(for: place).count)
         let connectionRow = hasConnections ? StopDepartureSheet.connectionRowHeight + 4 : 0
         let column = ceil(titleHeight) + connectionRow + detailCount * (ceil(detailFont.lineHeight) + 4)
+        if isEndpoint {
+            return (26 + 14 + column + endpointBottomInset).rounded()
+        }
         let header = 26 + 14 + max(column, 38)
         return (header + firstGroupHeight).rounded()
     }
@@ -186,14 +197,15 @@ struct ItineraryStopSheet: View {
                 time: place.departure ?? place.arrival,
                 details: Self.details(for: place),
                 connections: connections,
+                showsDepartures: !isEndpoint,
                 onHeaderHeight: { height in
-                    let compact = (height + Self.firstGroupHeight).rounded()
+                    let compact = (height + (isEndpoint ? Self.endpointBottomInset : Self.firstGroupHeight)).rounded()
                     guard abs(compact - compactHeight) > 1 else { return }
                     let wasCompact = detent == .height(compactHeight)
                     compactHeight = compact
                     if wasCompact { detent = .height(compact) }
                 },
-                onGo: {
+                onGo: isEndpoint ? nil : {
                     onGo(stop)
                 }
             )
@@ -202,6 +214,7 @@ struct ItineraryStopSheet: View {
     }
 
     static let firstGroupHeight: CGFloat = 330
+    static let endpointBottomInset: CGFloat = 24
 
     private static let timeFormatter: DateFormatter = {
         let formatter = DateFormatter()

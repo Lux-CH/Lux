@@ -284,12 +284,12 @@ struct ItineraryView: View {
                     }
                 }) {
                     if let destination = shownStopDestination {
-                        ItineraryStopSheet(place: destination.place, connections: destination.connections, detent: $stopSheetDetent, compactHeight: $stopSheetCompactHeight) { stop in
+                        ItineraryStopSheet(place: destination.place, connections: destination.connections, isEndpoint: destination.isEndpoint, detent: $stopSheetDetent, compactHeight: $stopSheetCompactHeight) { stop in
                             pendingTripSearch = stop
                             closeStopSheet(restoringDetails: false)
                         }
                             .environment(\.openTrip, tripOpener)
-                            .presentationDetents([.height(stopSheetCompactHeight), .large], selection: $stopSheetDetent)
+                            .presentationDetents(destination.isEndpoint ? [.height(stopSheetCompactHeight)] : [.height(stopSheetCompactHeight), .large], selection: $stopSheetDetent)
                             .presentationBackgroundInteraction(.enabled(upThrough: .height(stopSheetCompactHeight)))
                             .presentationCornerRadius(36)
                     }
@@ -382,13 +382,22 @@ struct ItineraryView: View {
 
     private func openStopSheet(_ place: Place) {
         HapticFeedback.impact(.soft)
-        let riding = ridingLines(at: place)
         connectionsTask?.cancel()
+        if isItineraryEndpoint(place) {
+            presentStopSheet(place, connections: [], isEndpoint: true)
+            return
+        }
+        let riding = ridingLines(at: place)
         connectionsTask = Task {
             let lines = await ConnectionService.shared.connections(for: place.parentId ?? place.stopId ?? "")
             guard !Task.isCancelled else { return }
             presentStopSheet(place, connections: lines.filter { !riding.contains($0.line) })
         }
+    }
+
+    private func isItineraryEndpoint(_ place: Place) -> Bool {
+        guard !isSingle, let legs = viewModel.itinerary?.legs, let first = legs.first, let last = legs.last else { return false }
+        return [first.from, last.to].contains { $0.lat == place.lat && $0.lon == place.lon }
     }
 
     private func ridingLines(at place: Place) -> Set<String> {
@@ -401,12 +410,13 @@ struct ItineraryView: View {
         }.compactMap(\.routeShortName))
     }
 
-    private func presentStopSheet(_ place: Place, connections: [StopConnection]) {
-        let destination = StopDetailDestination(place: place, connections: connections)
+    private func presentStopSheet(_ place: Place, connections: [StopConnection], isEndpoint: Bool = false) {
+        let destination = StopDetailDestination(place: place, connections: connections, isEndpoint: isEndpoint)
         stopSheetCompactHeight = ItineraryStopSheet.estimatedCompactHeight(
             for: place,
             width: containerWidth > 0 ? containerWidth : 390,
-            hasConnections: !connections.isEmpty
+            hasConnections: !connections.isEmpty,
+            isEndpoint: isEndpoint
         )
         shownStopDestination = destination
         stopSheetDetent = .height(stopSheetCompactHeight)
