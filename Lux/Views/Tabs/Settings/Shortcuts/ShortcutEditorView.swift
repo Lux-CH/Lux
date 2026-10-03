@@ -214,7 +214,7 @@ struct ShortcutEditorView: View {
                             .fill(.ultraThinMaterial)
                             .frame(width: 60, height: 60)
                         
-                        Image(systemName: "plus.circle.fill")
+                        Image(systemName: "link")
                             .font(.title)
                             .foregroundStyle(accentColorManager.selectedAccentColor)
                             .onTapGesture {

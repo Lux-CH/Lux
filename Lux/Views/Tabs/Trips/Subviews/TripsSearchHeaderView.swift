@@ -226,7 +226,7 @@ struct TripsSearchHeaderView: View {
                 isViaFocused = true
             }
         }) {
-            Image(systemName: "point.bottomleft.forward.to.point.topright.scurvepath")
+            Image(systemName: "plus")
                 .font(.system(size: 13, weight: .semibold))
                 .foregroundColor(.accentColor)
                 .frame(width: 32, height: 32)
