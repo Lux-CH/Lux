@@ -104,6 +104,7 @@ final class OnboardSession {
     @ObservationIgnored var crowdPromptTask: Task<Void, Never>?
     @ObservationIgnored var promptedLegs: Set<Int> = []
     @ObservationIgnored var lastAtBoardingStop: Date?
+    @ObservationIgnored var platformFixes = 0
     @ObservationIgnored var boarding: (legIndex: Int, stopId: String, at: Date)?
     @ObservationIgnored var retargetedLegs: Set<Int> = []
     @ObservationIgnored var replanTask: Task<Void, Never>?

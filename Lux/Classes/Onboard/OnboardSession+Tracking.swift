@@ -174,7 +174,34 @@ extension OnboardSession {
             let next = legs[legIndex + 1]
             if CLLocation(latitude: next.from.lat, longitude: next.from.lon).distance(from: location) < stopRadius {
                 completeLeg()
+                return
             }
+            if isOnPlatform(of: next, location: location, path: path) {
+                platformFixes += 1
+                if platformFixes >= 2 { completeLeg() }
+            } else {
+                platformFixes = 0
+            }
+        }
+    }
+
+    /// A train stops anywhere along its platform, not at the stop point: standing by the
+    /// departure track counts once past the walk's last stairs (an underpass runs below it).
+    func isOnPlatform(of leg: Leg, location: CLLocation, path: RoutePath) -> Bool {
+        guard leg.mode.isMainlineRail, let uic = StationLayout.uic(fromStopId: leg.from.stopId),
+              let layout = stationLayouts[uic] ?? StationLayoutStore.shared.cached(uic: uic),
+              let track = layout.track(named: leg.from.track ?? leg.from.scheduledTrack, stopId: leg.from.stopId) else { return false }
+        let edges = track.edgeCoordinates.map { RoutePath(coordinates: $0) }.filter { !$0.isEmpty }
+        guard !edges.isEmpty else { return false }
+
+        let lastStairs = maneuvers.indices.contains(legIndex) ? maneuvers[legIndex].last(where: \.isLevelChange)?.along : nil
+        if let lastStairs, alongInLeg < lastStairs - 10 { return false }
+        let platformLength = track.platform?.length ?? edges.map(\.length).max() ?? 0
+        guard path.length - alongInLeg < platformLength + 60 else { return false }
+
+        let tolerance = max(15, min(location.horizontalAccuracy, 35))
+        return edges.contains { edge in
+            (edge.project(location.coordinate)?.offset ?? .infinity) < tolerance
         }
     }
 
@@ -539,6 +566,7 @@ extension OnboardSession {
         showsCrowdPrompt = false
         crowdPromptTask?.cancel()
         lastAtBoardingStop = nil
+        platformFixes = 0
         if boarding?.legIndex != index { boarding = nil }
 
         if leg.isTransit {
