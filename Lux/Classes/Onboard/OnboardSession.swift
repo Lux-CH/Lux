@@ -76,6 +76,7 @@ final class OnboardSession {
     var transferOptions: [ReplanProposal] = []
     @ObservationIgnored var transferOptionsTask: Task<Void, Never>?
     @ObservationIgnored var transferOptionsCheck: (key: String, at: Date)?
+    @ObservationIgnored var transferContext: TripIntelligence.Context?
     /// Where the coaches of the next train to board stop on its platform (mainline rail).
     var formation: TrainFormation?
     @ObservationIgnored var formationTarget = ""

@@ -32,6 +32,8 @@ extension OnboardSession {
         var exitName: String? = nil
         var ridingTripId: String? = nil
         var transfers: Int? = nil
+        var insight: TripSuggestion.Reason? = nil
+        var source: Itinerary? = nil
 
         var firstTransit: Leg? { legs.first(where: \.isTransit) }
         var nextTransit: Leg? {
@@ -65,16 +67,31 @@ extension OnboardSession {
         let options = Self.savedRouteOptions(from: origin, to: Self.routeTarget(destination), time: departure)
         let currentArrival = arrivalDate
         let currentNext = legs[replaceFrom...].first(where: \.isTransit)?.tripId
+        let near = userLocation?.coordinate ?? currentLeg.map { CLLocationCoordinate2D(latitude: $0.from.lat, longitude: $0.from.lon) }
 
         lastReplanAt = now
         isReplanning = true
         replanTask?.cancel()
         replanTask = Task { [weak self] in
             let result = try? await LuxData.route(options)
+            guard !Task.isCancelled else { return }
+            let candidates = (result?.itineraries ?? []).filter { $0.startTime >= departure.addingTimeInterval(-60) }
+            var choice = candidates.min(by: { $0.endTime < $1.endTime })
+            var insight: TripSuggestion.Reason?
+            if IntelligenceStore.isIntelligentMode, candidates.count > 1, let fastestEnd = choice?.endTime {
+                let context = await TripIntelligence.liveContext(near: near, at: departure, candidates: candidates, includeCrowd: false)
+                let ranked = TripIntelligence.rank(candidates, context: context)
+                if let top = ranked.first(where: { $0.itinerary.endTime <= fastestEnd.addingTimeInterval(2 * 60) }),
+                   top.itinerary.intelligenceSignature != choice?.intelligenceSignature {
+                    choice = top.itinerary
+                    if let fastest = TripIntelligence.fastest(in: ranked) {
+                        insight = TripIntelligence.reasons(best: top, fastest: fastest, context: context).first
+                    }
+                }
+            }
             guard let self, !Task.isCancelled else { return }
             self.isReplanning = false
-            let candidates = (result?.itineraries ?? []).filter { $0.startTime >= departure.addingTimeInterval(-60) }
-            guard let best = candidates.min(by: { $0.endTime < $1.endTime }) else {
+            guard let best = choice else {
                 self.showAlert(
                     OnboardAlert(severity: .warning, symbolName: "arrow.triangle.branch", title: String(localized: "Aucune alternative trouvée"), message: nil),
                     spoken: nil,
@@ -91,7 +108,10 @@ extension OnboardSession {
                 legs: best.legs,
                 arrival: best.endTime,
                 lateBy: best.endTime.timeIntervalSince(currentArrival),
-                autoApplyAt: Date().addingTimeInterval(60)
+                autoApplyAt: Date().addingTimeInterval(60),
+                transfers: best.transfers,
+                insight: insight,
+                source: best
             )
             withAnimation(.spring(duration: 0.45)) { self.replan = proposal }
             if let transit = proposal.firstTransit {
@@ -210,14 +230,12 @@ extension OnboardSession {
         let index = legIndex
         let planned = Set(legs[nextIndex...].compactMap(\.tripId))
         let options = Self.savedRouteOptions(from: origin, to: Self.routeTarget(destination), time: now)
+        let near = userLocation?.coordinate ?? CLLocationCoordinate2D(latitude: leg.from.lat, longitude: leg.from.lon)
         transferOptionsTask = Task { [weak self] in
             let result = try? await LuxData.route(options)
-            guard let self, !Task.isCancelled else { return }
-            self.transferOptionsTask = nil
-            guard self.isRunning, self.isAtTransfer, self.transferOptionsKey == key else { return }
+            guard !Task.isCancelled else { return }
             let now = Date()
-            var seen: Set<String> = []
-            let alternatives = (result?.itineraries ?? [])
+            var ordered = (result?.itineraries ?? [])
                 .filter { itinerary in
                     guard !itinerary.legs.contains(where: \.cancelled),
                           Set(itinerary.legs.compactMap(\.tripId)) != planned else { return false }
@@ -225,9 +243,25 @@ extension OnboardSession {
                     return first.startTime > now.addingTimeInterval(60)
                 }
                 .sorted { $0.endTime < $1.endTime }
+            var insight: TripSuggestion.Reason?
+            var context: TripIntelligence.Context?
+            if IntelligenceStore.isIntelligentMode, !ordered.isEmpty {
+                let live = await TripIntelligence.liveContext(near: near, at: now, candidates: ordered)
+                let ranked = TripIntelligence.rank(ordered, context: live)
+                ordered = ranked.map(\.itinerary)
+                insight = TripIntelligence.insight(for: ranked, context: live)
+                context = live
+            }
+            guard let self, !Task.isCancelled else { return }
+            self.transferOptionsTask = nil
+            guard self.isRunning, self.isAtTransfer, self.transferOptionsKey == key else { return }
+            self.transferContext = context
+            var seen: Set<String> = []
+            let alternatives = ordered
                 .filter { seen.insert($0.legs.first(where: \.isTransit)?.tripId ?? "walk").inserted }
                 .prefix(3)
-                .map { itinerary in
+                .enumerated()
+                .map { offset, itinerary in
                     ReplanProposal(
                         reason: .alternative,
                         replaceFrom: index,
@@ -235,7 +269,9 @@ extension OnboardSession {
                         arrival: itinerary.endTime,
                         lateBy: itinerary.endTime.timeIntervalSince(self.arrivalDate),
                         autoApplyAt: nil,
-                        transfers: itinerary.transfers
+                        transfers: itinerary.transfers,
+                        insight: offset == 0 ? insight : nil,
+                        source: itinerary
                     )
                 }
             withAnimation(.spring(duration: 0.45)) { self.transferOptions = Array(alternatives) }
@@ -244,6 +280,10 @@ extension OnboardSession {
 
     func useTransferOption(_ option: ReplanProposal) {
         guard isAtTransfer, legIndex >= option.replaceFrom else { return }
+        if let chosen = option.source, let context = transferContext {
+            let others = transferOptions.compactMap(\.source).filter { $0.intelligenceSignature != chosen.intelligenceSignature }
+            IntelligenceLearner.observe(chosen, among: others, context: context, signal: .transferOption)
+        }
         var option = option
         option.replaceFrom = legIndex
         transferOptionsTask?.cancel()

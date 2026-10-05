@@ -406,6 +406,25 @@ struct ReplanOptionRow: View {
     let proposal: OnboardSession.ReplanProposal
 
     var body: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            row
+            if let insight = proposal.insight {
+                HStack(spacing: 6) {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 11, weight: .bold))
+                    Text(insight.text)
+                        .font(.caption.weight(.semibold))
+                        .lineLimit(1)
+                }
+                .foregroundStyle(Color.accentColor)
+                .padding(.leading, 2)
+            }
+        }
+        .padding(10)
+        .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+    }
+
+    private var row: some View {
         HStack(spacing: 10) {
             if let transit = proposal.nextTransit {
                 LinePill(line: transit.routeShortName ?? "", mode: transit.mode, agency: transit.agencyId, width: 42, height: 26, fontSize: 14, usesOriginalColors: true)
@@ -446,8 +465,6 @@ struct ReplanOptionRow: View {
                 }
             }
         }
-        .padding(10)
-        .background(Color.primary.opacity(0.05), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
     }
 }
 
