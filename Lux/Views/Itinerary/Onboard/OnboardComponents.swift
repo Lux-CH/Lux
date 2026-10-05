@@ -512,6 +512,9 @@ struct OnboardBottomPanel: View {
                     if session.isInStation, let formation = session.formation {
                         FormationSummary(formation: formation, platformSectors: session.formationPlatformSectors)
                     }
+                    if session.isInStation, let advice = session.platformAdvice {
+                        PlatformAdviceRow(advice: advice, isRiding: false)
+                    }
                 }
             }
         case .waiting:
@@ -519,6 +522,10 @@ struct OnboardBottomPanel: View {
                 if let formation = session.formation {
                     FormationSummary(formation: formation, platformSectors: session.formationPlatformSectors)
                         .padding(.bottom, 2)
+                        .transition(.opacity)
+                }
+                if let advice = session.platformAdvice {
+                    PlatformAdviceRow(advice: advice, isRiding: false)
                         .transition(.opacity)
                 }
                 if let info = session.rideInfo {
@@ -539,6 +546,10 @@ struct OnboardBottomPanel: View {
         case .riding:
             VStack(alignment: .leading, spacing: 8) {
                 rideProgress
+                if let advice = session.platformAdvice {
+                    PlatformAdviceRow(advice: advice, isRiding: true)
+                        .transition(.opacity)
+                }
                 if let info = session.rideInfo {
                     RideCommunityStrip(info: info)
                 }
@@ -757,6 +768,60 @@ private struct FormationSummary: View {
         } else if let occupancy = formation.occupancy, occupancy.isKnown {
             OccupancyForecastRow(occupancy: occupancy)
         }
+    }
+}
+
+struct PlatformAdviceRow: View {
+    let advice: PlatformAdvice
+    let isRiding: Bool
+
+    private var exitText: String {
+        switch advice.exitKind {
+        case .elevator: String(localized: "près de l'ascenseur")
+        case .escalator: String(localized: "près de l'escalier roulant")
+        case .stairs: String(localized: "près des escaliers")
+        case nil: String(localized: "la plus proche")
+        }
+    }
+
+    private var title: String {
+        if !isRiding, let board = advice.boardSector {
+            if let coach = advice.coach {
+                return String(localized: "Attendez en secteur \(board), voiture \(coach)")
+            }
+            return String(localized: "Attendez en secteur \(board)")
+        }
+        return String(localized: "Descendez en secteur \(advice.exitSector)")
+    }
+
+    private var subtitle: String {
+        String(localized: "À \(advice.alightName), sortie \(exitText)")
+    }
+
+    var body: some View {
+        HStack(alignment: .top, spacing: 10) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(.white)
+                .frame(width: 28, height: 28)
+                .background(Circle().fill(Color.accentColor.gradient))
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline.weight(.semibold))
+                Text(subtitle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                if advice.busyTrain && !isRiding {
+                    Text("Train chargé : les voitures en bout de train sont souvent plus calmes")
+                        .font(.caption)
+                        .foregroundStyle(.orange)
+                }
+            }
+            Spacer(minLength: 0)
+        }
+        .padding(10)
+        .background(Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .accessibilityElement(children: .combine)
     }
 }
 

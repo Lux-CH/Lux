@@ -81,6 +81,9 @@ final class OnboardSession {
     @ObservationIgnored var formationTarget = ""
     @ObservationIgnored var formationFetchedAt: Date = .distantPast
     @ObservationIgnored var formationTask: Task<Void, Never>?
+    var platformAdvice: PlatformAdvice?
+    @ObservationIgnored var platformAdviceTarget = ""
+    @ObservationIgnored var platformAdviceTask: Task<Void, Never>?
 
     var needsSharingConsent: Bool { Settings.shared.onboardCrowdConsent == .undecided }
 
@@ -300,6 +303,7 @@ final class OnboardSession {
 
     func stop() {
         formationTask?.cancel()
+        platformAdviceTask?.cancel()
         guard isRunning else { return }
         isRunning = false
         if Self.active === self { Self.active = nil }
@@ -471,6 +475,7 @@ final class OnboardSession {
         catchUpWithVehicle()
         updateEstimates()
         refreshFormationIfNeeded()
+        refreshPlatformAdvice()
         if let lastFixAt, now.timeIntervalSince(lastFixAt) > 45 {
             assign(\.hasWeakGPS, true)
         } else if lastFixAt == nil, now.timeIntervalSince(legs.first?.startTime ?? now) > 0 {
