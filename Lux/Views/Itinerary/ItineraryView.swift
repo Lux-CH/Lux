@@ -495,6 +495,7 @@ struct ItineraryView: View {
     }
 
     private func startOnboard(_ itinerary: Itinerary) {
+        IntelligenceLearner.observe(itinerary, signal: .started)
         let session = OnboardSession(itinerary: itinerary, destinationName: viewModel.destinationName)
         closeStopSheet(restoringDetails: false)
         showDetails = false

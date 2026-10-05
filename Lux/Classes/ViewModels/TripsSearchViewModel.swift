@@ -752,6 +752,9 @@ class TripsSearchViewModel: ObservableObject {
                     self.animateIn = true
                     self.errorMessage = nil
 
+                    if pageCursor == nil, preset != .intelligent {
+                        IntelligenceLearner.forget()
+                    }
                     if pageCursor == nil, preset == .intelligent {
                         self.startIntelligence(
                             base: result,
@@ -809,12 +812,11 @@ class TripsSearchViewModel: ObservableObject {
             let crowd = usesCrowd ? await TripIntelligence.crowdLevels(for: candidates) : [:]
             guard !Task.isCancelled else { return }
 
-            let suggestion = TripIntelligence.suggest(
-                from: candidates,
-                context: .init(profile: profile, weather: weather, arriveBy: arriveBy, crowd: crowd)
-            )
+            let context = TripIntelligence.Context(profile: profile, weather: weather, arriveBy: arriveBy, crowd: crowd)
+            let suggestion = TripIntelligence.suggest(from: candidates, context: context)
             await MainActor.run {
                 guard let self, !Task.isCancelled else { return }
+                IntelligenceLearner.remember(candidates: candidates, context: context)
                 withAnimation(.spring(response: 0.45, dampingFraction: 0.85)) {
                     self.suggestion = suggestion
                     self.isThinking = false

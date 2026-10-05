@@ -43,6 +43,9 @@ struct TripResultView: View {
                 buttonContent
             }
             .buttonStyle(TripsResultBttnStyle(isPressed: $isPressed))
+            .simultaneousGesture(TapGesture().onEnded {
+                IntelligenceLearner.observe(itinerary, signal: .opened)
+            })
             .padding(.horizontal, horizontalInset)
         }
         else {

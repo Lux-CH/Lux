@@ -38,31 +38,71 @@ struct IntelligenceProfile: Codable, Equatable {
     var isConfigured = false
 }
 
+struct IntelligenceLearning: Codable, Equatable {
+    var isEnabled = true
+    var walk = 0.0
+    var weather = 0.0
+    var transfer = 0.0
+    var margin = 0.0
+    var crowd = 0.0
+    var observations = 0
+    var updatedAt: Date?
+
+    static let limits: [WritableKeyPath<IntelligenceLearning, Double>: ClosedRange<Double>] = [
+        \.walk: -0.3...0.7,
+        \.weather: -0.6...1.2,
+        \.transfer: -1.5...8,
+        \.margin: -2...3,
+        \.crowd: -2...3
+    ]
+
+    mutating func nudge(_ key: WritableKeyPath<IntelligenceLearning, Double>, by delta: Double) {
+        guard let range = Self.limits[key] else { return }
+        self[keyPath: key] = min(range.upperBound, max(range.lowerBound, self[keyPath: key] + delta))
+    }
+
+    func erased() -> IntelligenceLearning {
+        IntelligenceLearning(isEnabled: isEnabled)
+    }
+}
+
 final class IntelligenceStore: ObservableObject {
     static let shared = IntelligenceStore()
 
     @Published var profile: IntelligenceProfile {
-        didSet { persist() }
+        didSet { persist(profile, key: Self.profileKey) }
     }
 
-    private static let key = "intelligenceProfile"
+    @Published var learning: IntelligenceLearning {
+        didSet { persist(learning, key: Self.learningKey) }
+    }
+
+    @Published var departureAlerts: Bool {
+        didSet { UserDefaults.standard.set(departureAlerts, forKey: Self.alertsKey) }
+    }
+
+    private static let profileKey = "intelligenceProfile"
+    private static let learningKey = "intelligenceLearning"
+    private static let alertsKey = "intelligenceDepartureAlerts"
+
+    static var isIntelligentMode: Bool {
+        (UserDefaults.standard.string(forKey: "routePreset") ?? "intelligent") == "intelligent"
+    }
 
     private init() {
-        if let data = UserDefaults.standard.data(forKey: Self.key),
-           let decoded = try? JSONDecoder().decode(IntelligenceProfile.self, from: data) {
-            profile = decoded
-        } else {
-            profile = IntelligenceProfile()
-        }
+        let defaults = UserDefaults.standard
+        profile = defaults.data(forKey: Self.profileKey).flatMap { try? JSONDecoder().decode(IntelligenceProfile.self, from: $0) } ?? IntelligenceProfile()
+        learning = defaults.data(forKey: Self.learningKey).flatMap { try? JSONDecoder().decode(IntelligenceLearning.self, from: $0) } ?? IntelligenceLearning()
+        departureAlerts = defaults.bool(forKey: Self.alertsKey)
     }
 
     func reset() {
         profile = IntelligenceProfile()
     }
 
-    private func persist() {
-        if let data = try? JSONEncoder().encode(profile) {
-            UserDefaults.standard.set(data, forKey: Self.key)
+    private func persist<T: Encodable>(_ value: T, key: String) {
+        if let data = try? JSONEncoder().encode(value) {
+            UserDefaults.standard.set(data, forKey: key)
         }
     }
 }
