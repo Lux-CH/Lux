@@ -348,10 +348,17 @@ extension OnboardSession {
     func evaluateRidingTrain(leg: Leg, alongs: [CLLocationDistance]) {
         let timetable = estimatedAlongByTime(leg: leg, alongs: alongs)
         var gpsAlong: CLLocationDistance?
+        // realtime can be minutes off: once fixes agree with each other, the timetable no longer vets them
+        let following = trainGPSStreak > 0 && now.timeIntervalSince(trainGPSAt) < 60
+        func plausible(_ along: CLLocationDistance, at timestamp: Date) -> Bool {
+            guard following else { return abs(along - timetable) < 15_000 }
+            let elapsed = max(0, timestamp.timeIntervalSince(lastTrainFix))
+            return abs(along - (trainFix.along + trainFix.speed * elapsed)) < 150 + 40 * elapsed
+        }
         if let location = userLocation, location.horizontalAccuracy >= 0, location.horizontalAccuracy <= 25,
            now.timeIntervalSince(location.timestamp) < 4,
-           let projection = currentPath?.project(location.coordinate, hint: alongInLeg),
-           projection.offset < 40, abs(projection.along - timetable) < 2500 {
+           let projection = currentPath?.project(location.coordinate, hint: following ? trainFix.along : nil),
+           projection.offset < 40, plausible(projection.along, at: location.timestamp) {
             gpsAlong = projection.along
             if location.timestamp > lastTrainFix {
                 lastTrainFix = location.timestamp
