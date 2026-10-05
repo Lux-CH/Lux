@@ -29,6 +29,7 @@ struct SettingsView: View {
                     
                     VStack(spacing: 16) {
                         shortcutsCard
+                        IntelligenceSettingsCard()
                         lineScoreCard
                         SettingsCard {
                             Section {
