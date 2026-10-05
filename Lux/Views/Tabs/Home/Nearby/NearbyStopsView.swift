@@ -29,17 +29,33 @@ struct NearbyStopsView: View {
     @State private var showingSuggestion: Bool = false
     @State private var showSafari: Bool = false
     @State private var networkMonitor: NWPathMonitor? = nil
+    @StateObject private var nearbyIntelligence = NearbyIntelligence()
     
     private let significantDistance: CLLocationDistance = 100.0
     private let networkMonitorQueue = DispatchQueue(label: "NetworkMonitor")
     
     private var groupBudget: (station: Int, first: Int, second: Int) {
+        let budget: (station: Int, first: Int, second: Int)
         switch UIScreen.main.bounds.height {
-        case 900...: return (7, 4, 2)
-        case 840..<900: return (6, 3, 2)
-        case 800..<840: return (5, 2, 2)
-        default: return (4, 2, 1)
+        case 900...: budget = (7, 4, 2)
+        case 840..<900: budget = (6, 3, 2)
+        case 800..<840: budget = (5, 2, 2)
+        default: budget = (4, 2, 1)
         }
+        return budget
+    }
+
+    private var displayedStops: [SearchResult] {
+        let nearbyStops = Array(progress.searchResults.prefix(2))
+        return nearbyStation(among: nearbyStops).map { [$0] } ?? nearbyStops
+    }
+
+    private func highlight(for stop: SearchResult) -> NearbyIntelligence.Pick? {
+        nearbyIntelligence.pick.flatMap { $0.stop.id == stop.id ? $0 : nil }
+    }
+
+    private func refreshIntelligence(force: Bool = false) {
+        nearbyIntelligence.refresh(stops: displayedStops, location: locationManager.location, force: force)
     }
 
     private func nearbyStation(among stops: [SearchResult]) -> SearchResult? {
@@ -181,14 +197,14 @@ struct NearbyStopsView: View {
                         let nearbyStops = Array(progress.searchResults.prefix(2))
                         if let station = nearbyStation(among: nearbyStops) {
                             ZStack {
-                                StopView(stop: station, maxGroupsToShow: groupBudget.station, fromStops: false, isLastStopOverall: true)
+                                StopView(stop: station, maxGroupsToShow: groupBudget.station, fromStops: false, isLastStopOverall: true, highlight: highlight(for: station))
                             }
                             .frame(maxWidth: .infinity)
                         } else {
                             ForEach(Array(nearbyStops.enumerated()), id: \.element.id) { index, result in
                                 let isLastStop = index == min(1, progress.searchResults.count - 1)
                                 ZStack {
-                                    StopView(stop: result, maxGroupsToShow: index == 0 ? groupBudget.first : (showingSuggestion ? max(1, groupBudget.second - 1) : groupBudget.second), fromStops: false, isLastStopOverall: isLastStop)
+                                    StopView(stop: result, maxGroupsToShow: index == 0 ? groupBudget.first : (showingSuggestion ? max(1, groupBudget.second - 1) : groupBudget.second), fromStops: false, isLastStopOverall: isLastStop, highlight: highlight(for: result))
                                 }
                                 .frame(maxWidth: .infinity)
                             }
@@ -316,8 +332,13 @@ struct NearbyStopsView: View {
                 }
             }
         }
+        .animation(.spring(response: 0.45, dampingFraction: 0.85), value: nearbyIntelligence.pick)
+        .onChange(of: progress.searchResults.map(\.id)) {
+            refreshIntelligence()
+        }
         .onReceive(refreshTimer) { _ in
             guard !isAuthorizationNotAllowed else { return }
+            refreshIntelligence()
             guard let currentLoc = locationManager.location, let lastLoc = lastFetchedLocation else {
                 if locationManager.location != nil {
                     refreshNearbyStopsInBackground()
@@ -340,6 +361,7 @@ struct NearbyStopsView: View {
         }
         .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
             locationManager.resumeUpdates()
+            refreshIntelligence(force: true)
             
             stopNetworkMonitoring()
             startNetworkMonitoring()

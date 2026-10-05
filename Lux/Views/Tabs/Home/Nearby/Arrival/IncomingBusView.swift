@@ -11,6 +11,7 @@ import LuxCom
 struct IncomingBusView: View {
     let group: GroupedStopTime
     let viewModel: StopViewModel
+    var pick: NearbyIntelligence.Pick? = nil
     @Environment(\.colorScheme) var colorScheme
     
     private var parsedStopName: (city: String, location: String) {
@@ -62,6 +63,7 @@ struct IncomingBusView: View {
                                     Text(group.headsign)
                                         .font(.system(size: 17, weight: .medium))
                                         .foregroundColor(.primary)
+                                        .lineLimit(pick == nil ? nil : 1)
                                     if let track = displayTrack, !track.isEmpty {
                                         Text(track)
                                             .font(.system(size: 8))
@@ -73,6 +75,9 @@ struct IncomingBusView: View {
                                                     .stroke(Color.secondary.opacity(0.8), lineWidth: 0.5)
                                             )
                                     }
+                                    if let pick {
+                                        IntelligentLeaveBadge(pick: pick)
+                                    }
                                 }
                             } else {
                                 Text(parsedStopName.city)
@@ -83,6 +88,7 @@ struct IncomingBusView: View {
                                     Text(parsedStopName.location.shortnameCapitalize)
                                         .font(.system(size: 17, weight: .medium))
                                         .foregroundColor(.primary)
+                                        .lineLimit(pick == nil ? nil : 1)
                                     if let track = displayTrack, !track.isEmpty {
                                         Text(track)
                                             .font(.system(size: 8))
@@ -93,6 +99,10 @@ struct IncomingBusView: View {
                                                 RoundedRectangle(cornerRadius: 3)
                                                     .stroke(Color.secondary.opacity(0.8), lineWidth: 0.5)
                                             )
+                                            .padding(.top, 2.25)
+                                    }
+                                    if let pick {
+                                        IntelligentLeaveBadge(pick: pick)
                                             .padding(.top, 2.25)
                                     }
                                 }

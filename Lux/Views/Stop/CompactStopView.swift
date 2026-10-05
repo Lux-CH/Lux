@@ -15,11 +15,13 @@ struct CompactStopView: View {
     let maxGroupsToShow: Int
     let dontShowLastDivider: Bool
     let isLastStopOverall: Bool
+    let highlight: NearbyIntelligence.Pick?
     
     private let activeDotColor = Color.primary.opacity(0.5)
     private let inactiveDotColor = Color.secondary.opacity(0.3)
     
-    init(stop: SearchResult, maxGroupsToShow: Int, dontShowLastDivider: Bool, isLastStopOverall: Bool) {
+    init(stop: SearchResult, maxGroupsToShow: Int, dontShowLastDivider: Bool, isLastStopOverall: Bool, highlight: NearbyIntelligence.Pick? = nil) {
+        self.highlight = highlight
         self._viewModel = StateObject(wrappedValue: StopViewModel(stop: stop, fromStops: false, time: nil))
         self.maxGroupsToShow = maxGroupsToShow
         self.dontShowLastDivider = dontShowLastDivider
@@ -146,12 +148,23 @@ struct CompactStopView: View {
     }
 
     private var orderedRouteNames: [String] {
-        let names = viewModel.routeNames
-        guard viewModel.stop.servesMainlineRail else { return names }
+        var names = viewModel.routeNames
+        if viewModel.stop.servesMainlineRail {
+            let rail = names.filter(isRailRoute).map { (name: $0, departure: soonestDeparture($0)) }
+            if let topRail = rail.min(by: { $0.departure < $1.departure })?.name {
+                names = [topRail] + names.filter { $0 != topRail }
+            }
+        }
+        if let line = highlight?.line, names.contains(line) {
+            names = [line] + names.filter { $0 != line }
+        }
+        return names
+    }
 
-        let rail = names.filter(isRailRoute).map { (name: $0, departure: soonestDeparture($0)) }
-        guard let topRail = rail.min(by: { $0.departure < $1.departure })?.name else { return names }
-        return [topRail] + names.filter { $0 != topRail }
+    private func highlightedPage(in groups: [GroupedStopTime]) -> Int? {
+        guard let highlight else { return nil }
+        let key = highlight.headsign.normalizedHeadsignKey
+        return groups.firstIndex { $0.routeShortName == highlight.line && $0.headsign.normalizedHeadsignKey == key }
     }
 
     private var routeGroupsContent: some View {
@@ -181,6 +194,8 @@ struct CompactStopView: View {
             isSquared: mode.usesSquaredPill || isTrainDetected
         ).color
         let lineColor = isDarkColor(color) ? lightenColor(color) : color
+        let highlightedIndex = highlightedPage(in: groups)
+        let isHighlighted = highlightedIndex != nil && highlightedIndex == (viewModel.currentPages[routeName] ?? 0)
 
         return VStack(alignment: .leading, spacing: 0) {
             ZStack(alignment: .bottom) {
@@ -190,7 +205,7 @@ struct CompactStopView: View {
                 )) {
                     ForEach(Array(groups.enumerated()), id: \.element.id) { index, group in
                         if !group.stopTimes.isEmpty {
-                            IncomingBusView(group: group, viewModel: viewModel)
+                            IncomingBusView(group: group, viewModel: viewModel, pick: index == highlightedIndex ? highlight : nil)
                                 .padding(.horizontal)
                                 .tag(index)
                                 .accessibilityElement(children: .combine)
@@ -221,9 +236,15 @@ struct CompactStopView: View {
             }
         }
         .background(
-            LinearGradient(colors: [lineColor.opacity(0.05), lineColor.opacity(0.01)], startPoint: .topLeading, endPoint: .bottomTrailing)
-                .padding(.bottom, isLastRoute ? (isLastStopOverall ? -4 : -55) : 0)
+            ZStack {
+                LinearGradient(colors: [lineColor.opacity(0.05), lineColor.opacity(0.01)], startPoint: .topLeading, endPoint: .bottomTrailing)
+                if isHighlighted {
+                    LinearGradient(colors: [Color.accentColor.opacity(0.14), Color.accentColor.opacity(0.04)], startPoint: .leading, endPoint: .trailing)
+                }
+            }
+            .padding(.bottom, isLastRoute ? (isLastStopOverall ? -4 : -55) : 0)
         )
+        .animation(.spring(response: 0.4, dampingFraction: 0.85), value: isHighlighted)
     }
     
     private func groupAccessibilityLabel(for group: GroupedStopTime) -> String {
