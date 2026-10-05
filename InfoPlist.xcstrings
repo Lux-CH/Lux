@@ -47,6 +47,18 @@
         }
       }
     },
+    "NSCalendarsFullAccessUsageDescription" : {
+      "comment" : "Privacy - Calendars Full Access Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "fr" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Lux lit vos rendez-vous pour vous prévenir quand partir, et peut y sauvegarder vos itinéraires"
+          }
+        }
+      }
+    },
     "NSCalendarsUsageDescription" : {
       "comment" : "Privacy - Calendars Usage Description",
       "extractionState" : "extracted_with_value",

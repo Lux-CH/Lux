@@ -256,9 +256,17 @@ final class OnboardSession {
         return itinerary.startTime.timeIntervalSince(date) < 3 * 3600 && itinerary.endTime.timeIntervalSince(date) > -10 * 60
     }
 
+    @ObservationIgnored static weak var active: OnboardSession?
+
+    var finalDestination: CLLocationCoordinate2D? {
+        legs.last.map { CLLocationCoordinate2D(latitude: $0.to.lat, longitude: $0.to.lon) }
+    }
+
     func start() {
         guard !isRunning, !legs.isEmpty else { return }
         isRunning = true
+        Self.active = self
+        DepartureAlertPlanner.shared.refresh(force: true)
 
         enterLeg(0, announce: false)
 
@@ -294,6 +302,8 @@ final class OnboardSession {
         formationTask?.cancel()
         guard isRunning else { return }
         isRunning = false
+        if Self.active === self { Self.active = nil }
+        DepartureAlertPlanner.shared.refresh(force: true)
         tickTask?.cancel()
         crowdAckTask?.cancel()
         alertDismissTask?.cancel()

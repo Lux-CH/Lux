@@ -11,6 +11,7 @@ import LuxCom
 final class LuxAppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         OnboardLiveActivityController.endAll()
+        DepartureAlertPlanner.register()
         return true
     }
 
@@ -57,6 +58,10 @@ struct LuxApp: App {
                         }
                     }
                     settings.appLaunchCount += 1
+                    DepartureAlertPlanner.shared.refresh()
+                }
+                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                    DepartureAlertPlanner.shared.refresh()
                 }
                 .onOpenURL { url in
                     Task {
