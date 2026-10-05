@@ -8148,6 +8148,36 @@
         }
       }
     },
+    "Départ imminent de %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departing %@ now."
+          }
+        }
+      }
+    },
+    "Départ de %@ dans 1 minute." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departing %@ in 1 minute."
+          }
+        }
+      }
+    },
+    "Départ de %@ dans %lld minutes." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departing %@ in %lld minutes."
+          }
+        }
+      }
+    },
     "Autres options" : {
       "localizations" : {
         "en" : {

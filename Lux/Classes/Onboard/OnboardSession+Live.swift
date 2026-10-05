@@ -263,7 +263,7 @@ extension OnboardSession {
             : String(localized: "Départ de \(placeName(leg.from)) à \(formatTime(leg.startTime))")
         showAlert(
             OnboardAlert(severity: severity, symbolName: delay >= 2 ? "clock.badge.exclamationmark.fill" : "clock.fill", title: title, message: message),
-            spoken: boarded ? "\(title). \(message)." : String(localized: "\(title). Départ de \(placeName(leg.from)), \(spokenDeparture(leg.startTime))."),
+            spoken: boarded ? "\(title). \(message)." : "\(title). \(spokenDeparture(from: leg.from, at: leg.startTime))",
             urgency: .notice
         )
     }

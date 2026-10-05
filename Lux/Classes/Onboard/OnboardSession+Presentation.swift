@@ -34,6 +34,14 @@ extension OnboardSession {
         return String(localized: "départ dans \(minutes) minutes")
     }
 
+    func spokenDeparture(from place: Place, at date: Date) -> String {
+        let stop = placeName(place)
+        let minutes = Int((date.timeIntervalSince(Date()) / 60).rounded(.up))
+        if minutes <= 0 { return String(localized: "Départ imminent de \(stop).") }
+        if minutes == 1 { return String(localized: "Départ de \(stop) dans 1 minute.") }
+        return String(localized: "Départ de \(stop) dans \(minutes) minutes.")
+    }
+
     func startAnnouncement() -> String {
         switch phase {
         case .walking:
