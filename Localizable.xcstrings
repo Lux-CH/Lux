@@ -7848,6 +7848,16 @@
         }
       }
     },
+    "Vitesse : %lld km/h" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Speed: %lld km/h"
+          }
+        }
+      }
+    },
     "Voie" : {
       "localizations" : {
         "en" : {

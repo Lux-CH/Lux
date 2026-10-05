@@ -46,10 +46,15 @@ struct OnboardNavigationView: View {
                         .id(alert.id)
                 }
 
-                HStack {
+                HStack(alignment: .top) {
+                    if session.phase == .riding, let speed = session.groundSpeed, let leg = session.currentLeg {
+                        OnboardSpeedometer(speed: speed, mode: leg.mode, tint: getOnboardLegColor(leg))
+                            .transition(.scale(scale: 0.6).combined(with: .opacity))
+                    }
                     Spacer()
                     controls
                 }
+                .animation(.spring(duration: 0.4), value: session.groundSpeed == nil)
 
                 Spacer()
 

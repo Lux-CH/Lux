@@ -69,6 +69,9 @@ final class OnboardSession {
     var positionDelay: TimeInterval?
     @ObservationIgnored var positionDelayAt: Date = .distantPast
     var hasEstimatedVehicle = false
+    var groundSpeed: Int?
+    @ObservationIgnored var smoothedSpeed: CLLocationSpeed?
+    @ObservationIgnored var speedAt: Date = .distantPast
     var isReplanning = false
     var transferOptions: [ReplanProposal] = []
     @ObservationIgnored var transferOptionsTask: Task<Void, Never>?
@@ -448,6 +451,10 @@ final class OnboardSession {
         }
         if let replan, replan.reason == .faster, phase != .riding || (replan.expiresAt.map { now >= $0 } ?? false) {
             withAnimation(.spring(duration: 0.4)) { self.replan = nil }
+        }
+        if groundSpeed != nil, now.timeIntervalSince(speedAt) > 8 {
+            smoothedSpeed = nil
+            withAnimation(.snappy) { groundSpeed = nil }
         }
         lookForEarlierDeparture()
         refreshTransferOptions()

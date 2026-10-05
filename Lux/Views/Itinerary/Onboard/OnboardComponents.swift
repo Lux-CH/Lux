@@ -759,3 +759,56 @@ private struct FormationSummary: View {
         }
     }
 }
+
+struct OnboardSpeedometer: View {
+    let speed: Int
+    let mode: TransportationMode
+    let tint: Color
+
+    private var scale: Double {
+        switch mode {
+        case .highSpeedRail: 320
+        case _ where mode.isMainlineRail: 200
+        case .tram, .subway, .metro, .funicular: 60
+        default: 100
+        }
+    }
+
+    private var fraction: Double { min(1, max(0, Double(speed) / scale)) }
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .trim(from: 0, to: 0.75)
+                .stroke(Color.primary.opacity(0.1), style: StrokeStyle(lineWidth: 5, lineCap: .round))
+                .rotationEffect(.degrees(135))
+            Circle()
+                .trim(from: 0, to: 0.75 * fraction)
+                .stroke(
+                    AngularGradient(colors: [tint.opacity(0.55), tint], center: .center, startAngle: .degrees(0), endAngle: .degrees(270 * fraction)),
+                    style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                )
+                .rotationEffect(.degrees(135))
+            VStack(spacing: -2) {
+                Text("\(speed)")
+                    .font(.system(size: speed >= 100 ? 17 : 21, weight: .bold, design: .rounded))
+                    .monospacedDigit()
+                    .contentTransition(.numericText(value: Double(speed)))
+                Text("km/h")
+                    .font(.system(size: 9, weight: .semibold, design: .rounded))
+                    .foregroundStyle(.secondary)
+            }
+            .offset(y: 1)
+        }
+        .padding(7)
+        .frame(width: 66, height: 66)
+        .adaptable(ios26: .glassIn(AnyShape(Circle())), fallback: {
+            $0.background(.ultraThickMaterial, in: Circle())
+                .overlay(Circle().stroke(Color.primary.opacity(0.1), lineWidth: 0.5))
+        })
+        .shadow(radius: 2)
+        .animation(.snappy, value: speed)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text("Vitesse : \(speed) km/h"))
+    }
+}

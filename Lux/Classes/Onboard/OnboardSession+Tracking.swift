@@ -39,6 +39,7 @@ extension OnboardSession {
             paceSamples += 1
         }
         updateHeading()
+        updateGroundSpeed(location)
 
         if !hasResolvedStart, location.horizontalAccuracy <= usableAccuracy {
             hasResolvedStart = true
@@ -47,6 +48,20 @@ extension OnboardSession {
         evaluate()
         checkStillOnBoard()
         updateNearbyStations()
+    }
+
+    func updateGroundSpeed(_ location: CLLocation) {
+        guard location.speed >= 0, location.speedAccuracy >= 0, location.speedAccuracy <= 2.5,
+              location.horizontalAccuracy <= 50 else { return }
+        let smoothed = smoothedSpeed.map { $0 * 0.6 + location.speed * 0.4 } ?? location.speed
+        smoothedSpeed = smoothed
+        speedAt = now
+        let kmh = Int((smoothed * 3.6).rounded())
+        if groundSpeed == nil {
+            withAnimation(.snappy) { groundSpeed = kmh }
+        } else {
+            assign(\.groundSpeed, kmh)
+        }
     }
 
     func handle(_ heading: CLHeading) {
