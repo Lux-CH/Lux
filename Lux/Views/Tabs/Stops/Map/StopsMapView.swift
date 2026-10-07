@@ -244,9 +244,9 @@ struct StopsMapScreen: View {
         }) {
             if let selection = model.presentedSelection {
                 NavigationStack {
-                    StopDepartureSheet(stop: selection.stop, track: selection.track) {
+                    StopDepartureSheet(stop: selection.stop, track: selection.track, onGo: {
                         go(selection.stop)
-                    }
+                    })
                     .environment(\.openTrip, tripOpener)
                     .toolbar(.hidden, for: .navigationBar)
                 }
