@@ -179,6 +179,7 @@ struct StopsMapScreen: View {
     @State private var tripOpener = TripOpener()
     @State private var shouldRenderMap = true
     @State private var isOnScreen = false
+    @State private var shortcutDraft: SearchResult?
 
     var body: some View {
         NavigationStack {
@@ -207,8 +208,19 @@ struct StopsMapScreen: View {
                         }
                     }
                 }
+                .animation(.snappy, value: model.pin)
+                .animation(.snappy, value: model.selection)
+                .animation(.snappy, value: model.isZoomedOut)
+                .animation(.snappy, value: model.isLoading)
+                .animation(.snappy, value: showsHint)
             }
             .toolbar(.hidden, for: .navigationBar)
+            .sheet(item: $shortcutDraft) { location in
+                ShortcutEditorView(shortcutToEdit: nil, prefilledLocation: location, onSave: { shortcut in
+                    model.clearPin()
+                    model.openShortcut(shortcut)
+                })
+            }
             .onAppear {
                 isOnScreen = true
                 shouldRenderMap = true
@@ -229,11 +241,6 @@ struct StopsMapScreen: View {
                     .navigationBarBackButtonHidden(true)
             }
         }
-        .animation(.snappy, value: model.pin)
-        .animation(.snappy, value: model.selection)
-        .animation(.snappy, value: model.isZoomedOut)
-        .animation(.snappy, value: model.isLoading)
-        .animation(.snappy, value: showsHint)
         .sheet(isPresented: Binding(
             get: { model.selection != nil },
             set: { if !$0 { model.selection = nil } }
@@ -386,6 +393,23 @@ struct StopsMapScreen: View {
                     }
                 }
                 Spacer()
+                if pin.shortcut == nil {
+                    Button {
+                        shortcutDraft = model.destination(for: pin)
+                    } label: {
+                        Image(systemName: "circle.fill")
+                            .font(.system(size: 26))
+                            .foregroundStyle(Color(.tertiarySystemFill))
+                            .overlay {
+                                Image(systemName: "star")
+                                    .font(.system(size: 12, weight: .bold))
+                                    .foregroundStyle(.secondary)
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .disabled(pin.isLoading && pin.name == nil)
+                    .accessibilityLabel("Créer un raccourci")
+                }
                 Button {
                     model.clearPin()
                 } label: {

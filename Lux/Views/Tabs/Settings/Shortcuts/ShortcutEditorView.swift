@@ -15,6 +15,8 @@ struct ShortcutEditorView: View {
     @EnvironmentObject private var locationManager: LocationManager
     
     var shortcutToEdit: UserShortcut?
+    var prefilledLocation: SearchResult? = nil
+    var onSave: ((UserShortcut) -> Void)? = nil
     
     @State private var name: String = ""
     @State private var selectedSymbol: String = "house"
@@ -116,6 +118,9 @@ struct ShortcutEditorView: View {
     }
     
     private func setupForEditing() {
+        if shortcutToEdit == nil, let prefilledLocation {
+            selectedLocation = prefilledLocation
+        }
         if let shortcut = shortcutToEdit {
             isEditing = true
             name = shortcut.name
@@ -177,6 +182,7 @@ struct ShortcutEditorView: View {
                 stopId: stopId
             )
             shortcutManager.updateShortcut(updatedShortcut)
+            onSave?(updatedShortcut)
         } else {
             let newShortcut = UserShortcut(
                 name: name,
@@ -186,6 +192,7 @@ struct ShortcutEditorView: View {
                 stopId: stopId
             )
             shortcutManager.addShortcut(newShortcut)
+            onSave?(newShortcut)
         }
         
         dismiss()
