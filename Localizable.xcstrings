@@ -4478,16 +4478,6 @@
         }
       }
     },
-    "Intelligent" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intelligent"
-          }
-        }
-      }
-    },
     "Intelligent : partez dans %lld min, %lld min à pied" : {
       "localizations" : {
         "en" : {
@@ -5517,6 +5507,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "T"
+          }
+        }
+      }
+    },
+    "Magic" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic"
           }
         }
       }

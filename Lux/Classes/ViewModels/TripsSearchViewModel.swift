@@ -58,7 +58,7 @@ enum RoutePreset: String, CaseIterable, Identifiable {
 
     var title: LocalizedStringKey {
         switch self {
-        case .intelligent: "Intelligent"
+        case .intelligent: "Magic"
         case .fastest: "Le plus rapide"
         case .fewerTransfers: "Moins de changements"
         case .lessWalking: "Moins de marche"

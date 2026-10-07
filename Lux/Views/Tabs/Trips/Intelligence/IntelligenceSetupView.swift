@@ -219,7 +219,7 @@ struct IntelligenceSetupView: View {
                 VStack(spacing: 14) {
                     glyph(size: 92)
                         .padding(.top, 24)
-                    Text("Intelligent")
+                    Text("Magic")
                         .font(.largeTitle.weight(.bold))
                     Text("Le bon trajet, pas seulement le plus rapide. Quelques questions pour qu'il vous ressemble.")
                         .font(.body)

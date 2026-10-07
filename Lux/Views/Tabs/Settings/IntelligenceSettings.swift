@@ -85,7 +85,7 @@ struct IntelligenceSettingsCard: View {
                 SectionHeader(
                     icon: "sparkles",
                     iconColor: .purple,
-                    title: String(localized: "Intelligent"),
+                    title: String(localized: "Magic"),
                     subtitle: String(localized: "Suggestions selon la météo, l'affluence et vos habitudes")
                 )
             }
