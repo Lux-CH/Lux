@@ -130,7 +130,7 @@ private struct IntelligenceHeader: View {
                 }
             }
             .buttonStyle(ScaleButtonStyle())
-            .accessibilityLabel(Text("Personnaliser Intelligent"))
+            .accessibilityLabel(Text("Personnaliser Magic"))
         }
     }
 }

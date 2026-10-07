@@ -6651,12 +6651,12 @@
         }
       }
     },
-    "Personnaliser Intelligent" : {
+    "Personnaliser Magic" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Customize Intelligent"
+            "value" : "Customize Magic"
           }
         }
       }
