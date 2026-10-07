@@ -410,7 +410,7 @@ struct IntelligenceSetupView: View {
                 VStack(spacing: 12) {
                     glyph(size: 68)
                         .padding(.top, 16)
-                    Text("Votre Intelligent")
+                    Text("Votre Magic")
                         .font(.title.weight(.bold))
                     Text("Combiné à la météo, à l'affluence signalée et à vos lignes habituelles. Touchez une carte pour la modifier.")
                         .font(.subheadline)

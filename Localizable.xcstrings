@@ -9161,22 +9161,22 @@
         }
       }
     },
-    "Votre Intelligent" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Your Intelligent"
-          }
-        }
-      }
-    },
     "Votre ligne %@" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Your line %@"
+          }
+        }
+      }
+    },
+    "Votre Magic" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your Magic"
           }
         }
       }
