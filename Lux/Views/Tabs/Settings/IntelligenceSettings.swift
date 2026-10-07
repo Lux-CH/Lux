@@ -61,7 +61,7 @@ struct IntelligenceSettingsCard: View {
                 SettingsToggle(
                     icon: "brain",
                     title: String(localized: "Apprendre de mes choix"),
-                    subtitle: String(localized: "Intelligent s'ajuste doucement d'après les trajets que vous choisissez vraiment."),
+                    subtitle: String(localized: "Magic s'ajuste doucement d'après les trajets que vous choisissez vraiment."),
                     isOn: Binding(
                         get: { store.learning.isEnabled },
                         set: { store.learning.isEnabled = $0 }
@@ -167,7 +167,7 @@ struct IntelligenceLearningView: View {
             }
             Button("Annuler", role: .cancel) { }
         } message: {
-            Text("Intelligent oubliera ce qu'il a appris de vos choix. Vos réponses sont conservées.")
+            Text("Magic oubliera ce qu'il a appris de vos choix. Vos réponses sont conservées.")
         }
     }
 }

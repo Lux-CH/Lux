@@ -4498,26 +4498,6 @@
         }
       }
     },
-    "Intelligent oubliera ce qu'il a appris de vos choix. Vos réponses sont conservées." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intelligent will forget what it learned from your choices. Your answers are kept."
-          }
-        }
-      }
-    },
-    "Intelligent s'ajuste doucement d'après les trajets que vous choisissez vraiment." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intelligent slowly adjusts based on the trips you actually choose."
-          }
-        }
-      }
-    },
     "Interface compacte" : {
       "localizations" : {
         "en" : {
@@ -5517,6 +5497,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Magic"
+          }
+        }
+      }
+    },
+    "Magic oubliera ce qu'il a appris de vos choix. Vos réponses sont conservées." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic will forget what it learned from your choices. Your answers are kept."
+          }
+        }
+      }
+    },
+    "Magic s'ajuste doucement d'après les trajets que vous choisissez vraiment." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic slowly adjusts based on the trips you actually choose."
           }
         }
       }
