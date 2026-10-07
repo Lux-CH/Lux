@@ -189,6 +189,7 @@ struct MainNavigationView: View {
                                                 .padding(.bottom, 5)
                                             }
                                             .transition(.opacity.combined(with: .move(edge: .top)))
+                                            .zIndex(1)
                                         }
                                         
                                         GlassEffectGroup(spacing: 8) {
@@ -238,6 +239,7 @@ struct MainNavigationView: View {
 
                                                 if viewMode == .stops {
                                                     Button {
+                                                        guard viewMode == .stops else { return }
                                                         isSearchBarFocused = false
                                                         showStopsMap = true
                                                         UIImpactFeedbackGenerator(style: .soft).impactOccurred()
