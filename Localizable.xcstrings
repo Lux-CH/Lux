@@ -193,16 +193,6 @@
         }
       }
     },
-    "%@. Départ de %@, %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@. Departing %@, %@."
-          }
-        }
-      }
-    },
     "%@%lld'" : {
       "localizations" : {
         "fr" : {
@@ -3086,12 +3076,42 @@
         }
       }
     },
+    "Départ de %@ dans %lld minutes." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departing %@ in %lld minutes."
+          }
+        }
+      }
+    },
+    "Départ de %@ dans 1 minute." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departing %@ in 1 minute."
+          }
+        }
+      }
+    },
     "départ imminent" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "departing now"
+          }
+        }
+      }
+    },
+    "Départ imminent de %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departing %@ now."
           }
         }
       }
@@ -4758,7 +4778,9 @@
         }
       }
     },
-    "km/h" : {},
+    "km/h" : {
+      "shouldTranslate" : false
+    },
     "L" : {
       "localizations" : {
         "en" : {
@@ -9425,36 +9447,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoom in to see stops"
-          }
-        }
-      }
-    },
-    "Départ imminent de %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Departing %@ now."
-          }
-        }
-      }
-    },
-    "Départ de %@ dans 1 minute." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Departing %@ in 1 minute."
-          }
-        }
-      }
-    },
-    "Départ de %@ dans %lld minutes." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Departing %@ in %lld minutes."
           }
         }
       }
