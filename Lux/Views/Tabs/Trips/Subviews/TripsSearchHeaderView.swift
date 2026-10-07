@@ -121,7 +121,7 @@ struct TripsSearchHeaderView: View {
                         .frame(maxHeight: 15)
                         .padding(.vertical, 8)
                         .padding(.horizontal, 20)
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.luxAccent)
                         .contentShape(Capsule(style: .continuous))
                         .clipShape(Capsule(style: .continuous))
                         .adaptable(ios26: .glassButtonClear, fallback: {
@@ -184,17 +184,17 @@ struct TripsSearchHeaderView: View {
                         .lineLimit(1)
                 }
             }
-            .foregroundColor(.accentColor)
+            .foregroundColor(Color.luxAccent)
             .frame(maxHeight: 15)
             .padding(.vertical, 8)
             .padding(.horizontal, 20)
             .contentShape(Capsule(style: .continuous))
             .clipShape(Capsule(style: .continuous))
-            .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
+            .adaptable(ios26: .glassButtonTinted(Color.luxAccent.opacity(0.12)), fallback: {
                 $0.background(
                     Capsule(style: .continuous)
-                        .fill(Color.accentColor.opacity(0.12))
-                        .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                        .fill(Color.luxAccent.opacity(0.12))
+                        .stroke(Color.luxAccent.opacity(0.35), lineWidth: 0.5)
                 )
             })
         }
@@ -228,7 +228,7 @@ struct TripsSearchHeaderView: View {
         }) {
             Image(systemName: "plus")
                 .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.accentColor)
+                .foregroundColor(Color.luxAccent)
                 .frame(width: 32, height: 32)
                 .contentShape(Circle())
                 .clipShape(Circle())
@@ -291,23 +291,23 @@ struct TripsSearchHeaderView: View {
                     Image("toggled.slider.horizontal.3.badge.checkmark")
                         .font(.system(size: 14, weight: .semibold))
                         .symbolRenderingMode(.palette)
-                        .foregroundStyle(Color.green, Color.accentColor)
+                        .foregroundStyle(Color.green, Color.luxAccent)
                 } else {
                     Image(systemName: "slider.horizontal.3")
                         .font(.system(size: 14, weight: .semibold))
                 }
             }
-            .foregroundColor(.accentColor)
+            .foregroundColor(Color.luxAccent)
             .frame(maxHeight: 15)
             .padding(.vertical, 8)
             .padding(.horizontal, 20)
             .contentShape(Capsule(style: .continuous))
             .clipShape(Capsule(style: .continuous))
-            .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
+            .adaptable(ios26: .glassButtonTinted(Color.luxAccent.opacity(0.12)), fallback: {
                 $0.background(
                     Capsule(style: .continuous)
-                        .fill(Color.accentColor.opacity(0.12))
-                        .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                        .fill(Color.luxAccent.opacity(0.12))
+                        .stroke(Color.luxAccent.opacity(0.35), lineWidth: 0.5)
                 )
             })
         }
@@ -333,7 +333,7 @@ struct TripsSearchHeaderView: View {
                 VStack(spacing: 0) {
                     HStack(spacing: 8) {
                         Image(systemName: "location")
-                            .foregroundStyle(viewModel.selectedFrom == nil ? .secondary : Color.accentColor)
+                            .foregroundStyle(viewModel.selectedFrom == nil ? .secondary : Color.luxAccent)
                             .frame(width: 20)
                         fromSearchBar
                             .padding(.vertical, 8)
@@ -354,7 +354,7 @@ struct TripsSearchHeaderView: View {
                     
                     HStack(spacing: 8) {
                         Image(systemName: "flag.checkered")
-                            .foregroundStyle(viewModel.selectedTo == nil ? .secondary : Color.accentColor)
+                            .foregroundStyle(viewModel.selectedTo == nil ? .secondary : Color.luxAccent)
                             .frame(width: 20)
                         toSearchBar
                             .padding(.vertical, 8)
@@ -392,8 +392,8 @@ struct TripsSearchHeaderView: View {
                     .fill(
                         LinearGradient(
                             gradient: Gradient(colors: [
-                                viewModel.selectedFrom == nil ? Color.secondary.opacity(0.3) : Color.accentColor.opacity(0.4),
-                                viewModel.selectedTo == nil ? Color.secondary.opacity(0.3) : Color.accentColor.opacity(0.4)
+                                viewModel.selectedFrom == nil ? Color.secondary.opacity(0.3) : Color.luxAccent.opacity(0.4),
+                                viewModel.selectedTo == nil ? Color.secondary.opacity(0.3) : Color.luxAccent.opacity(0.4)
                             ]),
                             startPoint: .top,
                             endPoint: .bottom
@@ -458,7 +458,7 @@ struct TripsSearchHeaderView: View {
     private func viaRow(_ via: ViaStop) -> some View {
         HStack(spacing: 8) {
             Image(systemName: "smallcircle.filled.circle")
-                .foregroundStyle(via.location == nil ? .secondary : Color.accentColor)
+                .foregroundStyle(via.location == nil ? .secondary : Color.luxAccent)
                 .frame(width: 20)
             TripSearchBar(
                 searchText: $viewModel.viaQuery,
@@ -529,12 +529,12 @@ struct TripsSearchHeaderView: View {
                         .monospacedDigit()
                 }
             }
-            .foregroundColor(via.minimumStay > 0 ? .accentColor : .secondary)
+            .foregroundColor(via.minimumStay > 0 ? Color.luxAccent : .secondary)
             .padding(.vertical, 5)
             .padding(.horizontal, 8)
             .background(
                 Capsule(style: .continuous)
-                    .fill(via.minimumStay > 0 ? Color.accentColor.opacity(0.12) : Color(.tertiarySystemFill))
+                    .fill(via.minimumStay > 0 ? Color.luxAccent.opacity(0.12) : Color(.tertiarySystemFill))
             )
             .contentShape(Capsule(style: .continuous))
         }
@@ -587,7 +587,7 @@ struct TripsSearchHeaderView: View {
     
     private var swapButtonForegroundColor: Color {
         let isEnabled = !(viewModel.selectedFrom == nil && viewModel.selectedTo == nil)
-        return isEnabled ? .accentColor : Color(.tertiaryLabel)
+        return isEnabled ? Color.luxAccent : Color(.tertiaryLabel)
     }
     
     private var timeSummaryText: String {

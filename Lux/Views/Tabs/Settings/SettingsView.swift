@@ -13,7 +13,6 @@ struct SettingsView: View {
     @EnvironmentObject private var shortcutManager: ShortcutManager
     @Environment(\.colorScheme) private var colorScheme
     @ObservedObject var settings = Settings.shared
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     @State private var showWelcome: Bool = false
     @State private var displayMode: Int = 0
     
@@ -83,7 +82,7 @@ struct SettingsView: View {
         VStack(spacing: 12) {
             Image(systemName: "gearshape")
                 .font(.system(size: 40))
-                .foregroundColor(accentColorManager.selectedAccentColor)
+                .foregroundColor(Color.luxAccent)
             
             Text("Paramètres")
                 .font(.title2)

@@ -11,12 +11,12 @@ struct ColorSchemeSelectionView: View {
     @ObservedObject var settings = Settings.shared
     var dimiss: () -> Void
     
-    private let themeOptions = [
-        ThemeOption(id: "system", title: String(localized: "Système"), subtitle: String(localized: "Suit les réglages système"), icon: "iphone", color: .accentColor, isDefault: true),
+    private var themeOptions: [ThemeOption] {[
+        ThemeOption(id: "system", title: String(localized: "Système"), subtitle: String(localized: "Suit les réglages système"), icon: "iphone", color: Color.luxAccent, isDefault: true),
         ThemeOption(id: "automatic", title: String(localized: "Automatique"), subtitle: String(localized: "Basé sur l'heure"), icon: "clock.arrow.2.circlepath", color: .purple),
         ThemeOption(id: "light", title: String(localized: "Clair"), subtitle: String(localized: "Toujours en mode clair"), icon: "sun.max", color: .yellow),
         ThemeOption(id: "dark", title: String(localized: "Sombre"), subtitle: String(localized: "Toujours en mode sombre"), icon: "moon", color: .indigo)
-    ]
+    ]}
     
     var body: some View {
         NavigationStack {
@@ -38,7 +38,7 @@ struct ColorSchemeSelectionView: View {
         VStack(spacing: 12) {
             Image(systemName: "circle.lefthalf.filled")
                 .font(.system(size: 40))
-                .foregroundColor(.accentColor)
+                .foregroundColor(Color.luxAccent)
             
             Text("Mode d'affichage")
                 .font(.title2)

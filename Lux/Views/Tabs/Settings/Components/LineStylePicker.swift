@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct LineStylePicker<SelectionValue: Hashable>: View {
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     let icon: String
     let title: String
     let subtitle: String
@@ -25,7 +24,7 @@ struct LineStylePicker<SelectionValue: Hashable>: View {
             HStack(spacing: 12) {
                 Image(systemName: icon)
                     .font(.title3)
-                    .foregroundColor(accentColorManager.selectedAccentColor)
+                    .foregroundColor(Color.luxAccent)
                     .frame(width: 24, height: 24)
                 
                 VStack(alignment: .leading, spacing: 2) {
@@ -60,7 +59,7 @@ struct LineStylePicker<SelectionValue: Hashable>: View {
                             Text(option.label)
                                 .font(.caption)
                                 .fontWeight(isSelected(option.value) ? .semibold : .regular)
-                                .foregroundColor(isSelected(option.value) ? accentColorManager.selectedAccentColor : .secondary)
+                                .foregroundColor(isSelected(option.value) ? Color.luxAccent : .secondary)
                         }
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
@@ -71,7 +70,7 @@ struct LineStylePicker<SelectionValue: Hashable>: View {
                         ZStack {
                             if isSelected(option.value) {
                                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                    .fill(accentColorManager.selectedAccentColor.opacity(0.15))
+                                    .fill(Color.luxAccent.opacity(0.15))
                                     .matchedGeometryEffect(id: "lineStyleSelection", in: animation)
                             }
                         }

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct DateTimePickerView: View {
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     @Binding var selectedDate: Date
     @Binding var showDatePicker: Bool
     var onApply: () -> Void
@@ -32,13 +31,13 @@ struct DateTimePickerView: View {
             } label: {
                 Label("Maintenant", systemImage: "clock.arrow.circlepath")
                     .font(.footnote)
-                    .foregroundColor(accentColorManager.selectedAccentColor)
+                    .foregroundColor(Color.luxAccent)
                     .padding(.vertical, 6)
                     .padding(.horizontal, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 8)
-                            .stroke(accentColorManager.selectedAccentColor.opacity(0.5), lineWidth: 1)
-                            .background(accentColorManager.selectedAccentColor.opacity(0.1).cornerRadius(8))
+                            .stroke(Color.luxAccent.opacity(0.5), lineWidth: 1)
+                            .background(Color.luxAccent.opacity(0.1).cornerRadius(8))
                     )
             }
             .padding(.top, 4)
@@ -64,7 +63,7 @@ struct DateTimePickerView: View {
                     onApply()
                 }
                 .fontWeight(.bold)
-                .foregroundColor(accentColorManager.selectedAccentColor)
+                .foregroundColor(Color.luxAccent)
             }
             .padding(.horizontal)
             .padding(.bottom, 12)

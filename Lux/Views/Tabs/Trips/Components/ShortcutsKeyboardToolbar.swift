@@ -25,7 +25,7 @@ struct ShortcutsKeyboardToolbar: View {
                         HStack(spacing: 8) {
                             Image(systemName: "location.fill")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.accentColor)
+                                .foregroundColor(Color.luxAccent)
                                 .frame(width: 18, height: 18)
                                 .scaledToFit()
                             
@@ -36,7 +36,7 @@ struct ShortcutsKeyboardToolbar: View {
                         .frame(height: 16)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 8)
-                        .ifAvailable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.15)))
+                        .ifAvailable(ios26: .glassButtonTinted(Color.luxAccent.opacity(0.15)))
                     }
                     .buttonStyle(ScaleButtonStyle())
                     
@@ -54,7 +54,7 @@ struct ShortcutsKeyboardToolbar: View {
                                 HStack(spacing: 8) {
                                     Image(systemName: shortcut.symbol)
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(Color.luxAccent)
                                         .frame(width: 18, height: 18)
                                         .scaledToFit()
                                     
@@ -92,7 +92,7 @@ struct ShortcutsKeyboardToolbar: View {
                         HStack(spacing: 8) {
                             Image(systemName: "location.fill")
                                 .font(.system(size: 14, weight: .medium))
-                                .foregroundColor(.accentColor)
+                                .foregroundColor(Color.luxAccent)
                                 .frame(width: 18, height: 18)
                                 .scaledToFit()
                             
@@ -105,7 +105,7 @@ struct ShortcutsKeyboardToolbar: View {
                         .padding(.vertical, 8)
                         .background(
                             RoundedRectangle(cornerRadius: 10)
-                                .fill(Color.accentColor.opacity(0.15))
+                                .fill(Color.luxAccent.opacity(0.15))
                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                         )
                     }
@@ -125,7 +125,7 @@ struct ShortcutsKeyboardToolbar: View {
                                 HStack(spacing: 8) {
                                     Image(systemName: shortcut.symbol)
                                         .font(.system(size: 14, weight: .medium))
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(Color.luxAccent)
                                         .frame(width: 18, height: 18)
                                         .scaledToFit()
                                     

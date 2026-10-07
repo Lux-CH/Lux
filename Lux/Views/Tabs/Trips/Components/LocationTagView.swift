@@ -57,7 +57,7 @@ struct LocationTagView: View {
     
     private var iconStyle: (symbolName: String, color: Color)? {
         if case .currentPosition = location {
-            return ("location.fill", .accentColor)
+            return ("location.fill", Color.luxAccent)
         }
         
         guard case .searchResult(let result) = location else {
@@ -65,7 +65,7 @@ struct LocationTagView: View {
         }
         
         if let shortcutSymbol = shortcutSymbol(for: result) {
-            return (shortcutSymbol, .accentColor)
+            return (shortcutSymbol, Color.luxAccent)
         }
         
         if result.type != .stop, let style = visualStyleStore.style(for: result.id) {
@@ -82,7 +82,7 @@ struct LocationTagView: View {
         case .place:
             return ("building.fill", .blue)
         case .stop:
-            return ("signpost.right.fill", .accentColor)
+            return ("signpost.right.fill", Color.luxAccent)
         }
     }
     

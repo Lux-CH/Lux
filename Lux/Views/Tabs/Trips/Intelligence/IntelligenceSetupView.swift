@@ -10,7 +10,6 @@ import SwiftUI
 struct IntelligenceSetupView: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.colorScheme) private var colorScheme
-    @ObservedObject private var accentColorManager = AccentColorManager.shared
     @State private var draft: IntelligenceProfile
     @State private var step: Int
     @State private var isForward = true
@@ -27,7 +26,7 @@ struct IntelligenceSetupView: View {
         _step = State(initialValue: profile.isConfigured ? IntelligenceQuestion.all.count : -1)
     }
 
-    private var accent: Color { accentColorManager.selectedAccentColor }
+    private var accent: Color { Color.luxAccent }
     private var isIntro: Bool { step == introStep }
     private var isSummary: Bool { step >= questions.count }
     private var isQuestion: Bool { !isIntro && !isSummary }

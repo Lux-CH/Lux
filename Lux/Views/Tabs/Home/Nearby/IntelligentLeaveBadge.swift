@@ -19,7 +19,7 @@ struct IntelligentLeaveBadge: View {
 
     private func content(now: Date) -> some View {
         let leaveIn = Int((pick.leaveAt.timeIntervalSince(now) / 60).rounded(.down))
-        let tint = leaveIn <= 0 ? Color.orange : Color.accentColor
+        let tint = leaveIn <= 0 ? Color.orange : Color.luxAccent
         return HStack(spacing: 3) {
             Image(systemName: "sparkles")
                 .font(.system(size: 8, weight: .bold))

@@ -253,12 +253,12 @@ struct WidgetStopSelectorView: View {
             HStack(spacing: 18) {
                 ZStack {
                     Circle()
-                        .fill(Color.accentColor.opacity(0.15))
+                        .fill(Color.luxAccent.opacity(0.15))
                         .frame(width: 44, height: 44)
                     
                     Image(systemName: "location.fill")
                         .font(.system(size: 18))
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.luxAccent)
                         .symbolRenderingMode(.hierarchical)
                 }
                 
@@ -285,7 +285,7 @@ struct WidgetStopSelectorView: View {
                 
                 Image(systemName: selectedStopId == "current" ? "checkmark.circle.fill" : "circle")
                     .font(.system(size: 20, weight: .medium))
-                    .foregroundColor(selectedStopId == "current" ? .accentColor : .secondary.opacity(0.7))
+                    .foregroundColor(selectedStopId == "current" ? Color.luxAccent : .secondary.opacity(0.7))
             }
             .padding()
             .adaptable(
@@ -429,7 +429,7 @@ struct WidgetStopRow: View {
             
             Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                 .font(.system(size: 20, weight: .medium))
-                .foregroundColor(isSelected ? .accentColor : .secondary.opacity(0.7))
+                .foregroundColor(isSelected ? Color.luxAccent : .secondary.opacity(0.7))
         }
         .contentShape(Rectangle())
     }

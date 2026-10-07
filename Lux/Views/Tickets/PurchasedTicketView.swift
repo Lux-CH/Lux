@@ -29,7 +29,7 @@ struct PurchasedTicketView: View {
                     Text(countdownText)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.luxAccent)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {

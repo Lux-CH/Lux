@@ -82,7 +82,7 @@ struct ExpandedStopHeaderView: View {
             .padding(.horizontal, 8)
             .background(
                 Capsule(style: .continuous)
-                    .fill(Color.accentColor.opacity(0.1))
+                    .fill(Color.luxAccent.opacity(0.1))
             )
         }
         .buttonStyle(.borderless)
@@ -115,7 +115,7 @@ struct CustomSegmentedPicker: View {
                     Text(option)
                         .font(.footnote)
                         .fontWeight(selection == option ? .medium : .regular)
-                        .foregroundColor(selection == option ? .accentColor : .secondary)
+                        .foregroundColor(selection == option ? Color.luxAccent : .secondary)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 4)
                         .padding(.horizontal, 8)
@@ -125,7 +125,7 @@ struct CustomSegmentedPicker: View {
                     ZStack {
                         if selection == option {
                             Capsule(style: .continuous)
-                                .fill(Color.accentColor.opacity(0.12))
+                                .fill(Color.luxAccent.opacity(0.12))
                                 .matchedGeometryEffect(id: "selection", in: animation)
                         }
                     }
@@ -135,7 +135,7 @@ struct CustomSegmentedPicker: View {
         .padding(2)
         .overlay(
             Capsule(style: .continuous)
-                .stroke(Color.accentColor.opacity(0.2), lineWidth: colorScheme == .dark ? 0.5 : 0.75)
+                .stroke(Color.luxAccent.opacity(0.2), lineWidth: colorScheme == .dark ? 0.5 : 0.75)
         )
         .frame(height: 28)
     }

@@ -239,7 +239,7 @@ struct CompactStopView: View {
             ZStack {
                 LinearGradient(colors: [lineColor.opacity(0.05), lineColor.opacity(0.01)], startPoint: .topLeading, endPoint: .bottomTrailing)
                 if isHighlighted {
-                    LinearGradient(colors: [Color.accentColor.opacity(0.14), Color.accentColor.opacity(0.04)], startPoint: .leading, endPoint: .trailing)
+                    LinearGradient(colors: [Color.luxAccent.opacity(0.14), Color.luxAccent.opacity(0.04)], startPoint: .leading, endPoint: .trailing)
                 }
             }
             .padding(.bottom, isLastRoute ? (isLastStopOverall ? -4 : -55) : 0)

@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct ShortcutsListView: View {
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     @EnvironmentObject private var shortcutManager: ShortcutManager
     @ObservedObject var settings = Settings.shared
     @Environment(\.colorScheme) private var colorScheme
@@ -42,7 +41,7 @@ struct ShortcutsListView: View {
         VStack(spacing: 12) {
             Image(systemName: "link")
                 .font(.system(size: 40))
-                .foregroundColor(accentColorManager.selectedAccentColor)
+                .foregroundColor(Color.luxAccent)
             
             Text("Raccourcis")
                 .font(.title2)
@@ -121,9 +120,9 @@ struct ShortcutsListView: View {
                     } label: {
                         HStack {
                             Image(systemName: "plus.circle.fill")
-                                .foregroundColor(accentColorManager.selectedAccentColor)
+                                .foregroundColor(Color.luxAccent)
                             Text("Ajouter un raccourci")
-                                .foregroundColor(accentColorManager.selectedAccentColor)
+                                .foregroundColor(Color.luxAccent)
                         }
                         .padding(.vertical, 10)
                         .padding(.leading, 5)
@@ -156,7 +155,7 @@ struct ShortcutsListView: View {
     private func shortcutRow(for shortcut: UserShortcut) -> some View {
         HStack {
             Image(systemName: shortcut.symbol)
-                .foregroundColor(accentColorManager.selectedAccentColor)
+                .foregroundColor(Color.luxAccent)
                 .font(.title3)
                 .frame(width: 40)
             
@@ -174,11 +173,11 @@ struct ShortcutsListView: View {
                     HStack {
                         ForEach(Array(schedule.daysOfWeek.sorted(by: { $0.rawValue < $1.rawValue })), id: \.self) { day in
                             Text(day.displayName)
-                                .foregroundStyle(Color.accentColor)
+                                .foregroundStyle(Color.luxAccent)
                                 .font(.caption2)
                                 .padding(.horizontal, 4)
                                 .padding(.vertical, 2)
-                                .background(accentColorManager.selectedAccentColor.opacity(0.2))
+                                .background(Color.luxAccent.opacity(0.2))
                                 .cornerRadius(4)
                         }
                         
@@ -192,7 +191,7 @@ struct ShortcutsListView: View {
             Spacer()
             
             Image(systemName: "pencil")
-                .foregroundColor(accentColorManager.selectedAccentColor)
+                .foregroundColor(Color.luxAccent)
         }
         .padding(.horizontal, 20)
         .padding(.vertical, 12)

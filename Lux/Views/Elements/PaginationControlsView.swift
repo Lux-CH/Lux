@@ -64,7 +64,7 @@ struct PaginationControlsView: View {
             .buttonStyle(.plain)
             .disabled(isLoadingEarlier || isLoadingLater || isLoading || isChangingContent)
         }
-        .foregroundColor(.accentColor)
+        .foregroundColor(Color.luxAccent)
         .background {
             if #available(iOS 27, *) {
                 Capsule(style: .continuous)

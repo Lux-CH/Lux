@@ -247,7 +247,7 @@ struct TicketRow: View {
                     Text(durationText)
                         .font(.title2)
                         .fontWeight(.bold)
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.luxAccent)
                 }
                 
                 VStack(alignment: .leading, spacing: 4) {
@@ -302,7 +302,6 @@ struct TicketRow: View {
 }
 
 struct LuxPassRow: View {
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     
     var body: some View {
         HStack(spacing: 16) {

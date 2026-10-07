@@ -39,7 +39,7 @@ struct ModernCard<Content: View>: View {
         case .normal:
             return Color(.secondarySystemGroupedBackground)
         case .accent:
-            return (optionalColor ?? Color.accentColor).opacity(0.05)
+            return (optionalColor ?? Color.luxAccent).opacity(0.05)
         case .subtle:
             return Color(.tertiarySystemGroupedBackground)
         }
@@ -60,14 +60,13 @@ struct ModernTextFieldStyle: TextFieldStyle {
 }
 
 struct ModernToggleStyle: ToggleStyle {
-    @ObservedObject var accentColorManager = AccentColorManager.shared
 
     func makeBody(configuration: Configuration) -> some View {
         Button {
             configuration.isOn.toggle()
         } label: {
             RoundedRectangle(cornerRadius: 16, style: .continuous)
-                .fill(configuration.isOn ? accentColorManager.selectedAccentColor : Color(.systemGray4))
+                .fill(configuration.isOn ? Color.luxAccent : Color(.systemGray4))
                 .frame(width: 50, height: 30)
                 .overlay(
                     Circle()

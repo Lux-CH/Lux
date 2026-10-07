@@ -137,10 +137,10 @@ struct MorePill: View {
     var body: some View {
         let fillColor: Color = settings.easyOnTheEyes ?
             .clear :
-            (settings.highContrastButAccurateLinePill ? Color(.secondarySystemFill) : Color.accentColor.opacity(0.25))
+            (settings.highContrastButAccurateLinePill ? Color(.secondarySystemFill) : Color.luxAccent.opacity(0.25))
         
         let strokeColor: Color = settings.easyOnTheEyes ?
-            Color.accentColor.opacity(0.1) :
+            Color.luxAccent.opacity(0.1) :
             Color.primary.opacity(0.1)
         
         ZStack {
@@ -149,7 +149,7 @@ struct MorePill: View {
                 .stroke(strokeColor, lineWidth: 0.5)
                 .frame(width: 30, height: 20)
             Image(systemName: "ellipsis")
-                .foregroundColor(Color.accentColor)
+                .foregroundColor(Color.luxAccent)
                 .multilineTextAlignment(.center)
                 .font(.system(size: 11))
         }

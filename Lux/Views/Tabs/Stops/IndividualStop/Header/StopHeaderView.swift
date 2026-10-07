@@ -63,7 +63,7 @@ struct StopHeaderView: View {
                             showAlert = true
                         } label: {
                             Image(systemName: "link")
-                                .foregroundColor(Color.accentColor)
+                                .foregroundColor(Color.luxAccent)
                                 .font(.system(size: 13.3))
                                 .frame(width: 40.5, height: 35)
                                 .contentShape(Circle())
@@ -83,7 +83,7 @@ struct StopHeaderView: View {
                         showTripSearch.toggle()
                     } label: {
                         Image(systemName: "arrow.triangle.turn.up.right.circle")
-                            .foregroundColor(Color.accentColor)
+                            .foregroundColor(Color.luxAccent)
                             .font(.system(size: 20))
                             .frame(width: 61, height: 52.5)
                             .contentShape(Circle())

@@ -52,7 +52,7 @@ struct AnimatedSearchBar: View {
             Button(action: onSearch) {
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 20))
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.luxAccent)
             }
             .buttonStyle(PlainButtonStyle())
             .allowsHitTesting(!isTextFieldDisabled)

@@ -23,7 +23,7 @@ struct SuggestedTripView: View {
                         HStack(spacing: 8) {
                             Image(systemName: reason.symbol)
                                 .font(.system(size: 12, weight: .semibold))
-                                .foregroundStyle(Color.accentColor)
+                                .foregroundStyle(Color.luxAccent)
                                 .frame(width: 18)
                             Text(reason.text)
                                 .font(.system(size: 14, weight: .medium))
@@ -51,8 +51,8 @@ struct SuggestedTripView: View {
         }
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.accentColor.opacity(0.1))
-                .stroke(Color.accentColor.opacity(0.2), lineWidth: 0.5)
+                .fill(Color.luxAccent.opacity(0.1))
+                .stroke(Color.luxAccent.opacity(0.2), lineWidth: 0.5)
         )
         .padding(.horizontal, 16)
     }
@@ -73,8 +73,8 @@ struct IntelligenceThinkingView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(
             RoundedRectangle(cornerRadius: 24, style: .continuous)
-                .fill(Color.accentColor.opacity(0.1))
-                .stroke(Color.accentColor.opacity(0.2), lineWidth: 0.5)
+                .fill(Color.luxAccent.opacity(0.1))
+                .stroke(Color.luxAccent.opacity(0.2), lineWidth: 0.5)
         )
         .padding(.horizontal, 16)
     }
@@ -89,7 +89,7 @@ private struct IntelligenceHeader: View {
         HStack(spacing: 8) {
             Image(systemName: "sparkles")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.luxAccent)
                 .symbolEffect(.pulse, isActive: weather == nil && !store.profile.isConfigured)
             Text("Suggestion")
                 .font(.system(size: 15, weight: .bold))
@@ -123,10 +123,10 @@ private struct IntelligenceHeader: View {
                 } else {
                     Text("Personnaliser")
                         .font(.system(size: 13, weight: .semibold))
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.luxAccent)
                         .padding(.horizontal, 12)
                         .padding(.vertical, 6)
-                        .background(Color.accentColor.opacity(0.14), in: Capsule())
+                        .background(Color.luxAccent.opacity(0.14), in: Capsule())
                 }
             }
             .buttonStyle(ScaleButtonStyle())

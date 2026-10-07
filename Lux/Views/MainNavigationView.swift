@@ -541,10 +541,10 @@ struct MainNavigationView: View {
                     VStack(spacing: 4) {
                         HStack {
                             Image(systemName: "plus")
-                                .foregroundColor(Color.accentColor.opacity(0.5))
+                                .foregroundColor(Color.luxAccent.opacity(0.5))
                                 .font(.system(size: 20))
                             Text("Ajouter des raccourcis")
-                                .foregroundColor(Color.accentColor.opacity(0.5))
+                                .foregroundColor(Color.luxAccent.opacity(0.5))
                         }
                     }
                     .frame(maxWidth: .infinity)

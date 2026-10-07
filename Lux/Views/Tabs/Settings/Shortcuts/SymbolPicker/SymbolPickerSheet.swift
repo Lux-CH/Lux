@@ -11,7 +11,6 @@ import SFSymbols
 struct SymbolPickerSheet: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var catalog = SymbolCatalog()
-    @ObservedObject private var accentColorManager = AccentColorManager.shared
 
     @Binding var selection: String
 
@@ -152,10 +151,10 @@ struct SymbolPickerSheet: View {
             .background(
                 Capsule()
                     .fill(isSelected
-                          ? accentColorManager.selectedAccentColor.opacity(0.15)
+                          ? Color.luxAccent.opacity(0.15)
                           : Color(.tertiarySystemGroupedBackground))
             )
-            .foregroundStyle(isSelected ? accentColorManager.selectedAccentColor : .primary)
+            .foregroundStyle(isSelected ? Color.luxAccent : .primary)
         }
         .buttonStyle(.plain)
     }
@@ -190,7 +189,7 @@ struct SymbolPickerSheet: View {
                             SymbolTile(
                                 name: symbol.name,
                                 isSelected: symbol.name == selection,
-                                tint: accentColorManager.selectedAccentColor
+                                tint: Color.luxAccent
                             )
                         }
                         .buttonStyle(.plain)

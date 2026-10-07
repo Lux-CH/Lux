@@ -64,7 +64,7 @@ struct OnboardConsentSheet: View {
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 15)
-                        .background(Color.accentColor.gradient, in: Capsule())
+                        .background(Color.luxAccent.gradient, in: Capsule())
                 }
                 .buttonStyle(ScaleButtonStyle())
 
@@ -74,7 +74,7 @@ struct OnboardConsentSheet: View {
                 } label: {
                     Text("Pas maintenant")
                         .font(.headline)
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.luxAccent)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 12)
                 }
@@ -89,18 +89,18 @@ struct OnboardConsentSheet: View {
     private var illustration: some View {
         ZStack {
             Circle()
-                .fill(Color.accentColor.opacity(0.12))
+                .fill(Color.luxAccent.opacity(0.12))
                 .frame(width: 112, height: 112)
             Circle()
-                .fill(Color.accentColor.gradient)
+                .fill(Color.luxAccent.gradient)
                 .frame(width: 80, height: 80)
-                .shadow(color: Color.accentColor.opacity(0.4), radius: 12, y: 6)
+                .shadow(color: Color.luxAccent.opacity(0.4), radius: 12, y: 6)
             Image(systemName: "tram.fill")
                 .font(.system(size: 36, weight: .semibold))
                 .foregroundStyle(.white)
             Image(systemName: "dot.radiowaves.up.forward")
                 .font(.system(size: 17, weight: .bold))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.luxAccent)
                 .frame(width: 34, height: 34)
                 .background(Circle().fill(Color(.systemBackground)))
                 .shadow(color: .black.opacity(0.12), radius: 4, y: 2)

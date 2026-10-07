@@ -21,7 +21,7 @@ struct ShortcutButton: View {
             VStack(spacing: 4) {
                 HStack {
                     Image(systemName: symbol)
-                        .foregroundColor(isPlaceholder ? Color.accentColor.opacity(0.5) : Color.accentColor)
+                        .foregroundColor(isPlaceholder ? Color.luxAccent.opacity(0.5) : Color.luxAccent)
                         .font(.system(size: 20))
                     if let shortcutName = name, !isPlaceholder, settings.showShortcutLabel {
                         Text(shortcutName)

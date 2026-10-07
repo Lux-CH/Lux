@@ -10,7 +10,6 @@ import LuxCom
 
 struct RouteOptionsView: View {
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     
     @State private var maxTransfers: Int
     @State private var minTransferTime: Int
@@ -94,7 +93,7 @@ struct RouteOptionsView: View {
                         HapticFeedback.mediumImpact()
                     }
                     .font(.body.weight(.bold))
-                    .foregroundStyle(accentColorManager.selectedAccentColor)
+                    .foregroundStyle(Color.luxAccent)
                 }
             }
             .confirmationDialog(
@@ -136,7 +135,7 @@ struct RouteOptionsView: View {
                     
                     Image(systemName: "slider.horizontal.3")
                         .font(.title)
-                        .foregroundStyle(accentColorManager.selectedAccentColor)
+                        .foregroundStyle(Color.luxAccent)
                 }
             }
         }
@@ -338,15 +337,15 @@ struct RouteOptionsView: View {
             showResetConfirmation = true
             HapticFeedback.lightImpact()
         }) {
-            ModernCard(style: .accent, optionalColor: accentColorManager.selectedAccentColor) {
+            ModernCard(style: .accent, optionalColor: Color.luxAccent) {
                 HStack(spacing: 12) {
                     Image(systemName: "arrow.clockwise")
                         .font(.headline.weight(.medium))
-                        .foregroundStyle(accentColorManager.selectedAccentColor)
+                        .foregroundStyle(Color.luxAccent)
                     
                     Text("Rétablir les valeurs par défaut")
                         .font(.subheadline.weight(.medium))
-                        .foregroundStyle(accentColorManager.selectedAccentColor)
+                        .foregroundStyle(Color.luxAccent)
                     
                     Spacer()
                 }
@@ -412,12 +411,11 @@ struct RouteOptionsView: View {
 struct OptionHeader: View {
     let title: String
     let icon: String
-    @ObservedObject var accentColorManager = AccentColorManager.shared
 
     var body: some View {
         HStack(spacing: 8) {
             Image(systemName: icon)
-                .foregroundStyle(accentColorManager.selectedAccentColor)
+                .foregroundStyle(Color.luxAccent)
                 .font(.caption.weight(.medium))
             
             Text(title)
@@ -431,7 +429,6 @@ struct TransferCountButton: View {
     let number: Int
     let isSelected: Bool
     let onTap: () -> Void
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     
     var body: some View {
         Button(action: onTap) {
@@ -441,7 +438,7 @@ struct TransferCountButton: View {
                 .frame(width: 44, height: 44)
                 .background(
                     Circle()
-                        .fill(isSelected ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
+                        .fill(isSelected ? Color.luxAccent : Color(.tertiarySystemFill))
                         .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                 )
         }
@@ -454,14 +451,13 @@ struct AccessibilityProfileButton: View {
     let iconName: String
     let isSelected: Bool
     let action: () -> Void
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     
     var body: some View {
         Button(action: action) {
             VStack(spacing: 12) {
                 ZStack {
                     Circle()
-                        .fill(isSelected ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
+                        .fill(isSelected ? Color.luxAccent : Color(.tertiarySystemFill))
                         .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                         .frame(width: 60, height: 60)
                     
@@ -472,14 +468,14 @@ struct AccessibilityProfileButton: View {
                 
                 Text(title)
                     .font(.system(size: 14, weight: isSelected ? .medium : .regular))
-                    .foregroundColor(isSelected ? accentColorManager.selectedAccentColor : .primary)
+                    .foregroundColor(isSelected ? Color.luxAccent : .primary)
                     .multilineTextAlignment(.center)
             }
             .frame(maxWidth: .infinity)
             .padding(.vertical, 10)
             .background(
                 RoundedRectangle(cornerRadius: 12, style: .continuous)
-                    .stroke(isSelected ? accentColorManager.selectedAccentColor : Color.clear, lineWidth: 2)
+                    .stroke(isSelected ? Color.luxAccent : Color.clear, lineWidth: 2)
                     .animation(.easeInOut(duration: 0.2), value: isSelected)
             )
         }
@@ -534,12 +530,12 @@ struct TransportModeToggle: View {
                 
                 ZStack {
                     Circle()
-                        .stroke(isSelected ? Color.accentColor : Color.secondary.opacity(0.3), lineWidth: 2)
+                        .stroke(isSelected ? Color.luxAccent : Color.secondary.opacity(0.3), lineWidth: 2)
                         .frame(width: 26, height: 26)
                     
                     if isSelected {
                         Circle()
-                            .fill(Color.accentColor)
+                            .fill(Color.luxAccent)
                             .frame(width: 18, height: 18)
                             .transition(.scale.combined(with: .opacity))
                     }
@@ -557,7 +553,6 @@ struct TransportModeToggle: View {
 struct TransferTimeSelector: View {
     @Binding var selectedTime: Int
     private let timeOptions = [0, 2, 5, 7, 10]
-    @ObservedObject var accentColorManager = AccentColorManager.shared
 
     
     var body: some View {
@@ -578,7 +573,7 @@ struct TransferTimeSelector: View {
                     .padding(.vertical, 12)
                     .background(
                         RoundedRectangle(cornerRadius: 12, style: .continuous)
-                            .fill(selectedTime == minutes ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
+                            .fill(selectedTime == minutes ? Color.luxAccent : Color(.tertiarySystemFill))
                             .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                     )
                 }
@@ -591,7 +586,6 @@ struct TransferTimeSelector: View {
 struct WalkingTimeSelector: View {
     @Binding var selectedTime: Int
     private let walkingTimeOptions = [300, 900, 1200, 1800, 5400]
-    @ObservedObject var accentColorManager = AccentColorManager.shared
 
     private func formatWalkingTime(_ seconds: Int) -> String {
         let minutes = seconds / 60
@@ -638,7 +632,7 @@ struct WalkingTimeSelector: View {
                         .padding(.vertical, 12)
                         .background(
                             RoundedRectangle(cornerRadius: 12, style: .continuous)
-                                .fill(selectedTime == seconds ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
+                                .fill(selectedTime == seconds ? Color.luxAccent : Color(.tertiarySystemFill))
                                 .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                         )
                     }
@@ -652,7 +646,6 @@ struct WalkingTimeSelector: View {
 struct PedestrianSpeedSelector: View {
     @Binding var selectedSpeed: Double
     private let speedOptions: [Double] = [1.0, 1.2, 1.7, 2.0, 3.0]
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     
     private var isSpeedInvalid: Bool {
         !speedOptions.contains(selectedSpeed)
@@ -714,15 +707,15 @@ struct PedestrianSpeedSelector: View {
     var body: some View {
         VStack(spacing: 12) {
             if isSpeedInvalid {
-                ModernCard(style: .accent, optionalColor: accentColorManager.selectedAccentColor) {
+                ModernCard(style: .accent, optionalColor: Color.luxAccent) {
                     HStack(spacing: 12) {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .font(.headline.weight(.medium))
-                            .foregroundStyle(accentColorManager.selectedAccentColor)
+                            .foregroundStyle(Color.luxAccent)
                         
                         Text("La vitesse choisie n'est plus sélectionnable.")
                             .font(.subheadline.weight(.medium))
-                            .foregroundStyle(accentColorManager.selectedAccentColor)
+                            .foregroundStyle(Color.luxAccent)
                         
                         Spacer()
                         
@@ -732,7 +725,7 @@ struct PedestrianSpeedSelector: View {
                                 .foregroundStyle(.white)
                                 .padding(.horizontal, 12)
                                 .padding(.vertical, 6)
-                                .background(accentColorManager.selectedAccentColor)
+                                .background(Color.luxAccent)
                                 .cornerRadius(12)
                         }
                     }
@@ -754,7 +747,7 @@ struct PedestrianSpeedSelector: View {
                         VStack(spacing: 8) {
                             ZStack {
                                 Circle()
-                                    .fill(selectedSpeed == speed ? accentColorManager.selectedAccentColor : Color(.tertiarySystemFill))
+                                    .fill(selectedSpeed == speed ? Color.luxAccent : Color(.tertiarySystemFill))
                                     .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
                                     .frame(width: 44, height: 44)
                                 
@@ -766,12 +759,12 @@ struct PedestrianSpeedSelector: View {
                             VStack(spacing: 2) {
                                 Text(getSpeedDescription(speed))
                                     .font(.system(size: 11, weight: selectedSpeed == speed ? .semibold : .medium))
-                                    .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor : .secondary)
+                                    .foregroundColor(selectedSpeed == speed ? Color.luxAccent : .secondary)
                                     .multilineTextAlignment(.center)
                                 
                                 Text(formatSpeedInKmh(speed))
                                     .font(.system(size: 9, weight: .regular))
-                                    .foregroundColor(selectedSpeed == speed ? accentColorManager.selectedAccentColor.opacity(0.8) : Color(.tertiaryLabel))
+                                    .foregroundColor(selectedSpeed == speed ? Color.luxAccent.opacity(0.8) : Color(.tertiaryLabel))
                                     .multilineTextAlignment(.center)
                             }
                         }

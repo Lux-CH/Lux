@@ -93,7 +93,7 @@ struct NearbyStopsView: View {
                         }
                     }
                     .font(.system(size: 16, weight: .medium))
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.luxAccent)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .background(
@@ -135,7 +135,7 @@ struct NearbyStopsView: View {
                             .resizable()
                             .scaledToFit()
                             .frame(width: 80, height: 80)
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(Color.luxAccent)
 
                         Text("Maintenance en cours")
                             .font(.title2)
@@ -173,7 +173,7 @@ struct NearbyStopsView: View {
                             Button("État des serveurs") {
                                 showSafari = true
                             }
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(Color.luxAccent)
                         }
                         .padding(.top, 8)
 
@@ -189,7 +189,7 @@ struct NearbyStopsView: View {
                     Button("État des serveurs") {
                         showSafari = true
                     }
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(Color.luxAccent)
                 }
             } else {
                 VStack(spacing: 8) {

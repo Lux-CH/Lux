@@ -74,7 +74,7 @@ struct StatsView: View {
         VStack(spacing: 12) {
             Image(systemName: "chart.bar.doc.horizontal")
                 .font(.system(size: 40))
-                .foregroundColor(.accentColor)
+                .foregroundColor(Color.luxAccent)
             
             Text(verbatim: "Statistiques")
                 .font(.title2)

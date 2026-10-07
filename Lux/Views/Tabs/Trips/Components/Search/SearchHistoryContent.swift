@@ -76,16 +76,16 @@ struct SearchHistoryContent: View {
                                 Image(systemName: "location.fill")
                                     .font(.system(size: 13, weight: .semibold))
                             }
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(Color.luxAccent)
                             .padding(.vertical, 6)
                             .padding(.horizontal, 24)
                             .contentShape(Capsule(style: .continuous))
                             .clipShape(Capsule(style: .continuous))
-                            .adaptable(ios26: .glassButtonTinted(Color.accentColor.opacity(0.12)), fallback: {
+                            .adaptable(ios26: .glassButtonTinted(Color.luxAccent.opacity(0.12)), fallback: {
                                 $0.background(
                                     Capsule(style: .continuous)
-                                        .fill(Color.accentColor.opacity(0.12))
-                                        .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                                        .fill(Color.luxAccent.opacity(0.12))
+                                        .stroke(Color.luxAccent.opacity(0.35), lineWidth: 0.5)
                                 )
                             })
                         }
@@ -162,7 +162,7 @@ struct SearchHistoryContent: View {
     private func historyRow(for result: SearchResult, index: Int) -> some View {
         let defaultIcon: (String, Color) = visualStyleStore.style(for: result.id).map { ($0.symbolName, $0.color) }
             ?? getIconForType(result.type, id: result.id)
-        let (iconName, iconColor) = shortcutSymbol(for: result).map { ($0, Color.accentColor) } ?? defaultIcon
+        let (iconName, iconColor) = shortcutSymbol(for: result).map { ($0, Color.luxAccent) } ?? defaultIcon
 
         HStack(spacing: 14) {
             ZStack {
@@ -240,7 +240,7 @@ struct SearchHistoryContent: View {
         case .place:
             return ("building.fill", .blue)
         case .stop:
-            return ("signpost.right.fill", .accentColor)
+            return ("signpost.right.fill", Color.luxAccent)
         }
     }
 

@@ -153,7 +153,7 @@ struct WelcomeView: View {
         if currentPage == 1 {
             switch locationManager.authorizationStatus {
             case .notDetermined:
-                return .accentColor
+                return Color.luxAccent
             case .denied, .restricted:
                 return .yellow
             case .authorizedWhenInUse, .authorizedAlways:
@@ -497,7 +497,7 @@ struct WelcomeView: View {
         HStack(spacing: 12) {
             Image(systemName: "location.fill")
                 .font(.system(size: 20))
-                .foregroundColor(.accentColor)
+                .foregroundColor(Color.luxAccent)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(String(localized: "Localisation"))
@@ -601,13 +601,13 @@ struct WelcomeView: View {
     private func getLocationIconColor() -> Color {
         switch locationManager.authorizationStatus {
         case .notDetermined:
-            return .accentColor
+            return Color.luxAccent
         case .denied, .restricted:
             return .orange
         case .authorizedWhenInUse, .authorizedAlways:
             return .green
         @unknown default:
-            return .accentColor
+            return Color.luxAccent
         }
     }
     
@@ -664,7 +664,7 @@ struct WelcomeView: View {
         HStack(spacing: 12) {
             Image(systemName: "paintbrush")
                 .font(.system(size: 20))
-                .foregroundColor(.accentColor)
+                .foregroundColor(Color.luxAccent)
             
             VStack(alignment: .leading, spacing: 2) {
                 Text("Faites de Lux le votre")
@@ -842,7 +842,7 @@ struct CustomisationExplainationButton: View {
                 Spacer()
                 
                 Image(systemName: "arrow.right.circle")
-                    .foregroundStyle(Color.accentColor)
+                    .foregroundStyle(Color.luxAccent)
             }
             .contentShape(Rectangle())
         }

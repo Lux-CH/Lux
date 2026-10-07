@@ -51,7 +51,7 @@ struct LineScoreView: View {
         VStack(spacing: 12) {
             Image(systemName: "chart.bar.fill")
                 .font(.system(size: 40))
-                .foregroundColor(.accentColor)
+                .foregroundColor(Color.luxAccent)
             
             Text("Lignes préférées")
                 .font(.title2)
@@ -156,9 +156,9 @@ struct LineScoreView: View {
                 } label: {
                     HStack {
                         Image(systemName: "plus.circle.fill")
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(Color.luxAccent)
                         Text("Ajouter une ligne")
-                            .foregroundColor(.accentColor)
+                            .foregroundColor(Color.luxAccent)
                     }
                     .padding(.vertical, 8)
                 }
@@ -334,7 +334,6 @@ struct EditableLinePill: View {
 struct AddLineScoreView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var lineScoreManager = LineScoreManager.shared
-    @ObservedObject private var accentColorManager = AccentColorManager.shared
 
     @State private var lineNumber = ""
     @State private var selectedMode: TransportationMode = .bus
@@ -385,16 +384,16 @@ struct AddLineScoreView: View {
                 Button {
                     addLine()
                 } label: {
-                    ModernCard(style: .accent, optionalColor: accentColorManager.selectedAccentColor) {
+                    ModernCard(style: .accent, optionalColor: Color.luxAccent) {
                         HStack(spacing: 12) {
                             Spacer()
                             Image(systemName: "plus")
                                 .font(.headline.weight(.medium))
-                                .foregroundStyle(accentColorManager.selectedAccentColor)
+                                .foregroundStyle(Color.luxAccent)
                             
                             Text("Ajouter cette ligne")
                                 .font(.subheadline.weight(.medium))
-                                .foregroundStyle(accentColorManager.selectedAccentColor)
+                                .foregroundStyle(Color.luxAccent)
                             Spacer()
                         }
                     }

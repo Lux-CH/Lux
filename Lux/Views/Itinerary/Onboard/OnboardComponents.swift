@@ -16,7 +16,7 @@ struct OnboardInstructionBanner: View {
         case .arrived: return Color(red: 0.13, green: 0.6, blue: 0.33)
         case .walking: return session.isOffRoute ? Color(red: 0.85, green: 0.45, blue: 0.05) : Color(red: 0.1, green: 0.42, blue: 0.85)
         case .waiting, .riding:
-            guard let leg = session.currentLeg else { return .accentColor }
+            guard let leg = session.currentLeg else { return Color.luxAccent }
             if session.phase == .riding && session.stopsRemaining <= 1 { return Color(red: 0.86, green: 0.18, blue: 0.2) }
             return linePill(for: leg).onboardLineColor
         }
@@ -539,7 +539,7 @@ struct OnboardBottomPanel: View {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 11)
                         .foregroundStyle(.white)
-                        .background(Color.accentColor.gradient, in: Capsule())
+                        .background(Color.luxAccent.gradient, in: Capsule())
                 }
                 .buttonStyle(.plain)
             }
@@ -602,7 +602,7 @@ struct OnboardBottomPanel: View {
 
     private var rideProgress: some View {
         let stops = session.currentStops
-        let color = session.currentLeg.map { getOnboardLegColor($0) } ?? .accentColor
+        let color = session.currentLeg.map { getOnboardLegColor($0) } ?? Color.luxAccent
         return VStack(alignment: .leading, spacing: 6) {
             GeometryReader { proxy in
                 let count = max(stops.count, 2)
@@ -657,7 +657,7 @@ struct OnboardBottomPanel: View {
     private var sharingRow: some View {
         HStack(spacing: 8) {
             Image(systemName: session.isSharingPosition ? "dot.radiowaves.up.forward" : "antenna.radiowaves.left.and.right.slash")
-                .foregroundStyle(session.isSharingPosition ? Color.accentColor : .secondary)
+                .foregroundStyle(session.isSharingPosition ? Color.luxAccent : .secondary)
                 .symbolEffect(.variableColor.iterative, options: .repeating, isActive: session.isSharingPosition)
             Group {
                 if !session.isSharingPosition {
@@ -804,7 +804,7 @@ struct PlatformAdviceRow: View {
                 .font(.system(size: 13, weight: .bold))
                 .foregroundStyle(.white)
                 .frame(width: 28, height: 28)
-                .background(Circle().fill(Color.accentColor.gradient))
+                .background(Circle().fill(Color.luxAccent.gradient))
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.subheadline.weight(.semibold))
@@ -820,7 +820,7 @@ struct PlatformAdviceRow: View {
             Spacer(minLength: 0)
         }
         .padding(10)
-        .background(Color.accentColor.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+        .background(Color.luxAccent.opacity(0.08), in: RoundedRectangle(cornerRadius: 14, style: .continuous))
         .accessibilityElement(children: .combine)
     }
 }

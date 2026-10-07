@@ -177,7 +177,7 @@ struct ItineraryView: View {
                                 }) {
                                     Image(systemName: "chevron.backward")
                                         .font(.headline)
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(Color.luxAccent)
                                         .frame(width: 45, height: 45)
                                         .contentShape(Circle())
                                         .clipShape(Circle())
@@ -198,7 +198,7 @@ struct ItineraryView: View {
                                 }) {
                                     Image(systemName: locationButtonIcon)
                                         .font(.headline)
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(Color.luxAccent)
                                         .frame(width: 45, height: 45)
                                         .contentShape(Circle())
                                         .clipShape(Circle())
@@ -460,8 +460,8 @@ struct ItineraryView: View {
                 .foregroundColor(.white)
                 .frame(width: 45, height: 45)
                 .contentShape(Circle())
-                .adaptable(ios26: .glassButtonTintedIn(AnyShape(Circle()), .accentColor), fallback: {
-                    $0.background(Color.accentColor, in: Circle())
+                .adaptable(ios26: .glassButtonTintedIn(AnyShape(Circle()), Color.luxAccent), fallback: {
+                    $0.background(Color.luxAccent, in: Circle())
                 })
                 .shadow(radius: 2)
         }
@@ -557,7 +557,7 @@ struct ItineraryView: View {
             } else {
                 Image(systemName: "clock")
                     .font(.headline)
-                    .foregroundColor(.accentColor)
+                    .foregroundColor(Color.luxAccent)
             }
         }
         .frame(width: 45, height: 45)

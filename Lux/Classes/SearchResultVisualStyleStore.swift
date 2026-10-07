@@ -28,7 +28,7 @@ enum SearchResultVisualColor: String, Codable, Sendable {
 
     var color: Color {
         switch self {
-        case .accent: return .accentColor
+        case .accent: return AccentColorManager.shared.selectedAccentColor
         case .red: return .red
         case .orange: return .orange
         case .yellow: return .yellow

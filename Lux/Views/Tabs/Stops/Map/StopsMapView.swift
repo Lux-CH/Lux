@@ -344,7 +344,7 @@ struct StopsMapScreen: View {
         } label: {
             Image(systemName: symbol)
                 .font(.headline)
-                .foregroundColor(.accentColor)
+                .foregroundColor(Color.luxAccent)
                 .frame(width: 45, height: 45)
                 .contentShape(Circle())
                 .clipShape(Circle())
@@ -368,7 +368,7 @@ struct StopsMapScreen: View {
                         .font(.system(size: 14, weight: .semibold))
                         .foregroundStyle(.white)
                         .frame(width: 30, height: 30)
-                        .background(Color.accentColor, in: Circle())
+                        .background(Color.luxAccent, in: Circle())
                 } else {
                     Image(systemName: "mappin.circle.fill")
                         .font(.system(size: 30))
@@ -432,8 +432,8 @@ struct StopsMapScreen: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 50)
                     .contentShape(Capsule(style: .continuous))
-                    .adaptable(ios26: .glassButtonTintedIn(AnyShape(Capsule(style: .continuous)), .accentColor), fallback: {
-                        $0.background(Color.accentColor, in: Capsule(style: .continuous))
+                    .adaptable(ios26: .glassButtonTintedIn(AnyShape(Capsule(style: .continuous)), Color.luxAccent), fallback: {
+                        $0.background(Color.luxAccent, in: Capsule(style: .continuous))
                     })
             }
             .buttonStyle(.plain)
@@ -1232,7 +1232,7 @@ private struct ShortcutBadgeView: View {
                 .font(.system(size: size * 0.42, weight: .semibold))
                 .foregroundStyle(.white)
                 .frame(width: size, height: size)
-                .background(Color.accentColor, in: Circle())
+                .background(Color.luxAccent, in: Circle())
                 .overlay(Circle().stroke(.white, lineWidth: 2.5))
                 .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
             Text(name)
@@ -1356,7 +1356,7 @@ private struct QuaiSignView: View {
             .padding(isSelected ? 2 : 1)
             .background(
                 RoundedRectangle(cornerRadius: isSelected ? 7 : 4, style: .continuous)
-                    .fill(isSelected ? Color.accentColor : .white)
+                    .fill(isSelected ? Color.luxAccent : .white)
             )
             .shadow(color: .black.opacity(0.25), radius: isSelected ? 3 : 1.5, y: 1)
             .padding(8)

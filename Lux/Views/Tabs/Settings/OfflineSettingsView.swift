@@ -214,7 +214,7 @@ struct OfflineSettingsView: View {
         switch offline.state {
         case .absent:
             return Status(
-                icon: "arrow.down.circle", tint: .accentColor,
+                icon: "arrow.down.circle", tint: Color.luxAccent,
                 title: String(localized: "Télécharger les horaires"),
                 subtitle: String(localized: "~450Mo · connexion Wi-Fi recommandée"),
                 isBusy: false, fraction: nil, percentText: nil,
@@ -223,7 +223,7 @@ struct OfflineSettingsView: View {
             )
         case .downloading(let p):
             return Status(
-                icon: "arrow.down.circle", tint: .accentColor,
+                icon: "arrow.down.circle", tint: Color.luxAccent,
                 title: String(localized: "Téléchargement…"),
                 subtitle: String(localized: "Récupération des horaires de la région"),
                 isBusy: true, fraction: min(max(p, 0), 1),
@@ -231,7 +231,7 @@ struct OfflineSettingsView: View {
             )
         case .extracting:
             return Status(
-                icon: "shippingbox", tint: .accentColor,
+                icon: "shippingbox", tint: Color.luxAccent,
                 title: String(localized: "Installation…"),
                 subtitle: String(localized: "Mise en place de la base de données"),
                 isBusy: true, fraction: nil, percentText: nil, action: nil

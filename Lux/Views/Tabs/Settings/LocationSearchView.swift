@@ -120,11 +120,11 @@ struct LocationSearchView: View {
                         HStack(spacing: 14) {
                             ZStack {
                                 Circle()
-                                    .fill(Color.accentColor.opacity(0.14))
+                                    .fill(Color.luxAccent.opacity(0.14))
                                     .frame(width: 38, height: 38)
                                 Image(systemName: "location.fill")
                                     .font(.system(size: 16, weight: .medium))
-                                    .foregroundColor(.accentColor)
+                                    .foregroundColor(Color.luxAccent)
                             }
                             Text("Position actuelle")
                                 .font(.system(size: 15, weight: .medium))

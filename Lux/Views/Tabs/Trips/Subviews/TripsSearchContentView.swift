@@ -322,10 +322,10 @@ struct EmptyStateContent: View {
                         .padding(.vertical, 12)
                         .background(
                             RoundedRectangle(cornerRadius: 16)
-                                .fill(Color.accentColor.opacity(0.15))
-                                .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                                .fill(Color.luxAccent.opacity(0.15))
+                                .stroke(Color.luxAccent.opacity(0.35), lineWidth: 0.5)
                         )
-                        .foregroundColor(.accentColor)
+                        .foregroundColor(Color.luxAccent)
                     }
                     .buttonStyle(ScaleButtonStyle())
                     .padding(.top, shortcutManager.shortcuts.isEmpty ? 5 : 0)
@@ -350,7 +350,7 @@ struct EmptyStateContent: View {
                                 HStack(spacing: 12) {
                                     Image(systemName: shortcut.symbol)
                                         .font(.system(size: 16, weight: .medium))
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(Color.luxAccent)
                                         .frame(width: 24, height: 24)
                                     
                                     VStack(alignment: .leading, spacing: 2) {
@@ -446,16 +446,16 @@ struct RoutePresetBar: View {
                     .font(.system(size: 13, weight: .medium))
                     .lineLimit(1)
             }
-            .foregroundColor(isSelected ? .accentColor : .secondary)
+            .foregroundColor(isSelected ? Color.luxAccent : .secondary)
             .padding(.vertical, 8)
             .padding(.horizontal, 14)
             .background {
                 if isSelected {
                     Capsule(style: .continuous)
-                        .fill(Color.accentColor.opacity(0.14))
+                        .fill(Color.luxAccent.opacity(0.14))
                         .overlay(
                             Capsule(style: .continuous)
-                                .stroke(Color.accentColor.opacity(0.35), lineWidth: 0.5)
+                                .stroke(Color.luxAccent.opacity(0.35), lineWidth: 0.5)
                         )
                         .matchedGeometryEffect(id: "presetSelection", in: selection)
                 } else {

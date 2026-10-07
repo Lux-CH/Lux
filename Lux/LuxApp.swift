@@ -26,7 +26,6 @@ struct LuxApp: App {
     @StateObject private var locationManager = LocationManager()
     @StateObject private var shortcutManager = ShortcutManager()
     @StateObject private var disruptionManager = DisruptionManager()
-    @StateObject private var accentColorManager = AccentColorManager.shared
     @StateObject private var offlineManager = OfflineManager.shared
 
     @State private var showItinerarySheet: Bool = false
@@ -48,9 +47,7 @@ struct LuxApp: App {
                 .environmentObject(shortcutManager)
                 .environmentObject(disruptionManager)
                 .environmentObject(offlineManager)
-                .tint(accentColorManager.selectedAccentColor)
-                // i am fully aware this will deprecated in the future; however not putting it doesn't apply the accent everywhere; same if you only leave accentColor
-                .accentColor(accentColorManager.selectedAccentColor)
+                .luxAccentTint()
                 .onAppear {
                     if ((settings.appLaunchCount % 15) == 0) {
                         Task.detached(priority: .background) {
@@ -81,8 +78,7 @@ struct LuxApp: App {
                             .environmentObject(locationManager)
                             .environmentObject(shortcutManager)
                             .environmentObject(disruptionManager)
-                            .tint(accentColorManager.selectedAccentColor)
-                            .accentColor(accentColorManager.selectedAccentColor)
+                            .luxAccentTint()
                     } else {
                         ProgressView("Chargement de l'itinéraire...")
                             .progressViewStyle(CircularProgressViewStyle())
@@ -94,8 +90,7 @@ struct LuxApp: App {
                         .environmentObject(locationManager)
                         .environmentObject(shortcutManager)
                         .environmentObject(disruptionManager)
-                        .tint(accentColorManager.selectedAccentColor)
-                        .accentColor(accentColorManager.selectedAccentColor)
+                        .luxAccentTint()
                 }
                 .fullScreenCover(isPresented: $showTripPlaceSheet) {
                     if let place = sharedStopDetail {
@@ -106,8 +101,7 @@ struct LuxApp: App {
                         .environmentObject(locationManager)
                         .environmentObject(shortcutManager)
                         .environmentObject(disruptionManager)
-                        .tint(accentColorManager.selectedAccentColor)
-                        .accentColor(accentColorManager.selectedAccentColor)
+                        .luxAccentTint()
                     }
                 }
                 .alert("Êtes-vous sûr de vouloir ouvrir cet itinéraire ?", isPresented: $showConfirmation) {

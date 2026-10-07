@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct SettingsRow: View {
-    @ObservedObject var accentColorManager = AccentColorManager.shared
 
     let icon: String
     let title: String
@@ -20,7 +19,7 @@ struct SettingsRow: View {
         HStack(spacing: 12) {
             Image(systemName: icon)
                 .font(.title3)
-                .foregroundColor(accentColorManager.selectedAccentColor)
+                .foregroundColor(Color.luxAccent)
                 .frame(width: 24, height: 24)
             
             VStack(alignment: .leading, spacing: 2) {

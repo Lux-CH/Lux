@@ -82,7 +82,7 @@ struct ShareButtonView: View {
                                 } else {
                                     Image(systemName: "square.and.arrow.up")
                                         .font(.headline)
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(Color.luxAccent)
                                         .offset(y: -1)
                                 }
                             }
@@ -114,7 +114,7 @@ struct ShareButtonView: View {
                                 } else {
                                     Image(systemName: "square.and.arrow.up")
                                         .font(.headline)
-                                        .foregroundColor(.accentColor)
+                                        .foregroundColor(Color.luxAccent)
                                         .offset(y: -1)
                                 }
                             }
@@ -253,7 +253,7 @@ struct ShareButtonView: View {
             return .green
         }
         
-        return .accentColor
+        return Color.luxAccent
     }
     
     @ViewBuilder

@@ -17,7 +17,7 @@ struct OnboardIntroCallout: View {
                     Text("Nouveau")
                         .font(.caption2.weight(.heavy))
                         .textCase(.uppercase)
-                        .foregroundStyle(Color.accentColor)
+                        .foregroundStyle(Color.luxAccent)
                     Text("Laissez Lux vous guider")
                         .font(.subheadline.weight(.bold))
                     Text("Guidage pas à pas, alerte avant votre arrêt et retards en direct.")

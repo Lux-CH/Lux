@@ -11,7 +11,6 @@ struct TripsSearchTimePickerView: View {
     @Binding var selectedDate: Date?
     @Binding var departureType: DepartureType
     @Binding var showDatePicker: Bool
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     var onApply: () -> Void
     @State private var localDate: Date
     
@@ -61,13 +60,13 @@ struct TripsSearchTimePickerView: View {
                 } label: {
                     Label("Maintenant", systemImage: "clock.arrow.circlepath")
                         .font(.footnote)
-                        .foregroundColor(accentColorManager.selectedAccentColor)
+                        .foregroundColor(Color.luxAccent)
                         .padding(.vertical, 8)
                         .padding(.horizontal, 12)
                         .background(
                             RoundedRectangle(cornerRadius: 8)
-                                .stroke(accentColorManager.selectedAccentColor.opacity(0.5), lineWidth: 1)
-                                .background(accentColorManager.selectedAccentColor.opacity(0.1).cornerRadius(8))
+                                .stroke(Color.luxAccent.opacity(0.5), lineWidth: 1)
+                                .background(Color.luxAccent.opacity(0.1).cornerRadius(8))
                         )
                 }
                 .buttonStyle(ScaleButtonStyle())
@@ -98,7 +97,7 @@ struct TripsSearchTimePickerView: View {
                     }
                 }
                 .fontWeight(.bold)
-                .foregroundColor(accentColorManager.selectedAccentColor)
+                .foregroundColor(Color.luxAccent)
                 .buttonStyle(ScaleButtonStyle())
             }
             .padding(.horizontal)

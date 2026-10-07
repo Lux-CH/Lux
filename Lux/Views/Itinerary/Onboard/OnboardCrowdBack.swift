@@ -335,7 +335,7 @@ struct ReplanCard: View {
                         .foregroundStyle(.white)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, 11)
-                        .background(Color.accentColor.gradient, in: Capsule())
+                        .background(Color.luxAccent.gradient, in: Capsule())
                     }
                     .buttonStyle(ScaleButtonStyle())
                 }
@@ -416,7 +416,7 @@ struct ReplanOptionRow: View {
                         .font(.caption.weight(.semibold))
                         .lineLimit(1)
                 }
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.luxAccent)
                 .padding(.leading, 2)
             }
         }
@@ -484,7 +484,7 @@ struct TransferOptionsCard: View {
                         .font(.system(size: 15, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: 30, height: 30)
-                        .background(Circle().fill(Color.accentColor.gradient))
+                        .background(Circle().fill(Color.luxAccent.gradient))
                     VStack(alignment: .leading, spacing: 1) {
                         Text("Autres options")
                             .font(.subheadline.weight(.semibold))

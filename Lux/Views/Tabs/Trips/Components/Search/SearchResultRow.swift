@@ -22,7 +22,7 @@ struct SearchResultRow: View {
         case .place:
             return ("building.fill", .blue)
         case .stop:
-            return ("signpost.right.fill", .accentColor)
+            return ("signpost.right.fill", Color.luxAccent)
         }
     }
     

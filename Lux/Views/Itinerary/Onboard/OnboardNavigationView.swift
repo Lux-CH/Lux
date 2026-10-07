@@ -200,7 +200,7 @@ struct OnboardNavigationView: View {
         Button(action: action) {
             Image(systemName: systemImage)
                 .font(.headline)
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.luxAccent)
                 .frame(width: 45, height: 45)
                 .contentShape(Circle())
                 .contentTransition(.symbolEffect(.replace))
@@ -218,7 +218,7 @@ struct OnboardNavigationView: View {
         Button(action: recenter) {
             Label("Recentrer", systemImage: "location.north.line.fill")
                 .font(.subheadline.weight(.semibold))
-                .foregroundStyle(Color.accentColor)
+                .foregroundStyle(Color.luxAccent)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)
                 .adaptable(ios26: .glassButton, fallback: {

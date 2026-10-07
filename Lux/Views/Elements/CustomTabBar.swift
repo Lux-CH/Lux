@@ -93,12 +93,12 @@ struct TabButton: View {
                 
                 Image(systemName: tab.icon)
                     .font(.system(size: 16, weight: selectedTab == tab ? .bold : .medium))
-                    .foregroundStyle(selectedTab == tab ? Color.accentColor : Color.primary.opacity(0.6))
+                    .foregroundStyle(selectedTab == tab ? Color.luxAccent : Color.primary.opacity(0.6))
                     .frame(width: 30, height: 30)
                 
                 Text(tab.title)
                     .font(.system(size: 16, weight: selectedTab == tab ? .bold : .medium))
-                    .foregroundStyle(selectedTab == tab ? Color.accentColor : Color.primary.opacity(0.6))
+                    .foregroundStyle(selectedTab == tab ? Color.luxAccent : Color.primary.opacity(0.6))
                     .transition(.opacity.combined(with: .scale))
                 
                 Spacer(minLength: 0)
@@ -110,8 +110,8 @@ struct TabButton: View {
                     Capsule(style: .continuous)
                         .fill(
                             colorScheme == .dark
-                            ? Color.accentColor.opacity(0.15)
-                            : Color.accentColor.opacity(0.1)
+                            ? Color.luxAccent.opacity(0.15)
+                            : Color.luxAccent.opacity(0.1)
                         )
                         .stroke(Color.primary.opacity(0.1), lineWidth: 0.25)
                         .matchedGeometryEffect(id: "TAB", in: namespace)

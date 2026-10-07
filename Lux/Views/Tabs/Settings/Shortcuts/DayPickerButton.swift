@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct DayPickerButton: View {
-    @ObservedObject var accentColorManager = AccentColorManager.shared
     let day: UserShortcut.TimeSchedule.Weekday
     let isSelected: Bool
     let onTap: () -> Void
@@ -18,7 +17,7 @@ struct DayPickerButton: View {
             VStack(spacing: 6) {
                 ZStack {
                     Circle()
-                        .fill(isSelected ? accentColorManager.selectedAccentColor : Color(.quaternarySystemFill))
+                        .fill(isSelected ? Color.luxAccent : Color(.quaternarySystemFill))
                         .stroke(
                             isSelected ? Color.clear : Color(.separator).opacity(0.3),
                             lineWidth: 0.5
@@ -31,7 +30,7 @@ struct DayPickerButton: View {
                 }
                 .scaleEffect(isSelected ? 1.1 : 1.0)
                 .shadow(
-                    color: isSelected ? accentColorManager.selectedAccentColor.opacity(0.3) : Color.clear,
+                    color: isSelected ? Color.luxAccent.opacity(0.3) : Color.clear,
                     radius: isSelected ? 1 : 0,
                     x: 0,
                     y: 0.5
@@ -42,7 +41,7 @@ struct DayPickerButton: View {
                 )
                 Text(day.displayName)
                     .font(.system(size: 10, weight: .medium))
-                    .foregroundStyle(isSelected ? accentColorManager.selectedAccentColor : .secondary)
+                    .foregroundStyle(isSelected ? Color.luxAccent : .secondary)
                     .opacity(isSelected ? 1.0 : 0.8)
             }
         }

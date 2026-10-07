@@ -69,8 +69,8 @@ struct StopDepartureSheet: View {
                             .padding(.horizontal, 14)
                             .frame(height: 38)
                             .contentShape(Capsule(style: .continuous))
-                            .adaptable(ios26: .glassButtonTintedIn(AnyShape(Capsule(style: .continuous)), .accentColor), fallback: {
-                                $0.background(Color.accentColor, in: Capsule(style: .continuous))
+                            .adaptable(ios26: .glassButtonTintedIn(AnyShape(Capsule(style: .continuous)), Color.luxAccent), fallback: {
+                                $0.background(Color.luxAccent, in: Capsule(style: .continuous))
                             })
                     }
                     .buttonStyle(.plain)

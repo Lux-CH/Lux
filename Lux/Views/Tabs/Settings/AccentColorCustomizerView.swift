@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AccentColorCustomizerView: View {
-    @ObservedObject var accentColorManager = AccentColorManager.shared
+    private let accentColorManager = AccentColorManager.shared
     @Environment(\.colorScheme) var colorScheme
     @State private var selectedColorScale: CGFloat = 1.0
     @State private var selectedColorName = ""
@@ -19,7 +19,7 @@ struct AccentColorCustomizerView: View {
             ZStack {
                 LinearGradient(
                     colors: [
-                        accentColorManager.selectedAccentColor.opacity(0.1),
+                        Color.luxAccent.opacity(0.1),
                         Color.clear,
                     ],
                     startPoint: .top,
@@ -32,7 +32,7 @@ struct AccentColorCustomizerView: View {
                         VStack(spacing: 16) {
                             ZStack {
                                 Circle()
-                                    .fill(accentColorManager.selectedAccentColor)
+                                    .fill(Color.luxAccent)
                                     .frame(width: 65, height: 65)
                                 
                                 Image(systemName: "paintpalette")
@@ -63,7 +63,7 @@ struct AccentColorCustomizerView: View {
                                     .font(.headline)
                                     .fontWeight(.semibold)
                                 Spacer()
-                                if (accentColorManager.selectedAccentColor == Color(hex: "2d327d") || accentColorManager.selectedAccentColor == Color(hex: "6B4423")) && colorScheme == .dark {
+                                if (Color.luxAccent == Color(hex: "2d327d") || Color.luxAccent == Color(hex: "6B4423")) && colorScheme == .dark {
                                     Button {showDarkColorAlert = true} label: {
                                         Text("\(Image(systemName: "exclamationmark.triangle")) Couleur Sombre")
                                             .font(.caption)
@@ -84,11 +84,11 @@ struct AccentColorCustomizerView: View {
                             .padding(.horizontal, 24)
                             
                             LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 20), count: 3), spacing: 20) {
-                                ForEach(Array(accentColorManager.availableColors.enumerated()), id: \.element.name) { index, colorData in
+                                ForEach(Array(accentColorManager.availableColors.enumerated()), id: \.element.id) { index, colorData in
                                     ModernColorOptionView(
                                         color: colorData.color,
                                         name: colorData.name,
-                                        isSelected: colorData.color == accentColorManager.selectedAccentColor,
+                                        isSelected: colorData.id == accentColorManager.selectedID,
                                         index: index
                                     ) {
                                         selectColor(colorData)
@@ -107,7 +107,7 @@ struct AccentColorCustomizerView: View {
     
     private func selectColor(_ colorData: AccentColorManager.AccentColorOption) {
         withAnimation(.spring(response: 0.5, dampingFraction: 0.7)) {
-            accentColorManager.setAccentColor(colorData.color)
+            accentColorManager.setAccentColor(colorData)
             selectedColorName = colorData.name
         }
         
