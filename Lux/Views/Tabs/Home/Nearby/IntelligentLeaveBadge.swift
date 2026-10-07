@@ -46,7 +46,7 @@ struct IntelligentLeaveBadge: View {
         .animation(.snappy, value: leaveIn)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(leaveIn <= 0
-            ? String(localized: "Intelligent : partez maintenant, \(pick.walkMinutes) min à pied")
-            : String(localized: "Intelligent : partez dans \(leaveIn) min, \(pick.walkMinutes) min à pied"))
+            ? String(localized: "Magic : partez maintenant, \(pick.walkMinutes) min à pied")
+            : String(localized: "Magic : partez dans \(leaveIn) min, \(pick.walkMinutes) min à pied"))
     }
 }

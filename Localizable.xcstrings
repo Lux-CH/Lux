@@ -4478,26 +4478,6 @@
         }
       }
     },
-    "Intelligent : partez dans %lld min, %lld min à pied" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intelligent: leave in %1$lld min, %2$lld min walk"
-          }
-        }
-      }
-    },
-    "Intelligent : partez maintenant, %lld min à pied" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Intelligent: leave now, %lld min walk"
-          }
-        }
-      }
-    },
     "Interface compacte" : {
       "localizations" : {
         "en" : {
@@ -5497,6 +5477,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Magic"
+          }
+        }
+      }
+    },
+    "Magic : partez dans %lld min, %lld min à pied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic: leave in %1$lld min, %2$lld min walk"
+          }
+        }
+      }
+    },
+    "Magic : partez maintenant, %lld min à pied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Magic: leave now, %lld min walk"
           }
         }
       }
