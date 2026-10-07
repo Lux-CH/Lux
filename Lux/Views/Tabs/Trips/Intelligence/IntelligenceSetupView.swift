@@ -16,6 +16,7 @@ struct IntelligenceSetupView: View {
     @State private var glyphTrigger = 0
     @State private var isEditingFromSummary = false
     @State private var dragOffset: CGFloat = 0
+    @State private var answered: Set<String> = []
 
     private let questions = IntelligenceQuestion.all
     private let introStep = -1
@@ -161,6 +162,7 @@ struct IntelligenceSetupView: View {
                 Button {
                     HapticFeedback.lightImpact()
                     draft = IntelligenceProfile()
+                    answered = []
                     isEditingFromSummary = false
                     go(to: 0)
                 } label: {
@@ -289,13 +291,13 @@ struct IntelligenceSetupView: View {
                 if question.options.count == 4 {
                     LazyVGrid(columns: [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)], spacing: 12) {
                         ForEach(question.options) { option in
-                            optionTile(option)
+                            optionTile(option, in: question)
                         }
                     }
                 } else {
                     VStack(spacing: 12) {
                         ForEach(question.options) { option in
-                            optionRow(option)
+                            optionRow(option, in: question)
                         }
                     }
                 }
@@ -307,10 +309,15 @@ struct IntelligenceSetupView: View {
         .scrollBounceBehavior(.basedOnSize)
     }
 
-    private func select(_ option: IntelligenceQuestion.Option) {
+    private func showsSelected(_ option: IntelligenceQuestion.Option, in question: IntelligenceQuestion) -> Bool {
+        (draft.isConfigured || answered.contains(question.id)) && option.isSelected(draft)
+    }
+
+    private func select(_ option: IntelligenceQuestion.Option, in question: IntelligenceQuestion) {
         HapticFeedback.lightImpact()
         withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
             option.apply(&draft)
+            answered.insert(question.id)
         }
         let current = step
         Task {
@@ -333,9 +340,9 @@ struct IntelligenceSetupView: View {
             .background(isSelected ? accent : accent.opacity(0.12), in: Circle())
     }
 
-    private func optionRow(_ option: IntelligenceQuestion.Option) -> some View {
-        let isSelected = option.isSelected(draft)
-        return Button { select(option) } label: {
+    private func optionRow(_ option: IntelligenceQuestion.Option, in question: IntelligenceQuestion) -> some View {
+        let isSelected = showsSelected(option, in: question)
+        return Button { select(option, in: question) } label: {
             HStack(spacing: 14) {
                 optionIcon(option.symbol, isSelected: isSelected)
                 VStack(alignment: .leading, spacing: 3) {
@@ -361,9 +368,9 @@ struct IntelligenceSetupView: View {
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 
-    private func optionTile(_ option: IntelligenceQuestion.Option) -> some View {
-        let isSelected = option.isSelected(draft)
-        return Button { select(option) } label: {
+    private func optionTile(_ option: IntelligenceQuestion.Option, in question: IntelligenceQuestion) -> some View {
+        let isSelected = showsSelected(option, in: question)
+        return Button { select(option, in: question) } label: {
             VStack(alignment: .leading, spacing: 12) {
                 HStack(alignment: .top) {
                     optionIcon(option.symbol, isSelected: isSelected)
