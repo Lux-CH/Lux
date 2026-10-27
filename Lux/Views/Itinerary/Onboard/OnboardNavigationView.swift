@@ -369,9 +369,7 @@ struct OnboardNavigationView: View {
         }
         allowsMediumDetent = true
         withAnimation(.smooth(duration: 0.3)) { detent = .medium }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            detailPath.append("disruptions")
-        }
+        DispatchQueue.main.async { detailPath.append("disruptions") }
     }
 
     private func openStopSheet(_ place: Place) {

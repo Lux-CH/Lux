@@ -177,6 +177,7 @@ struct DisruptionsListView: View {
         }
         .safeAreaInset(edge: .top, spacing: 0) { header }
         .toolbar(.hidden, for: .navigationBar)
+        .background(SwipeBackEnabler())
         .modifier(ClearNavigationBackground())
     }
 
@@ -186,6 +187,7 @@ struct DisruptionsListView: View {
                 .font(.headline)
             HStack {
                 Button {
+                    HapticFeedback.lightImpact()
                     dismiss()
                 } label: {
                     Image(systemName: "chevron.left")
@@ -195,15 +197,17 @@ struct DisruptionsListView: View {
                         .adaptable(ios26: .glassButton, fallback: {
                             $0.background(Color(.secondarySystemFill), in: Circle())
                         })
+                        .frame(width: 44, height: 44)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel(Text("Retour"))
                 Spacer()
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.top, 14)
-        .padding(.bottom, 10)
+        .padding(.horizontal, 12)
+        .padding(.top, 10)
+        .padding(.bottom, 6)
     }
 
     private func row(_ entry: Entry) -> some View {
@@ -227,6 +231,33 @@ struct DisruptionsListView: View {
         }
         .padding(.horizontal, 14)
         .padding(.vertical, 12)
+    }
+}
+
+private struct SwipeBackEnabler: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> Controller { Controller() }
+    func updateUIViewController(_ controller: Controller, context: Context) {}
+
+    final class Controller: UIViewController, UIGestureRecognizerDelegate {
+        private weak var previousDelegate: UIGestureRecognizerDelegate?
+
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            guard let pop = navigationController?.interactivePopGestureRecognizer, pop.delegate !== self else { return }
+            previousDelegate = pop.delegate
+            pop.delegate = self
+            pop.isEnabled = true
+        }
+
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            guard let pop = navigationController?.interactivePopGestureRecognizer, pop.delegate === self else { return }
+            pop.delegate = previousDelegate
+        }
+
+        func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+            (navigationController?.viewControllers.count ?? 0) > 1
+        }
     }
 }
 
