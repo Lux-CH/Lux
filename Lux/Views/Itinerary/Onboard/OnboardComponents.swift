@@ -702,16 +702,21 @@ struct OnboardBottomPanel: View {
                         isCancelled: leg.cancelled
                     )
                     .environment(\.countdownColor, getLegColor(leg, brightIt: true))
-                    if session.canReportRide {
+                }
+
+                if isExpanded, session.legIndex + 1 < session.legs.count {
+                    if session.phase == .riding || session.phase == .waiting {
                         Divider()
                             .padding(.vertical, 16)
-                        RideRatingSection(reports: session.rideReports, info: session.rideInfo) { attribute, level in
-                            session.reportRide(attribute, level: level)
-                        }
                     }
-                } else {
-                    ForEach(Array(remainingLegs.enumerated()), id: \.offset) { _, leg in
-                        legRow(leg)
+                    OnboardJourneyTimeline(session: session, itineraryViewModel: itineraryViewModel, onOpenDisruptions: onOpenDetail)
+                }
+
+                if session.phase == .riding || session.phase == .waiting, session.canReportRide {
+                    Divider()
+                        .padding(.vertical, 16)
+                    RideRatingSection(reports: session.rideReports, info: session.rideInfo) { attribute, level in
+                        session.reportRide(attribute, level: level)
                     }
                 }
 
@@ -727,34 +732,6 @@ struct OnboardBottomPanel: View {
         }
         .padding(.horizontal, 22)
         .padding(.top, 16)
-    }
-
-    private var remainingLegs: [Leg] {
-        guard session.legIndex + 1 < session.legs.count else { return [] }
-        return Array(session.legs[(session.legIndex + 1)...])
-    }
-
-    private func legRow(_ leg: Leg) -> some View {
-        HStack(spacing: 12) {
-            if leg.isTransit {
-                LinePill(line: leg.routeShortName ?? "", mode: leg.mode, agency: leg.agencyId, width: 38, height: 24, fontSize: 13, usesOriginalColors: true)
-                Text(leg.headsign.map { String(localized: "Direction \($0)") } ?? "")
-                    .font(.subheadline)
-                    .lineLimit(1)
-            } else {
-                Image(systemName: "figure.walk")
-                    .frame(width: 38)
-                    .foregroundStyle(.blue)
-                Text("Marchez \(max(1, leg.duration / 60)) min")
-                    .font(.subheadline)
-            }
-            Spacer()
-            Text(formatTime(leg.startTime))
-                .font(.subheadline.weight(.medium))
-                .monospacedDigit()
-                .foregroundStyle(.secondary)
-        }
-        .padding(.vertical, 7)
     }
 }
 
