@@ -8,7 +8,6 @@
 import Foundation
 import CoreLocation
 import LuxCom
-import Polyline
 
 private let tripDaySeparator = "@@D"
 
@@ -83,7 +82,7 @@ struct OfflineProvider: OfflineDataProvider {
         let start = places.first?.departure ?? places.first?.arrival ?? serviceDay
         let end = places.last?.arrival ?? places.last?.departure ?? serviceDay
         let coords = details.stops.map { CLLocationCoordinate2D(latitude: $0.lat, longitude: $0.lon) }
-        let encoded = Polyline(coordinates: coords, precision: 1e6).encodedPolyline
+        let encoded = PolylineCodec.encode(coords)
 
         let leg = Leg(
             mode: OfflineProvider.mode(forRouteType: details.routeType),

@@ -8,7 +8,6 @@
 import SwiftUI
 import MapKit
 import LuxCom
-import Polyline
 
 extension OnboardSession {
     func startLiveFeeds() {
@@ -427,7 +426,7 @@ extension OnboardSession {
                 scheduledEndTime: end, realTime: current.realTime, cancelled: current.cancelled,
                 distance: route.distance, headsign: current.headsign, routeShortName: current.routeShortName,
                 intermediateStops: current.intermediateStops,
-                legGeometry: LegGeometry(points: Polyline(coordinates: coordinates, precision: 1e6).encodedPolyline, length: coordinates.count),
+                legGeometry: LegGeometry(points: PolylineCodec.encode(coordinates), length: coordinates.count),
                 agencyId: current.agencyId, tripId: current.tripId, steps: current.steps
             )
             if self.legIndex == index {

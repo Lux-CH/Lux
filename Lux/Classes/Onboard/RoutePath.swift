@@ -6,7 +6,6 @@
 //
 
 import CoreLocation
-import Polyline
 
 struct RoutePath {
     struct Projection {
@@ -42,7 +41,7 @@ struct RoutePath {
     }
 
     init(encoded: String, precision: Double = 1e6, fallback: [CLLocationCoordinate2D] = []) {
-        let decoded = Polyline(encodedPolyline: encoded, precision: precision).coordinates ?? []
+        let decoded = PolylineCodec.decode(encoded, precision: precision)
         self.init(coordinates: decoded.count >= 2 ? decoded : fallback)
     }
 

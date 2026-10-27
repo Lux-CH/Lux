@@ -8,7 +8,6 @@
 import SwiftUI
 import MapKit
 import LuxCom
-import Polyline
 
 @MainActor
 final class ItineraryViewModel: ObservableObject {
@@ -318,9 +317,9 @@ final class ItineraryViewModel: ObservableObject {
         
         for leg in legs where leg.mode == .walk || leg.mode.isCycling {
             let legId = getLegIdentifier(leg)
-            let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e6)
+            let coordinates = PolylineCodec.decode(leg.legGeometry.points)
             
-            if let coordinates = polyline.coordinates, coordinates.count >= 2 {
+            if coordinates.count >= 2 {
                 let simplifiedCoordinates = reduceCoordinatesIfNeeded(
                     coordinates,
                     maxPoints: maxWalkingPathPointsPerLeg
@@ -674,9 +673,9 @@ final class ItineraryViewModel: ObservableObject {
 
     
     private func createRouteOverlay(for leg: Leg, withColor color: Color) -> RouteOverlay? {
-        let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e6)
+        let coordinates = PolylineCodec.decode(leg.legGeometry.points)
         
-        guard let coordinates = polyline.coordinates, !coordinates.isEmpty else { return nil }
+        guard !coordinates.isEmpty else { return nil }
 
         let simplifiedCoordinates = reduceCoordinatesIfNeeded(
             coordinates,

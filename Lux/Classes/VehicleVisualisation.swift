@@ -8,7 +8,6 @@
 
 import CoreLocation
 import LuxCom
-import Polyline
 import SwiftUI
 
 struct VehicleAnnotation: Identifiable {
@@ -35,8 +34,8 @@ enum VehicleVisualisation {
     }
     
     static func calculateKeyFrames(for leg: Leg, polylineString: String, precision: Double, scheduled: Bool = false) -> [KeyFrame] {
-        let polyline = Polyline(encodedPolyline: polylineString, precision: precision)
-        guard let coordinates = polyline.coordinates, coordinates.count >= 2 else { return [] }
+        let coordinates = PolylineCodec.decode(polylineString, precision: precision)
+        guard coordinates.count >= 2 else { return [] }
         
         let departureTime = (scheduled ? leg.scheduledStartTime : leg.startTime).timeIntervalSince1970
         let arrivalTime = (scheduled ? leg.scheduledEndTime : leg.endTime).timeIntervalSince1970
