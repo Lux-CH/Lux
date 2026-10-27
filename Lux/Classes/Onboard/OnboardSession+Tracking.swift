@@ -34,7 +34,7 @@ extension OnboardSession {
         assign(\.hasWeakGPS, location.horizontalAccuracy > usableAccuracy)
         userLocation = location
         motion.record(location)
-        if phase == .walking, location.horizontalAccuracy <= 30, location.speed >= 0.4, location.speed <= 3 {
+        if phase == .walking, !isOnBikeLeg, location.horizontalAccuracy <= 30, location.speed >= 0.4, location.speed <= 3 {
             measuredPace = measuredPace.map { $0 * 0.92 + location.speed * 0.08 } ?? location.speed
             paceSamples += 1
         }
@@ -161,7 +161,7 @@ extension OnboardSession {
 
         walkOffset = projection.offset
         assign(\.alongInLeg, projection.along)
-        let tolerance = max(offRouteDistance, location.horizontalAccuracy)
+        let tolerance = max(currentOffRouteDistance, location.horizontalAccuracy)
         if projection.offset > tolerance {
             offRouteStreak += 1
         } else if projection.offset < tolerance * 0.7 {
@@ -688,9 +688,13 @@ extension OnboardSession {
             let request = MKDirections.Request()
             request.source = MKMapItem(placemark: MKPlacemark(coordinate: location.coordinate))
             request.destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: leg.to.lat, longitude: leg.to.lon)))
-            request.transportType = .walking
-            guard let route = try? await MKDirections(request: request).calculate().routes.first,
-                  !Task.isCancelled, let self, self.legIndex == index, self.phase == .walking else { return }
+            request.transportType = leg.mode.isCycling ? .cycling : .walking
+            let route = try? await MKDirections(request: request).calculate().routes.first
+            guard !Task.isCancelled, let self, self.legIndex == index, self.phase == .walking else { return }
+            guard let route else {
+                if leg.mode.isCycling { self.rerouteByBike(from: location, index: index) }
+                return
+            }
 
             let points = route.polyline.points()
             let coordinates = (0..<route.polyline.pointCount).map { points[$0].coordinate }
@@ -715,19 +719,23 @@ extension OnboardSession {
                 headsign: current.headsign, routeShortName: current.routeShortName,
                 intermediateStops: current.intermediateStops,
                 legGeometry: LegGeometry(points: Polyline(coordinates: coordinates, precision: 1e6).encodedPolyline, length: coordinates.count),
-                agencyId: current.agencyId, tripId: current.tripId, steps: current.steps
+                agencyId: current.agencyId, tripId: current.tripId, steps: current.steps,
+                rental: current.rental
             )
             self.alongInLeg = 0
             self.offRouteStreak = 0
             self.spokenManeuvers.removeAll()
             withAnimation { self.isOffRoute = false }
-            self.announcer.announce(String(localized: "Nouvel itinéraire à pied."), urgency: .guidance)
+            self.announcer.announce(
+                current.mode.isCycling ? String(localized: "Nouvel itinéraire à vélo.") : String(localized: "Nouvel itinéraire à pied."),
+                urgency: .guidance
+            )
             self.evaluate()
         }
     }
 
     func catchUpWithVehicle() {
-        guard isRunning, phase == .walking || phase == .waiting, motion.isInVehicle else { return }
+        guard isRunning, phase == .walking || phase == .waiting, !isOnBikeLeg, motion.isInVehicle else { return }
         let running = legs.indices.first { index in
             index >= legIndex && legs[index].isTransit
                 && now >= legs[index].startTime.addingTimeInterval(-60)

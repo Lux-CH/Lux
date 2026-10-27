@@ -448,7 +448,7 @@ extension OnboardSession {
         let modes = defaults.data(forKey: "routeOptionsTransportModes")
             .flatMap { try? JSONDecoder().decode(Set<TransportationMode>.self, from: $0) }
             .flatMap { $0.isEmpty ? nil : Array($0) }
-        return RouteOptions(
+        var options = RouteOptions(
             from: from,
             to: to,
             via: nil,
@@ -465,6 +465,8 @@ extension OnboardSession {
             maxPreTransitTime: maxWalking == 900 ? nil : maxWalking,
             maxPostTransitTime: maxWalking == 900 ? nil : maxWalking
         )
+        BikeMode.stored.apply(to: &options, onBoard: BikeMode.storedOnBoard)
+        return options
     }
 
     func updateConnectionRisk() {
@@ -538,13 +540,13 @@ extension OnboardSession {
 
     func walkTime(ofLegAt index: Int) -> TimeInterval {
         let leg = legs[index]
-        if let walkingPace { return paths[index].length / walkingPace }
+        if !leg.mode.isCycling, let walkingPace { return paths[index].length / walkingPace }
         return Double(leg.duration)
     }
 
     func remainingWalkTime(leg: Leg, path: RoutePath) -> TimeInterval {
         let remaining = max(0, path.length - alongInLeg)
-        if let walkingPace { return remaining / walkingPace }
+        if !leg.mode.isCycling, let walkingPace { return remaining / walkingPace }
         guard path.length > 0, leg.duration > 0 else { return remaining / walkingSpeed }
         return remaining / path.length * Double(leg.duration)
     }

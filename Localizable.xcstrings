@@ -9810,6 +9810,286 @@
           }
         }
       }
+    },
+    "Sans vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No bike"
+          }
+        }
+      }
+    },
+    "Mon vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My bike"
+          }
+        }
+      }
+    },
+    "Vélo partagé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared bike"
+          }
+        }
+      }
+    },
+    "À pied entre les arrêts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On foot between stops"
+          }
+        }
+      }
+    },
+    "Itinéraires avec votre propre vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routes with your own bike"
+          }
+        }
+      }
+    },
+    "Donkey Republic" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donkey Republic"
+          }
+        }
+      }
+    },
+    "Emporter à bord" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take it on board"
+          }
+        }
+      }
+    },
+    "Emporter le vélo à bord" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the bike on board"
+          }
+        }
+      }
+    },
+    "Seuls les trains et bus qui acceptent les vélos sont proposés. Sinon, il reste attaché au premier arrêt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only trains and buses that carry bikes are suggested. Otherwise, it stays locked at the first stop."
+          }
+        }
+      }
+    },
+    "Genève, EPFL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geneva, EPFL"
+          }
+        }
+      }
+    },
+    "Vélos disponibles en temps réel. Les vélos Donkey se rendent dans une station." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live bike availability. Donkey bikes go back to a station."
+          }
+        }
+      }
+    },
+    "partagé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "shared"
+          }
+        }
+      }
+    },
+    "Prenez un vélo %@ à %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grab a %1$@ bike at %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "Prenez un vélo %@ à proximité" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grab a %@ bike nearby"
+          }
+        }
+      }
+    },
+    "Pédalez jusqu'à %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ride to %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "Pédalez jusqu'à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ride to %@"
+          }
+        }
+      }
+    },
+    "Rejoignez le vélo %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Head to the %@ bike"
+          }
+        }
+      }
+    },
+    "%lld min à vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min by bike"
+          }
+        }
+      }
+    },
+    "Électrique" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electric"
+          }
+        }
+      }
+    },
+    "Ouvrir %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open %@"
+          }
+        }
+      }
+    },
+    "Rendez-le à %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Return it at %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "Garez-le dans la zone %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Park it within the %@ zone"
+          }
+        }
+      }
+    },
+    "Rythme à vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cycling pace"
+          }
+        }
+      }
+    },
+    "Choisissez votre allure habituelle pour des temps de trajet plus justes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick your usual pace for more accurate travel times"
+          }
+        }
+      }
+    },
+    "Tranquille" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relaxed"
+          }
+        }
+      }
+    },
+    "Sportif" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sporty"
+          }
+        }
+      }
+    },
+    "C'est parti. Pédalez jusqu'à %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let's go. Ride to %@."
+          }
+        }
+      }
+    },
+    "Nouvel itinéraire à vélo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New bike route."
+          }
+        }
+      }
     }
   },
   "version" : "1.0"

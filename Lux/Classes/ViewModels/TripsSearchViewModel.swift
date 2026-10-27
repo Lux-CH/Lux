@@ -168,6 +168,9 @@ class TripsSearchViewModel: ObservableObject {
 
     @AppStorage("routePreset") private var storedRoutePreset: String = RoutePreset.intelligent.rawValue
     @Published var routePreset: RoutePreset = .intelligent
+    @Published var bikeMode: BikeMode = BikeMode.stored
+    @Published var bikeOnBoard: Bool = BikeMode.storedOnBoard
+    @Published var bikeSpeed: Double = BikeMode.storedSpeed
     /// True when the selected preset found nothing and the shown routes ignore it.
     @Published var isPresetFallback = false
     @Published var suggestion: TripSuggestion?
@@ -663,8 +666,11 @@ class TripsSearchViewModel: ObservableObject {
         let viaIds = needsStitching ? [] : plannedVias.map(\.location.id)
         let viaStays = needsStitching ? [] : plannedVias.map(\.stay)
 
+        let bikeMode = self.bikeMode
+        let bikeOnBoard = self.bikeOnBoard
+        let bikeSpeed = self.bikeSpeed
         let options = { (preset: RoutePreset, directOnly: Bool) in
-            RouteOptions(
+            var options = RouteOptions(
                 from: fromLocation,
                 to: toLocation,
                 via: viaIds.isEmpty ? nil : viaIds,
@@ -683,6 +689,8 @@ class TripsSearchViewModel: ObservableObject {
                 maxPostTransitTime: preset.maxAccessWalk(self.routeOptions.maxPostTransitTime),
                 numLegAlternatives: 0 // 0.8
             )
+            bikeMode.apply(to: &options, onBoard: bikeOnBoard, speed: bikeSpeed)
+            return options
         }
         let plan = { (preset: RoutePreset, directOnly: Bool) async throws -> PlannedRoute in
             needsStitching
@@ -959,6 +967,21 @@ class TripsSearchViewModel: ObservableObject {
         }
     }
     
+    func setBikeMode(_ mode: BikeMode, onBoard: Bool? = nil, speed: Double? = nil, refresh: Bool = true) {
+        let onBoard = onBoard ?? bikeOnBoard
+        let speed = speed ?? bikeSpeed
+        guard mode != bikeMode || onBoard != bikeOnBoard || speed != bikeSpeed else { return }
+        bikeMode = mode
+        bikeOnBoard = onBoard
+        bikeSpeed = speed
+        UserDefaults.standard.set(mode.rawValue, forKey: BikeMode.storageKey)
+        UserDefaults.standard.set(onBoard, forKey: BikeMode.onBoardStorageKey)
+        UserDefaults.standard.set(speed, forKey: BikeMode.speedStorageKey)
+        if refresh {
+            refreshTripsIfReady()
+        }
+    }
+
     func changeDepartureType(_ type: DepartureType) {
         self.departureType = type
 //        if selectedFrom != nil && selectedTo != nil {

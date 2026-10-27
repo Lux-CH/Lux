@@ -304,7 +304,7 @@ final class ItineraryViewModel: ObservableObject {
         
         legKeyFrames.removeAll()
         
-        for leg in legs where leg.mode != .walk && leg.mode != .bike {
+        for leg in legs where leg.mode != .walk && !leg.mode.isCycling {
             let legId = getLegIdentifier(leg)
             let keyFrames = VehicleVisualisation.calculateKeyFrames(for: leg, polylineString: leg.legGeometry.points, precision: 1e6)
             legKeyFrames[legId] = keyFrames
@@ -316,7 +316,7 @@ final class ItineraryViewModel: ObservableObject {
         
         walkingLegPaths.removeAll()
         
-        for leg in legs where leg.mode == .walk {
+        for leg in legs where leg.mode == .walk || leg.mode.isCycling {
             let legId = getLegIdentifier(leg)
             let polyline = Polyline(encodedPolyline: leg.legGeometry.points, precision: 1e6)
             
@@ -446,7 +446,7 @@ final class ItineraryViewModel: ObservableObject {
 
     private func subscribeToLiveVehicles(for legs: [Leg]) {
         guard !shouldStop, !OfflineRouter.shared.isOfflineActive else { return }
-        for leg in legs where leg.mode != .walk && leg.mode != .bike {
+        for leg in legs where leg.mode != .walk && !leg.mode.isCycling {
             guard let tripId = leg.tripId, !tripId.isEmpty else { continue }
             let legId = getLegIdentifier(leg)
             guard liveVehicleTasks[legId] == nil else { continue }
@@ -467,7 +467,7 @@ final class ItineraryViewModel: ObservableObject {
         let currentTimeInterval = currentTime.timeIntervalSince1970
         
         let newVehicleAnnotations = itinerary.legs.compactMap { leg -> VehicleAnnotation? in
-            guard leg.mode != .walk && leg.mode != .bike else { return nil }
+            guard leg.mode != .walk && !leg.mode.isCycling else { return nil }
             
             let legId = getLegIdentifier(leg)
 
@@ -525,14 +525,14 @@ final class ItineraryViewModel: ObservableObject {
         let currentTimeInterval = currentTime.timeIntervalSince1970
         
         let newWalkingAnnotations = itinerary.legs.compactMap { leg -> WalkingAnnotation? in
-            guard leg.mode == .walk else { return nil }
+            guard leg.mode == .walk || leg.mode.isCycling else { return nil }
             
             guard leg.startTime <= currentTime && leg.endTime >= currentTime else { return nil }
             
             let legId = getLegIdentifier(leg)
             guard let position = walkingPosition(for: leg, legId: legId, at: currentTimeInterval) else { return nil }
             
-            return WalkingAnnotation(id: legId, coordinate: position)
+            return WalkingAnnotation(id: legId, coordinate: position, isCycling: leg.mode.isCycling)
         }
 
         withAnimation(.linear(duration: 1.0)) {
@@ -722,7 +722,7 @@ func resolvedLineColor(for leg: Leg) -> LineColors.ResolvedLineColor? {
 
 func getOnboardLegColor(_ leg: Leg) -> Color {
     switch leg.mode {
-    case .walk, .bike, .car:
+    case .walk, .bike, .rental, .car:
         return getLegColor(leg)
     default:
         return legacyLineColor(getLegColor(leg))
@@ -733,7 +733,9 @@ func getLegColor(_ leg: Leg, brightIt: Bool = false) -> Color {
     switch leg.mode {
     case .walk:
         return .blue
-    case .bike, .car:
+    case .bike, .rental:
+        return .bikeLeg
+    case .car:
         return .gray
     default:
         let baseColor: Color

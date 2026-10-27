@@ -107,6 +107,22 @@ struct TripResultView: View {
                     }
                 }
                 
+                let cyclingLegs = itinerary.legs.filter { $0.mode.isCycling }
+                if !cyclingLegs.isEmpty {
+                    Image(systemName: "circle.fill")
+                        .font(.system(size: 5))
+                        .foregroundColor(.secondary)
+                    HStack(spacing: 6) {
+                        Image(systemName: "bicycle")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundColor(.bikeLeg)
+
+                        Text("\(max(1, cyclingLegs.reduce(0) { $0 + $1.duration } / 60)) min")
+                            .font(.system(size: 14, weight: .medium))
+                            .foregroundColor(.secondary)
+                    }
+                }
+
                 let walkingLegs = itinerary.legs.filter { $0.mode == .walk }
                 if !walkingLegs.isEmpty {
                     Image(systemName: "circle.fill")

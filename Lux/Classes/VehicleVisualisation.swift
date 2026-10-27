@@ -22,6 +22,7 @@ struct VehicleAnnotation: Identifiable {
 struct WalkingAnnotation: Identifiable {
     let id: String
     var coordinate: CLLocationCoordinate2D
+    var isCycling = false
 }
 
 enum VehicleVisualisation {

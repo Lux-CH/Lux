@@ -66,7 +66,13 @@ struct TripsSearchHeaderView: View {
             }
         }
         .sheet(isPresented: $viewModel.showSettings) {
-            RouteOptionsView(routeOptions: viewModel.routeOptions) { newOptions in
+            RouteOptionsView(
+                routeOptions: viewModel.routeOptions,
+                bikeMode: viewModel.bikeMode,
+                bikeOnBoard: viewModel.bikeOnBoard,
+                bikeSpeed: viewModel.bikeSpeed
+            ) { newOptions, bikeMode, bikeOnBoard, bikeSpeed in
+                viewModel.setBikeMode(bikeMode, onBoard: bikeOnBoard, speed: bikeSpeed, refresh: false)
                 viewModel.updateRouteOptions(newOptions)
             }
             .presentationDetents([.medium, .large])

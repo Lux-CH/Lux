@@ -115,7 +115,7 @@ enum StitchedRoutePlanner {
     ) -> RouteOptions {
         let stopIDs = segment.stopVias.map(\.location.id)
         let stays = segment.stopVias.map(\.stay)
-        return RouteOptions(
+        var options = RouteOptions(
             from: segment.from,
             to: segment.to,
             via: stopIDs.isEmpty ? nil : stopIDs,
@@ -136,6 +136,11 @@ enum StitchedRoutePlanner {
             maxPostTransitTime: segment.endName == nil ? base.maxPostTransitTime : nil,
             numLegAlternatives: base.numLegAlternatives
         )
+        options.directModes = base.directModes
+        options.preTransitModes = base.preTransitModes
+        options.postTransitModes = base.postTransitModes
+        options.requireBikeTransport = base.requireBikeTransport
+        return options
     }
 
     // MARK: - Forward (leave at)

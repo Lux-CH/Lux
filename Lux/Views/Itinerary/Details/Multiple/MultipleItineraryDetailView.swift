@@ -103,6 +103,11 @@ struct MultipleItineraryDetailView: View {
         let fromName = leg.from.name
         let toName = leg.to.name
         
+        if legIndex + 1 < itinerary.legs.count, let rental = itinerary.legs[legIndex + 1].rental,
+           toName.isEmpty || toName == rental.systemName {
+            return Text("Rejoignez le vélo \(rental.systemName ?? "")")
+        }
+        
         if legIndex == 0 {
             return Text("Marchez jusqu'à \(Image(systemName: "signpost.right")) \(toName)")
         } else if legIndex == itinerary.legs.count - 1 {
@@ -171,7 +176,13 @@ struct MultipleItineraryDetailView: View {
             ScrollView {
                 VStack(spacing: 0) {
                     ForEach(Array(itinerary.legs.enumerated()), id: \.element.legGeometry.points) { legIndex, leg in
-                        if leg.mode != .walk {
+                        if leg.mode.isCycling {
+                            BikeLegView(
+                                leg: leg,
+                                isLast: legIndex == itinerary.legs.count - 1,
+                                destinationName: viewModel.destinationName
+                            )
+                        } else if leg.mode != .walk {
                             // Transit leg
                             LegHeaderView(leg: leg, legColor: legColor(for: leg), isSingle: false, nextStop: nil)
                                 .padding(.horizontal, 20)

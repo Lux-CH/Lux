@@ -46,6 +46,9 @@ extension OnboardSession {
         switch phase {
         case .walking:
             if let leg = currentLeg {
+                if leg.mode.isCycling {
+                    return String(localized: "C'est parti. Pédalez jusqu'à \(placeName(leg.to, isDestination: legIndex == legs.count - 1)).")
+                }
                 return String(localized: "C'est parti. Marchez jusqu'à \(placeName(leg.to, isDestination: legIndex == legs.count - 1)).")
             }
         case .waiting:
@@ -98,6 +101,9 @@ extension OnboardSession {
             } else if let maneuver = nextManeuver {
                 state.title = maneuver.instruction
                 state.symbolName = maneuver.symbolName
+            } else if let leg, leg.mode.isCycling {
+                state.title = String(localized: "Pédalez jusqu'à \(placeName(leg.to, isDestination: legIndex == legs.count - 1))")
+                state.symbolName = leg.bikeSymbol
             } else if let leg {
                 state.title = String(localized: "Marchez jusqu'à \(placeName(leg.to, isDestination: legIndex == legs.count - 1))")
                 state.symbolName = "figure.walk"

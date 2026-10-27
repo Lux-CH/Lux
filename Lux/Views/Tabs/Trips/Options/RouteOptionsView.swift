@@ -17,10 +17,13 @@ struct RouteOptionsView: View {
     @State private var selectedTransportModes: Set<TransportationMode>
     @State private var maxWalkingTime: Int
     @State private var pedestrianSpeed: Double
+    @State private var bikeMode: BikeMode
+    @State private var bikeOnBoard: Bool
+    @State private var bikeSpeed: Double
     @State private var showResetConfirmation = false
     
     private let availableTransportModes: [TransportationMode] = [.bus, .tram, .rail, .ferry]
-    private let onSave: (RouteOptions) -> Void
+    private let onSave: (RouteOptions, BikeMode, Bool, Double) -> Void
     private let routeOptions: RouteOptions
     
     private let defaultMaxTransfers = 5
@@ -30,9 +33,12 @@ struct RouteOptionsView: View {
     private let defaultMaxWalkingTime = 900
     private let defaultPedestrianSpeed: Double = 1.2
     
-    init(routeOptions: RouteOptions, onSave: @escaping (RouteOptions) -> Void) {
+    init(routeOptions: RouteOptions, bikeMode: BikeMode, bikeOnBoard: Bool, bikeSpeed: Double, onSave: @escaping (RouteOptions, BikeMode, Bool, Double) -> Void) {
         self.routeOptions = routeOptions
         self.onSave = onSave
+        _bikeMode = State(initialValue: bikeMode)
+        _bikeOnBoard = State(initialValue: bikeOnBoard)
+        _bikeSpeed = State(initialValue: bikeSpeed)
         
         _maxTransfers = State(initialValue: routeOptions.maxTransfers)
         _minTransferTime = State(initialValue: routeOptions.minTransferTime)
@@ -58,6 +64,7 @@ struct RouteOptionsView: View {
                     VStack(spacing: 24) {
                         transfersSection
                         walkOptionsSection
+                        bikeSection
                         accessibilitySection
 //                        transportModesSection
                         resetSection
@@ -247,6 +254,88 @@ struct RouteOptionsView: View {
         }
     }
     
+    private var bikeSection: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            OptionHeader(title: String(localized: "Vélo"), icon: "bicycle")
+
+            ModernCard {
+                VStack(spacing: 0) {
+                    ForEach(Array(BikeMode.allCases.enumerated()), id: \.element) { index, mode in
+                        BikeModeRow(mode: mode, isSelected: bikeMode == mode) {
+                            withAnimation(.spring(response: 0.3)) {
+                                bikeMode = mode
+                            }
+                            HapticFeedback.lightImpact()
+                        }
+
+                        if index < BikeMode.allCases.count - 1 {
+                            Divider()
+                                .opacity(0.5)
+                                .padding(.vertical, 8)
+                        }
+                    }
+
+                    if bikeMode != .off {
+                        Divider()
+                            .opacity(0.5)
+                            .padding(.vertical, 8)
+
+                        VStack(alignment: .leading, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Rythme à vélo")
+                                    .font(.subheadline.weight(.medium))
+                                    .foregroundStyle(.primary)
+
+                                Text("Choisissez votre allure habituelle pour des temps de trajet plus justes")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.leading)
+                            }
+                            .frame(maxWidth: .infinity, alignment: .leading)
+
+                            BikeSpeedSelector(selectedSpeed: $bikeSpeed)
+                        }
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
+
+                    if bikeMode == .own {
+                        Divider()
+                            .opacity(0.5)
+                            .padding(.vertical, 8)
+
+                        Toggle(isOn: $bikeOnBoard.animation(.spring(response: 0.3))) {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Emporter le vélo à bord")
+                                    .font(.subheadline.weight(.medium))
+                                Text("Seuls les trains et bus qui acceptent les vélos sont proposés. Sinon, il reste attaché au premier arrêt.")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.leading)
+                            }
+                        }
+                        .tint(Color.bikeLeg)
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
+
+                    if bikeMode == .shared {
+                        Divider()
+                            .opacity(0.5)
+                            .padding(.vertical, 8)
+
+                        VStack(alignment: .leading, spacing: 10) {
+                            BikeNetworkRow(name: "Donkey Republic", area: String(localized: "Genève, EPFL"), color: Color(red: 0.93, green: 0.43, blue: 0.17))
+                            Text("Vélos disponibles en temps réel. Les vélos Donkey se rendent dans une station.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
+                        }
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                    }
+                }
+            }
+        }
+    }
+
     private var accessibilitySection: some View {
         VStack(alignment: .leading, spacing: 12) {
             OptionHeader(title: String(localized: "Accessibilité"), icon: "figure.roll")
@@ -374,6 +463,9 @@ struct RouteOptionsView: View {
             selectedTransportModes = defaultTransportModes
             maxWalkingTime = defaultMaxWalkingTime
             pedestrianSpeed = defaultPedestrianSpeed
+            bikeMode = .off
+            bikeOnBoard = true
+            bikeSpeed = BikeMode.defaultSpeed
         }
         saveOptions(shouldDismiss: false)
     }
@@ -401,9 +493,139 @@ struct RouteOptionsView: View {
             maxPostTransitTime: walkingTime
         )
         
-        onSave(newOptions)
+        onSave(newOptions, bikeMode, bikeOnBoard, bikeSpeed)
         if shouldDismiss {
             dismiss()
+        }
+    }
+}
+
+struct BikeModeRow: View {
+    let mode: BikeMode
+    let isSelected: Bool
+    let onTap: () -> Void
+
+    var body: some View {
+        Button(action: onTap) {
+            HStack(spacing: 16) {
+                ZStack {
+                    Circle()
+                        .fill(mode == .off ? Color.blue.opacity(0.12) : Color.bikeLeg.opacity(0.16))
+                        .frame(width: 44, height: 44)
+
+                    Image(systemName: mode.symbol)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(mode == .off ? Color.blue : Color.bikeLeg)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(mode.title)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.primary)
+                    Text(mode.subtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+
+                ZStack {
+                    Circle()
+                        .stroke(isSelected ? Color.luxAccent : Color.secondary.opacity(0.3), lineWidth: 2)
+                        .frame(width: 26, height: 26)
+
+                    if isSelected {
+                        Circle()
+                            .fill(Color.luxAccent)
+                            .frame(width: 18, height: 18)
+                            .transition(.scale.combined(with: .opacity))
+                    }
+                }
+                .animation(.spring(response: 0.3, dampingFraction: 0.8), value: isSelected)
+            }
+            .padding(.vertical, 4)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(PlainButtonStyle())
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
+    }
+}
+
+struct BikeSpeedSelector: View {
+    @Binding var selectedSpeed: Double
+
+    private struct Pace: Identifiable {
+        let speed: Double
+        let title: LocalizedStringKey
+        let symbol: String
+        var id: Double { speed }
+    }
+
+    private let paces = [
+        Pace(speed: 3.0, title: "Tranquille", symbol: "tortoise.fill"),
+        Pace(speed: BikeMode.defaultSpeed, title: "Normal", symbol: "bicycle"),
+        Pace(speed: 5.5, title: "Sportif", symbol: "figure.outdoor.cycle"),
+        Pace(speed: 6.9, title: "Électrique", symbol: "bolt.fill")
+    ]
+
+    var body: some View {
+        HStack(spacing: 8) {
+            ForEach(paces) { pace in
+                let isSelected = selectedSpeed == pace.speed
+                Button {
+                    withAnimation(.spring(response: 0.3)) {
+                        selectedSpeed = pace.speed
+                    }
+                    HapticFeedback.lightImpact()
+                } label: {
+                    VStack(spacing: 8) {
+                        ZStack {
+                            Circle()
+                                .fill(isSelected ? Color.bikeLeg : Color(.tertiarySystemFill))
+                                .stroke(Color.primary.opacity(0.1), lineWidth: 0.5)
+                                .frame(width: 44, height: 44)
+
+                            Image(systemName: pace.symbol)
+                                .font(.system(size: 18, weight: .medium))
+                                .foregroundColor(isSelected ? .white : .primary)
+                        }
+
+                        VStack(spacing: 2) {
+                            Text(pace.title)
+                                .font(.system(size: 11, weight: isSelected ? .semibold : .medium))
+                                .foregroundColor(isSelected ? Color.bikeLeg : .secondary)
+
+                            Text(String(format: "%.0f km/h", (pace.speed * 3.6).rounded()))
+                                .font(.system(size: 9, weight: .regular))
+                                .foregroundColor(isSelected ? Color.bikeLeg.opacity(0.8) : Color(.tertiaryLabel))
+                        }
+                        .multilineTextAlignment(.center)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 8)
+                }
+                .buttonStyle(ScaleButtonStyle())
+                .accessibilityAddTraits(isSelected ? .isSelected : [])
+            }
+        }
+    }
+}
+
+struct BikeNetworkRow: View {
+    let name: String
+    let area: String
+    let color: Color
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Circle()
+                .fill(color)
+                .frame(width: 8, height: 8)
+            Text(name)
+                .font(.subheadline.weight(.medium))
+            Spacer()
+            Text(area)
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
 }

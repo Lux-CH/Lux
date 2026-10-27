@@ -244,6 +244,21 @@ struct LegSegmentView: View {
                             isAnimating = true
                         }
                     }
+                } else if leg.mode.isCycling {
+                    HStack(spacing: 4) {
+                        Image(systemName: leg.bikeSymbol)
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(.bikeLeg)
+                            .shadow(color: Color.black.opacity(0.3), radius: 1, x: 0, y: 1)
+
+                        if isFirst && isLast {
+                            Text(formatDistance(leg.distance ?? 0))
+                                .font(.system(size: 10, weight: .medium))
+                                .foregroundColor(.bikeLeg)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
+                        }
+                    }
                 } else if let routeName = leg.routeShortName {
                     Text(routeName)
                         .font(.custom("NimbusSansBeckerPBla", size: 14))
@@ -278,6 +293,8 @@ struct LegSegmentView: View {
         switch mode {
         case .walk:
             return "figure.walk"
+        case .bike, .rental:
+            return "bicycle"
         case .bus:
             return "bus.fill"
         case .subway:

@@ -44,6 +44,7 @@ private enum Margin: Equatable {
 private enum Rail: Equatable {
     case line(Color)
     case walk
+    case cycle
 }
 
 private struct StationModel: Equatable {
@@ -81,6 +82,8 @@ private struct RideModel: Equatable {
 private struct WalkModel: Equatable {
     let detail: String
     let margin: Margin?
+    var symbol = "figure.walk"
+    var isCycling = false
 }
 
 private struct JourneyRow: Equatable, Identifiable {
@@ -229,7 +232,11 @@ private struct JourneyModel: Equatable {
                         if entries.isEmpty {
                             addStation(station(session.placeName(leg.from), time: leg.startTime, place: leg.from, leg: nil))
                         }
-                        entries.append((.walk(WalkModel(detail: Self.walkDetail(leg), margin: margin(afterWalkAt: index))), .walk))
+                        if leg.mode.isCycling {
+                            entries.append((.walk(WalkModel(detail: Self.rideDetail(leg), margin: margin(afterWalkAt: index), symbol: leg.bikeSymbol, isCycling: true)), .cycle))
+                        } else {
+                            entries.append((.walk(WalkModel(detail: Self.walkDetail(leg), margin: margin(afterWalkAt: index))), .walk))
+                        }
                     } else {
                         pendingMargin = margin(afterWalkAt: index)
                     }
@@ -288,6 +295,13 @@ private struct JourneyModel: Equatable {
         let minutes = String(localized: "\(max(1, leg.duration / 60)) min à pied")
         guard let distance = leg.distance, distance >= 20 else { return minutes }
         return "\(minutes) · \(formatDistance(distance))"
+    }
+
+    private static func rideDetail(_ leg: Leg) -> String {
+        let minutes = String(localized: "\(max(1, leg.duration / 60)) min à vélo")
+        let network = leg.rental?.systemName.map { " · \($0)" } ?? ""
+        guard let distance = leg.distance, distance >= 20 else { return minutes + network }
+        return "\(minutes) · \(formatDistance(distance))\(network)"
     }
 
     private static func durationText(_ seconds: Int) -> String {
@@ -479,8 +493,9 @@ private struct JourneyTimelineContent: View, Equatable {
 
     private func walkRow(_ walk: WalkModel) -> some View {
         HStack(spacing: 6) {
-            Image(systemName: "figure.walk")
+            Image(systemName: walk.symbol)
                 .font(.caption.weight(.semibold))
+                .foregroundStyle(walk.isCycling ? Color.bikeLeg : Color.secondary)
             Text(walk.detail)
             Spacer(minLength: 8)
             if let margin = walk.margin {
@@ -513,7 +528,7 @@ private struct JourneyTimelineContent: View, Equatable {
         case .line(let color):
             let rect = CGRect(x: piece.from.x - 2.5, y: piece.from.y, width: 5, height: max(0, piece.to.y - piece.from.y))
             context.fill(Path(rect), with: .color(color))
-        case .walk:
+        case .walk, .cycle:
             let start = piece.from.y + 12
             let end = piece.to.y - (piece.endsAtDestination ? 8 : 6) - 6
             guard end > start else { return }
@@ -524,7 +539,7 @@ private struct JourneyTimelineContent: View, Equatable {
                 let y = start + step * CGFloat(index)
                 path.addEllipse(in: CGRect(x: piece.from.x - 1.75, y: y - 1.75, width: 3.5, height: 3.5))
             }
-            context.fill(path, with: .color(.secondary.opacity(0.6)))
+            context.fill(path, with: .color(piece.rail == .cycle ? Color.bikeLeg : .secondary.opacity(0.6)))
         }
     }
 }

@@ -105,7 +105,7 @@ struct OnboardInstructionBanner: View {
         }
         guard let leg = session.currentLeg else { return "" }
         let isLast = session.legIndex == session.legs.count - 1
-        return String(localized: "Marchez jusqu'à \(session.placeName(leg.to, isDestination: isLast))")
+        return session.streetInstruction(to: leg, isDestination: isLast)
     }
 
     @ViewBuilder

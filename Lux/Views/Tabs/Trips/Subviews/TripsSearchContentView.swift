@@ -418,6 +418,12 @@ struct RoutePresetBar: View {
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(spacing: 8) {
+                bikeChip
+
+                Capsule()
+                    .fill(Color.secondary.opacity(0.25))
+                    .frame(width: 1, height: 18)
+
                 ForEach(RoutePreset.allCases) { preset in
                     chip(for: preset)
                 }
@@ -425,6 +431,80 @@ struct RoutePresetBar: View {
             .padding(.horizontal, 16)
         }
         .scrollClipDisabled()
+    }
+
+    private var bikeChip: some View {
+        let mode = viewModel.bikeMode
+        let isActive = mode != .off
+        return Menu {
+            Picker(selection: Binding(
+                get: { viewModel.bikeMode },
+                set: { newMode in
+                    HapticFeedback.lightImpact()
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
+                        viewModel.setBikeMode(newMode)
+                    }
+                }
+            )) {
+                ForEach(BikeMode.allCases) { option in
+                    Label {
+                        Text(option.title)
+                        Text(option.subtitle)
+                    } icon: {
+                        Image(systemName: option.symbol)
+                    }
+                    .tag(option)
+                }
+            } label: {
+                EmptyView()
+            }
+            .pickerStyle(.inline)
+
+            if mode == .own {
+                Toggle(isOn: Binding(
+                    get: { viewModel.bikeOnBoard },
+                    set: { onBoard in
+                        HapticFeedback.lightImpact()
+                        viewModel.setBikeMode(.own, onBoard: onBoard)
+                    }
+                )) {
+                    Label("Emporter à bord", systemImage: "tram.fill")
+                }
+            }
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: isActive ? mode.symbol : "bicycle")
+                    .font(.system(size: 12, weight: .semibold))
+                    .contentTransition(.symbolEffect(.replace))
+                Text(mode.chipTitle)
+                    .font(.system(size: 13, weight: .medium))
+                    .lineLimit(1)
+                if mode == .own && viewModel.bikeOnBoard {
+                    Image(systemName: "tram.fill")
+                        .font(.system(size: 10, weight: .semibold))
+                        .transition(.scale.combined(with: .opacity))
+                }
+                Image(systemName: "chevron.down")
+                    .font(.system(size: 9, weight: .bold))
+                    .opacity(0.6)
+            }
+            .foregroundColor(isActive ? Color.bikeLeg : .secondary)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 14)
+            .background {
+                Capsule(style: .continuous)
+                    .fill(isActive ? Color.bikeLeg.opacity(0.16) : Color(.secondarySystemFill).opacity(0.5))
+                    .overlay(
+                        Capsule(style: .continuous)
+                            .stroke(Color.bikeLeg.opacity(isActive ? 0.45 : 0), lineWidth: 0.5)
+                    )
+            }
+            .contentShape(Capsule(style: .continuous))
+            .animation(.spring(response: 0.35, dampingFraction: 0.8), value: mode)
+        }
+        .menuOrder(.fixed)
+        .accessibilityLabel(Text("Vélo"))
+        .accessibilityValue(Text(mode.title))
     }
 
     private func chip(for preset: RoutePreset) -> some View {

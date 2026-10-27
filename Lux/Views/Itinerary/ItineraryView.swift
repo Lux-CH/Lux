@@ -713,7 +713,7 @@ struct ItineraryMapView: View {
 
                 ForEach(viewModel.walkingAnnotations) { walking in
                     Annotation("", coordinate: walking.coordinate, anchor: .center) {
-                        WalkingAnnotationView()
+                        WalkingAnnotationView(isCycling: walking.isCycling)
                     }
                 }
             }
