@@ -7,7 +7,7 @@
 
 import Foundation
 import CoreLocation
-import GRDB
+import SQLite3
 
 enum OfflineRegion {
     static let minLat = 46.09207
@@ -63,22 +63,17 @@ struct GTFSStop {
 
 final class OfflineGTFSStore: @unchecked Sendable {
 
-    let dbQueue: DatabaseQueue
+    let dbQueue: SQLiteConnection
     let fileURL: URL
 
     init(url: URL) throws {
         self.fileURL = url
-        var config = Configuration()
-        config.busyMode = .timeout(5)
-        self.dbQueue = try DatabaseQueue(path: url.path, configuration: config)
-        try migrator.migrate(dbQueue)
+        self.dbQueue = try SQLiteConnection(path: url.path)
+        try dbQueue.execute(Self.schema)
     }
 
-    private var migrator: DatabaseMigrator {
-        var migrator = DatabaseMigrator()
-        migrator.registerMigration("v1") { db in
-            try db.execute(sql: """
-                CREATE TABLE stop (
+    private static let schema = """
+                CREATE TABLE IF NOT EXISTS stop (
                     id TEXT PRIMARY KEY,
                     norm_id TEXT NOT NULL DEFAULT '',
                     name TEXT NOT NULL,
@@ -89,12 +84,12 @@ final class OfflineGTFSStore: @unchecked Sendable {
                     location_type INTEGER NOT NULL DEFAULT 0,
                     level DOUBLE NOT NULL DEFAULT 0
                 );
-                CREATE INDEX idx_stop_parent ON stop(parent_station);
-                CREATE INDEX idx_stop_norm ON stop(norm_id);
-                CREATE INDEX idx_stop_search ON stop(search_name);
-                CREATE INDEX idx_stop_latlon ON stop(lat, lon);
+                CREATE INDEX IF NOT EXISTS idx_stop_parent ON stop(parent_station);
+                CREATE INDEX IF NOT EXISTS idx_stop_norm ON stop(norm_id);
+                CREATE INDEX IF NOT EXISTS idx_stop_search ON stop(search_name);
+                CREATE INDEX IF NOT EXISTS idx_stop_latlon ON stop(lat, lon);
 
-                CREATE TABLE route (
+                CREATE TABLE IF NOT EXISTS route (
                     id TEXT PRIMARY KEY,
                     short_name TEXT NOT NULL DEFAULT '',
                     route_type INTEGER NOT NULL DEFAULT 3,
@@ -102,15 +97,15 @@ final class OfflineGTFSStore: @unchecked Sendable {
                     color TEXT
                 );
 
-                CREATE TABLE trip (
+                CREATE TABLE IF NOT EXISTS trip (
                     id TEXT PRIMARY KEY,
                     route_id TEXT NOT NULL,
                     service_id TEXT NOT NULL,
                     headsign TEXT
                 );
-                CREATE INDEX idx_trip_service ON trip(service_id);
+                CREATE INDEX IF NOT EXISTS idx_trip_service ON trip(service_id);
 
-                CREATE TABLE stop_time (
+                CREATE TABLE IF NOT EXISTS stop_time (
                     trip_id TEXT NOT NULL,
                     stop_id TEXT NOT NULL,
                     seq INTEGER NOT NULL,
@@ -120,28 +115,25 @@ final class OfflineGTFSStore: @unchecked Sendable {
                     pickup INTEGER NOT NULL DEFAULT 0,
                     dropoff INTEGER NOT NULL DEFAULT 0
                 );
-                CREATE INDEX idx_st_stop ON stop_time(stop_id, dep_sec);
-                CREATE INDEX idx_st_trip ON stop_time(trip_id, seq);
+                CREATE INDEX IF NOT EXISTS idx_st_stop ON stop_time(stop_id, dep_sec);
+                CREATE INDEX IF NOT EXISTS idx_st_trip ON stop_time(trip_id, seq);
 
-                CREATE TABLE calendar (
+                CREATE TABLE IF NOT EXISTS calendar (
                     service_id TEXT PRIMARY KEY,
                     mon INTEGER, tue INTEGER, wed INTEGER, thu INTEGER,
                     fri INTEGER, sat INTEGER, sun INTEGER,
                     start_date INTEGER, end_date INTEGER
                 );
 
-                CREATE TABLE calendar_date (
+                CREATE TABLE IF NOT EXISTS calendar_date (
                     service_id TEXT NOT NULL,
                     date INTEGER NOT NULL,
                     exception INTEGER NOT NULL
                 );
-                CREATE INDEX idx_caldate ON calendar_date(date);
+                CREATE INDEX IF NOT EXISTS idx_caldate ON calendar_date(date);
 
-                CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT);
-                """)
-        }
-        return migrator
-    }
+                CREATE TABLE IF NOT EXISTS meta (key TEXT PRIMARY KEY, value TEXT);
+                """
 
     static let zurich: Calendar = {
         var cal = Calendar(identifier: .gregorian)
@@ -149,20 +141,25 @@ final class OfflineGTFSStore: @unchecked Sendable {
         return cal
     }()
 
-    func activeServiceIds(on day: Date, db: Database) throws -> Set<String> {
+    static func serviceDayStart(for date: Date) -> Date {
+        let noon = zurich.date(bySettingHour: 12, minute: 0, second: 0, of: date) ?? zurich.startOfDay(for: date)
+        return noon.addingTimeInterval(-12 * 3600)
+    }
+
+    func activeServiceIds(on day: Date, db: SQLiteConnection) throws -> Set<String> {
         let cal = OfflineGTFSStore.zurich
-        let comps = cal.dateComponents([.year, .month, .day, .weekday], from: day)
+        let comps = cal.dateComponents([.year, .month, .day, .weekday], from: day.addingTimeInterval(12 * 3600))
         let ymd = (comps.year! * 10000) + (comps.month! * 100) + comps.day!
         let weekdayColumn = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"][comps.weekday! - 1]
 
-        var ids = Set<String>(try String.fetchAll(db, sql: """
+        var ids = Set<String>(try db.strings( """
             SELECT service_id FROM calendar
             WHERE start_date <= ? AND end_date >= ? AND \(weekdayColumn) = 1
             """, arguments: [ymd, ymd]))
 
-        let added = try String.fetchAll(db, sql:
+        let added = try db.strings(
             "SELECT service_id FROM calendar_date WHERE date = ? AND exception = 1", arguments: [ymd])
-        let removed = try String.fetchAll(db, sql:
+        let removed = try db.strings(
             "SELECT service_id FROM calendar_date WHERE date = ? AND exception = 2", arguments: [ymd])
 
         ids.formUnion(added)
@@ -172,16 +169,17 @@ final class OfflineGTFSStore: @unchecked Sendable {
 
     func departures(stopId: String, time: Date, limit: Int) throws -> [GTFSDeparture] {
         let cal = OfflineGTFSStore.zurich
-        let today = cal.startOfDay(for: time)
-        let yesterday = cal.date(byAdding: .day, value: -1, to: today)!
+        let today = OfflineGTFSStore.serviceDayStart(for: time)
+        let yesterday = OfflineGTFSStore.serviceDayStart(for: cal.date(byAdding: .day, value: -1, to: time)!)
         let nowSec = Int(time.timeIntervalSince(today))
+        let yesterdaySec = Int(time.timeIntervalSince(yesterday))
 
         return try dbQueue.read { db in
             let stopIds = try self.physicalStopIds(for: stopId, db: db)
             guard !stopIds.isEmpty else { return [] }
 
             var rows: [GTFSDeparture] = []
-            for (serviceDay, minDepSec) in [(today, nowSec), (yesterday, nowSec + 86_400)] {
+            for (serviceDay, minDepSec) in [(today, nowSec), (yesterday, yesterdaySec)] {
                 let services = try self.activeServiceIds(on: serviceDay, db: db)
                 if services.isEmpty { continue }
                 rows += try self.rawDepartures(db: db, stopIds: stopIds, serviceIds: services,
@@ -196,12 +194,12 @@ final class OfflineGTFSStore: @unchecked Sendable {
         }
     }
 
-    private func physicalStopIds(for stopId: String, db: Database) throws -> [String] {
-        var ids = try String.fetchAll(db, sql:
+    private func physicalStopIds(for stopId: String, db: SQLiteConnection) throws -> [String] {
+        var ids = try db.strings(
             "SELECT id FROM stop WHERE id = ? OR parent_station = ?", arguments: [stopId, stopId])
         if ids.isEmpty {
             let norm = OfflineGTFSStore.normalize(id: stopId)
-            ids = try String.fetchAll(db, sql: """
+            ids = try db.strings( """
                 SELECT id FROM stop WHERE norm_id = ?
                    OR parent_station IN (SELECT id FROM stop WHERE norm_id = ?)
                 """, arguments: [norm, norm])
@@ -209,7 +207,7 @@ final class OfflineGTFSStore: @unchecked Sendable {
         return ids
     }
 
-    private func rawDepartures(db: Database, stopIds: [String], serviceIds: Set<String>,
+    private func rawDepartures(db: SQLiteConnection, stopIds: [String], serviceIds: Set<String>,
                                minDepSec: Int, serviceDay: Date, limit: Int) throws -> [GTFSDeparture] {
         let serviceIdsArray = Array(serviceIds)
         let servicePlaceholders = databaseQuestionMarks(count: serviceIdsArray.count)
@@ -228,15 +226,15 @@ final class OfflineGTFSStore: @unchecked Sendable {
             ORDER BY st.dep_sec
             LIMIT ?
             """
-        let args = StatementArguments(stopIds) + StatementArguments([minDepSec]) + StatementArguments(serviceIdsArray) + StatementArguments([limit])
-        let rows = try Row.fetchAll(db, sql: sql, arguments: args)
+        let args: [any SQLiteBindable] = stopIds + [minDepSec] + serviceIdsArray + [limit]
+        let rows = try db.rows(sql, arguments: args)
         return rows.map { row in
             GTFSDeparture(
-                tripId: row["trip_id"], stopId: row["stop_id"], stopName: row["stop_name"],
-                lat: row["lat"], lon: row["lon"], depSec: row["dep_sec"], arrSec: row["arr_sec"],
+                tripId: row.string("trip_id"), stopId: row.string("stop_id"), stopName: row.string("stop_name"),
+                lat: row.double("lat"), lon: row.double("lon"), depSec: row.optionalInt("dep_sec"), arrSec: row.optionalInt("arr_sec"),
                 serviceDay: serviceDay,
-                headsign: (row["st_headsign"] as String?)?.nilIfEmpty ?? row["trip_headsign"],
-                routeShortName: row["short_name"], routeType: row["route_type"], agencyId: row["agency_id"]
+                headsign: row.optionalString("st_headsign")?.nilIfEmpty ?? row.optionalString("trip_headsign"),
+                routeShortName: row.string("short_name"), routeType: row.int("route_type"), agencyId: row.string("agency_id")
             )
         }
     }
@@ -245,13 +243,13 @@ final class OfflineGTFSStore: @unchecked Sendable {
         let folded = OfflineGTFSStore.fold(text)
         guard !folded.isEmpty else { return [] }
         return try dbQueue.read { db in
-            let rows = try Row.fetchAll(db, sql: """
+            let rows = try db.rows( """
                 SELECT id, name, lat, lon FROM stop
                 WHERE parent_station = '' AND search_name LIKE ?
                 ORDER BY (CASE WHEN search_name LIKE ? THEN 0 ELSE 1 END), length(name)
                 LIMIT ?
                 """, arguments: ["%\(folded)%", "\(folded)%", limit])
-            return rows.map { GTFSStop(id: $0["id"], name: $0["name"], lat: $0["lat"], lon: $0["lon"]) }
+            return rows.map { GTFSStop(id: $0.string("id"), name: $0.string("name"), lat: $0.double("lat"), lon: $0.double("lon")) }
         }
     }
 
@@ -259,11 +257,11 @@ final class OfflineGTFSStore: @unchecked Sendable {
         let target = CLLocation(latitude: lat, longitude: lon)
         for delta in [0.05, 0.15, 0.5] {
             let rows: [GTFSStop] = try dbQueue.read { db in
-                try Row.fetchAll(db, sql: """
+                try db.rows( """
                     SELECT id, name, lat, lon FROM stop
                     WHERE parent_station = '' AND lat BETWEEN ? AND ? AND lon BETWEEN ? AND ?
                     """, arguments: [lat - delta, lat + delta, lon - delta, lon + delta])
-                .map { GTFSStop(id: $0["id"], name: $0["name"], lat: $0["lat"], lon: $0["lon"]) }
+                .map { GTFSStop(id: $0.string("id"), name: $0.string("name"), lat: $0.double("lat"), lon: $0.double("lon")) }
             }
             if rows.count >= min(limit, 1) || delta == 0.5 {
                 return rows
@@ -278,7 +276,7 @@ final class OfflineGTFSStore: @unchecked Sendable {
 
     func tripDetails(tripId: String, serviceDay: Date) throws -> GTFSTripDetails? {
         try dbQueue.read { db in
-            let rows = try Row.fetchAll(db, sql: """
+            let rows = try db.rows( """
                 SELECT st.seq, st.stop_id, st.arr_sec, st.dep_sec,
                        s.name, s.lat, s.lon,
                        t.headsign AS trip_headsign, r.short_name, r.route_type, r.agency_id
@@ -291,15 +289,15 @@ final class OfflineGTFSStore: @unchecked Sendable {
                 """, arguments: [tripId])
             guard let first = rows.first else { return nil }
             let stops = rows.map {
-                GTFSTripStop(seq: $0["seq"], stopId: $0["stop_id"], name: $0["name"],
-                             lat: $0["lat"], lon: $0["lon"], arrSec: $0["arr_sec"], depSec: $0["dep_sec"])
+                GTFSTripStop(seq: $0.int("seq"), stopId: $0.string("stop_id"), name: $0.string("name"),
+                             lat: $0.double("lat"), lon: $0.double("lon"), arrSec: $0.optionalInt("arr_sec"), depSec: $0.optionalInt("dep_sec"))
             }
             return GTFSTripDetails(
                 stops: stops,
-                headsign: first["trip_headsign"],
-                routeShortName: first["short_name"],
-                routeType: first["route_type"],
-                agencyId: first["agency_id"],
+                headsign: first.optionalString("trip_headsign"),
+                routeShortName: first.string("short_name"),
+                routeType: first.int("route_type"),
+                agencyId: first.string("agency_id"),
                 serviceDay: serviceDay
             )
         }
@@ -307,14 +305,14 @@ final class OfflineGTFSStore: @unchecked Sendable {
 
     func importDate() -> Date? {
         let value = try? dbQueue.read { db in
-            try String.fetchOne(db, sql: "SELECT value FROM meta WHERE key = 'import_date'")
+            try db.strings("SELECT value FROM meta WHERE key = 'import_date'").first
         }
         guard let value, let interval = TimeInterval(value) else { return nil }
         return Date(timeIntervalSince1970: interval)
     }
 
     func stopCount() -> Int {
-        (try? dbQueue.read { db in try Int.fetchOne(db, sql: "SELECT COUNT(*) FROM stop") ?? 0 }) ?? 0
+        (try? dbQueue.read { db in try db.rows("SELECT COUNT(*) AS n FROM stop").first?.int("n") ?? 0 }) ?? 0
     }
 
     static func normalize(id: String) -> String {
@@ -337,4 +335,152 @@ private extension String {
 
 private func databaseQuestionMarks(count: Int) -> String {
     Array(repeating: "?", count: max(count, 1)).joined(separator: ",")
+}
+
+protocol SQLiteBindable {
+    func bind(to statement: OpaquePointer?, at position: Int32)
+}
+
+extension Int: SQLiteBindable {
+    func bind(to statement: OpaquePointer?, at position: Int32) {
+        sqlite3_bind_int64(statement, position, Int64(self))
+    }
+}
+
+extension Double: SQLiteBindable {
+    func bind(to statement: OpaquePointer?, at position: Int32) {
+        sqlite3_bind_double(statement, position, self)
+    }
+}
+
+extension String: SQLiteBindable {
+    func bind(to statement: OpaquePointer?, at position: Int32) {
+        sqlite3_bind_text(statement, position, self, -1, unsafeBitCast(-1, to: sqlite3_destructor_type.self))
+    }
+}
+
+struct SQLiteError: Error, LocalizedError {
+    let message: String
+    var errorDescription: String? { message }
+}
+
+struct SQLiteRow {
+    fileprivate enum Value {
+        case int(Int)
+        case double(Double)
+        case text(String)
+        case null
+    }
+
+    fileprivate let values: [String: Value]
+    fileprivate let first: Value?
+
+    func optionalString(_ column: String) -> String? {
+        Self.string(values[column])
+    }
+
+    func string(_ column: String) -> String { optionalString(column) ?? "" }
+
+    func optionalInt(_ column: String) -> Int? {
+        switch values[column] {
+        case .int(let value): return value
+        case .double(let value): return Int(value)
+        case .text(let value): return Int(value)
+        default: return nil
+        }
+    }
+
+    func int(_ column: String) -> Int { optionalInt(column) ?? 0 }
+
+    func double(_ column: String) -> Double {
+        switch values[column] {
+        case .double(let value): return value
+        case .int(let value): return Double(value)
+        case .text(let value): return Double(value) ?? 0
+        default: return 0
+        }
+    }
+
+    fileprivate var firstString: String? { Self.string(first) }
+
+    private static func string(_ value: Value?) -> String? {
+        switch value {
+        case .text(let value): return value
+        case .int(let value): return String(value)
+        case .double(let value): return String(value)
+        default: return nil
+        }
+    }
+}
+
+final class SQLiteConnection: @unchecked Sendable {
+    private var handle: OpaquePointer?
+    private let queue = DispatchQueue(label: "ch.cclerc.lux.offline-sqlite")
+
+    init(path: String) throws {
+        let flags = SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX
+        guard sqlite3_open_v2(path, &handle, flags, nil) == SQLITE_OK else {
+            let message = handle.map { String(cString: sqlite3_errmsg($0)) } ?? "open failed"
+            sqlite3_close_v2(handle)
+            handle = nil
+            throw SQLiteError(message: message)
+        }
+        sqlite3_busy_timeout(handle, 5000)
+    }
+
+    deinit {
+        sqlite3_close_v2(handle)
+    }
+
+    func read<T>(_ body: (SQLiteConnection) throws -> T) throws -> T {
+        try queue.sync { try body(self) }
+    }
+
+    func execute(_ sql: String) throws {
+        try queue.sync {
+            guard sqlite3_exec(handle, sql, nil, nil, nil) == SQLITE_OK else { throw lastError() }
+        }
+    }
+
+    func strings(_ sql: String, arguments: [any SQLiteBindable] = []) throws -> [String] {
+        try rows(sql, arguments: arguments).compactMap(\.firstString)
+    }
+
+    func rows(_ sql: String, arguments: [any SQLiteBindable] = []) throws -> [SQLiteRow] {
+        var statement: OpaquePointer?
+        guard sqlite3_prepare_v2(handle, sql, -1, &statement, nil) == SQLITE_OK else { throw lastError() }
+        defer { sqlite3_finalize(statement) }
+
+        for (index, argument) in arguments.enumerated() {
+            argument.bind(to: statement, at: Int32(index + 1))
+        }
+
+        let columnCount = sqlite3_column_count(statement)
+        let names = (0..<columnCount).map { String(cString: sqlite3_column_name(statement, $0)) }
+        var result: [SQLiteRow] = []
+        while true {
+            let step = sqlite3_step(statement)
+            if step == SQLITE_DONE { break }
+            guard step == SQLITE_ROW else { throw lastError() }
+            var values: [String: SQLiteRow.Value] = [:]
+            var first: SQLiteRow.Value?
+            for column in 0..<columnCount {
+                let value: SQLiteRow.Value
+                switch sqlite3_column_type(statement, column) {
+                case SQLITE_INTEGER: value = .int(Int(sqlite3_column_int64(statement, column)))
+                case SQLITE_FLOAT: value = .double(sqlite3_column_double(statement, column))
+                case SQLITE_NULL: value = .null
+                default: value = .text(sqlite3_column_text(statement, column).map { String(cString: $0) } ?? "")
+                }
+                values[names[Int(column)]] = value
+                if column == 0 { first = value }
+            }
+            result.append(SQLiteRow(values: values, first: first))
+        }
+        return result
+    }
+
+    private func lastError() -> SQLiteError {
+        SQLiteError(message: handle.map { String(cString: sqlite3_errmsg($0)) } ?? "sqlite error")
+    }
 }

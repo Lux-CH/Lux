@@ -117,14 +117,14 @@ struct OfflineProvider: OfflineDataProvider {
     }
 
     static func encodeTripId(_ id: String, serviceDay: Date) -> String {
-        let ymd = OfflineGTFSStore.zurich.dateComponents([.year, .month, .day], from: serviceDay)
+        let ymd = OfflineGTFSStore.zurich.dateComponents([.year, .month, .day], from: serviceDay.addingTimeInterval(12 * 3600))
         let stamp = String(format: "%04d%02d%02d", ymd.year ?? 0, ymd.month ?? 0, ymd.day ?? 0)
         return "\(id)\(tripDaySeparator)\(stamp)"
     }
 
     static func decodeTripId(_ encoded: String) -> (id: String, serviceDay: Date) {
         guard let range = encoded.range(of: tripDaySeparator, options: .backwards) else {
-            return (encoded, OfflineGTFSStore.zurich.startOfDay(for: Date()))
+            return (encoded, OfflineGTFSStore.serviceDayStart(for: Date()))
         }
         let id = String(encoded[..<range.lowerBound])
         let stamp = String(encoded[range.upperBound...])
@@ -133,9 +133,9 @@ struct OfflineProvider: OfflineDataProvider {
             var comps = DateComponents()
             comps.year = y; comps.month = m; comps.day = d
             let day = OfflineGTFSStore.zurich.date(from: comps) ?? Date()
-            return (id, OfflineGTFSStore.zurich.startOfDay(for: day))
+            return (id, OfflineGTFSStore.serviceDayStart(for: day))
         }
-        return (id, OfflineGTFSStore.zurich.startOfDay(for: Date()))
+        return (id, OfflineGTFSStore.serviceDayStart(for: Date()))
     }
 
     static func mode(forRouteType type: Int) -> TransportationMode {
