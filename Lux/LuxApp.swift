@@ -6,16 +6,21 @@
 //
 
 import SwiftUI
+import CoreLocation
 import LuxCom
 
 final class LuxAppDelegate: NSObject, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         OnboardLiveActivityController.endAll()
+        if #available(iOS 17.0, *) {
+            CLBackgroundActivitySession().invalidate()
+        }
         DepartureAlertPlanner.register()
         return true
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
+        MainActor.assumeIsolated { OnboardSession.active?.stop() }
         OnboardLiveActivityController.endAllBeforeTermination()
     }
 }
@@ -35,6 +40,7 @@ struct LuxApp: App {
     @State private var showItineraryProcessingError: Bool = false
     @State private var pendingURL: URL?
     @State private var sharedItinerary: Itinerary?
+    @State private var sharedLiveShare: LiveShareLink?
     @State private var sharedStopDetail: (String, String)?
     @State private var errorMessage: String = ""
     @ObservedObject var settings = Settings.shared
@@ -73,7 +79,7 @@ struct LuxApp: App {
                 }
                 .fullScreenCover(isPresented: $showItinerarySheet) {
                     if let itinerary = sharedItinerary {
-                        ItineraryView(itinerary: itinerary, fromNearby: false)
+                        ItineraryView(itinerary: itinerary, liveShare: sharedLiveShare)
                             .preferredColorScheme(getColorScheme())
                             .environmentObject(locationManager)
                             .environmentObject(shortcutManager)
@@ -152,10 +158,14 @@ struct LuxApp: App {
             
         case .itinerary(let itinerary):
             sharedItinerary = itinerary
+            sharedLiveShare = nil
             showItinerarySheet = false
             showTripPlaceSheet = false
             showStopSheet = false
             showItinerarySheet = true
+            
+        case .liveItinerary:
+            break
             
         case .error(let error):
             errorMessage = error.localizedDescription
@@ -170,6 +180,15 @@ struct LuxApp: App {
         switch result {
         case .itinerary(let itinerary):
             sharedItinerary = itinerary
+            sharedLiveShare = nil
+            showItinerarySheet = false
+            showTripPlaceSheet = false
+            showStopSheet = false
+            showItinerarySheet = true
+            
+        case .liveItinerary(let itinerary, let link):
+            sharedItinerary = itinerary
+            sharedLiveShare = link
             showItinerarySheet = false
             showTripPlaceSheet = false
             showStopSheet = false

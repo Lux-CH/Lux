@@ -11,6 +11,7 @@ import LuxCom
 
 enum URLHandlerResult {
     case itinerary(Itinerary)
+    case liveItinerary(Itinerary, LiveShareLink)
     case stopDetail(stopId: String, name: String)
     case stopPlace(name: String, stopId: String)
     case confirmationRequired(URL)
@@ -44,6 +45,10 @@ struct URLHandler {
     private static let maxFileSize: Int64 = 51200
     
     static func process(_ url: URL) async -> URLHandlerResult {
+        if let shared = sharedPageURL(url) {
+            return .confirmationRequired(shared)
+        }
+        
         if url.pathExtension == "luxtrip" || (url.scheme == "lux" && url.host == "itinerary") {
             return .confirmationRequired(url)
         }
@@ -65,6 +70,23 @@ struct URLHandler {
         } else {
             return await handleLocalItinerary(url)
         }
+    }
+    
+    private static func sharedPageURL(_ url: URL) -> URL? {
+        guard url.scheme == "https", url.host == "lux.cclerc.ch", url.path == "/share.html",
+              let fragment = url.fragment, !fragment.isEmpty else { return nil }
+        let parts = fragment.split(separator: "~", maxSplits: 1).map(String.init)
+        let identifier = parts[0]
+        guard !identifier.isEmpty, identifier.count <= 64,
+              identifier.allSatisfy({ $0.isASCII && ($0.isLetter || $0.isNumber || $0 == "_" || $0 == "-") }) else { return nil }
+        var components = URLComponents()
+        components.scheme = "lux"
+        components.host = "itinerary"
+        components.path = "/\(identifier)"
+        if parts.count == 2, LiveShareFollower.isValidShareId(parts[1]) {
+            components.queryItems = [URLQueryItem(name: "live", value: parts[1])]
+        }
+        return components.url
     }
     
     private static func parseStopDetailURL(_ url: URL) -> (stopId: String, name: String)? {
@@ -115,10 +137,16 @@ struct URLHandler {
         
         let identifier = pathComponents[1]
         let itinerarySharer = ItinerarySharer()
+        let liveShareId = URLComponents(url: url, resolvingAgainstBaseURL: false)?
+            .queryItems?.first { $0.name == "live" }?.value
+            .flatMap { LiveShareFollower.isValidShareId($0) ? $0 : nil }
         
         let result = await itinerarySharer.downloadItinerary(identifier)
         switch result {
         case .success(let itinerary):
+            if let liveShareId {
+                return .liveItinerary(itinerary, LiveShareLink(shareId: liveShareId, itineraryId: identifier))
+            }
             return .itinerary(itinerary)
         case .failure(let error):
             return .error(error)

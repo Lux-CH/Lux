@@ -62,6 +62,7 @@ struct ItineraryView: View {
     @State private var tripOpener = TripOpener()
     @State private var containerWidth: CGFloat = 0
     @State private var connectionsTask: Task<Void, Never>?
+    @State private var liveFollower: LiveShareFollower?
 
     private static func compactDetent(isSingle: Bool) -> PresentationDetent {
         guard isSingle else { return .fraction(0.225) }
@@ -86,6 +87,14 @@ struct ItineraryView: View {
         self._detailDetent = State(initialValue: Self.compactDetent(isSingle: false))
     }
     
+    init(itinerary: Itinerary, liveShare: LiveShareLink?) {
+        _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary))
+        self.fromNearby = false
+        self.isSingle = false
+        self._detailDetent = State(initialValue: Self.compactDetent(isSingle: false))
+        self._liveFollower = State(initialValue: liveShare.map { LiveShareFollower(shareId: $0.shareId, itineraryId: $0.itineraryId) })
+    }
+
     init(itinerary: Itinerary, fromNearby: Bool, destinationName: String? = nil) {
         _viewModel = StateObject(wrappedValue: ItineraryViewModel(itinerary: itinerary, destinationName: destinationName))
         self.fromNearby = fromNearby
@@ -158,7 +167,8 @@ struct ItineraryView: View {
                             selectedStop: stopDetailDestination != nil ? shownStopDestination?.place : nil,
                             stopSheetHeight: stopSheetCompactHeight,
                             onOpenStop: openStopSheet,
-                            onMapTap: { closeStopSheet(restoringDetails: true) }
+                            onMapTap: { closeStopSheet(restoringDetails: true) },
+                            liveFollower: liveFollower
                         )
                     } else {
                         Color(.secondarySystemBackground)
@@ -166,6 +176,12 @@ struct ItineraryView: View {
                     }
                 }
                 .onGeometryChange(for: CGFloat.self) { $0.size.width } action: { containerWidth = $0 }
+                .overlay(alignment: .top) {
+                    if let liveFollower {
+                        LiveShareOverlay(follower: liveFollower, viewModel: viewModel, onFocus: focusLive)
+                            .padding(.horizontal, 73)
+                    }
+                }
                 .overlay(alignment: .leading) {
                     VStack(spacing: 12) {
                         GlassEffectGroup(spacing: 8) {
@@ -231,7 +247,7 @@ struct ItineraryView: View {
                 }
                 .overlay(alignment: .trailing) {
                     VStack(spacing: 12) {
-                        if canStartOnboard {
+                        if canStartOnboard && liveFollower == nil {
                             onboardButton
                         }
                         if let itinerary = viewModel.itinerary {
@@ -341,6 +357,13 @@ struct ItineraryView: View {
             await viewModel.loadItinerary()
         }
         .onAppear {
+            if let liveFollower {
+                let viewModel = viewModel
+                liveFollower.onItineraryChange = { itinerary in
+                    Task { await viewModel.replaceItinerary(itinerary) }
+                }
+                liveFollower.start()
+            }
             locationManager.startMonitoring()
             isOnScreen = true
             shouldRenderMap = true
@@ -364,6 +387,7 @@ struct ItineraryView: View {
             }
         }
         .onDisappear {
+            liveFollower?.stop()
             onboardSession?.stop()
             onboardSession = nil
             locationManager.stopMonitoring()
@@ -436,6 +460,15 @@ struct ItineraryView: View {
         guard stopDetailDestination != nil else { return }
         keepsDetailsHidden = !restoringDetails
         stopDetailDestination = nil
+    }
+
+    private func focusLive() {
+        guard let coordinate = liveFollower?.coordinate else { return }
+        trackingMode = .none
+        let isOnFoot = [.walking, .waiting].contains(liveFollower?.state?.onboardPhase)
+        withAnimation(.smooth(duration: 0.6)) {
+            viewModel.position = .camera(MapCamera(centerCoordinate: coordinate, distance: isOnFoot ? 900 : 2500))
+        }
     }
 
     private var canStartOnboard: Bool {
@@ -608,6 +641,7 @@ struct ItineraryMapView: View {
     let stopSheetHeight: CGFloat
     let onOpenStop: (Place) -> Void
     let onMapTap: () -> Void
+    var liveFollower: LiveShareFollower? = nil
 
     @State private var position: MapCameraPosition = .automatic
     @State private var mapCamera: MapCamera?
@@ -661,15 +695,26 @@ struct ItineraryMapView: View {
                     .stroke(overlay.color, lineWidth: 4)
             }
             
-            ForEach(viewModel.vehicleAnnotations) { vehicle in
-                Annotation("", coordinate: vehicle.coordinate, anchor: .center) {
-                    VehicleAnnotationView(annotation: vehicle)
+            if let live = liveFollower?.state, let coordinate = live.coordinate {
+                if let accuracy = live.acc, accuracy > 15, accuracy < 1000 {
+                    MapCircle(center: coordinate, radius: accuracy)
+                        .foregroundStyle(Color.luxAccent.opacity(0.12))
+                        .stroke(Color.luxAccent.opacity(0.35), lineWidth: 1)
                 }
-            }
-            
-            ForEach(viewModel.walkingAnnotations) { walking in
-                Annotation("", coordinate: walking.coordinate, anchor: .center) {
-                    WalkingAnnotationView()
+                Annotation("", coordinate: coordinate, anchor: .center) {
+                    LiveSharePuck(fixDate: live.fixDate)
+                }
+            } else {
+                ForEach(viewModel.vehicleAnnotations) { vehicle in
+                    Annotation("", coordinate: vehicle.coordinate, anchor: .center) {
+                        VehicleAnnotationView(annotation: vehicle)
+                    }
+                }
+
+                ForEach(viewModel.walkingAnnotations) { walking in
+                    Annotation("", coordinate: walking.coordinate, anchor: .center) {
+                        WalkingAnnotationView()
+                    }
                 }
             }
         }

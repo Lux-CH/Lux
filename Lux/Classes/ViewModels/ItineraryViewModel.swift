@@ -86,6 +86,25 @@ final class ItineraryViewModel: ObservableObject {
         await loadItinerary()
     }
     
+    func replaceItinerary(_ newItinerary: Itinerary) async {
+        stopAllTasks()
+
+        self.vehicleAnnotations = []
+        self.walkingAnnotations = []
+        self.itinerary = newItinerary
+        self.mapAnnotations = []
+        self.routeOverlays = []
+        self.walkingDirections = [:]
+        self.legKeyFrames = [:]
+        self.walkingLegPaths = [:]
+        self.stationOverlay = StationOverlayContent()
+        self.error = nil
+        self.shouldStop = false
+        self.selectedStop = nil
+
+        await loadItinerary()
+    }
+
     func stopAllTasks() {
         liveVehicleTasks.values.forEach { $0.cancel() }
         liveVehicleTasks.removeAll()
