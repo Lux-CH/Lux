@@ -131,6 +131,7 @@ struct ItineraryStopSheet: View {
     let place: Place
     var connections: [StopConnection] = []
     var isEndpoint = false
+    var showsGo = true
     @Binding var detent: PresentationDetent
     @Binding var compactHeight: CGFloat
     let onGo: (SearchResult) -> Void
@@ -165,12 +166,12 @@ struct ItineraryStopSheet: View {
         return details
     }
 
-    static func estimatedCompactHeight(for place: Place, width: CGFloat, hasConnections: Bool, isEndpoint: Bool = false) -> CGFloat {
+    static func estimatedCompactHeight(for place: Place, width: CGFloat, hasConnections: Bool, isEndpoint: Bool = false, showsGo: Bool = true) -> CGFloat {
         let titleFont = UIFont.systemFont(ofSize: UIFont.preferredFont(forTextStyle: .title3).pointSize, weight: .bold)
         let detailFont = UIFont.preferredFont(forTextStyle: .subheadline)
         let buttonFont = UIFont.systemFont(ofSize: 14, weight: .semibold)
         let buttonWidth = (String(localized: "Y aller") as NSString).size(withAttributes: [.font: buttonFont]).width + 54
-        let textWidth = max(80, isEndpoint ? width - 40 : width - 40 - 12 - buttonWidth)
+        let textWidth = max(80, isEndpoint || !showsGo ? width - 40 : width - 40 - 12 - buttonWidth)
         let titleHeight = min(
             (place.name as NSString).boundingRect(
                 with: CGSize(width: textWidth, height: .greatestFiniteMagnitude),
@@ -205,7 +206,7 @@ struct ItineraryStopSheet: View {
                     compactHeight = compact
                     if wasCompact { detent = .height(compact) }
                 },
-                onGo: isEndpoint ? nil : {
+                onGo: isEndpoint || !showsGo ? nil : {
                     onGo(stop)
                 }
             )
