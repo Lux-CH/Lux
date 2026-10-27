@@ -659,6 +659,7 @@ extension OnboardSession {
         alongInLeg = currentPath?.length ?? 0
         arrivalDate = Date()
         remainingDistance = 0
+        liveShare.finish(arrived: true, session: self)
         HapticFeedback.notification(type: .success)
         announcer.announce(
             String(localized: "Vous êtes arrivé à \(destinationName)."),

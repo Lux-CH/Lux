@@ -201,6 +201,29 @@ actor RelayClient {
         send(Self.encode(["action": "crowd_stop"]))
     }
 
+    /// Someone's live onboard share, by its public id. Also used by the sharer itself
+    /// to keep the connection up and learn how many people follow.
+    func liveShare(id: String) -> AsyncStream<LiveShareState> {
+        let key = SubscriptionKey(channel: "live", src: "shared", id: id, extra: "")
+        return stream(
+            key: key,
+            subscribePayload: ["action": "sub_live", "id": id],
+            unsubscribePayload: ["action": "unsub_live", "id": id],
+            as: LiveShareState.self
+        )
+    }
+
+    private static let liveEncoder = JSONEncoder()
+
+    func publishLiveShare(_ update: LiveShareUpdate) {
+        guard isConnected, let data = try? Self.liveEncoder.encode(update) else { return }
+        send(String(decoding: data, as: UTF8.self))
+    }
+
+    func endLiveShare(token: String, arrived: Bool) {
+        send(Self.encode(["action": "live_end", "token": token, "arrived": arrived]))
+    }
+
     func crowdAcks() -> AsyncStream<CrowdAck> {
         let id = UUID()
         return AsyncStream { continuation in

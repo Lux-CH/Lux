@@ -105,6 +105,7 @@ final class OnboardSession {
     @ObservationIgnored var paceSamples = 0
     let announcer: OnboardAnnouncer
     let liveActivity = OnboardLiveActivityController()
+    let liveShare = OnboardLiveShare()
     @ObservationIgnored var liveFeeds: [Int: RelayLiveFeed<Itinerary>] = [:]
     @ObservationIgnored var vehicleTasks: [Int: Task<Void, Never>] = [:]
     @ObservationIgnored var rideInfoTask: Task<Void, Never>?
@@ -330,6 +331,7 @@ final class OnboardSession {
     }
 
     func stopTracking() {
+        liveShare.finish(arrived: phase == .arrived, session: self)
         guard isTracking else { return }
         isTracking = false
         locationProvider.stop()
@@ -454,6 +456,11 @@ final class OnboardSession {
     func tick() {
         guard isRunning else { return }
         now = Date()
+        if isTracking, phase != .arrived, now.timeIntervalSince(arrivalDate) > 45 * 60 {
+            stopTracking()
+            liveActivity.end(finalState: nil)
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
         if let leg = currentLeg {
             locationProvider.isSaving = phase == .waiting && !leg.mode.isMainlineRail && leg.startTime.timeIntervalSince(now) > 120
         }
@@ -471,6 +478,7 @@ final class OnboardSession {
             smoothedSpeed = nil
             withAnimation(.snappy) { groundSpeed = nil }
         }
+        liveShare.update(from: self)
         lookForEarlierDeparture()
         refreshTransferOptions()
         catchUpWithVehicle()
