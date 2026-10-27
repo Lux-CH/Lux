@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import GlowGetter
 
 struct SwissPassView: View {
     private let barcodeGenerator = BarcodeGenerator()
