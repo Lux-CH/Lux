@@ -328,6 +328,11 @@ struct RouteOptionsView: View {
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.leading)
+                            BikeNetworkRow(name: "Lime", area: String(localized: "Lausanne, Morges"), color: Color(red: 0, green: 0.82, blue: 0))
+                            Text("Les vélos Lime se rendent sur un emplacement Lime.")
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
                         }
                         .transition(.opacity.combined(with: .move(edge: .top)))
                     }

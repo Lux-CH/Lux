@@ -35,256 +35,6 @@
         }
       }
     },
-    "Arrêter le partage" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Stop sharing"
-          }
-        }
-      }
-    },
-    "Attend à %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Waiting at %@"
-          }
-        }
-      }
-    },
-    "Connexion…" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Connecting…"
-          }
-        }
-      }
-    },
-    "depuis %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "since %@"
-          }
-        }
-      }
-    },
-    "Descend à %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Gets off at %@"
-          }
-        }
-      }
-    },
-    "Départ à %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Departs at %@"
-          }
-        }
-      }
-    },
-    "En direct" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Live"
-          }
-        }
-      }
-    },
-    "il y a %lld min" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld min ago"
-          }
-        }
-      }
-    },
-    "il y a %lld s" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld s ago"
-          }
-        }
-      }
-    },
-    "Le lien montre votre position jusqu'à votre arrivée." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The link shows your location until you arrive."
-          }
-        }
-      }
-    },
-    "Partage actif" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sharing"
-          }
-        }
-      }
-    },
-    "Partage impossible" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn't share"
-          }
-        }
-      }
-    },
-    "Partage terminé" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sharing ended"
-          }
-        }
-      }
-    },
-    "Partage terminé ou indisponible." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sharing ended or unavailable."
-          }
-        }
-      }
-    },
-    "Partager le lien" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Share link"
-          }
-        }
-      }
-    },
-    "Partager mon trajet" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Share my trip"
-          }
-        }
-      }
-    },
-    "Personne ne suit" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No one following"
-          }
-        }
-      }
-    },
-    "Signal faible" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Weak signal"
-          }
-        }
-      }
-    },
-    "Signal perdu" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Signal lost"
-          }
-        }
-      }
-    },
-    "Signal perdu à %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Signal lost at %@"
-          }
-        }
-      }
-    },
-    "Suivi par %lld personnes" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Followed by %lld people"
-          }
-        }
-      }
-    },
-    "Suivi par 1 personne" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Followed by 1 person"
-          }
-        }
-      }
-    },
-    "Terminé" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ended"
-          }
-        }
-      }
-    },
-    "Vers %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "To %@"
-          }
-        }
-      }
-    },
-    "Vérifiez votre connexion." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check your connection."
-          }
-        }
-      }
-    },
     "· Puis" : {
       "localizations" : {
         "en" : {
@@ -501,12 +251,42 @@
         }
       }
     },
+    "%lld correspondances" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld transfers"
+          }
+        }
+      }
+    },
     "%lld min" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld min"
+          }
+        }
+      }
+    },
+    "%lld min à pied" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min walk"
+          }
+        }
+      }
+    },
+    "%lld min à vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min by bike"
           }
         }
       }
@@ -547,6 +327,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "%lld min less walking in the rain"
+          }
+        }
+      }
+    },
+    "%lld min de marge" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min to spare"
           }
         }
       }
@@ -648,36 +438,6 @@
     "%llds" : {
       "shouldTranslate" : false
     },
-    "à %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "at %@"
-          }
-        }
-      }
-    },
-    "À destination" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Arrived"
-          }
-        }
-      }
-    },
-    "à l'instant" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "just now"
-          }
-        }
-      }
-    },
     "•" : {
       "localizations" : {
         "en" : {
@@ -688,6 +448,16 @@
         }
       },
       "shouldTranslate" : false
+    },
+    "→ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "→ %@"
+          }
+        }
+      }
     },
     "+%lld min" : {
       "shouldTranslate" : false
@@ -702,12 +472,42 @@
         }
       }
     },
+    "−%lld min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "−%lld min"
+          }
+        }
+      }
+    },
     "1 an" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "1 year"
+          }
+        }
+      }
+    },
+    "1 arrêt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 stop"
+          }
+        }
+      }
+    },
+    "1 correspondance" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "1 transfer"
           }
         }
       }
@@ -812,6 +612,16 @@
         }
       }
     },
+    "à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "at %@"
+          }
+        }
+      }
+    },
     "À %@ de vous" : {
       "localizations" : {
         "en" : {
@@ -852,12 +662,32 @@
         }
       }
     },
+    "À destination" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Arrived"
+          }
+        }
+      }
+    },
     "À durée à peu près égale" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "For a similar travel time"
+          }
+        }
+      }
+    },
+    "à l'instant" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "just now"
           }
         }
       }
@@ -888,6 +718,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Walking"
+          }
+        }
+      }
+    },
+    "À pied entre les arrêts" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On foot between stops"
           }
         }
       }
@@ -1582,6 +1422,16 @@
         }
       }
     },
+    "Arrêter le partage" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stop sharing"
+          }
+        }
+      }
+    },
     "arrêts" : {
       "localizations" : {
         "en" : {
@@ -1754,6 +1604,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tips"
+          }
+        }
+      }
+    },
+    "Attend à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting at %@"
           }
         }
       }
@@ -2354,6 +2214,16 @@
         }
       }
     },
+    "C'est parti. Pédalez jusqu'à %@." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let's go. Ride to %@."
+          }
+        }
+      }
+    },
     "C'est parti. Prenez %@, %@." : {
       "localizations" : {
         "en" : {
@@ -2406,6 +2276,16 @@
     },
     "cclerc.ch" : {
       "shouldTranslate" : false
+    },
+    "Ce code n'est pas un SwissPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This isn't a SwissPass code"
+          }
+        }
+      }
     },
     "Ce que Lux a appris" : {
       "localizations" : {
@@ -2640,6 +2520,16 @@
         }
       }
     },
+    "Choisissez votre allure habituelle pour des temps de trajet plus justes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick your usual pace for more accurate travel times"
+          }
+        }
+      }
+    },
     "Choisissez votre position actuelle ou commencez à taper pour rechercher un arrêt.\n3 caractères minimum sont requis" : {
       "localizations" : {
         "en" : {
@@ -2866,6 +2756,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Connectivity"
+          }
+        }
+      }
+    },
+    "Connexion…" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Connecting…"
           }
         }
       }
@@ -3326,6 +3226,16 @@
         }
       }
     },
+    "Départ à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Departs at %@"
+          }
+        }
+      }
+    },
     "départ dans %lld minutes" : {
       "localizations" : {
         "en" : {
@@ -3462,6 +3372,16 @@
         }
       }
     },
+    "depuis %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "since %@"
+          }
+        }
+      }
+    },
     "Depuis %@" : {
       "localizations" : {
         "en" : {
@@ -3518,6 +3438,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Unpleasant"
+          }
+        }
+      }
+    },
+    "Descend à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gets off at %@"
           }
         }
       }
@@ -3742,6 +3672,16 @@
         }
       }
     },
+    "Donkey Republic" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Donkey Republic"
+          }
+        }
+      }
+    },
     "Données cellulaires" : {
       "localizations" : {
         "en" : {
@@ -3892,6 +3832,36 @@
         }
       }
     },
+    "Électrique" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Electric"
+          }
+        }
+      }
+    },
+    "Emporter à bord" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take it on board"
+          }
+        }
+      }
+    },
+    "Emporter le vélo à bord" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Take the bike on board"
+          }
+        }
+      }
+    },
     "En attente de votre position..." : {
       "localizations" : {
         "en" : {
@@ -3918,6 +3888,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "By setting up a programmation, Lux will suggest the shortcut on the home screen based on the time of day.\nFor example, if you use a shortcut every day at 8 AM, Lux will highlight it around that time."
+          }
+        }
+      }
+    },
+    "En direct" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live"
           }
         }
       }
@@ -4023,6 +4003,7 @@
       }
     },
     "Erreur de scan" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4328,6 +4309,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Keep current"
+          }
+        }
+      }
+    },
+    "Garez-le dans la zone %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Park it within the %@ zone"
+          }
+        }
+      }
+    },
+    "Genève, EPFL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Geneva, EPFL"
           }
         }
       }
@@ -4638,6 +4639,26 @@
         }
       }
     },
+    "il y a %lld min" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld min ago"
+          }
+        }
+      }
+    },
+    "il y a %lld s" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld s ago"
+          }
+        }
+      }
+    },
     "Il y a du monde à bord ?" : {
       "localizations" : {
         "en" : {
@@ -4824,6 +4845,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Trips"
+          }
+        }
+      }
+    },
+    "Itinéraires avec votre propre vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Routes with your own bike"
           }
         }
       }
@@ -5241,6 +5272,26 @@
         }
       }
     },
+    "Lampe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flashlight"
+          }
+        }
+      }
+    },
+    "Lausanne, Morges" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lausanne, Morges"
+          }
+        }
+      }
+    },
     "Lavande Pastel" : {
       "localizations" : {
         "en" : {
@@ -5297,6 +5348,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "funicular"
+          }
+        }
+      }
+    },
+    "Le lien montre votre position jusqu'à votre arrivée." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The link shows your location until you arrive."
           }
         }
       }
@@ -5521,6 +5582,16 @@
         }
       }
     },
+    "Les vélos Lime se rendent sur un emplacement Lime." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lime bikes must be returned to a Lime parking spot."
+          }
+        }
+      }
+    },
     "Lettres et chiffres" : {
       "localizations" : {
         "en" : {
@@ -5697,6 +5768,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Lux steers you away from transfers that are too tight."
+          }
+        }
+      }
+    },
+    "Lux n'a pas accès à la caméra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux can't access the camera"
           }
         }
       }
@@ -5882,6 +5963,7 @@
       }
     },
     "Marchez %lld min" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -6233,6 +6315,16 @@
         }
       }
     },
+    "Mon vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "My bike"
+          }
+        }
+      }
+    },
     "Montez à %@" : {
       "localizations" : {
         "en" : {
@@ -6422,6 +6514,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "New walking route."
+          }
+        }
+      }
+    },
+    "Nouvel itinéraire à vélo." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New bike route."
           }
         }
       }
@@ -6625,6 +6727,16 @@
         }
       }
     },
+    "Ouvrir %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open %@"
+          }
+        }
+      }
+    },
     "Ouvrir la carte du réseau officiel des tpg" : {
       "localizations" : {
         "en" : {
@@ -6715,12 +6827,62 @@
         }
       }
     },
+    "partagé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "shared"
+          }
+        }
+      }
+    },
+    "Partage actif" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharing"
+          }
+        }
+      }
+    },
     "Partage de la position du véhicule…" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sharing the vehicle's position…"
+          }
+        }
+      }
+    },
+    "Partage impossible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't share"
+          }
+        }
+      }
+    },
+    "Partage terminé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharing ended"
+          }
+        }
+      }
+    },
+    "Partage terminé ou indisponible." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sharing ended or unavailable."
           }
         }
       }
@@ -6791,6 +6953,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Share vehicle position"
+          }
+        }
+      }
+    },
+    "Partager le lien" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share link"
+          }
+        }
+      }
+    },
+    "Partager mon trajet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share my trip"
           }
         }
       }
@@ -6901,6 +7083,26 @@
         }
       }
     },
+    "Pédalez jusqu'à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ride to %@"
+          }
+        }
+      }
+    },
+    "Pédalez jusqu'à %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ride to %1$@ %2$@"
+          }
+        }
+      }
+    },
     "Pendant que vous êtes à bord, Lux peut partager anonymement la position du véhicule." : {
       "localizations" : {
         "en" : {
@@ -6977,6 +7179,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Customize your Lux experience"
+          }
+        }
+      }
+    },
+    "Personne ne suit" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No one following"
           }
         }
       }
@@ -7297,6 +7509,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Take the stairs"
+          }
+        }
+      }
+    },
+    "Prenez un vélo %@ à %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grab a %1$@ bike at %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "Prenez un vélo %@ à proximité" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Grab a %@ bike nearby"
           }
         }
       }
@@ -7811,12 +8043,32 @@
         }
       }
     },
+    "Rejoignez le vélo %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Head to the %@ bike"
+          }
+        }
+      }
+    },
     "Remet à zéro tous les scores des lignes" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Reset every line’s score to 0"
+          }
+        }
+      }
+    },
+    "Rendez-le à %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Return it at %1$@ %2$@"
           }
         }
       }
@@ -8041,6 +8293,16 @@
         }
       }
     },
+    "Rythme à vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cycling pace"
+          }
+        }
+      }
+    },
     "Rythme de marche" : {
       "localizations" : {
         "en" : {
@@ -8107,6 +8369,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Sat"
+          }
+        }
+      }
+    },
+    "Sans vélo" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No bike"
           }
         }
       }
@@ -8301,12 +8573,52 @@
         }
       }
     },
+    "Seuls les trains et bus qui acceptent les vélos sont proposés. Sinon, il reste attaché au premier arrêt." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only trains and buses that carry bikes are suggested. Otherwise, it stays locked at the first stop."
+          }
+        }
+      }
+    },
+    "Signal faible" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Weak signal"
+          }
+        }
+      }
+    },
     "Signal GPS faible · position estimée" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Weak GPS · estimated position"
+          }
+        }
+      }
+    },
+    "Signal perdu" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signal lost"
+          }
+        }
+      }
+    },
+    "Signal perdu à %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Signal lost at %@"
           }
         }
       }
@@ -8347,6 +8659,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Fitness"
+          }
+        }
+      }
+    },
+    "Sportif" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Sporty"
           }
         }
       }
@@ -8431,12 +8753,42 @@
         }
       }
     },
+    "Suite du trajet" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rest of the trip"
+          }
+        }
+      }
+    },
     "Suivant" : {
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Next"
+          }
+        }
+      }
+    },
+    "Suivi par %lld personnes" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Followed by %lld people"
+          }
+        }
+      }
+    },
+    "Suivi par 1 personne" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Followed by 1 person"
           }
         }
       }
@@ -8651,6 +9003,16 @@
         }
       }
     },
+    "Terminé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ended"
+          }
+        }
+      }
+    },
     "Terminer" : {
       "localizations" : {
         "en" : {
@@ -8852,6 +9214,7 @@
       }
     },
     "Traitement..." : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -8887,6 +9250,16 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Tram"
+          }
+        }
+      }
+    },
+    "Tranquille" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Relaxed"
           }
         }
       }
@@ -9231,6 +9604,26 @@
         }
       }
     },
+    "Vélo partagé" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Shared bike"
+          }
+        }
+      }
+    },
+    "Vélos disponibles en temps réel. Les vélos Donkey se rendent dans une station." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Live bike availability. Donkey bikes go back to a station."
+          }
+        }
+      }
+    },
     "vélos secteur %@" : {
       "localizations" : {
         "en" : {
@@ -9257,6 +9650,26 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Please check your mobile data or your Wi-Fi connection and try again."
+          }
+        }
+      }
+    },
+    "Vérifiez votre connexion." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your connection."
+          }
+        }
+      }
+    },
+    "Vers %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "To %@"
           }
         }
       }
@@ -9727,396 +10140,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Zoom in to see stops"
-          }
-        }
-      }
-    },
-    "→ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "→ %@"
-          }
-        }
-      }
-    },
-    "−%lld min" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "−%lld min"
-          }
-        }
-      }
-    },
-    "Suite du trajet" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rest of the trip"
-          }
-        }
-      }
-    },
-    "1 correspondance" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 transfer"
-          }
-        }
-      }
-    },
-    "%lld correspondances" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld transfers"
-          }
-        }
-      }
-    },
-    "%lld min à pied" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld min walk"
-          }
-        }
-      }
-    },
-    "%lld min de marge" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld min to spare"
-          }
-        }
-      }
-    },
-    "1 arrêt" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "1 stop"
-          }
-        }
-      }
-    },
-    "Sans vélo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "No bike"
-          }
-        }
-      }
-    },
-    "Mon vélo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "My bike"
-          }
-        }
-      }
-    },
-    "Vélo partagé" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Shared bike"
-          }
-        }
-      }
-    },
-    "À pied entre les arrêts" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "On foot between stops"
-          }
-        }
-      }
-    },
-    "Itinéraires avec votre propre vélo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Routes with your own bike"
-          }
-        }
-      }
-    },
-    "Donkey Republic" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Donkey Republic"
-          }
-        }
-      }
-    },
-    "Emporter à bord" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take it on board"
-          }
-        }
-      }
-    },
-    "Emporter le vélo à bord" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Take the bike on board"
-          }
-        }
-      }
-    },
-    "Seuls les trains et bus qui acceptent les vélos sont proposés. Sinon, il reste attaché au premier arrêt." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Only trains and buses that carry bikes are suggested. Otherwise, it stays locked at the first stop."
-          }
-        }
-      }
-    },
-    "Genève, EPFL" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geneva, EPFL"
-          }
-        }
-      }
-    },
-    "Vélos disponibles en temps réel. Les vélos Donkey se rendent dans une station." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Live bike availability. Donkey bikes go back to a station."
-          }
-        }
-      }
-    },
-    "partagé" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "shared"
-          }
-        }
-      }
-    },
-    "Prenez un vélo %@ à %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grab a %1$@ bike at %2$@ %3$@"
-          }
-        }
-      }
-    },
-    "Prenez un vélo %@ à proximité" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Grab a %@ bike nearby"
-          }
-        }
-      }
-    },
-    "Pédalez jusqu'à %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ride to %1$@ %2$@"
-          }
-        }
-      }
-    },
-    "Pédalez jusqu'à %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ride to %@"
-          }
-        }
-      }
-    },
-    "Rejoignez le vélo %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Head to the %@ bike"
-          }
-        }
-      }
-    },
-    "%lld min à vélo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld min by bike"
-          }
-        }
-      }
-    },
-    "Électrique" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Electric"
-          }
-        }
-      }
-    },
-    "Ouvrir %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Open %@"
-          }
-        }
-      }
-    },
-    "Rendez-le à %@ %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Return it at %1$@ %2$@"
-          }
-        }
-      }
-    },
-    "Garez-le dans la zone %@" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Park it within the %@ zone"
-          }
-        }
-      }
-    },
-    "Rythme à vélo" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cycling pace"
-          }
-        }
-      }
-    },
-    "Choisissez votre allure habituelle pour des temps de trajet plus justes" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pick your usual pace for more accurate travel times"
-          }
-        }
-      }
-    },
-    "Tranquille" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Relaxed"
-          }
-        }
-      }
-    },
-    "Sportif" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Sporty"
-          }
-        }
-      }
-    },
-    "C'est parti. Pédalez jusqu'à %@." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Let's go. Ride to %@."
-          }
-        }
-      }
-    },
-    "Nouvel itinéraire à vélo." : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New bike route."
-          }
-        }
-      }
-    },
-    "Ce code n'est pas un SwissPass" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This isn't a SwissPass code"
-          }
-        }
-      }
-    },
-    "Lux n'a pas accès à la caméra" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lux can't access the camera"
-          }
-        }
-      }
-    },
-    "Lampe" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Flashlight"
           }
         }
       }
