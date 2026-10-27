@@ -15,6 +15,7 @@ struct OnboardMapView: UIViewRepresentable {
     @Binding var showsOverview: Bool
     let topInset: CGFloat
     let bottomInset: CGFloat
+    var focusedStop: Place?
 
     func makeCoordinator() -> OnboardMapController {
         OnboardMapController(session: session)
@@ -36,6 +37,7 @@ struct OnboardMapView: UIViewRepresentable {
         controller.setInsets(top: topInset, bottom: bottomInset)
         controller.syncContent()
         controller.setMode(following: isFollowing, overview: showsOverview)
+        controller.setFocus(focusedStop)
     }
 
     static func dismantleUIView(_ mapView: MKMapView, coordinator: OnboardMapController) {
@@ -796,6 +798,46 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
         transition = (mapView.camera.copy() as! MKMapCamera, CACurrentMediaTime())
     }
 
+    private var focusedStopKey: String?
+    private var focusedStopPin: MapPin?
+
+    func setFocus(_ place: Place?) {
+        let key = place.map { "\($0.stopId ?? "")|\($0.lat)|\($0.lon)" }
+        guard key != focusedStopKey else { return }
+        focusedStopKey = key
+        if let focusedStopPin { mapView.removeAnnotation(focusedStopPin) }
+        focusedStopPin = nil
+        guard let place else { return }
+        transition = nil
+
+        let coordinate = CLLocationCoordinate2D(latitude: place.lat, longitude: place.lon)
+        let pin = MapPin(kind: .focusedStop, coordinate: coordinate, anchorY: FocusedStopMarker.anchorY)
+        pin.content = AnyView(FocusedStopMarker(name: place.name, color: focusColor(for: place)))
+        mapView.addAnnotation(pin)
+        focusedStopPin = pin
+
+        let center = MKMapPoint(coordinate)
+        let size = 320 * MKMapPointsPerMeterAtLatitude(place.lat)
+        let rect = MKMapRect(x: center.x - size / 2, y: center.y - size / 2, width: size, height: size)
+        let padding = UIEdgeInsets(top: topInset + 20, left: 30, bottom: bottomInset + 20, right: 30)
+        let previous = mapView.camera.copy() as! MKMapCamera
+        mapView.setCamera(MKMapCamera(lookingAtCenter: previous.centerCoordinate, fromDistance: previous.centerCoordinateDistance, pitch: 0, heading: 0), animated: false)
+        mapView.setVisibleMapRect(rect, edgePadding: padding, animated: false)
+        let target = mapView.camera.copy() as! MKMapCamera
+        mapView.setCamera(previous, animated: false)
+        mapView.setCamera(target, animated: true)
+    }
+
+    private func focusColor(for place: Place) -> Color {
+        let ids = Set([place.stopId, place.parentId].compactMap { $0 })
+        let leg = session.legs.first { leg in
+            leg.isTransit && leg.allStops.contains { stop in
+                [stop.stopId, stop.parentId].contains { id in id.map { ids.contains($0) } ?? false }
+            }
+        }
+        return leg.map { getLegColor($0) } ?? Color.luxAccent
+    }
+
     private func showOverview() {
         var rect = MKMapRect.null
         let startLeg = session.phase == .arrived ? 0 : session.legIndex
@@ -1068,12 +1110,13 @@ extension StationOverlayContent {
 
 private final class MapPin: NSObject, MKAnnotation {
     enum Kind {
-        case puck, ghost, approaching, stop, destination, stationTrack, stationCurrentTrack, stationAccess, levelChange, sector
+        case puck, ghost, approaching, stop, focusedStop, destination, stationTrack, stationCurrentTrack, stationAccess, levelChange, sector
 
         var zPriority: MKAnnotationViewZPriority {
             switch self {
             case .puck: return .max
             case .approaching: return MKAnnotationViewZPriority(rawValue: 700)
+            case .focusedStop: return MKAnnotationViewZPriority(rawValue: 650)
             case .ghost: return MKAnnotationViewZPriority(rawValue: 600)
             case .destination: return MKAnnotationViewZPriority(rawValue: 500)
             case .stop: return .defaultUnselected
@@ -1142,6 +1185,33 @@ private final class TouchRecognizer: UIGestureRecognizer {
 
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent) {
         state = .cancelled
+    }
+}
+
+private struct FocusedStopMarker: View {
+    let name: String
+    let color: Color
+    @State private var appeared = false
+
+    static let labelHeight: CGFloat = 18
+    static let dotSize: CGFloat = 18
+    static let anchorY: CGFloat = labelHeight + 4 + dotSize / 2
+
+    var body: some View {
+        VStack(spacing: 4) {
+            MapLabel(text: name)
+                .frame(height: Self.labelHeight)
+            Circle()
+                .fill(Color(.systemBackground))
+                .frame(width: Self.dotSize, height: Self.dotSize)
+                .overlay(Circle().stroke(color, lineWidth: 5))
+                .shadow(color: .black.opacity(0.25), radius: 3, y: 1)
+        }
+        .scaleEffect(appeared ? 1 : 0.4, anchor: UnitPoint(x: 0.5, y: Self.anchorY / (Self.labelHeight + 4 + Self.dotSize)))
+        .opacity(appeared ? 1 : 0)
+        .onAppear {
+            withAnimation(.spring(duration: 0.4, bounce: 0.35).delay(0.2)) { appeared = true }
+        }
     }
 }
 
