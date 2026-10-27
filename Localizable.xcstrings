@@ -10090,6 +10090,36 @@
           }
         }
       }
+    },
+    "Ce code n'est pas un SwissPass" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This isn't a SwissPass code"
+          }
+        }
+      }
+    },
+    "Lux n'a pas accès à la caméra" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lux can't access the camera"
+          }
+        }
+      }
+    },
+    "Lampe" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flashlight"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
