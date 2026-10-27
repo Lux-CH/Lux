@@ -35,6 +35,9 @@ final class ItineraryViewModel: ObservableObject {
     private var stationTask: Task<Void, Never>?
     
     private var shouldStop = false
+    private var isOnboarding = false
+    private var isInBackground = false
+    private var areMapUpdatesPaused: Bool { isOnboarding || isInBackground }
     
     @Published var itinerary: Itinerary?
     @Published var selectedStop: Place? = nil
@@ -391,7 +394,7 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     private func startVehicleUpdates() {
-        guard !shouldStop else { return }
+        guard !shouldStop, !areMapUpdatesPaused else { return }
         guard !legKeyFrames.isEmpty else {
             vehicleAnnotations = []
             return
@@ -408,7 +411,7 @@ final class ItineraryViewModel: ObservableObject {
     }
     
     private func startWalkingUpdates() {
-        guard !shouldStop, walkingUpdateTask == nil else { return }
+        guard !shouldStop, !areMapUpdatesPaused, walkingUpdateTask == nil else { return }
         guard !walkingLegPaths.isEmpty else {
             walkingAnnotations = []
             return
@@ -433,6 +436,29 @@ final class ItineraryViewModel: ObservableObject {
         walkingUpdateTask = nil
     }
     
+    func setOnboarding(_ onboarding: Bool) {
+        let wasPaused = areMapUpdatesPaused
+        isOnboarding = onboarding
+        applyMapUpdatesPause(wasPaused: wasPaused)
+    }
+
+    func setInBackground(_ background: Bool) {
+        let wasPaused = areMapUpdatesPaused
+        isInBackground = background
+        applyMapUpdatesPause(wasPaused: wasPaused)
+    }
+
+    private func applyMapUpdatesPause(wasPaused: Bool) {
+        guard areMapUpdatesPaused != wasPaused else { return }
+        if areMapUpdatesPaused {
+            stopVehicleUpdates()
+            stopWalkingUpdates()
+        } else {
+            startVehicleUpdates()
+            startWalkingUpdates()
+        }
+    }
+
     private func stopVehicleUpdates() {
         vehicleUpdateTask?.cancel()
         vehicleUpdateTask = nil

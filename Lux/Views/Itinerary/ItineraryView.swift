@@ -31,6 +31,7 @@ struct ItineraryView: View {
     @EnvironmentObject private var disruptionManager: DisruptionManager
     @EnvironmentObject private var offlineManager: OfflineManager
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.scenePhase) private var scenePhase
     @State private var showDetails: Bool = true
     @State private var hasShownDeferredDetails = false
     private var defersDetails = false
@@ -386,6 +387,9 @@ struct ItineraryView: View {
                 }
             }
         }
+        .onChange(of: scenePhase, initial: true) { _, phase in
+            viewModel.setInBackground(phase == .background)
+        }
         .onDisappear {
             liveFollower?.stop()
             onboardSession?.stop()
@@ -533,6 +537,7 @@ struct ItineraryView: View {
         closeStopSheet(restoringDetails: false)
         showDetails = false
         trackingMode = .none
+        viewModel.setOnboarding(true)
         withAnimation(.easeInOut(duration: 0.35)) {
             onboardSession = session
         }
@@ -540,6 +545,7 @@ struct ItineraryView: View {
     }
 
     private func endOnboard() {
+        viewModel.setOnboarding(false)
         withAnimation(.easeInOut(duration: 0.35)) {
             onboardSession = nil
         }
