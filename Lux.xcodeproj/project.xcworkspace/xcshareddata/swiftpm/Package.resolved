@@ -1,33 +1,6 @@
 {
-  "originHash" : "723e921cf9b7bcdb6b7a1aa48a14b06d6457ced3b7c891930945a493a12e37cb",
+  "originHash" : "0a8dcca623d7674cfa313ff8ffcfd7c9711281a7be62d146d036c54a979b5142",
   "pins" : [
-    {
-      "identity" : "codescanner",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/twostraws/CodeScanner",
-      "state" : {
-        "revision" : "5e886430238944c7200fc9e10dbf2d9550dba865",
-        "version" : "2.5.2"
-      }
-    },
-    {
-      "identity" : "glowgetter",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Aeastr/GlowGetter",
-      "state" : {
-        "revision" : "78f41fa9f28b07879a70e101bf3fd2010dac61b8",
-        "version" : "1.1.2"
-      }
-    },
-    {
-      "identity" : "grdb.swift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/groue/GRDB.swift",
-      "state" : {
-        "revision" : "2cf6c756e1e5ef6901ebae16576a7e4e4b834622",
-        "version" : "6.29.3"
-      }
-    },
     {
       "identity" : "luxcom",
       "kind" : "remoteSourceControl",
@@ -44,15 +17,6 @@
       "state" : {
         "revision" : "4d8346c6bc579347e4df0429493760691c5aeca2",
         "version" : "0.4.7"
-      }
-    },
-    {
-      "identity" : "polyline",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/raphaelmor/Polyline",
-      "state" : {
-        "branch" : "master",
-        "revision" : "353f80378dcd8f17eefe8550090c6b1ae3c9da23"
       }
     },
     {

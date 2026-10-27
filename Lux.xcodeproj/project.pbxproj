@@ -7,8 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		790749E22DEE45A50010D818 /* CodeScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 790749E12DEE45A50010D818 /* CodeScanner */; };
-		790749EC2DEE598E0010D818 /* GlowGetter in Frameworks */ = {isa = PBXBuildFile; productRef = 790749EB2DEE598E0010D818 /* GlowGetter */; };
 		791994C72DE374CF00B2080C /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 791994C62DE374CF00B2080C /* Localizable.xcstrings */; };
 		791F49B12DC58AB4006B5565 /* SFSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 791F49B02DC58AB4006B5565 /* SFSymbols */; };
 		796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */ = {isa = PBXBuildFile; productRef = 796BC9042DEBC6B800D0FC4A /* MessagePacker */; };
@@ -21,10 +19,8 @@
 		79ABCC9C2E11AACC00A85D71 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ABCC9B2E11AACC00A85D71 /* WidgetKit.framework */; };
 		79ABCC9E2E11AACC00A85D71 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 79ABCC9D2E11AACC00A85D71 /* SwiftUI.framework */; };
 		79ABCCA92E11AACD00A85D71 /* StopWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 79ABCC992E11AACC00A85D71 /* StopWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		79C64D402DB930DC00C01B89 /* Polyline in Frameworks */ = {isa = PBXBuildFile; productRef = 79C64D3F2DB930DC00C01B89 /* Polyline */; };
 		79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806F52E10CA8E004CA0A0 /* LuxCom */; };
 		79E806F92E10CAAB004CA0A0 /* LuxCom in Frameworks */ = {isa = PBXBuildFile; productRef = 79E806F82E10CAAB004CA0A0 /* LuxCom */; };
-		AA0100000000000000000003 /* GRDB in Frameworks */ = {isa = PBXBuildFile; productRef = AA0100000000000000000002 /* GRDB */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -160,14 +156,10 @@
 			files = (
 				799EE2962FC72228007F2852 /* LuxCom in Frameworks */,
 				79E806F92E10CAAB004CA0A0 /* LuxCom in Frameworks */,
-				790749EC2DEE598E0010D818 /* GlowGetter in Frameworks */,
 				79A2CC3A2E0EDCF80071DD44 /* LuxCom in Frameworks */,
 				796BC9052DEBC6B800D0FC4A /* MessagePacker in Frameworks */,
-				79C64D402DB930DC00C01B89 /* Polyline in Frameworks */,
 				791F49B12DC58AB4006B5565 /* SFSymbols in Frameworks */,
-				790749E22DEE45A50010D818 /* CodeScanner in Frameworks */,
 				79E806F62E10CA8E004CA0A0 /* LuxCom in Frameworks */,
-				AA0100000000000000000003 /* GRDB in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -265,16 +257,12 @@
 			);
 			name = Lux;
 			packageProductDependencies = (
-				79C64D3F2DB930DC00C01B89 /* Polyline */,
 				791F49B02DC58AB4006B5565 /* SFSymbols */,
 				796BC9042DEBC6B800D0FC4A /* MessagePacker */,
-				790749E12DEE45A50010D818 /* CodeScanner */,
-				790749EB2DEE598E0010D818 /* GlowGetter */,
 				79A2CC392E0EDCF80071DD44 /* LuxCom */,
 				79E806F52E10CA8E004CA0A0 /* LuxCom */,
 				79E806F82E10CAAB004CA0A0 /* LuxCom */,
 				799EE2952FC72228007F2852 /* LuxCom */,
-				AA0100000000000000000002 /* GRDB */,
 			);
 			productName = Lux;
 			productReference = 799D2A672D98ABF80066E9F5 /* Lux.app */;
@@ -335,13 +323,9 @@
 			mainGroup = 799D2A5E2D98ABF80066E9F5;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				79C64D3E2DB930DC00C01B89 /* XCRemoteSwiftPackageReference "Polyline" */,
 				791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SFSymbols" */,
 				796BC9032DEBC6B800D0FC4A /* XCRemoteSwiftPackageReference "MessagePacker" */,
-				790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */,
-				790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */,
 				799EE2942FC72228007F2852 /* XCRemoteSwiftPackageReference "LuxCom" */,
-				AA0100000000000000000001 /* XCRemoteSwiftPackageReference "GRDB" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 799D2A682D98ABF80066E9F5 /* Products */;
@@ -796,22 +780,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/twostraws/CodeScanner";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.2;
-			};
-		};
-		790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Aeastr/GlowGetter";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.1.1;
-			};
-		};
 		791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SFSymbols" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/simonbs/SFSymbols";
@@ -836,35 +804,9 @@
 				kind = branch;
 			};
 		};
-		79C64D3E2DB930DC00C01B89 /* XCRemoteSwiftPackageReference "Polyline" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/raphaelmor/Polyline";
-			requirement = {
-				branch = master;
-				kind = branch;
-			};
-		};
-		AA0100000000000000000001 /* XCRemoteSwiftPackageReference "GRDB" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/groue/GRDB.swift";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 6.0.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		790749E12DEE45A50010D818 /* CodeScanner */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 790749E02DEE45A50010D818 /* XCRemoteSwiftPackageReference "CodeScanner" */;
-			productName = CodeScanner;
-		};
-		790749EB2DEE598E0010D818 /* GlowGetter */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 790749EA2DEE598E0010D818 /* XCRemoteSwiftPackageReference "GlowGetter" */;
-			productName = GlowGetter;
-		};
 		791F49B02DC58AB4006B5565 /* SFSymbols */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 791F49AF2DC58AB4006B5565 /* XCRemoteSwiftPackageReference "SFSymbols" */;
@@ -894,11 +836,6 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = LuxCom;
 		};
-		79C64D3F2DB930DC00C01B89 /* Polyline */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 79C64D3E2DB930DC00C01B89 /* XCRemoteSwiftPackageReference "Polyline" */;
-			productName = Polyline;
-		};
 		79E806F52E10CA8E004CA0A0 /* LuxCom */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LuxCom;
@@ -906,11 +843,6 @@
 		79E806F82E10CAAB004CA0A0 /* LuxCom */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = LuxCom;
-		};
-		AA0100000000000000000002 /* GRDB */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = AA0100000000000000000001 /* XCRemoteSwiftPackageReference "GRDB" */;
-			productName = GRDB;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
