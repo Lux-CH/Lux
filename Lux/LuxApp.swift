@@ -33,16 +33,7 @@ struct LuxApp: App {
     @StateObject private var disruptionManager = DisruptionManager()
     @StateObject private var offlineManager = OfflineManager.shared
 
-    @State private var showItinerarySheet: Bool = false
-    @State private var showStopSheet: Bool = false
-    @State private var showTripPlaceSheet: Bool = false
-    @State private var showConfirmation: Bool = false
-    @State private var showItineraryProcessingError: Bool = false
     @State private var pendingURL: URL?
-    @State private var sharedItinerary: Itinerary?
-    @State private var sharedLiveShare: LiveShareLink?
-    @State private var sharedStopDetail: (String, String)?
-    @State private var errorMessage: String = ""
     @ObservedObject var settings = Settings.shared
     
     var body: some Scene {
@@ -77,58 +68,6 @@ struct LuxApp: App {
                         .environmentObject(shortcutManager)
                         .environmentObject(disruptionManager)
                 }
-                .fullScreenCover(isPresented: $showItinerarySheet) {
-                    if let itinerary = sharedItinerary {
-                        ItineraryView(itinerary: itinerary, liveShare: sharedLiveShare)
-                            .preferredColorScheme(getColorScheme())
-                            .environmentObject(locationManager)
-                            .environmentObject(shortcutManager)
-                            .environmentObject(disruptionManager)
-                            .luxAccentTint()
-                    } else {
-                        ProgressView("Chargement de l'itinéraire...")
-                            .progressViewStyle(CircularProgressViewStyle())
-                            .foregroundStyle(.primary)
-                    }
-                }
-                .fullScreenCover(isPresented: $showStopSheet) {
-                    stopView
-                        .environmentObject(locationManager)
-                        .environmentObject(shortcutManager)
-                        .environmentObject(disruptionManager)
-                        .luxAccentTint()
-                }
-                .fullScreenCover(isPresented: $showTripPlaceSheet) {
-                    if let place = sharedStopDetail {
-                        TripsSearchView(
-                            initialSearchResult: SearchResult(type: .stop, tokens: [], name: place.1, id: place.0, lat: 0.0, lon: 0.0, areas: [], score: 0.0),
-                            initialTargetField: .to
-                        )
-                        .environmentObject(locationManager)
-                        .environmentObject(shortcutManager)
-                        .environmentObject(disruptionManager)
-                        .luxAccentTint()
-                    }
-                }
-                .alert("Êtes-vous sûr de vouloir ouvrir cet itinéraire ?", isPresented: $showConfirmation) {
-                    Button("Ouvrir") {
-                        if let url = pendingURL {
-                            Task {
-                                await handleConfirmedItinerary(url)
-                            }
-                        }
-                    }
-                    Button("Annuler", role: .cancel) {
-                        pendingURL = nil
-                    }
-                } message: {
-                    Text("Cet itinéraire vous a été partagé. Assurez-vous qu'il provient d'une source fiable.")
-                }
-                .alert("L'itinéraire n'a pas pu être ouvert.", isPresented: $showItineraryProcessingError) {
-                    Button("OK") { }
-                } message: {
-                    Text(errorMessage.isEmpty ? "Une erreur est survenue lors de son ouverture. Il est possible que le lien ait expiré." : errorMessage)
-                }
         }
     }
     
@@ -140,36 +79,25 @@ struct LuxApp: App {
         switch result {
         case .confirmationRequired(let url):
             pendingURL = url
-            showConfirmation = true
+            presentConfirmation(for: url)
             
         case .stopPlace(let name, let stopId):
-            sharedStopDetail = (stopId, name)
-            showItinerarySheet = false
-            showTripPlaceSheet = false
-            showStopSheet = false
-            showTripPlaceSheet = true
+            presentLinked(TripsSearchView(
+                initialSearchResult: SearchResult(type: .stop, tokens: [], name: name, id: stopId, lat: 0.0, lon: 0.0, areas: [], score: 0.0),
+                initialTargetField: .to
+            ))
             
         case .stopDetail(let stopId, let name):
-            sharedStopDetail = (stopId, name)
-            showItinerarySheet = false
-            showTripPlaceSheet = false
-            showStopSheet = false
-            showStopSheet = true
+            presentLinked(stopView(stopId: stopId, name: name))
             
         case .itinerary(let itinerary):
-            sharedItinerary = itinerary
-            sharedLiveShare = nil
-            showItinerarySheet = false
-            showTripPlaceSheet = false
-            showStopSheet = false
-            showItinerarySheet = true
+            presentLinked(ItineraryView(itinerary: itinerary, liveShare: nil))
             
         case .liveItinerary:
             break
             
         case .error(let error):
-            errorMessage = error.localizedDescription
-            showItineraryProcessingError = true
+            presentError(error.localizedDescription)
         }
     }
     
@@ -179,31 +107,73 @@ struct LuxApp: App {
         
         switch result {
         case .itinerary(let itinerary):
-            sharedItinerary = itinerary
-            sharedLiveShare = nil
-            showItinerarySheet = false
-            showTripPlaceSheet = false
-            showStopSheet = false
-            showItinerarySheet = true
+            presentLinked(ItineraryView(itinerary: itinerary, liveShare: nil))
             
         case .liveItinerary(let itinerary, let link):
-            sharedItinerary = itinerary
-            sharedLiveShare = link
-            showItinerarySheet = false
-            showTripPlaceSheet = false
-            showStopSheet = false
-            showItinerarySheet = true
+            presentLinked(ItineraryView(itinerary: itinerary, liveShare: link))
             
         case .error(let error):
-            errorMessage = error.localizedDescription
-            showItineraryProcessingError = true
+            presentError(error.localizedDescription)
             
         default:
-            errorMessage = "Une erreur est survenue."
-            showItineraryProcessingError = true
+            presentError(String(localized: "Une erreur est survenue."))
         }
         
         pendingURL = nil
+    }
+    
+    @MainActor
+    private func presentConfirmation(for url: URL) {
+        let alert = UIAlertController(
+            title: String(localized: "Êtes-vous sûr de vouloir ouvrir cet itinéraire ?"),
+            message: String(localized: "Cet itinéraire vous a été partagé. Assurez-vous qu'il provient d'une source fiable."),
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: String(localized: "Annuler"), style: .cancel) { _ in
+            pendingURL = nil
+        })
+        alert.addAction(UIAlertAction(title: String(localized: "Ouvrir"), style: .default) { _ in
+            Task { await handleConfirmedItinerary(url) }
+        })
+        presentOnTop(alert)
+    }
+    
+    @MainActor
+    private func presentError(_ message: String) {
+        let alert = UIAlertController(
+            title: String(localized: "L'itinéraire n'a pas pu être ouvert."),
+            message: message.isEmpty ? String(localized: "Une erreur est survenue lors de son ouverture. Il est possible que le lien ait expiré.") : message,
+            preferredStyle: .alert
+        )
+        alert.addAction(UIAlertAction(title: String(localized: "OK"), style: .default))
+        presentOnTop(alert)
+    }
+    
+    @MainActor
+    private func presentLinked<Content: View>(_ content: Content) {
+        let colorScheme = getColorScheme()
+        let host = UIHostingController(rootView: content
+            .preferredColorScheme(colorScheme)
+            .environmentObject(locationManager)
+            .environmentObject(shortcutManager)
+            .environmentObject(disruptionManager)
+            .environmentObject(offlineManager)
+            .luxAccentTint())
+        host.modalPresentationStyle = .fullScreen
+        host.overrideUserInterfaceStyle = colorScheme == .dark ? .dark : colorScheme == .light ? .light : .unspecified
+        presentOnTop(host)
+    }
+    
+    @MainActor
+    private func presentOnTop(_ controller: UIViewController) {
+        guard let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) ?? UIApplication.shared.connectedScenes.compactMap({ $0 as? UIWindowScene }).first,
+              var top = scene.keyWindow?.rootViewController else { return }
+        while let presented = top.presentedViewController, !presented.isBeingDismissed {
+            top = presented
+        }
+        top.present(controller, animated: true)
     }
     
     private func getColorScheme() -> ColorScheme? {
@@ -228,22 +198,19 @@ struct LuxApp: App {
         }
     }
     
-    @ViewBuilder
-    private var stopView: some View {
-        if let (stopId, name) = sharedStopDetail {
-            ItineraryStopDetailView(stop: Place(
-                name: name,
-                stopId: stopId,
-                lat: 0.0,
-                lon: 0.0,
-                level: 0,
-                arrival: nil,
-                departure: nil,
-                scheduledArrival: nil,
-                scheduledDeparture: nil,
-                scheduledTrack: nil,
-                track: nil,
-                vertexType: .transit))
-        }
+    private func stopView(stopId: String, name: String) -> some View {
+        ItineraryStopDetailView(stop: Place(
+            name: name,
+            stopId: stopId,
+            lat: 0.0,
+            lon: 0.0,
+            level: 0,
+            arrival: nil,
+            departure: nil,
+            scheduledArrival: nil,
+            scheduledDeparture: nil,
+            scheduledTrack: nil,
+            track: nil,
+            vertexType: .transit))
     }
 }
