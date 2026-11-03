@@ -93,3 +93,12 @@ class ShortcutStorage: ShortcutStorageProtocol {
         try saveShortcuts(updated)
     }
 }
+
+extension ShortcutStorage {
+    static func symbol(forShortcutNamed name: String?) -> String? {
+        guard let name, !name.isEmpty else { return nil }
+        return ShortcutStorage().loadShortcuts().first {
+            $0.name.localizedCaseInsensitiveCompare(name) == .orderedSame
+        }?.symbol
+    }
+}

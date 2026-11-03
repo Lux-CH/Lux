@@ -48,4 +48,5 @@ struct OnboardActivityAttributes: ActivityAttributes {
     }
 
     var destinationName: String
+    var destinationSymbol: String? = nil
 }

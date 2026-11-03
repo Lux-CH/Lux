@@ -533,7 +533,7 @@ struct ItineraryView: View {
 
     private func startOnboard(_ itinerary: Itinerary) {
         IntelligenceLearner.observe(itinerary, signal: .started)
-        let session = OnboardSession(itinerary: itinerary, destinationName: viewModel.destinationName)
+        let session = OnboardSession(itinerary: itinerary, destinationName: viewModel.destinationName, destinationSymbol: viewModel.destinationSymbol)
         closeStopSheet(restoringDetails: false)
         showDetails = false
         trackingMode = .none

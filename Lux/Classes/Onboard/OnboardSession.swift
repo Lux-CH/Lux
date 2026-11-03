@@ -24,6 +24,7 @@ final class OnboardSession {
     let maxRetargetsPerLeg = 3
 
     let destinationName: String
+    let destinationSymbol: String?
     var legs: [Leg]
     var paths: [RoutePath]
     @ObservationIgnored var stopAlongs: [[CLLocationDistance]]
@@ -159,12 +160,13 @@ final class OnboardSession {
     @ObservationIgnored var announcedRisk: ConnectionRisk = .comfortable
     @ObservationIgnored var missedDepartureAlerted: Set<Int> = []
 
-    init(itinerary: Itinerary, destinationName: String?) {
+    init(itinerary: Itinerary, destinationName: String?, destinationSymbol: String? = nil) {
         let legs = itinerary.legs
         self.legs = legs
         self.destinationName = destinationName
             ?? legs.last.map { $0.to.name == "END" ? String(localized: "votre destination") : $0.to.name }
             ?? String(localized: "votre destination")
+        self.destinationSymbol = destinationSymbol
         self.arrivalDate = itinerary.endTime
         self.voiceEnabled = Settings.shared.onboardVoiceGuidance
         self.announcer = OnboardAnnouncer(voiceEnabled: Settings.shared.onboardVoiceGuidance)
@@ -298,7 +300,7 @@ final class OnboardSession {
             }
         }
 
-        liveActivity.start(destinationName: destinationName.capitalizedFirstLetter, state: activityState())
+        liveActivity.start(destinationName: destinationName.capitalizedFirstLetter, destinationSymbol: destinationSymbol, state: activityState())
         announcer.alertSink = { [weak self] title, body in
             guard let self, self.liveActivity.isActive else { return false }
             self.liveActivity.update(self.activityState(), alert: (title, body ?? ""))

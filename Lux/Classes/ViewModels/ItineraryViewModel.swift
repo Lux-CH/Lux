@@ -55,6 +55,7 @@ final class ItineraryViewModel: ObservableObject {
     @ObservedObject var settings = Settings.shared
         
     private(set) var destinationName: String?
+    private(set) var destinationSymbol: String?
 
     init(tripId: String) {
         self.tripId = tripId
@@ -64,6 +65,7 @@ final class ItineraryViewModel: ObservableObject {
         self.init(tripId: "")
         self.itinerary = itinerary
         self.destinationName = destinationName
+        self.destinationSymbol = ShortcutStorage.symbol(forShortcutNamed: destinationName)
     }
         
     func switchToTrip(tripId: String) async {
@@ -666,7 +668,8 @@ final class ItineraryViewModel: ObservableObject {
                 place: terminalPlace,
                 color: annotationColor,
                 isTerminal: isLastLeg || isTransferPoint,
-                isIntermediate: !isLastLeg && !isTransferPoint
+                isIntermediate: !isLastLeg && !isTransferPoint,
+                symbol: isLastLeg && leg.to.name == "END" ? destinationSymbol : nil
             ))
             
             if let overlay = createRouteOverlay(for: leg, withColor: legColor) {

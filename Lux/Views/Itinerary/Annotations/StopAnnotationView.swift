@@ -24,6 +24,7 @@ struct StopAnnotation: Identifiable, Equatable {
     let color: Color
     let isTerminal: Bool
     let isIntermediate: Bool
+    let symbol: String?
     
     static func == (lhs: StopAnnotation, rhs: StopAnnotation) -> Bool {
         return lhs.id == rhs.id &&
@@ -33,10 +34,11 @@ struct StopAnnotation: Identifiable, Equatable {
                lhs.place.name == rhs.place.name &&
                lhs.color == rhs.color &&
                lhs.isTerminal == rhs.isTerminal &&
-               lhs.isIntermediate == rhs.isIntermediate
+               lhs.isIntermediate == rhs.isIntermediate &&
+               lhs.symbol == rhs.symbol
     }
     
-    init(place: Place, color: Color, isTerminal: Bool = false, isIntermediate: Bool = false) {
+    init(place: Place, color: Color, isTerminal: Bool = false, isIntermediate: Bool = false, symbol: String? = nil) {
         var modifiedPlace = place
         switch place.name {
         case "START":
@@ -53,6 +55,7 @@ struct StopAnnotation: Identifiable, Equatable {
         self.color = color
         self.isTerminal = isTerminal
         self.isIntermediate = isIntermediate
+        self.symbol = symbol
     }
 }
 
@@ -95,24 +98,33 @@ struct StopAnnotationView: View {
             } else if isTerminal || annotation.isTerminal {
                 Circle()
                     .fill(annotation.color.opacity(0.15))
-                    .frame(width: terminalSize + 10, height: terminalSize + 10)
+                    .frame(width: getCircleSize() + 10, height: getCircleSize() + 10)
             }
             
             Circle()
                 .fill(isSelected ? annotation.color : .white)
                 .stroke(isSelected ? .white : annotation.color, lineWidth: isSelected || isTerminal || annotation.isTerminal ? 3 : 1)
                 .frame(
-                    width: isSelected ? 24 : getCircleSize(),
-                    height: isSelected ? 24 : getCircleSize()
+                    width: isSelected ? max(24, getCircleSize()) : getCircleSize(),
+                    height: isSelected ? max(24, getCircleSize()) : getCircleSize()
                 )
                 .shadow(color: Color.black.opacity(isSelected ? 0.3 : 0.2), radius: isSelected ? 4 : 2, x: 0, y: 1)
+                .overlay {
+                    if let symbol = annotation.symbol {
+                        Image(systemName: symbol)
+                            .font(.system(size: 13, weight: .bold))
+                            .foregroundStyle(isSelected ? .white : annotation.color)
+                    }
+                }
                 .scaleEffect(isAnimating ? 1.2 : 1.0)
         }
         .animation(.spring(response: 0.35, dampingFraction: 0.65), value: isSelected)
     }
     
     private func getCircleSize() -> CGFloat {
-        if isTerminal || annotation.isTerminal {
+        if annotation.symbol != nil {
+            return 28
+        } else if isTerminal || annotation.isTerminal {
             return terminalSize
         } else if annotation.isIntermediate {
             return intermediateSize

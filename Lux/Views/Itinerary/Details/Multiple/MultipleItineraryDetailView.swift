@@ -92,7 +92,7 @@ struct MultipleItineraryDetailView: View {
     private func arrivalText(for leg: Leg) -> Text {
         if leg.to.name == "END" {
             if let destinationName = viewModel.destinationName {
-                return Text("Arrivée à \(Image(systemName: "signpost.right")) \(destinationName)")
+                return Text("Arrivée à \(Image(systemName: viewModel.destinationSymbol ?? "signpost.right")) \(destinationName)")
             }
             return Text("Vous êtes arrivé à destination")
         }
@@ -112,7 +112,7 @@ struct MultipleItineraryDetailView: View {
             return Text("Marchez jusqu'à \(Image(systemName: "signpost.right")) \(toName)")
         } else if legIndex == itinerary.legs.count - 1 {
             if let destinationName = viewModel.destinationName {
-                return Text("Marchez jusqu'à \(Image(systemName: "signpost.right")) \(destinationName)")
+                return Text("Marchez jusqu'à \(Image(systemName: viewModel.destinationSymbol ?? "signpost.right")) \(destinationName)")
             }
             return Text("Marchez vers votre destination")
         } else {

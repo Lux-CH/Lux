@@ -19,7 +19,7 @@ struct OnboardLiveActivity: Widget {
                 if context.isStale {
                     InterruptedView(destination: context.attributes.destinationName)
                 } else {
-                    OnboardLockScreenView(state: context.state, destination: context.attributes.destinationName)
+                    OnboardLockScreenView(state: context.state, destination: context.attributes.destinationName, destinationSymbol: context.attributes.destinationSymbol)
                 }
             }
             .widgetURL(URL(string: "lux://onboard"))
@@ -100,6 +100,7 @@ private struct InterruptedView: View {
 private struct OnboardLockScreenView: View {
     let state: State
     let destination: String
+    var destinationSymbol: String? = nil
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -235,7 +236,7 @@ private struct OnboardLockScreenView: View {
                 }
             } else {
                 HStack(spacing: 6) {
-                    Image(systemName: "flag.checkered")
+                    Image(systemName: destinationSymbol ?? "flag.checkered")
                     Text(destination).lineLimit(1)
                     Spacer()
                     Text("Arrivée \(state.arrivalDate, style: .time)").fontWeight(.semibold)

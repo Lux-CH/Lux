@@ -16,14 +16,14 @@ final class OnboardLiveActivityController {
     private static let staleAfter: TimeInterval = 180
     private static let refreshAfter: TimeInterval = 60
 
-    func start(destinationName: String, state: OnboardActivityAttributes.ContentState) {
+    func start(destinationName: String, destinationSymbol: String? = nil, state: OnboardActivityAttributes.ContentState) {
         guard ActivityAuthorizationInfo().areActivitiesEnabled, activity == nil else { return }
         for stale in Activity<OnboardActivityAttributes>.activities {
             Task { await stale.end(nil, dismissalPolicy: .immediate) }
         }
         do {
             activity = try Activity.request(
-                attributes: OnboardActivityAttributes(destinationName: destinationName),
+                attributes: OnboardActivityAttributes(destinationName: destinationName, destinationSymbol: destinationSymbol),
                 content: ActivityContent(state: state, staleDate: Date().addingTimeInterval(Self.staleAfter)),
                 pushType: nil
             )

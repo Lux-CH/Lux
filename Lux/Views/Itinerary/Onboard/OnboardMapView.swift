@@ -478,7 +478,7 @@ final class OnboardMapController: NSObject, MKMapViewDelegate, UIGestureRecogniz
             destination?.coordinate = coordinate
             update(destination, content: AnyView(
                 VStack(spacing: 2) {
-                    Image(systemName: "flag.checkered")
+                    Image(systemName: session.destinationSymbol ?? "flag.checkered")
                         .font(.system(size: 13, weight: .bold))
                         .foregroundStyle(.white)
                         .frame(width: 30, height: 30)
