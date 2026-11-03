@@ -21,6 +21,7 @@ final class OnboardSession {
     func boardingGrace(for leg: Leg) -> TimeInterval {
         leg.realTime ? 5 * 60 : 12 * 60
     }
+    let maxRetargetsPerLeg = 3
 
     let destinationName: String
     var legs: [Leg]
@@ -117,7 +118,7 @@ final class OnboardSession {
     @ObservationIgnored var lastAtBoardingStop: Date?
     @ObservationIgnored var platformFixes = 0
     @ObservationIgnored var boarding: (legIndex: Int, stopId: String, at: Date)?
-    @ObservationIgnored var retargetedLegs: Set<Int> = []
+    @ObservationIgnored var retargetedLegs: [Int: Set<String>] = [:]
     @ObservationIgnored var replanTask: Task<Void, Never>?
     @ObservationIgnored var arrivalTask: Task<Void, Never>?
     @ObservationIgnored var isTracking = false

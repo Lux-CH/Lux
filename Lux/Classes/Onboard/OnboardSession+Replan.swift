@@ -167,7 +167,7 @@ extension OnboardSession {
         announcedCancellations = announcedCancellations.filter { $0 < keep }
         missedDepartureAlerted = missedDepartureAlerted.filter { $0 < keep }
         announcedStopAlerts = announcedStopAlerts.filter { (Int($0.split(separator: "-").first ?? "") ?? 0) < keep }
-        retargetedLegs = retargetedLegs.filter { $0 < keep }
+        retargetedLegs = retargetedLegs.filter { $0.key < keep }
         reroutedWalks = reroutedWalks.filter { $0 < keep }
         announcedRisk = .comfortable
         walkBackLegIndex = nil

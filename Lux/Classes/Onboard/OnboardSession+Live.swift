@@ -54,10 +54,15 @@ extension OnboardSession {
 
     func retargetCurrentLeg(to tripId: String) {
         let index = legIndex
-        guard !retargetedLegs.contains(index), legs.indices.contains(index), legs[index].tripId != tripId else { return }
-        retargetedLegs.insert(index)
+        guard legs.indices.contains(index), let currentTrip = legs[index].tripId, currentTrip != tripId else { return }
+        var tried = retargetedLegs[index] ?? []
+        guard !tried.contains(tripId), tried.count <= maxRetargetsPerLeg else { return }
+        tried.insert(currentTrip)
+        tried.insert(tripId)
+        retargetedLegs[index] = tried
         Task { [weak self] in
             guard let trip = try? await LuxData.trip(tripId: tripId), let self, self.legIndex == index,
+                  self.legs[index].tripId == currentTrip,
                   let corrected = LegLiveMerger.merge(self.legs[index], with: trip, retargetingTo: tripId) else { return }
             let earlier = corrected.scheduledStartTime < self.legs[index].scheduledStartTime
             self.legs[index] = corrected
