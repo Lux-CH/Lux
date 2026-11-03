@@ -190,6 +190,21 @@ extension OnboardSession {
                 completeLeg()
                 return
             }
+            if now > next.startTime.addingTimeInterval(180), !motion.isInVehicle,
+               !missedDepartureAlerted.contains(legIndex + 1) {
+                missedDepartureAlerted.insert(legIndex + 1)
+                showAlert(
+                    OnboardAlert(
+                        severity: .warning,
+                        symbolName: "exclamationmark.triangle.fill",
+                        title: String(localized: "Départ manqué ?"),
+                        message: String(localized: "\(next.spokenLineName.capitalizedFirstLetter) est déjà parti. Recherche d'une alternative…")
+                    ),
+                    spoken: String(localized: "Il semble que vous ayez manqué \(next.spokenLineName)."),
+                    urgency: .notice
+                )
+                requestReplan(.missedDeparture)
+            }
             if isOnPlatform(of: next, location: location, path: path) {
                 platformFixes += 1
                 if platformFixes >= 2 { completeLeg() }
