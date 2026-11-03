@@ -69,6 +69,7 @@ extension OnboardSession {
         let currentNext = legs[replaceFrom...].first(where: \.isTransit)?.tripId
         let near = userLocation?.coordinate ?? currentLeg.map { CLLocationCoordinate2D(latitude: $0.from.lat, longitude: $0.from.lon) }
 
+        let requestedWhileRiding = phase == .riding
         lastReplanAt = now
         isReplanning = true
         replanTask?.cancel()
@@ -91,6 +92,7 @@ extension OnboardSession {
             }
             guard let self, !Task.isCancelled else { return }
             self.isReplanning = false
+            if reason != .cancelled, !requestedWhileRiding, self.phase == .riding, replaceFrom <= self.legIndex { return }
             guard let best = choice else {
                 self.showAlert(
                     OnboardAlert(severity: .warning, symbolName: "arrow.triangle.branch", title: String(localized: "Aucune alternative trouvée"), message: nil),
@@ -129,8 +131,24 @@ extension OnboardSession {
         apply(proposal)
     }
 
+    func dropPreBoardingReplan() {
+        guard phase != .riding, !(currentLeg?.cancelled ?? false) else { return }
+        if replanTask != nil, isReplanning {
+            replanTask?.cancel()
+            isReplanning = false
+        }
+        if let replan, replan.reason != .cancelled, replan.ridingTripId == nil, replan.replaceFrom <= legIndex {
+            withAnimation(.spring(duration: 0.4)) { self.replan = nil }
+        }
+    }
+
     func apply(_ proposal: ReplanProposal) {
         guard proposal.replaceFrom <= legs.count else { return }
+        if phase == .riding, proposal.ridingTripId == nil, proposal.replaceFrom <= legIndex,
+           !(currentLeg?.cancelled ?? false) {
+            withAnimation(.spring(duration: 0.4)) { replan = nil }
+            return
+        }
         HapticFeedback.notification(type: .success)
         withAnimation(.spring(duration: 0.45)) { replan = nil }
 

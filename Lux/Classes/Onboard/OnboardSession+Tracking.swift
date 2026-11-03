@@ -629,6 +629,7 @@ extension OnboardSession {
         if verifiable, let stopId = leg.from.stopId {
             boarding = (legIndex, stopId, lastAtBoardingStop ?? now)
         }
+        dropPreBoardingReplan()
         withAnimation(.spring(duration: 0.45)) { phase = .riding }
         nextStopIndex = 1
         scheduleCrowdPrompt()
