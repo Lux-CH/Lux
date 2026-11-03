@@ -264,7 +264,7 @@ extension OnboardSession {
                 let leaving = projection.offset < 60 && projection.along > boardAlong + 200 && location.speed > 7
                 if leaving && now < leg.startTime.addingTimeInterval(-120)
                     && lastAtBoardingStop.map({ now.timeIntervalSince($0) < 600 }) == true {
-                    boardEarlierVehicle(leg)
+                    boardOtherVehicle(leg)
                 }
             }
             return
@@ -278,12 +278,15 @@ extension OnboardSession {
             let movingAway = projection.offset < 50
                 && projection.along > boardAlong + 70
                 && location.speed > 2
-            if movingAway && now > leg.startTime.addingTimeInterval(-120) {
+            let plannedPlausible = now > leg.startTime.addingTimeInterval(-120)
+                && now < leg.startTime.addingTimeInterval(boardingGrace(for: leg))
+            if movingAway && plannedPlausible {
                 board()
                 return
             }
-            if movingAway && lastAtBoardingStop.map({ now.timeIntervalSince($0) < 600 }) == true {
-                boardEarlierVehicle(leg)
+            let plannedGone = now >= leg.startTime.addingTimeInterval(boardingGrace(for: leg))
+            if movingAway && (plannedGone || lastAtBoardingStop.map({ now.timeIntervalSince($0) < 600 }) == true) {
+                boardOtherVehicle(leg)
                 return
             }
 
@@ -743,6 +746,11 @@ extension OnboardSession {
         guard let index = running else { return }
         hasResolvedStart = true
         if index != legIndex { enterLeg(index, announce: false) }
-        board(verifiable: false)
+        let leg = legs[index]
+        if !leg.mode.isMainlineRail, now > leg.startTime.addingTimeInterval(boardingGrace(for: leg)) {
+            boardOtherVehicle(leg)
+        } else {
+            board(verifiable: false)
+        }
     }
 }

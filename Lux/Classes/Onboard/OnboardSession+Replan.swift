@@ -405,11 +405,12 @@ extension OnboardSession {
         }
     }
 
-    func boardEarlierVehicle(_ leg: Leg) {
+    func boardOtherVehicle(_ leg: Leg) {
         let index = legIndex
+        let leftStopAt = lastAtBoardingStop ?? now
+        board(verifiable: false)
         guard !earlierBoardingLegs.contains(index) else { return }
         earlierBoardingLegs.insert(index)
-        board(verifiable: false)
         guard let stopId = leg.from.stopId else { return }
         let plannedTrip = leg.tripId
         let isRail = leg.mode.isMainlineRail
@@ -422,10 +423,10 @@ extension OnboardSession {
                 .filter { isRail || $0.headsign == nil || leg.headsign == nil || $0.headsign == leg.headsign }
                 .compactMap { stopTime -> (tripId: String, departure: Date)? in
                     guard let departure = stopTime.place.departure ?? stopTime.place.scheduledDeparture,
-                          departure <= now.addingTimeInterval(60), departure > now.addingTimeInterval(-12 * 60) else { return nil }
+                          departure <= now.addingTimeInterval(3 * 60), departure > now.addingTimeInterval(-12 * 60) else { return nil }
                     return (stopTime.tripId, departure)
                 }
-                .sorted { $0.departure > $1.departure }
+                .sorted { abs($0.departure.timeIntervalSince(leftStopAt)) < abs($1.departure.timeIntervalSince(leftStopAt)) }
                 .prefix(3)
             for candidate in candidates {
                 guard let trip = try? await LuxData.trip(tripId: candidate.tripId) else { continue }

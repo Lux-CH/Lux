@@ -18,6 +18,9 @@ final class OnboardSession {
     let usableAccuracy: CLLocationAccuracy = 80
     var crowdReportInterval: TimeInterval { crowdWatched ? 2 : 10 }
     let rerouteCooldown: TimeInterval = 20
+    func boardingGrace(for leg: Leg) -> TimeInterval {
+        leg.realTime ? 5 * 60 : 12 * 60
+    }
 
     let destinationName: String
     var legs: [Leg]
